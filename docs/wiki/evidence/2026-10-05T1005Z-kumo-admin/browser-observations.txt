@@ -1,0 +1,26 @@
+2026-10-05, native Safari UI; observations by implementation agent.
+
+Development: http://127.0.0.1:4321/admin/
+- Dark Kumo buttons, inputs, selects and tabs visible. Public preview retains its typography and layout.
+- Removed local/unsaved status, recovery notice, edit/interact toggle, arrow buttons, and proactive publication issue list.
+- Add block dialog -> Media -> missing file -> Publish produced validation notification. Cancel removed test block.
+- Initial native HTML drag handling was unreliable in Safari; replaced with pointer capture.
+- Pointer drag Text row to upper half of Hero row changed sidebar order to Text, Hero, Counter, Accordion, Quote; preview followed.
+- Reload (accepting beforeunload) retained this order; no recovery banner appeared.
+- Initial Toasty viewport escaped the scoped portal because its first layout effect ran before the sibling ref. Moving the portal container before the provider fixed visible toast placement.
+- Empty page title generated no proactive error panel. Publish produced Cannot publish yet / Page title is required.
+- Collections tab: Journal selector, named text fields, required checkboxes, disabled populated field type/key controls mounted.
+- Media tab: Kumo Upload file and Storage settings buttons mounted. Storage dialog showed named Kumo fields, Use settings and Close; closed without edits.
+- Site settings and confirmation dialog mounted; Discard edits restored baseline (Save draft disabled). No files or remote data changed.
+
+Production: http://127.0.0.1:4322/admin/, own preview PID 70790
+- Static build mounted admin and preview.
+- Svelte Add one incremented 0 -> 1; Vue accordion expanded and showed explanatory text, without a mode toggle.
+- Mouse drag Text above Hero changed both sidebar and preview order, preserving counter value 1 and expanded accordion.
+- Clearing Page title and clicking Publish produced visible bottom-right Kumo error toast: Cannot publish yet / Page title is required.
+- Toast close control dismissed it; subsequent AX state had an empty Notifications region.
+- Restored title Home and dragged Hero above Text. Save draft returned to disabled; initial content/order restored.
+- Closed only the owned Site editor test tab; left unrelated Safari tab intact.
+- Stopped only owned preview PID 70790; existing development server left running.
+
+These are observed interactions, not claims of full layout, cross-browser, remote-provider, or deployment verification.

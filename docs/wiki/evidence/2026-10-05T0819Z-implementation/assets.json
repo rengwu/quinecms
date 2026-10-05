@@ -1,0 +1,36 @@
+{
+  "runtimeCopies": {
+    "react-dom": 1,
+    "svelte": 1,
+    "react": 1,
+    "@vue/runtime-core": 1,
+    "@vue/runtime-dom": 1
+  },
+  "pages": [
+    {
+      "page": "admin/index.html",
+      "javascriptModules": 6,
+      "gzipJavaScriptBytes": 105703
+    },
+    {
+      "page": "blocks/index.html",
+      "javascriptModules": 7,
+      "gzipJavaScriptBytes": 70952
+    },
+    {
+      "page": "index.html",
+      "javascriptModules": 8,
+      "gzipJavaScriptBytes": 41870
+    },
+    {
+      "page": "journal/a-fresh-start/index.html",
+      "javascriptModules": 0,
+      "gzipJavaScriptBytes": 0
+    },
+    {
+      "page": "journal/index.html",
+      "javascriptModules": 0,
+      "gzipJavaScriptBytes": 0
+    }
+  ]
+}

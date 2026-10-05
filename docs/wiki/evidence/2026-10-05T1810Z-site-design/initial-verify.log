@@ -1,0 +1,65 @@
+
+> lean-sitebuilder@0.1.0 verify /Users/rengwu/Desktop/Projects/lean-sitebuilder
+> pnpm check && pnpm test && pnpm build && pnpm check:build
+
+
+> lean-sitebuilder@0.1.0 check /Users/rengwu/Desktop/Projects/lean-sitebuilder
+> pnpm prepare:blocks && astro check
+
+
+> lean-sitebuilder@0.1.0 prepare:blocks /Users/rengwu/Desktop/Projects/lean-sitebuilder
+> node scripts/generate-blocks.mjs
+
+Registered 12 block versions.
+02:11:09 [vite] Re-optimizing dependencies because vite config has changed
+02:11:09 [types] Generated 169ms
+02:11:09 [check] Getting diagnostics for Astro files in /Users/rengwu/Desktop/Projects/lean-sitebuilder...
+Result (87 files): 
+- 0 errors
+- 0 warnings
+- 0 hints
+
+
+> lean-sitebuilder@0.1.0 test /Users/rengwu/Desktop/Projects/lean-sitebuilder
+> pnpm prepare:blocks && vitest run
+
+
+> lean-sitebuilder@0.1.0 prepare:blocks /Users/rengwu/Desktop/Projects/lean-sitebuilder
+> node scripts/generate-blocks.mjs
+
+Registered 12 block versions.
+
+ RUN  v5.0.3 /Users/rengwu/Desktop/Projects/lean-sitebuilder
+
+ ❯ tests/editor-navigation.test.ts (10 tests | 1 failed) 882ms
+   × edits site fonts, size, line height and gutter together, recovers them and clears numeric overrides 332ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/editor-navigation.test.ts > edits site fonts, size, line height and gutter together, recovers them and clears numeric overrides
+AssertionError: expected 'arial' to contain 'Arial'
+
+Expected: "Arial"
+Received: "arial"
+
+ ❯ tests/editor-navigation.test.ts:227:5
+    225|   expect(
+    226|     editorPanel().querySelector('[aria-label="Body font"]')?.textConte…
+    227|   ).toContain('Arial');
+       |     ^
+    228|   expect(
+    229|     editorPanel().querySelector('[aria-label="Heading font"]')?.textCo…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 12 passed (13)
+      Tests  1 failed | 78 passed (79)
+   Start at  02:11:18
+   Duration  4.53s (import 54%, environment 32%, tests 7%, transform 6%)
+
+    Isolate  13 workers spawned · ~690ms startup each (spawn + environment, per file)
+             at least ~307ms faster with isolate: false — reuses workers across files instead of one per file
+
+ ELIFECYCLE  Test failed. See above for more details.
+ ELIFECYCLE  Command failed with exit code 1.

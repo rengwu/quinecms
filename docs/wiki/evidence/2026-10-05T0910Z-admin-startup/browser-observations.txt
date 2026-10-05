@@ -1,0 +1,11 @@
+2026-10-05, local fixture content, native computer-use controls.
+Baseline: /admin/ at 127.0.0.1:4321 rendered only the Astro toolbar in Helium and Safari.
+Safari Console: Error: @vitejs/plugin-react can't detect preamble. Something is wrong. (Fields.tsx:156).
+HTTP returned 200, but the custom createRoot entry did not request Astro before-hydration initialization.
+Changed only src/pages/admin/index.astro: use App client:only="react" with initial/config props; remove manual root and JSON seed.
+After reload on the same dev server: Pages/Collections/Media/Site drawer, block list, and live preview rendered. Console showed Vite connecting/connected, without the preamble exception.
+Home > Hero > Heading: typed "Admin startup verified."; preview heading matched. Cancel block changes restored "Make something lasting." and Saved content.
+Production: built static dist served at 127.0.0.1:4322, preview PID 67415. Admin shell and all home blocks rendered with styles.
+Interact > Add one changed the Svelte counter from 0 to 1. Vue accordion expanded and displayed its answer.
+Production Console: only favicon.ico 404; no JavaScript startup or CSS preload errors.
+Safari test tab closed after observation. Heading test edits were cancelled; no repository content or remote resources changed. The initial Helium local test window has no content edits and was left alone to avoid interfering with concurrent user browsing.

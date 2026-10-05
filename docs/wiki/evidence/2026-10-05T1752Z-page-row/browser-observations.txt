@@ -1,0 +1,7 @@
+Safari isolated window 49ED39D4-1D9B-4C26-9058-D8E600E6D9C1.
+http://127.0.0.1:4321/admin/?verify=page-row.
+Option+Tab moved focus from Add page to Home. Screenshot: title has no pill fill, aligns with table text, a visible keyboard outline remains, and the entire row is highlighted.
+Return opened Home editor; accessibility tree shows button ← Back above heading Home. Clicking Back restored the Pages table.
+No content edits or provider actions. Closed test window and verified original user window 2B0D6665-1FC9-43B0-9961-37D6640FC74C remains. Existing dev process remains running.
+
+Add-action follow-up: isolated window 50E18610-6B0C-46CB-8923-28F0CA036E33 at /admin/?verify=add-actions. Opened Content -> Journal. Screenshot confirms blue Add entry button with plus icon and standard size, alongside consistent Back control. Closed without editing content. Restarted dev process 91879 on the same port to clear the generated-route error; final user window has no overlay.

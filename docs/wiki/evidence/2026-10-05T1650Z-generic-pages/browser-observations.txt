@@ -1,0 +1,26 @@
+Local browser verification, 2026-10-06 Asia/Kuala_Lumpur.
+Owned Safari window: 8BFDD07A-FB8A-4BFC-B671-6CC909E2B7D5.
+User's pre-existing Safari window and development server were preserved.
+
+Production preview: http://127.0.0.1:4331 (owned Astro preview PID 88199).
+- Admin mounted Home; Pages table displayed Home, Block examples and Journal as Static, Journal entry as Generic with no URL.
+- Opening Journal entry displayed title/date/summary/image/body binding placeholders in the live preview and no URL field.
+- Entry heading details replaced parent controls, with Schema field inputs and fallback values grouped per field. Screenshot inspection showed aligned full-width controls and consistent separation.
+- Changing Bind Heading from title to missing_title immediately changed the preview placeholder. Publish showed a toast: Journal entry / Entry heading / Journal: binding missing_title is missing or has an incompatible field type.
+- Cancel block changes restored title and disabled Save draft.
+- Content / Journal / A slower way to build displayed URL slug, Title, Summary, Date, rich-text Body and Cover image. No block list or live website rendering was present.
+- Inserted https://www.youtube.com/watch?v=jNQXAC9IVRw through YouTube / Insert video. The visual editor showed the YouTube node with Remove; surrounding prose and list remained.
+- Reloaded and reopened the entry. The YouTube node and surrounding content recovered in the visual editor.
+- Collection schemas / Journal showed Generic page = Journal entry. Selecting None removed assignment. The initial empty trigger had a blank label; explicit Kumo placeholder and regression test fixed this.
+- Site / Discard edits restored all production test content; Save draft disabled.
+- Public /journal/a-slower-way-to-build rendered date, title, summary and formatted body from entry fields, without placeholders or a missing-media prompt.
+- Public /journal displayed links to both fresh entries.
+
+Final development check: http://127.0.0.1:4321 after refreshing Astro config to load regenerated routes.
+- Home mounted with no error overlay.
+- Generic page selector showed None · data only after selecting None. Restoring Journal entry disabled Save draft again.
+- Opened Content / Journal / A slower way to build. The lazy Body editor finished loading with headings, prose, lists, formatting controls, Image and YouTube buttons, and no error screen.
+
+Image selection/insertion/removal and embedded-media read-only behavior were exercised through real mounted controls in jsdom tests. No live R2 upload or external video playback was attempted.
+
+Cleanup: both production test edits and development assignment changes were reverted (Save draft disabled). Owned Safari window closed, returning to the pre-existing user window. Astro preview PID 88199 stopped; preview status confirms no preview running. Existing dev PID 66775 remains listening on 4321.

@@ -1,0 +1,6 @@
+Safari isolated window 4820465F-80BD-47EB-A03C-D96CD9EC9934.
+URL http://127.0.0.1:4321/admin/?verify=admin-width.
+Pages: table and heading/actions form one centered content column. Screenshot inspected.
+Site: settings controls and navigation groups use the same-width centered column. Screenshot inspected. The viewport has a vertical scrollbar on this longer page.
+Source confirms both pageOverview and adminPanel use the same max-width: var(--admin-content-max-width), set to 867px in workspace.
+No edits, saves, uploads or publications performed. Test window closed; original window 2B0D6665-1FC9-43B0-9961-37D6640FC74C and existing dev server remain.

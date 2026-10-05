@@ -1,0 +1,9 @@
+Safari isolated window E2557F0F-F3EE-44CC-B7AB-5645D1190CA8, /admin/?verify=content-width on local development port 4321.
+Existing user window 2B0D6665-1FC9-43B0-9961-37D6640FC74C was preserved.
+
+Initial development process 66775 held a stale entry_hello.astro route and showed Astro UnhandledRejection. Config touch did not clear it. After final verification completed, stopped that process and started pnpm dev on the same port. The new page mounted without the overlay.
+Site settings exposes Content max-width (px), initially 1200.
+Native setValue on numeric input did not update React state (confirmed on returning to Site). Retried with click, Select All, keyboard text 680 and Tab. Value is 680 and Save draft becomes enabled.
+Reloaded the dirty session using Command+R. Pages table returned without any reload-confirmation sheet.
+Opened Home after reload. Visually inspected screenshot: header links, Hero content, Text and Counter use centered narrower containers; Hero background remains full preview width. Navigation and page-editor drawer widths are unchanged. Save draft remains enabled, indicating recovery retained the unpublished edit.
+Closed the owned test window without a prompt. Original user window remains open and displays the editor without an Astro error overlay.

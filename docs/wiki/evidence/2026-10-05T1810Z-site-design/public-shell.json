@@ -1,0 +1,27 @@
+[
+  {
+    "route": "dist/index.html",
+    "style": "--site-content-max-width:1200px;--site-body-font:Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;--site-heading-font:Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;--site-body-font-size:16px;--site-body-line-height:1.6;--site-page-gutter:24px",
+    "bodyClass": "site-surface"
+  },
+  {
+    "route": "dist/journal/index.html",
+    "style": "--site-content-max-width:1200px;--site-body-font:Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;--site-heading-font:Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;--site-body-font-size:16px;--site-body-line-height:1.6;--site-page-gutter:24px",
+    "bodyClass": "site-surface"
+  },
+  {
+    "route": "dist/blocks/index.html",
+    "style": "--site-content-max-width:1200px;--site-body-font:Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;--site-heading-font:Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;--site-body-font-size:16px;--site-body-line-height:1.6;--site-page-gutter:24px",
+    "bodyClass": "site-surface"
+  },
+  {
+    "route": "dist/journal/keep-the-essentials/index.html",
+    "style": "--site-content-max-width:1200px;--site-body-font:Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;--site-heading-font:Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;--site-body-font-size:16px;--site-body-line-height:1.6;--site-page-gutter:24px",
+    "bodyClass": "site-surface"
+  },
+  {
+    "route": "dist/journal/a-slower-way-to-build/index.html",
+    "style": "--site-content-max-width:1200px;--site-body-font:Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;--site-heading-font:Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;--site-body-font-size:16px;--site-body-line-height:1.6;--site-page-gutter:24px",
+    "bodyClass": "site-surface"
+  }
+]

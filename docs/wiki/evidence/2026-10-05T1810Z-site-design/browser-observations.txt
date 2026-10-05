@@ -1,0 +1,10 @@
+Native Safari verification, 2026-10-06 local time, development server 127.0.0.1:4321.
+Owned test window: 484C730C-5D09-4D84-BA67-2005A8F09689; URL /admin/?verify=site-design.
+1. Opened Site. Typography fields showed System sans/System sans, 16px, 1.6; Layout showed 1200px width/24px gutter. Screenshot confirmed consistent field and section spacing.
+2. Used the Kumo dropdowns to select Arial body and Georgia headings. Typed body size 18, line height 1.8 and gutter 40 through native keyboard input.
+3. Opened Pages > Home. Screenshot showed serif display/title headings, sans body text and 40px horizontal content inset, with unchanged admin font/layout. The header, Hero and Text started at the same horizontal position.
+4. Mobile preview exposed an overly squeezed site title. Added flex wrapping to the public header and preview header/nav; the subsequent generic-page mobile screenshot showed site title on one line with navigation underneath.
+5. Opened Block examples and Journal entry. Both used the selected fonts and gutter; the generic page retained field-name placeholders. The mobile generic preview fit within its 390px surface.
+6. Reloaded with Command+R, opened Site. Accessibility values confirmed Arial, Georgia, 18, 1.8 and 40. No reload confirmation or error overlay appeared.
+7. Closed the owned test window. The original user window 2B0D6665-1FC9-43B0-9961-37D6640FC74C remained on Pages. No provider actions, downloads, content-file edits or new servers were created by browser verification.
+Screenshots were inspected in the tool output; this file records observations, not computed-style measurements. Unit tests separately verify exact serialized values and CSS tokens, clear/default behavior and invalid-value validation. Static output inspection is in public-shell.json.

@@ -1,11 +1,13 @@
 ---
 title: Technical contracts
 updated: 2026-10-05
-status: Specified; implementation unverified
+status: Implemented foundation; live providers unverified
 ---
 # Technical contracts
 
-The accepted foundation and contract choices are DEC-026–DEC-047 in the [decision register](../decisions/index.md). The technical interview is complete. Concrete definitions below are engineering specifications derived from those decisions, not implemented or verified APIs. Supporting library choices and exact adapter integration remain subject to implementation validation.
+The generic-page redesign (DEC-058–DEC-073) is implemented following authorization on 2026-10-06. The current page, entry, collection, binding and rich-text contracts below replace the earlier entry-block model. See [implementation and verification](../verification/runs/2026-10-05T1650Z-generic-pages.md). Live providers remain unverified.
+
+The accepted foundation and contract choices are DEC-026–DEC-050 in the [decision register](../decisions/index.md). The technical interview is complete. Concrete definitions below are engineering specifications derived from those decisions. The [feature map](../features/index.md) links the implemented API, recipes, and build-specific evidence. Supporting library choices and exact adapter integration remain subject to implementation validation.
 
 ## Shared dependencies — Q33
 
@@ -13,7 +15,7 @@ Accepted: build-generated self-hosted vendor modules. Proposed mechanics: a site
 
 Use the build's module graph instead of requiring every package to be a single manually maintained script. Packages may have multiple entry points and transitive dependencies. Sharing must include the React editor, block adapters, and block widgets. Build output inspection and browser checks must verify the result; a configuration flag alone is not proof.
 
-Vite documents resolving duplicated dependencies to a root copy, along with limitations for certain SSR ESM outputs: [resolve.dedupe](https://vite.dev/config/shared-options#resolve-dedupe). Its [production build](https://vite.dev/guide/build) manages emitted assets. Browser [import maps](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/script/type/importmap) can map names to module URLs, but do not make incompatible package APIs compatible. Exact implementation must match the Vite version bundled with the chosen Astro release; versions have not been pinned.
+Vite documents resolving duplicated dependencies to a root copy, along with limitations for certain SSR ESM outputs: [resolve.dedupe](https://vite.dev/config/shared-options#resolve-dedupe). Its [production build](https://vite.dev/guide/build) manages emitted assets. Browser [import maps](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/script/type/importmap) can map names to module URLs, but do not make incompatible package APIs compatible. Exact implementation must match the Vite version bundled with the chosen Astro release; compatible versions are now pinned in the application package and lockfile.
 
 ## Documents and identity — Q34
 
@@ -23,6 +25,7 @@ Accepted: immutable record IDs and ID-based filenames, with editable paths/slugs
 {
   "formatVersion": 1,
   "id": "page_about",
+  "kind": "static",
   "path": "/about",
   "title": "About",
   "blocks": [
@@ -36,11 +39,11 @@ Accepted: immutable record IDs and ID-based filenames, with editable paths/slugs
 }
 ```
 
-Proposed path: `content/pages/<id>.json`. Entries use `content/entries/<collectionId>/<id>.json` with `collectionId`, `slug`, custom `values`, and ordered `blocks`. Definitions live in `content/collections/<id>.json`; settings and media metadata have separate records. Example IDs above are readable placeholders; the concrete definitions below specify ID generation. Reserved route validation is required before publishing. Draft/main branches determine publication; no second per-record publication flag is implied.
+Proposed path: `content/pages/<id>.json`. Entries use `content/entries/<collectionId>/<id>.json` with `collectionId`, `slug`, and schema `values` only. Page records carry `kind: "static" | "generic"`; only static pages have a `path`. Definitions live in `content/collections/<id>.json`; settings and media metadata have separate records. Example IDs above are readable placeholders; the concrete definitions below specify ID generation. Reserved route validation is required before publishing. Draft/main branches determine publication; no second per-record publication flag is implied.
 
 ## Text inside blocks — Q35
 
-Accepted: JSON remains the outer format, with Markdown strings for formatted prose inside text blocks. Use a shared renderer and a restricted safe feature set. This does not add arbitrary executable Markdown/MDX or change the accepted collection field scope. Users edit through visual formatting controls for headings, paragraphs, emphasis, links, and lists. Unsupported externally edited Markdown must be preserved or explicitly rejected for visual editing, never silently discarded on a round-trip.
+Accepted: JSON remains the outer format, with Markdown strings for formatted prose inside text blocks. Use a shared renderer and a restricted safe feature set. This does not add arbitrary executable Markdown/MDX. DEC-068/DEC-072 extend the schema field set with rich text and uploaded-image/YouTube embeds. Users edit through visual formatting controls for headings, paragraphs, emphasis, links, and lists. Unsupported externally edited Markdown must be preserved or explicitly rejected for visual editing, never silently discarded on a round-trip.
 
 ## Versioning — Q36
 
@@ -86,7 +89,7 @@ Accepted: stable IDs for internal page/entry/media references, with explicit URL
 
 ## Supporting stack choices
 
-The selected core is Astro/TypeScript, React, Base UI, and CSS Modules, with Astro's compatible Vite toolchain. Use native controls where sufficient. Blocks use React/Svelte/Vue integrations or the vanilla adapter. Exact package versions must be pinned together during scaffolding; illustrative versions mentioned in answers are not pins.
+The selected core is Astro/TypeScript, React, Cloudflare Kumo, and CSS Modules, with Astro's compatible Vite toolchain. DEC-048 supersedes the earlier Base UI choice: Kumo supplies admin controls, dialogs, and toasts; CSS Modules own layout. Scope Kumo's standalone styles to admin surfaces and portals, outside the live preview. Blocks use React/Svelte/Vue integrations or the vanilla adapter. Exact package versions must be pinned together during scaffolding; illustrative versions mentioned in answers are not pins.
 
 Engineering recommendations for remaining supporting tools:
 
@@ -110,9 +113,11 @@ interface BlockInstance {
   type: string;          // e.g. core/hero
   version: number;      // installed implementation version
   props: JsonObject;
+  bindings?: Record<string, string>;
 }
 interface PageRecord extends Envelope {
-  path: string;         // absolute public route
+  kind: "static" | "generic";
+  path?: string; // required public route for static; forbidden for generic
   title: string;
   blocks: BlockInstance[];
 }
@@ -120,14 +125,13 @@ interface EntryRecord extends Envelope {
   collectionId: string;
   slug: string;         // route segment under the collection
   values: JsonObject;
-  blocks: BlockInstance[];
 }
 interface CollectionRecord extends Envelope {
   name: string;
   path: string;
   fields: FieldSpec[];
   titleField: string;   // key of a text field in values
-  template: "standard";
+  genericPageId?: string;
 }
 type LinkRef =
   | { kind: "page" | "entry"; id: string; fragment?: string }
@@ -151,7 +155,7 @@ interface SiteRecord extends Envelope {
 
 Files live under `content/pages/`, `content/entries/<collectionId>/`, `content/collections/`, and `content/media/`, using `<id>.json`. `content/site.json` stores the site record. Connection configuration is separate from content, and no credential is serialized into these files.
 
-Paths must be unique across pages, collection listings, and entry routes. Normalize paths and reject traversal, reserved admin/assets routes, and collisions. Internal references resolve through IDs. External links use allowed URL schemes; scripts are never a link target. Media URLs are derived from configured R2/public origins and recorded per uploaded object. The registry is used during build/preview, not fetched by every public block.
+Public paths must be unique across static pages and assigned entry routes. A collection prefix does not reserve or generate an index route; a static page may occupy it. Generic pages have no independent URL. Normalize paths and reject traversal, reserved admin/assets routes, and collisions. Internal references resolve through IDs. External links use allowed URL schemes; scripts are never a link target. Media URLs are derived from configured R2/public origins and recorded per uploaded object. The registry is used during build/preview, not fetched by every public block.
 
 ## Field and custom-widget definitions
 
@@ -162,6 +166,7 @@ interface FieldBase {
 }
 type FieldSpec = FieldBase & (
   | { type: "text"; multiline?: boolean }
+  | { type: "richtext" }
   | { type: "number"; min?: number; max?: number }
   | { type: "date" }                 // YYYY-MM-DD
   | { type: "toggle" }               // boolean, false is a value
@@ -200,6 +205,11 @@ Do not import every block or framework into every public page. Generate statical
 
 Blocks use CSS Modules or framework-scoped styles. CSS resets and document-wide theme variables belong to the shell. Namespaced keyframes/fonts and popup portal containers need equivalent ownership. Portals used by editor components mount inside a styled editor-owned container; block popups must retain block-scoped classes. Optional globals such as theme are passed as values/CSS variables, with no mandatory stylistic adherence.
 
+DEC-075 adds optional `site.globals.contentMaxWidth`, a positive finite number in pixels (omitted/null uses 1200). The public shell and live preview set `--site-content-max-width` using the same resolver. Blocks are advised to cap their content containers with it; full-width backgrounds and narrower text measures are allowed. This is a maximum border-box container width including padding, not a forced block width. The variable is scoped away from admin controls. Invalid explicit values fail content validation; preview safely falls back while editing.
+
+DEC-078 adds optional `bodyFont`, `headingFont`, `bodyFontSize`, `bodyLineHeight` and `pageGutter` globals. Font IDs select local fallback stacks (`system`, `arial`, `georgia`, `times`, `mono`); missing/null uses system sans. Body size defaults to 16px, unitless line height to 1.6 and horizontal page gutter to 24px. Size and line height accept finite positive numbers; gutter accepts finite nonnegative numbers. Explicit invalid values fail structural validation. The shared resolver emits corresponding `--site-*` tokens on the public shell/live preview only, safely defaulting during draft editing. Starter blocks follow these tokens; custom block adherence remains advisory. Heading line height and vertical spacing remain block-specific. These defaults and the initial font list are implementation choices within the accepted controls.
+
+
 CSS scoping is a contract and validation target, not a sandbox for arbitrary untrusted JavaScript. Public HTML, the admin document, and every retained block version must be checked for cross-component style leakage and duplicate runtime execution.
 
 ## Save, recovery, and Publish
@@ -222,7 +232,7 @@ Session recovery includes the base SHA and incomplete values. If the server draf
 
 ## Initial proof and validation targets
 
-Implementation remains unstarted. Validate these before widening the block catalog:
+Implementation began after explicit user authorization. The [initial verification run](../verification/runs/2026-10-05T0819Z-implementation.md) records coverage and gaps for these targets:
 
 - Render repeated React blocks, another framework block, and a vanilla block in public output and a single-document preview. Verify compatible vendors execute once per document, styles stay scoped, and pages load only their required dependencies.
 - Edit/reorder/remove blocks; ensure updates appear immediately and destruction releases handlers. Compare published and preview content/layout on fixed fixtures.
@@ -232,3 +242,27 @@ Implementation remains unstarted. Validate these before widening the block catal
 - Upload image variants to a test R2 bucket, verify IDs/metadata and responsive URLs, and preserve original files when a format cannot safely be resized. Verify credentials never appear in generated assets.
 
 Exact image widths/quality, upload limits, package pins, drag-and-drop implementation, and route reservations are bounded engineering details to validate during implementation, not unresolved product preferences. No application behavior is claimed tested by the wiki build.
+
+## Admin interaction refinement
+
+DEC-049–DEC-050 keep preview islands interactive without a mode toggle. Block rows sort with pointer dragging; Alt+Up/Down provides keyboard access without extra visible controls. Session recovery remains automatic and silent. Submission runs the existing Save/Publish checks and reports errors through Kumo toasts; there is no proactive issue panel or saved/unsaved status banner.
+
+DEC-057 limits mounting preview islands and displaying the preview-width control to page editing, including page-block details. Content entries, collection schemas, Media and Site use a normal admin main region. Leaving page editing unmounts the preview rather than hiding an active rendering. All areas still share content state, recovery and Save draft/Publish.
+
+## Generic pages and field bindings — DEC-058–DEC-073
+
+`Definition.kind` is `static` (the default for existing blocks) or `generic`. The Add block catalog and publication validation enforce the page kind. Generic starter blocks are Entry heading, Entry rich text and Entry media. A normal Collection list block selects a collection on static pages; entries without a generic page display plain titles rather than broken links.
+
+`Block.bindings` maps each target block-field key to a schema field-key string. `props` retain literal values, used directly for unbound fields and as fallbacks for bound fields. Source and target field types must match; custom/collection selector fields are not bindable schema types. Validate every schema assigned to a template even when it has no entries. Unknown keys, missing assignments and type mismatches are publication issues; structurally valid drafts remain saveable. Resolved values also satisfy the block field's range/options/media constraints before publishing.
+
+A blank optional source value (missing, null or whitespace-only text) uses the literal fallback or null. Zero and false remain real values. Schema required fields still govern entry completeness; a bound block field does not make an optional schema field required. Broken bindings never silently use fallback to bypass validation. Version switching retains only bindings whose target fields remain compatible.
+
+During preview, generic renderers receive literal props and `context.bindingPlaceholders`, mapping bound target keys to strings such as `{{title}}`. Block authors display that placeholder at the field's rendered position, including media slots. Publication receives resolved typed props and no placeholder map. Context also exposes collection title/link summaries for listing blocks; provider credentials remain outside context.
+
+Rich-text values are Markdown strings. Uploaded images use `![alt](media:media_id)` and YouTube uses `![title](youtube:VIDEO_ID)`; `src/core/embeds.ts` validates identifiers and accepted YouTube URLs. The shared Markdown renderer resolves image IDs through media metadata and emits only canonical youtube-nocookie iframe URLs. Raw HTML is escaped. Visual Lexical nodes preserve these destinations through editing, undo and reload. Unsupported Markdown remains in source mode; missing media and unsupported embed destinations block publication. Choose an already uploaded image through the rich-text Image control; upload new files through Media first.
+
+The existing demo entries were replaced under DEC-073. There is no automatic legacy-entry migration: imported entry block arrays and old collection `template` values are structural errors. Tab recovery now uses `lean-sitebuilder:recovery:v2`; older recovery storage remains untouched. JSON file envelopes retain `formatVersion: 1`, with the explicit page discriminator and structural checks distinguishing the revised shape.
+
+## Persistent admin navigation — DEC-074
+
+The main navigation is independent of the selected area's content. Pages opens to its table; page and block details add their own drawer beside the navigation, followed by the live preview. Other areas retain the standard admin main region. At widths up to 800px, a Menu button opens the same navigation in a Kumo dialog; choosing an area closes it. Area switching preserves the shared content state and removes any active page preview.

@@ -1,0 +1,9 @@
+Native Safari via cua_repl; existing development server http://127.0.0.1:4321/admin/.
+Owned isolated window UUID D2555F0A-2132-4108-A2B6-5798D73EEB91.
+
+1. Initial view: Pages table, five destinations in separate left Main navigation region, Pages highlighted. Screenshot visually inspected; table content starts to the right of the navigation.
+2. Content: Content heading and Journal collection button in Admin workspace. Main navigation remains; no Site builder or Live preview region.
+3. Pages -> Home: nested drawer has Pages back control, title/path, block list. Separate Live preview region.
+4. Hero: drawer starts All blocks, Hero and its fields. Screenshot visually inspected: navigation, drawer and preview are separate columns with no overlap. No parent page fields within block drawer.
+5. Safari Responsive Design Mode set to 390x844. Main sidebar hidden, Open navigation button present. Menu opens Navigation dialog with all five areas. Media selection closes it and opens Media admin workspace without preview. Screenshot confirms controls fit viewport.
+6. Closed owned test window; returned state shows original user window UUID 2B0D6665-1FC9-43B0-9961-37D6640FC74C still present. No browser content edits or provider actions. User development server was not stopped.

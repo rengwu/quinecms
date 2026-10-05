@@ -92,9 +92,122 @@ Accepted from [technical-round-three answers](../journal/2026-10-05-grill-b9adf5
 
 | ID | Decision | Basis and rationale |
 | --- | --- | --- |
-| DEC-042 | Use Base UI with CSS Modules for the React editor. | Q40. Native controls remain suitable where sufficient; grill-form stays native HTML. |
+| DEC-042 | Original choice: Base UI with CSS Modules for the React editor. **Superseded by DEC-048.** | Q40. Preserved as interview history; grill-form stays native HTML. |
 | DEC-043 | Use CSS Modules or framework-scoped styles for blocks. | Q41. Shared shell owns global styles; block styles must not leak into the editor or other blocks. |
 | DEC-044 | Save all pending editor changes in one draft commit. | Q42. Related page, schema, navigation, and media metadata changes persist together. |
 | DEC-045 | Recover unsaved edits within the tab session, including reloads. | Q43. This does not select indefinite device-wide recovery or storing binary uploads. |
 | DEC-046 | Provide visual formatting controls that save Markdown. | Q44. Keep the supported formatting set small and round-trip it consistently. |
 | DEC-047 | Save incomplete drafts; require valid required content and references before Publish. | Q45. Structural corruption is still rejected. Newly empty fields after a version switch may be saved for later completion. |
+
+## Admin refinement — 2026-10-05
+
+Accepted directly from the user's implementation feedback.
+
+| ID | Decision | Basis and rationale |
+| --- | --- | --- |
+| DEC-048 | Use Cloudflare Kumo for all admin UI controls, dialogs, and notifications. | Replaces DEC-042. Keep its styling scoped to admin surfaces so preview blocks retain their designs. |
+| DEC-049 | Keep the live preview interactive at all times and sort block rows by dragging. | Remove Interact/Edit blocks toggle and visible up/down buttons. Keyboard sorting remains available for accessibility. |
+| DEC-050 | Recover silently and show validation errors in toasts on submission. | Remove saved/local/unsaved status text, recovery banners, and the proactive publication issue list. Save/Publish validation rules remain unchanged. |
+| DEC-051 | Opening a block replaces parent-level sidebar navigation with the block editor. | Direct UI feedback: hide tabs, page/entry selector and Add page; All blocks returns to the parent view. |
+
+## Admin hierarchy choices — 2026-10-05
+
+Accepted from [Q46–Q47](../journal/2026-10-05-grill-d3cb2bf4-2763-40ad-bc3a-9213d73c86a4.md). See the [design](../discussions/admin-hierarchy-proposal.md) and [interpretation](../journal/2026-10-05-admin-hierarchy-decisions.md). Implementation is recorded in the [admin hierarchy run](../verification/runs/2026-10-05T1054Z-admin-hierarchy.md).
+
+| ID | Decision | Basis and rationale |
+| --- | --- | --- |
+| DEC-052 | Place a compact, borderless + Add block action beside the Blocks heading, aligned right. Remove the list-footer action. | Q46 selects header placement to distinguish the action from draggable block rows. A visible label remains alongside the plus icon. Affects [visual editing](../features/editor.md). |
+| DEC-053 | Provide separate top-level Content and Collection schemas areas for collection entry authoring and schema editing. | Q47 selects alternative B over the recommended A and per-collection tabs. Content browses collections and edits entry values/bodies; Collection schemas edits model definitions. This makes the two tasks explicit and keeps their controls out of one another's views. Affects [visual editing](../features/editor.md); shared Save draft/Publish and safe schema changes remain in force. |
+
+## Home navigation — 2026-10-05
+
+| ID | Decision | Basis and rationale |
+| --- | --- | --- |
+| DEC-054 | Put Pages, Content, Collection schemas, Media and Site on a separate Home menu screen, outside the editing sidebar. | Direct implementation feedback rejected the sidebar destination grid and requested another nesting level. Each area returns to Home; nested collection, entry, field and block screens return to their immediate parent. Affects [visual editing](../features/editor.md). |
+
+## Editor layout consistency — 2026-10-05
+
+| ID | Decision | Basis and rationale |
+| --- | --- | --- |
+| DEC-055 | Apply a shared layout standard across admin forms, custom widgets, sections and action groups. | Direct feedback identified inconsistent Design, Media and Site layouts and requested research into sidebar editors and Kumo. The [research and implemented layout contract](../journal/2026-10-05-editor-layout.md) distinguish the user's requirement from our specific spacing choices. Kumo continues to own all controls. |
+
+## Pages overview — 2026-10-05
+
+| ID | Decision | Basis and rationale |
+| --- | --- | --- |
+| DEC-056 | Add a Pages table between Home and an individual page editor. | Direct feedback requested one more hierarchy level listing all pages in a table. The overview shows titles and URL paths; opening a page enters its settings/blocks, and its back link returns to Pages. Add page belongs to the overview. See [visual editing](../features/editor.md). |
+
+## Preview scope — 2026-10-05
+
+| ID | Decision | Basis and rationale |
+| --- | --- | --- |
+| DEC-057 | Show the live website preview only while editing pages and their blocks. Content, Collection schemas, Media and Site use standard admin views. | Direct instruction limits right-side rendering to Pages. Other areas use a centered, wider form/list workspace with no drawer, live rendering or preview-width control. Entry block editing and shared draft saves remain available. Home and the Pages table keep their existing overview layouts. Affects [visual editing](../features/editor.md). |
+
+## Generic pages — discussion requirements, 2026-10-05
+
+Direct requirements from the user, recorded in the [discussion journal](../journal/2026-10-05-generic-pages-discussion.md). Not implemented; follow-up choices are open.
+
+| ID | Decision | Basis and rationale |
+| --- | --- | --- |
+| DEC-058 | Collection entries contain schema-defined fields only, with no independent blocks. | Replaces the entry-block editing portion of the earlier design and DEC-057's retained entry blocks. The user distinguishes content data from its rendering layout. |
+| DEC-059 | Pages have static and generic types. Generic pages contain only registered generic blocks, not normal blocks. | Static pages hold predefined content; generic pages define reusable entry layouts. |
+| DEC-060 | Each generic-block field can optionally bind to a schema field by its parameter-name string. | The matching field supplies the selected entry's content/value. DEC-066–DEC-067 resolve missing, empty and incompatible binding behavior. |
+| DEC-061 | Each collection schema can optionally select a generic page. | Makes layout assignment a collection-level choice. DEC-062–DEC-064 resolve template sharing, entry URLs and behavior without an assignment. |
+
+## Generic pages — round one, 2026-10-05
+
+Accepted from [Q48–Q55](../journal/2026-10-05-grill-d557fd13-2a71-44e6-9b9a-4543b858f2b0.md); see the [interpretation](../journal/2026-10-05-generic-pages-round-one.md). These changes are not implemented.
+
+| ID | Decision | Basis and rationale |
+| --- | --- | --- |
+| DEC-062 | Without a generic page, a collection is data-only and generates no individual entry routes. | Q48. Footer links are a motivating example, explicitly outside this implementation's scope. |
+| DEC-063 | Allow one generic page to serve multiple compatible collection schemas. | Q49. Bound field names and value types must be compatible across assigned schemas. |
+| DEC-064 | Entry URLs use collection prefix plus entry slug; generic pages have no standalone public URL. | Q50. Layout identity is independent of the collection's route. |
+| DEC-065 | A collection index route exists only when a static page occupies it; otherwise it returns 404. | Q51 custom answer rejects automatic listing generation. DEC-070–DEC-071 subsequently settle assignment mechanics and a collection-list block. |
+| DEC-066 | Missing or incompatible field bindings may be saved in drafts but prevent publication. | Q52. Fixed fallback values do not conceal invalid bindings. |
+| DEC-067 | An empty optional bound value uses the block field's fixed fallback, otherwise renders empty. | Q53. Applies to a valid binding whose entry value is empty. |
+| DEC-068 | Add visual rich-text schema fields, with uploaded images and YouTube embeds. | Q54 and custom note expand basic fields and the current formatting-only editor. DEC-072 subsequently limits the initial embed scope to these two types. |
+| DEC-069 | Generic-page previews display bound field-name placeholders. | Q55. A real-entry selector or separate sample-data authoring UI was not chosen. |
+
+## Generic pages — round two, 2026-10-05
+
+Accepted from [Q56–Q59](../journal/2026-10-05-grill-192c91a8-c5db-4b3b-9e4f-84772508186b.md); see the [interpretation](../journal/2026-10-05-generic-pages-round-two.md). The scoped interview is complete; these changes are not implemented.
+
+| ID | Decision | Basis and rationale |
+| --- | --- | --- |
+| DEC-070 | Match a static page's URL to the collection prefix to supply its index page. | Q56. No separate index-page assignment control; the static page owns the route. |
+| DEC-071 | Include a basic collection-list block for static pages in this version. | Q57. An explicitly created index page can show collection entries without automatic index generation. Footer integration remains out of scope. |
+| DEC-072 | Limit initial rich-text embeds to uploaded images and YouTube videos. | Q58. Other providers and uploaded audio/video embeds are outside this initial rich-text scope. |
+| DEC-073 | Replace the current project's existing demo entries with completely new schema-only entries when implementing. | Q59 custom answer explicitly says the existing entries are unnecessary. No conversion/preservation workflow is required for these fixtures; this is not a general destructive migration policy. |
+
+Implementation of DEC-058–DEC-073 was authorized on 2026-10-06 and is recorded in the [generic-page implementation journal](../journal/2026-10-06-generic-pages-implementation.md).
+
+## Main navigation — 2026-10-06
+
+| ID | Decision | Basis and rationale |
+| --- | --- | --- |
+| DEC-074 | Move Pages, Content, Collection schemas, Media and Site into a persistent main sidebar. | Direct screenshot feedback replaces the Home destination menu from DEC-054. The page/block drawer remains a separate nested editor; preview scope from DEC-057 is unchanged. Defaulting to Pages, active-area highlighting and a narrow-screen Menu dialog are implementation choices. See the [implementation journal](../journal/2026-10-06-admin-navigation.md). |
+
+## Shared content width — 2026-10-06
+
+| ID | Decision | Basis and rationale |
+| --- | --- | --- |
+| DEC-075 | Content max-width is a site-wide variable that blocks are advised to follow. | Direct user instruction. Block styling remains independent; there is no forced wrapper. The 1200px default, pixel input and `--site-content-max-width` naming are implementation choices. See [static blocks](../features/static-blocks.md). |
+
+## Admin content width — 2026-10-06
+
+| ID | Decision | Basis and rationale |
+| --- | --- | --- |
+| DEC-076 | Standardize admin main content at 867px across screens. | Direct user instruction. Pages, Content, Collection schemas, Media and Site, including nested standard admin editors, share one centered maximum width and shrink on narrow viewports. See [visual editing](../features/editor.md). |
+
+## Admin action consistency — 2026-10-06
+
+| ID | Decision | Basis and rationale |
+| --- | --- | --- |
+| DEC-077 | Use ← Back for every parent-navigation button and the blue primary variant for every Add action. | Direct screenshot feedback. This supersedes the borderless Add block styling from DEC-052 while retaining its header placement. [Implementation](../journal/2026-10-06-table-and-back.md). |
+
+## Site typography and gutter — 2026-10-06
+
+| ID | Decision | Basis and rationale |
+| --- | --- | --- |
+| DEC-078 | Add site-wide body font, heading font, body font size, body line height and page gutter settings. | Direct user selection from the proposed globals. These supplement content max-width and apply to public rendering/live preview; block adoption remains advised. Section spacing, text width, palette and radius were not selected. [Implementation](../journal/2026-10-06-site-design.md). |

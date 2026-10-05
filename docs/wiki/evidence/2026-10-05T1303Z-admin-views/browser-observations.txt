@@ -1,0 +1,15 @@
+Environment: native Safari, existing http://127.0.0.1:4321/admin/ development instance.
+Owned fresh window: 1255F660-4B73-41A9-B5A8-58B64B118B92.
+Original user window: 2B0D6665-1FC9-43B0-9961-37D6640FC74C, preserved.
+Direct CUA accessibility-tree and screenshot inspection; screenshots viewed in tool output, not saved as files.
+
+Home → Media: Admin workspace containing Home back link, Media heading, Storage settings and Upload file. Screenshot showed centered content spanning a wider column on the dark admin canvas. No live preview, sidebar or width toggle.
+Home → Site: Admin workspace with Site settings, Navigation, Backups and Session. No website content or width toggle.
+Home → Content → Journal → A fresh start: collection and entry lists led to an entry form in Admin workspace. Screenshot showed the wide slug/title/date fields and block list. The entry's Text block replaced those fields with block controls; no live website rendering was present.
+
+Initial Text-widget load failed and the UI went blank. Native Safari console showed 16 Lexical dependency requests failing with HTTP 504 “Outdated Optimize Dep” and a resulting module import error. Browser reload and repetition reproduced it. Refreshed the existing server through its config watcher by touching astro.config.mjs without changing file contents; then reloaded the owned tab. Repeated Content → Journal → A fresh start → Text successfully loaded Bold/Italic/heading/list/link controls and the Body editor text. Returned through All blocks → Journal entries → Content → Home.
+
+Home → Collection schemas → Journal → Title: each level used Admin workspace with no website rendering or width toggle. Field key/type/removal remained disabled for populated Title. Parent links returned through Journal schema → Collection schemas → Home.
+Home → Pages: existing two-row Pages table, without preview. Opening Home restored Site builder beside Live preview and Toggle preview width. Rendered Hero, Text, Counter, Accordion and Quote were present. Opening Hero retained the preview and replaced page controls with its block form.
+Returned through All blocks → Pages → Home → Media. Final full accessibility state contained Admin workspace and no Live preview or width toggle.
+No content values were edited. Verified owned window ID and disabled Save draft, then closed its single tab/window. Active window returned to the original user window. Inspector closed; no new server or remote provider actions.

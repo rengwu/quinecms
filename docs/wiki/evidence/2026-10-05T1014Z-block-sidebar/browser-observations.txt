@@ -1,0 +1,6 @@
+2026-10-05: Safari, native UI controls, fresh tab at http://127.0.0.1:4321/admin/.
+Initial state: Pages/Collections/Media/Site tabs, Home selector, Add page, Home fields and block list visible.
+Clicked Hero v2. Accessibility state removed tab group, document selector, Add page and page fields. Sidebar begins with All blocks, followed by Hero heading, Version and block fields/actions.
+Clicked preview Add one while inside block details: counter changed from 0 to 1.
+Clicked All blocks. Tabs, Home selector, Add page, Home fields and block list returned. Counter retained value 1. Save draft remained disabled: no content changes.
+Closed only the owned test tab. No server or provider resources were created or modified.

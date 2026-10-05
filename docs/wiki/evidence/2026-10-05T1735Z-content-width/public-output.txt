@@ -1,0 +1,5 @@
+dist/blocks/index.html: public shell emits --site-content-max-width:1200px
+dist/index.html: public shell emits --site-content-max-width:1200px
+dist/journal/a-slower-way-to-build/index.html: public shell emits --site-content-max-width:1200px
+dist/journal/index.html: public shell emits --site-content-max-width:1200px
+dist/journal/keep-the-essentials/index.html: public shell emits --site-content-max-width:1200px

@@ -1,0 +1,6 @@
+http://127.0.0.1:4331/admin/ -> 200
+http://127.0.0.1:4331/journal/ -> 200
+http://127.0.0.1:4331/journal/a-slower-way-to-build/ -> 200
+http://127.0.0.1:4331/journal/keep-the-essentials/ -> 200
+http://127.0.0.1:4331/page_journal_entry/ -> 404
+http://127.0.0.1:4321/admin/ -> 200

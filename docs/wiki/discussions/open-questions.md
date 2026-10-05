@@ -1,9 +1,19 @@
 ---
 title: Open questions
 updated: 2026-10-05
-status: Interviews complete
+status: Scoped interviews complete
 ---
 # Open questions
+
+## Generic pages and schema-only entries — resolved
+
+The user requested discussion before implementation. DEC-058–DEC-061 establish field-only entries, static/generic page types, generic-only blocks with optional field-name bindings, and optional collection-to-template assignment. See the [discussion journal](../journal/2026-10-05-generic-pages-discussion.md).
+
+Q48–Q55 are resolved as DEC-062–DEC-069; see the [round-one interpretation](../journal/2026-10-05-generic-pages-round-one.md). Q56–Q59 are resolved as DEC-070–DEC-073 in [round two](../journal/2026-10-05-generic-pages-round-two.md): index pages match by URL, a basic collection-list block is included, rich-text embeds initially support uploaded images and YouTube, and the current demo entries will be replaced with fresh schema-only content. No consequential product questions remain for this scope. Concrete interfaces and rendering/validation mechanics remain engineering work. Footer integration and broader rich-text embed support are outside this version. The user authorized implementation on 2026-10-06; see the [implementation run](../verification/runs/2026-10-05T1650Z-generic-pages.md). The earlier interview-complete statements below describe the previous scope.
+
+## Admin hierarchy refinement — resolved
+
+Q46–Q47 select Add block beside the Blocks heading, aligned right, and alternative B: separate top-level Content and Collection schemas areas. These are DEC-052–DEC-053 in the [decision register](../decisions/index.md); see the [accepted design](admin-hierarchy-proposal.md) and [interpretation](../journal/2026-10-05-admin-hierarchy-decisions.md). The scoped choices are resolved. DEC-054 additionally moves all destinations to a standalone Home menu. Implementation is present; the [run](../verification/runs/2026-10-05T1054Z-admin-hierarchy.md) records completed checks and the remaining schema-screen browser review.
 
 The four-round product interview establishes the [agreed design](agreed-design.md). The user subsequently requested a technical grill to choose the stack, content format, block contracts, and related implementation decisions. The technical interview is now complete as well. Accepted choices are recorded below; untested engineering details are identified in the technical specification.
 
@@ -19,7 +29,7 @@ Q33–Q39 are accepted as DEC-035–DEC-041. The user chose retained deprecated 
 
 | Question | Decision | Accepted outcome |
 | --- | --- | --- |
-| Q40 | Editor UI components | Base UI primitives with CSS Modules; native controls where sufficient. |
+| Q40 | Editor UI components | Originally Base UI; superseded by Cloudflare Kumo in DEC-048. |
 | Q41 | Block CSS scoping | CSS Modules/framework-scoped styles, with no unscoped global resets/selectors. |
 | Q42 | Save scope | All pending editor changes in one draft commit. |
 | Q43 | Unsaved content recovery | Per-tab session recovery, excluding binary uploads. |
@@ -28,7 +38,7 @@ Q33–Q39 are accepted as DEC-035–DEC-041. The user chose retained deprecated 
 
 Q40–Q45 are accepted as DEC-042–DEC-047. See the [editor/saving journal](../journal/2026-10-05-editor-saving.md). Concrete definitions, engineering recommendations, and verification targets are consolidated in [technical contracts](technical-contracts.md). No further questionnaire is needed for the scoped design.
 
-Base UI supplies unstyled React primitives and documents tree-shakable imports and CSS Modules usage: [quick start](https://base-ui.com/react/overview/quick-start). This is the selected editor library; grill-form remains native HTML.
+Base UI supplies unstyled React primitives and documents tree-shakable imports and CSS Modules usage: [quick start](https://base-ui.com/react/overview/quick-start). This records the original interview choice. DEC-048 now selects [Cloudflare Kumo](https://github.com/cloudflare/kumo) for admin UI; grill-form remains native HTML.
 
 For Git transactions, the proposed engineering path creates a tree and commit based on the loaded draft head, then advances the branch without force. A concurrent branch advance to a divergent commit must reject the update; preserve local work and explain recovery. Q42 selects all pending edits in one commit. See GitHub's [trees](https://docs.github.com/en/rest/git/trees#create-a-tree), [commits](https://docs.github.com/en/rest/git/commits#create-a-commit), and [reference updates](https://docs.github.com/en/rest/git/refs#update-a-reference). This is a design proposal requiring race-condition testing, not a claim that a preflight read alone provides locking.
 

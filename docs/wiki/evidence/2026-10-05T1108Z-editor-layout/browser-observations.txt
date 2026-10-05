@@ -1,0 +1,13 @@
+Environment: native Safari, existing http://127.0.0.1:4321/admin/ development server.
+Owned fresh window: D8B76266-A255-4BBD-941C-E9BCC4724D61.
+Pre-existing user window preserved: 2B0D6665-1FC9-43B0-9961-37D6640FC74C.
+Evidence: direct accessibility-tree and screenshot inspection through CUA; screenshots were viewed in the tool session, not saved as repository artifacts.
+
+Pages: page heading/Add page, selector and page fields precede Blocks/Add block and rows. The header action is distinct from the draggable list.
+Hero v2: activated Set design in the fresh tab. Accent (#243326) and Spacing (80) each showed a label above a full-width input, aligned to the other fields. The footer separated Cancel block changes/Remove from the fields. Cancel reverted the test change; Save draft became disabled.
+Media: Media heading at left and Storage settings at right. Primary Upload file below; helper beneath it. No overlapping or abutting controls.
+Site: title/theme followed by a separate Navigation section. Add link at the section header's right. Each of three links was a bounded group with Label and Destination; the external link also had URL. Remove link aligned right inside each group.
+Site lower: after scrolling the drawer, Backups showed its heading, description and Export/Import action row. Session followed a separator and contained Discard edits/Lock editor. Buttons stayed within the sidebar without collisions.
+Connection: fields aligned vertically at full width with labels above; Reload draft/Export backup in a supporting row, Close/Connect in a separate bottom-right row. No credentials entered or actions submitted.
+Schemas: navigated Home → Collection schemas → Journal → Title. Each level replaced the previous controls and supplied its immediate-parent back link. Title showed Label, locked Field key and Field type, explanatory text, Required checkbox and Default value with consistent vertical gaps. Remove field was disabled and separated below a divider. No schema or entry values were changed.
+Cleanup: verified owned window identity and disabled Save draft, then closed its single tab/window. No server started or stopped. User's pre-existing browser window was not edited or closed.

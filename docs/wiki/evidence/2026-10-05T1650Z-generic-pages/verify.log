@@ -1,0 +1,118 @@
+
+> lean-sitebuilder@0.1.0 verify /Users/rengwu/Desktop/Projects/lean-sitebuilder
+> pnpm check && pnpm test && pnpm build && pnpm check:build
+
+
+> lean-sitebuilder@0.1.0 check /Users/rengwu/Desktop/Projects/lean-sitebuilder
+> pnpm prepare:blocks && astro check
+
+
+> lean-sitebuilder@0.1.0 prepare:blocks /Users/rengwu/Desktop/Projects/lean-sitebuilder
+> node scripts/generate-blocks.mjs
+
+Registered 12 block versions.
+00:53:14 [types] Generated 45ms
+00:53:14 [check] Getting diagnostics for Astro files in /Users/rengwu/Desktop/Projects/lean-sitebuilder...
+Result (84 files): 
+- 0 errors
+- 0 warnings
+- 0 hints
+
+
+> lean-sitebuilder@0.1.0 test /Users/rengwu/Desktop/Projects/lean-sitebuilder
+> pnpm prepare:blocks && vitest run
+
+
+> lean-sitebuilder@0.1.0 prepare:blocks /Users/rengwu/Desktop/Projects/lean-sitebuilder
+> node scripts/generate-blocks.mjs
+
+Registered 12 block versions.
+
+ RUN  v5.0.3 /Users/rengwu/Desktop/Projects/lean-sitebuilder
+
+
+ Test Files  13 passed (13)
+      Tests  75 passed (75)
+   Start at  00:53:22
+   Duration  4.18s (import 56%, environment 31%, tests 7%, transform 6%)
+
+    Isolate  13 workers spawned · ~652ms startup each (spawn + environment, per file)
+             at least ~290ms faster with isolate: false — reuses workers across files instead of one per file
+
+
+> lean-sitebuilder@0.1.0 build /Users/rengwu/Desktop/Projects/lean-sitebuilder
+> pnpm prepare:blocks && astro build
+
+
+> lean-sitebuilder@0.1.0 prepare:blocks /Users/rengwu/Desktop/Projects/lean-sitebuilder
+> node scripts/generate-blocks.mjs
+
+Registered 12 block versions.
+00:53:28 [types] Generated 40ms
+00:53:28 [build] output: "static"
+00:53:28 [build] mode: "static"
+00:53:28 [build] directory: /Users/rengwu/Desktop/Projects/lean-sitebuilder/dist/
+00:53:28 [build] Collecting build info...
+00:53:28 [build] ✓ Completed in 97ms.
+00:53:28 [build] Building static entrypoints...
+00:53:28 [vite] ✓ built in 269ms
+00:53:29 [vite] ✓ built in 597ms
+00:53:29 [build] Rearranging server assets...
+
+ generating static routes 
+00:53:29   ├─ /admin/index.html (+27ms) 
+00:53:29   ├─ /blocks/index.html (+14ms) 
+00:53:29   ├─ /journal/a-slower-way-to-build/index.html (+8ms) 
+00:53:29   ├─ /journal/keep-the-essentials/index.html (+4ms) 
+00:53:29   ├─ /journal/index.html (+5ms) 
+00:53:29   ├─ /index.html (+14ms) 
+00:53:29 ✓ Completed in 123ms.
+
+00:53:29 [build] ✓ Completed in 1.05s.
+00:53:29 [build] 6 page(s) built in 1.15s
+00:53:29 [build] Complete!
+
+> lean-sitebuilder@0.1.0 check:build /Users/rengwu/Desktop/Projects/lean-sitebuilder
+> node scripts/check-build.mjs
+
+{
+  "runtimeCopies": {
+    "react-dom": 1,
+    "svelte": 1,
+    "react": 1,
+    "@vue/runtime-core": 1,
+    "@vue/runtime-dom": 1
+  },
+  "pages": [
+    {
+      "page": "admin/index.html",
+      "javascriptModules": 11,
+      "gzipJavaScriptBytes": 207792
+    },
+    {
+      "page": "blocks/index.html",
+      "javascriptModules": 7,
+      "gzipJavaScriptBytes": 70952
+    },
+    {
+      "page": "index.html",
+      "javascriptModules": 8,
+      "gzipJavaScriptBytes": 41870
+    },
+    {
+      "page": "journal/a-slower-way-to-build/index.html",
+      "javascriptModules": 0,
+      "gzipJavaScriptBytes": 0
+    },
+    {
+      "page": "journal/index.html",
+      "javascriptModules": 0,
+      "gzipJavaScriptBytes": 0
+    },
+    {
+      "page": "journal/keep-the-essentials/index.html",
+      "javascriptModules": 0,
+      "gzipJavaScriptBytes": 0
+    }
+  ]
+}

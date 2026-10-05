@@ -1,0 +1,13 @@
+Native Safari on http://127.0.0.1:4321/admin/ (existing Astro dev process 66775).
+Fresh owned window: A56FF1A5-ABBC-45E6-8468-5DEEBC94F3B5.
+Original user window preserved: 2B0D6665-1FC9-43B0-9961-37D6640FC74C.
+Direct accessibility tree and screenshot observations via CUA; screenshots viewed in tool output, not stored as files.
+
+Home → Pages opened a full-page overview. Header Pages and Add page, then a two-column table: Page title and URL path. Rows Home / and Block examples /blocks. No editor sidebar or live preview; preview-width control absent. Screenshot showed aligned headers/cells and the action above the table.
+Clicking the Home table cell opened the Home page editor. The drawer began with ← Pages and Home heading, then title/path fields and Blocks. No page selector, Home back link or Add page in this drawer.
+
+Initial attempt: Text and Quote preview showed “Importing a module script failed.” HTTP inspection found their source modules returned 200, while /node_modules/.vite/deps/marked.js?v=3d72e6c7 returned 504; the optimized marked.js file was missing. Reloading the browser did not fix it. Touching astro.config.mjs triggered the existing dev-server watcher to reload its module graph; file contents stayed unchanged. This recovered rendering without stopping the user server or creating another process.
+
+Final attempt after module-graph refresh: Home → Pages → Home showed all blocks, including Room for your ideas and the Quote. Opening Hero v2 replaced page fields and ← Pages with the block form and ← All blocks. All blocks restored Home's fields and ← Pages; screenshot confirmed correct hierarchy and aligned layout.
+← Pages restored the two-row table. Opening Block examples showed its /blocks field and two Tabs blocks plus Quote in the preview. ← Pages then ← Home returned to the standalone Home menu.
+No content values changed in this browser check. Before cleanup, the owned window identity matched and Save draft was disabled. Closed its single tab/window; the reported active window became the preserved original user window. No provider actions, file uploads or content writes occurred.

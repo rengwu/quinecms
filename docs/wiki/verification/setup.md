@@ -1,0 +1,40 @@
+---
+title: Verification setup
+updated: 2026-10-06
+---
+# Verification setup
+
+Run from the lean-sitebuilder repository with Node 22.12+ and pinned pnpm 10.34.1. The initial run used macOS, Node 22.19.0, and Helium via the native computer-use tool.
+
+## Commands and readiness
+
+```sh
+pnpm install --frozen-lockfile
+pnpm verify
+pnpm preview --port 4321
+```
+
+The preview serves the built static `dist/` on `http://127.0.0.1:4321`. Check `/` and `/admin/` return HTTP 200. Use a different explicit port if another process owns 4321; do not stop unrelated processes. `pnpm dev` is the source development alternative. Re-run it after adding routes or changing registrations, because generation happens before startup.
+
+For editor startup changes, exercise `/admin/` in both development and production preview. HTTP 200 and a successful build do not prove that React mounted: verify the Pages table and main sidebar first, then open a page row to check the drawer and live preview, change a block field and cancel it, and check the browser console. The [startup repair](runs/2026-10-05T0910Z-admin-startup.md) caught a development-only missing React preamble that the initial production checks missed.
+
+## Identity and isolation
+
+Record `git rev-parse HEAD` and dirty status. Hash application files, tests, content, configuration, and lockfile for a dirty build; the initial report links its manifest. `pnpm build` produces `.astro/client-graph.json`; `pnpm check:build` verifies output references/sharing and reports gzip module sizes. These sizes exclude dynamically loaded editor tools and runtime-fetched content; they are not a full page transfer measurement.
+
+Use a fresh browser tab for local fixtures. No password or provider configuration is needed for local editing. Session recovery survives reload; Site → Discard edits resets to the loaded baseline. Browser-only changes do not alter local content files. Do not reuse the user's unrelated tabs or data as fixtures.
+
+## Available drivers and fixtures
+
+- Vitest unit tests cover JSON validation/versioning, Git transactions through a fake transport, recovery storage, React/Vue lifecycle, activation policy, Markdown import/export, Lexical mounting, and media uploads through mocked SDK/canvas APIs.
+- Production artifact checks inspect real emitted files and their module graph.
+- Native browser automation can drive the actual editor. The initial run lost window access; the startup repair subsequently verified development editing and production mounting/interactions in Safari.
+- Live GitHub/R2/Netlify checks require separately configured disposable resources and credentials. None were available or modified during the initial run.
+
+Public fixtures are Home, Block examples, an explicit static Journal index, and two entries rendered through the Journal entry generic page. Generic pages are editable under Pages but have no standalone public route. Main and draft content live in Git once connected; the local demo is read-only at the filesystem boundary.
+
+## Evidence and cleanup
+
+Store outcome logs, source manifests, and observations under `evidence/<run-id>/`, without tokens or private content. Link them from the run. Preserve evidence before cleanup.
+
+Astro 7 starts this preview in the background. Check `pnpm exec astro preview status`, then stop the owned instance with `pnpm exec astro preview stop`; verify status reports no running preview. Do not rely on closing its launcher terminal. Close/reset test tabs when the browser tool is available; if it is not, record remaining browser-only fixture edits instead of manipulating another session. Remove any exported test backups only when their identity is known. There are no polling collectors or background provider workers.

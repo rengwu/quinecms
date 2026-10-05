@@ -1,0 +1,16 @@
+Observed through native Helium UI, intermediate dirty build, 2026-10-05 approximately 08:01–08:05 UTC:
+- Hero heading changed to "A durable home for ideas."; live preview displayed the same text.
+- v2 -> deprecated v1 retained Heading and Description; switching back to v2 left Eyebrow empty and Alignment at "Choose…".
+- Cancel block changes restored "Make something lasting." and Saved content status.
+- Text moved above Hero using Move text up; visual editor controls loaded and edited prose appeared in preview.
+- Interact allowed Svelte Add one; preview count changed from 0 to 1.
+- Reload prompted about unsaved edits. After accepting, order and edited text recovered with "Recovered your work from this tab" and Unsaved changes.
+- Journal schema exposed populated field keys/types as disabled; Add entry produced an untitled entry and one publication issue.
+- Add block dialog exposed available types; adding Counter mounted the Svelte preview. Setting Starting number to 12 and clicking Add one displayed 13.
+- React, Svelte, Vue, and vanilla preview content rendered after the lazy CSS fix.
+
+Earlier failed observation: Svelte/Vue previews reported missing preload CSS. Fixed by preserving Astro-deleted client CSS referenced by Vite dynamic imports. Subsequent native UI showed both blocks and styles.
+
+No final browser pass: later getAXState/getApp calls returned computer-use error -10005 cgWindowNotFound, even though app inventory listed Helium running. The final repeated React public-page check, cleanup/reset of test tab edits, and final layout/interaction smoke test remain unverified. Later code changes have automated coverage only. No GitHub token, R2 key, upload, or real publish action was used.
+
+Cleanup: Astro preview status identified the owned background server as PID 63170. `pnpm exec astro preview stop` returned "Stopped preview server (pid 63170)."

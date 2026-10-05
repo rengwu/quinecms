@@ -1,0 +1,19 @@
+Browser: Safari native UI, existing development server http://127.0.0.1:4321/admin/.
+No provider credentials or remote writes.
+
+Before the user's Home-screen refinement:
+- Fresh tab displayed Add block as a compact borderless plus/label beside Blocks; five draggable rows below and no Add block footer row.
+- Content opened Journal then its entry list with Add entry. No schema field controls appeared.
+- A fresh start opened the entry form with URL slug, Title, Date and Blocks. No Pages selector or schema controls.
+- Changed Title to A fresh start — edited; public preview heading updated immediately.
+- Opened Text v1; sidebar showed All blocks and block fields, without entry controls or global destinations.
+- All blocks restored the edited title. Back to Journal entries displayed the edited title in the list and collection preview.
+
+After the Home-screen refinement (final application source):
+- Home displayed as a standalone dark screen with five vertical destinations: Pages, Content, Collection schemas, Media, Site.
+- No editing sidebar or preview appeared on Home; global Connection/Save draft/Publish stayed available, and preview-width toggle was absent.
+- Build-triggered reload restored Home and retained the local edit (Save draft enabled).
+- Subsequent native interaction was interrupted twice with “The user changed ... Safari.app”. Fresh read-only observations showed additional block edits made outside this check. Stopped driving that browser and preserved the active tab and its content.
+
+Limit: final schema/field visual review was not completed in the browser. Real Kumo component tests cover schema drill-down, populated-field protection, default edits, new-entry defaults, entry deletion and empty collection deletion. Home navigation and data preservation are covered by final UI tests.
+Cleanup: no new servers were started. The fresh test tab became actively used and was intentionally left open, including the local title edit; no discarding or closing was attempted after interference. The attempted new-window command was interrupted and the next observation showed the same original window and two tabs.
