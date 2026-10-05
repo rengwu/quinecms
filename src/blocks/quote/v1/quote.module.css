@@ -1,0 +1,16 @@
+.quote {
+  margin: 56px auto;
+  padding: 40px var(--site-page-gutter);
+  max-width: var(--site-content-max-width);
+  text-align: center;
+}
+.quote blockquote {
+  font-family: var(--site-heading-font);
+  font-size: clamp(1.7em, 4cqw, 2.8em);
+  line-height: 1.35;
+  margin: 0 0 24px;
+}
+.quote figcaption {
+  font-size: 0.9em;
+  color: #637068;
+}

@@ -1,0 +1,28 @@
+{
+  "type": "counter",
+  "version": 1,
+  "label": "Counter",
+  "framework": "svelte",
+  "activation": "visible",
+  "component": "Counter.svelte",
+  "fields": [
+    {
+      "key": "label",
+      "label": "Label",
+      "type": "text",
+      "required": true
+    },
+    {
+      "key": "start",
+      "label": "Starting number",
+      "type": "number"
+    }
+  ],
+  "defaults": {
+    "label": "Little things add up.",
+    "start": 0
+  },
+  "dependencies": {
+    "svelte": "^5.57.1"
+  }
+}

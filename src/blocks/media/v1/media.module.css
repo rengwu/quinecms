@@ -1,0 +1,20 @@
+.media {
+  max-width: var(--site-content-max-width);
+  margin: 40px auto;
+  padding: 0 var(--site-page-gutter);
+}
+.media img,
+.media video {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+}
+.media audio {
+  width: 100%;
+}
+.media figcaption {
+  font-size: 0.9em;
+  margin: 16px 0;
+  color: #667566;
+}

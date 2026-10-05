@@ -1,0 +1,46 @@
+{
+  "formatVersion": 1,
+  "id": "page_journal_entry",
+  "kind": "generic",
+  "title": "Journal entry",
+  "blocks": [
+    {
+      "id": "block_entry_heading",
+      "type": "generic-heading",
+      "version": 1,
+      "props": {
+        "title": "",
+        "description": "",
+        "date": null
+      },
+      "bindings": {
+        "title": "title",
+        "description": "summary",
+        "date": "date"
+      }
+    },
+    {
+      "id": "block_entry_media",
+      "type": "generic-media",
+      "version": 1,
+      "props": {
+        "file": null,
+        "caption": ""
+      },
+      "bindings": {
+        "file": "image"
+      }
+    },
+    {
+      "id": "block_entry_body",
+      "type": "generic-rich-text",
+      "version": 1,
+      "props": {
+        "body": ""
+      },
+      "bindings": {
+        "body": "body"
+      }
+    }
+  ]
+}

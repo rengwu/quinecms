@@ -1,0 +1,31 @@
+{
+  "type": "hero",
+  "version": 1,
+  "label": "Hero",
+  "deprecated": true,
+  "framework": "react",
+  "activation": "never",
+  "component": "Hero.tsx",
+  "fields": [
+    {
+      "key": "title",
+      "label": "Heading",
+      "type": "text",
+      "required": true
+    },
+    {
+      "key": "description",
+      "label": "Description",
+      "type": "text",
+      "required": false
+    }
+  ],
+  "defaults": {
+    "title": "Make something lasting.",
+    "description": "A simpler place to share your work."
+  },
+  "dependencies": {
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0"
+  }
+}

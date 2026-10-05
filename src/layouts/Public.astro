@@ -1,0 +1,39 @@
+---
+import type { Content } from '../core/types';
+import { resolveLink } from '../core/content';
+import { siteStyle } from '../core/site-style';
+import '../styles/public.css';
+interface Props {
+  content: Content;
+  title: string;
+}
+const { content, title } = Astro.props;
+---
+
+<!doctype html>
+<html
+  lang="en"
+  data-theme={content.site.globals.theme}
+  style={siteStyle(content.site.globals)}
+>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{title} · {content.site.title}</title>
+  </head>
+  <body class="site-surface">
+    <header class="site-header">
+      <a href="/">{content.site.title}</a>
+      <nav aria-label="Main">
+        {content.site.navigation.map((n) => (
+          <a href={resolveLink(content, n.to)}>{n.label}</a>
+        ))}
+      </nav>
+    </header>
+    <main>
+      <slot />
+    </main>
+    <footer class="site-footer">{content.site.title}</footer>
+  </body>
+</html>

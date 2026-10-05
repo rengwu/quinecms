@@ -1,0 +1,35 @@
+---
+import { createHash } from 'node:crypto';
+import { loadContent } from '../../core/load';
+import App from '../../editor/App';
+import '../../styles/public.css';
+const initial = await loadContent();
+const password = import.meta.env.ADMIN_PASSWORD;
+const config = {
+  passwordHash: password
+    ? createHash('sha256').update(password).digest('hex')
+    : '',
+  owner: import.meta.env.PUBLIC_GITHUB_OWNER ?? '',
+  repo: import.meta.env.PUBLIC_GITHUB_REPO ?? '',
+  branch: import.meta.env.PUBLIC_DRAFT_BRANCH ?? 'draft',
+  r2: {
+    accountId: import.meta.env.PUBLIC_R2_ACCOUNT_ID ?? '',
+    bucket: import.meta.env.PUBLIC_R2_BUCKET ?? '',
+    publicURL: import.meta.env.PUBLIC_R2_PUBLIC_URL ?? '',
+  },
+};
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="robots" content="noindex,nofollow" />
+    <title>Site editor</title>
+  </head>
+  <body style="background:#101712">
+    <App client:only="react" {initial} {config} />
+    <noscript>The site editor needs JavaScript enabled.</noscript>
+  </body>
+</html>

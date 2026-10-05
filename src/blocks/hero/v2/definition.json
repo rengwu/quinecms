@@ -1,0 +1,65 @@
+{
+  "type": "hero",
+  "version": 2,
+  "label": "Hero",
+  "framework": "react",
+  "activation": "never",
+  "component": "Hero.tsx",
+  "fields": [
+    {
+      "key": "eyebrow",
+      "label": "Eyebrow",
+      "type": "text",
+      "required": false
+    },
+    {
+      "key": "title",
+      "label": "Heading",
+      "type": "text",
+      "required": true
+    },
+    {
+      "key": "description",
+      "label": "Description",
+      "type": "text",
+      "required": false,
+      "multiline": true
+    },
+    {
+      "key": "align",
+      "label": "Alignment",
+      "type": "select",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        }
+      ]
+    },
+    {
+      "key": "presentation",
+      "label": "Design",
+      "type": "custom",
+      "widget": "hero-presentation",
+      "validator": "hero-presentation"
+    }
+  ],
+  "defaults": {
+    "eyebrow": "A small independent website",
+    "title": "Make something lasting.",
+    "description": "A simple home for your ideas, built to stay yours.",
+    "align": "left",
+    "presentation": {
+      "accent": "#243326",
+      "inset": 80
+    }
+  },
+  "dependencies": {
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0"
+  }
+}

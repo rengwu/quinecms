@@ -1,0 +1,13 @@
+{
+  "formatVersion": 1,
+  "id": "entry_essentials",
+  "collectionId": "collection_journal",
+  "slug": "keep-the-essentials",
+  "values": {
+    "title": "Keep the essentials",
+    "summary": "Content that stays yours.",
+    "date": "2026-10-06",
+    "body": "## A place for your ideas\n\nYour words live in simple files. Your layout lives in a reusable page. Change one without rebuilding the other.\n\nThat separation makes a small site easier to care for.",
+    "image": null
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "type": "accordion",
+  "version": 1,
+  "label": "Accordion",
+  "framework": "vue",
+  "activation": "visible",
+  "component": "Accordion.vue",
+  "fields": [
+    {
+      "key": "question",
+      "label": "Question",
+      "type": "text",
+      "required": true
+    },
+    {
+      "key": "answer",
+      "label": "Answer",
+      "type": "text",
+      "required": true,
+      "multiline": true
+    }
+  ],
+  "defaults": {
+    "question": "How does this website work?",
+    "answer": "Its pages are static files. The editor updates content in Git and your host rebuilds the site."
+  },
+  "dependencies": {
+    "vue": "^3.5.43"
+  }
+}

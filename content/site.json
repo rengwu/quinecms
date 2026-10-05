@@ -1,0 +1,40 @@
+{
+  "formatVersion": 1,
+  "id": "site_main",
+  "title": "A place for good ideas",
+  "globals": {
+    "contentMaxWidth": 1200,
+    "theme": "light",
+    "bodyFont": "system",
+    "headingFont": "system",
+    "bodyFontSize": 16,
+    "bodyLineHeight": 1.6,
+    "pageGutter": 24
+  },
+  "navigation": [
+    {
+      "id": "nav_home",
+      "label": "Home",
+      "to": {
+        "kind": "page",
+        "id": "page_home"
+      }
+    },
+    {
+      "id": "nav_journal",
+      "label": "Journal",
+      "to": {
+        "kind": "external",
+        "url": "/journal"
+      }
+    },
+    {
+      "id": "nav_blocks",
+      "label": "Blocks",
+      "to": {
+        "kind": "page",
+        "id": "page_blocks"
+      }
+    }
+  ]
+}

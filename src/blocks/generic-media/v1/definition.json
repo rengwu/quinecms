@@ -1,0 +1,29 @@
+{
+  "version": 1,
+  "framework": "react",
+  "activation": "never",
+  "dependencies": {
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0"
+  },
+  "type": "generic-media",
+  "kind": "generic",
+  "label": "Entry media",
+  "fields": [
+    {
+      "key": "file",
+      "label": "File",
+      "type": "media"
+    },
+    {
+      "key": "caption",
+      "label": "Caption",
+      "type": "text"
+    }
+  ],
+  "defaults": {
+    "file": null,
+    "caption": ""
+  },
+  "component": "Media.tsx"
+}

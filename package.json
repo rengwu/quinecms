@@ -1,0 +1,58 @@
+{
+  "name": "lean-sitebuilder",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@10.34.1",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "scripts": {
+    "prepare:blocks": "node scripts/generate-blocks.mjs",
+    "dev": "pnpm prepare:blocks && astro dev --host 127.0.0.1",
+    "build": "pnpm prepare:blocks && astro build",
+    "preview": "astro preview --host 127.0.0.1",
+    "check": "pnpm prepare:blocks && astro check",
+    "test": "pnpm prepare:blocks && vitest run",
+    "wiki:check": "node docs/wiki/_build.mjs --check",
+    "check:build": "node scripts/check-build.mjs",
+    "format": "prettier --write src scripts tests *.mjs *.ts *.json content",
+    "verify": "pnpm check && pnpm test && pnpm build && pnpm check:build"
+  },
+  "dependencies": {
+    "@astrojs/react": "7.0.0",
+    "@astrojs/svelte": "9.0.1",
+    "@astrojs/vue": "7.0.3",
+    "@aws-sdk/client-s3": "3.1146.0",
+    "@cloudflare/kumo": "2.14.0",
+    "@lexical/link": "0.52.0",
+    "@lexical/list": "0.52.0",
+    "@lexical/markdown": "0.52.0",
+    "@lexical/react": "0.52.0",
+    "@lexical/rich-text": "0.52.0",
+    "@lexical/selection": "0.52.0",
+    "@octokit/rest": "22.0.1",
+    "@phosphor-icons/react": "2.1.10",
+    "astro": "7.3.5",
+    "lexical": "0.52.0",
+    "marked": "18.0.14",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "semver": "7.8.5",
+    "svelte": "5.57.1",
+    "vue": "3.5.43"
+  },
+  "devDependencies": {
+    "@astrojs/check": "0.9.10",
+    "@types/node": "22.20.5",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "@types/semver": "7.8.0",
+    "jsdom": "30.1.2",
+    "postcss": "8.5.29",
+    "prettier": "3.9.9",
+    "prettier-plugin-astro": "1.1.0",
+    "typescript": "6.0.3",
+    "vitest": "5.0.3"
+  }
+}

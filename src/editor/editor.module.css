@@ -1,0 +1,650 @@
+/* Layout belongs here; Kumo owns controls, dialogs, and their visual states. */
+.workspace {
+  isolation: isolate;
+  --navigation-width: 216px;
+  --drawer-width: 360px;
+  --admin-content-max-width: 867px;
+  --editor-space-1: 4px;
+  --editor-space-2: 8px;
+  --editor-space-3: 12px;
+  --editor-space-4: 16px;
+  --editor-space-6: 24px;
+}
+.app {
+  font-family: Inter, system-ui, sans-serif;
+  font-size: 14px;
+}
+.topbar,
+.navigation,
+.drawer,
+.gate,
+.portal {
+  color: var(--text-color-kumo-default);
+  font-family: Inter, system-ui, sans-serif;
+  font-size: 14px;
+  color-scheme: dark;
+  line-height: 1.5;
+}
+.topbar {
+  position: fixed;
+  z-index: 2;
+  inset: 0 0 auto;
+  min-height: 60px;
+  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+  gap: var(--editor-space-2);
+  background: var(--color-kumo-base);
+  border-bottom: 1px solid var(--color-kumo-line);
+}
+.brand {
+  font-weight: 650;
+  letter-spacing: -0.03em;
+  font-size: 18px;
+  margin-right: auto;
+}
+.drawer {
+  position: fixed;
+  z-index: 1;
+  left: var(--navigation-width);
+  top: 60px;
+  bottom: 0;
+  width: var(--drawer-width);
+  background: var(--color-kumo-base);
+  border-right: 1px solid var(--color-kumo-line);
+  overflow: auto;
+  padding: var(--editor-space-6);
+}
+.drawer h2,
+.adminPanel h2 {
+  font-weight: 600;
+  font-size: 18px;
+  letter-spacing: -0.02em;
+  margin: 0;
+}
+.drawer h3,
+.adminPanel h3 {
+  font-weight: 600;
+  font-size: 14px;
+  margin: 0;
+}
+.back {
+  margin: 0 0 var(--editor-space-4) -8px;
+  align-self: flex-start;
+}
+.panelBody,
+.formStack,
+.panelSection {
+  display: flex;
+  flex-direction: column;
+  gap: var(--editor-space-4);
+  min-width: 0;
+}
+.panelBody {
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+.panelBody > button,
+.formStack > button,
+.panelSection > button {
+  align-self: flex-start;
+}
+.panelBody > .back {
+  margin-bottom: 0;
+}
+.panelBody > .sectionHeader:first-child {
+  margin-top: 0;
+}
+.panelSection + .panelSection {
+  border-top: 1px solid var(--color-kumo-line);
+  padding-top: var(--editor-space-6);
+  margin-top: var(--editor-space-2);
+}
+.panelSection > .sectionHeader {
+  margin: 0;
+}
+.widgetField {
+  min-width: 0;
+  padding: 0;
+  margin: 0;
+  border: 0;
+}
+.widgetField > legend {
+  padding: 0;
+  margin-bottom: var(--editor-space-3);
+  font-weight: 600;
+}
+.actionFooter {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--editor-space-2);
+  border-top: 1px solid var(--color-kumo-line);
+  margin-top: var(--editor-space-2);
+  padding-top: var(--editor-space-6);
+}
+.dialogActions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: var(--editor-space-2);
+}
+.navigationItem {
+  padding: var(--editor-space-4);
+  border: 1px solid var(--color-kumo-line);
+  border-radius: 8px;
+  min-width: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--editor-space-4);
+}
+.navigationItem > .row {
+  justify-content: flex-end;
+}
+.home {
+  min-height: 100vh;
+  margin-left: var(--navigation-width);
+  padding: 100px 32px 60px;
+  color: var(--text-color-kumo-default);
+  background: var(--color-kumo-base);
+  color-scheme: dark;
+}
+.adminPanel,
+.pageOverview {
+  max-width: var(--admin-content-max-width);
+  margin: 0 auto;
+}
+.adminPanel {
+  line-height: 1.5;
+}
+.adminPanel > .panelBody > h2,
+.adminPanel > .panelBody > .sectionHeader:first-child h2,
+.adminPanel > .panelBody > .panelSection:first-child > .sectionHeader h2 {
+  font-size: 24px;
+}
+.navigation {
+  position: fixed;
+  inset: 60px auto 0 0;
+  width: var(--navigation-width);
+  overflow-y: auto;
+  padding: var(--editor-space-6) var(--editor-space-3);
+  border-right: 1px solid var(--color-kumo-line);
+  background: var(--color-kumo-base);
+  z-index: 1;
+}
+.navigationLinks {
+  display: flex;
+  flex-direction: column;
+  gap: var(--editor-space-1);
+}
+.navigationLinks > .navigationLink {
+  justify-content: flex-start;
+  width: 100%;
+  min-height: 40px;
+  padding-inline: var(--editor-space-3);
+  color: var(--text-color-kumo-subtle);
+}
+.navigationLinks > .navigationLink[aria-current='page'] {
+  background: var(--color-kumo-control);
+  color: var(--text-color-kumo-default);
+  font-weight: 600;
+}
+.navigationToggle {
+  display: none;
+}
+.pageOverview {
+  display: flex;
+  flex-direction: column;
+  gap: var(--editor-space-6);
+}
+.pageOverview > .back,
+.pageOverview > .sectionHeader {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+.pageOverview h1 {
+  font-size: 24px;
+  font-weight: 600;
+  margin: 0;
+}
+.pageTable {
+  border: 1px solid var(--color-kumo-line);
+  border-radius: 8px;
+  overflow: auto;
+}
+.pageTable table {
+  width: 100%;
+  table-layout: fixed;
+}
+.pageTable td {
+  overflow-wrap: anywhere;
+  white-space: normal;
+}
+.pageRow {
+  cursor: pointer;
+}
+.pageTable .pageRow:hover,
+.pageTable .pageRow:focus-within {
+  background: var(--color-kumo-tint);
+}
+.pageTable .pageTitle {
+  justify-content: flex-start;
+  max-width: 100%;
+  min-height: 36px;
+  height: auto;
+  padding: 0;
+  margin: 0;
+  border-radius: 0;
+  background: transparent;
+  font-weight: inherit;
+  white-space: normal;
+  text-align: left;
+  overflow-wrap: anywhere;
+}
+.sectionHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: var(--editor-space-2) 0 0;
+}
+.sectionHeader h2 {
+  margin: 0;
+}
+.sectionHeader > button {
+  flex-shrink: 0;
+  margin-left: auto;
+}
+.recordList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 8px;
+}
+.recordButton {
+  width: 100%;
+  min-height: 48px;
+  height: auto;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  justify-content: space-between;
+  text-align: left;
+  white-space: normal;
+}
+.recordButton > svg {
+  flex-shrink: 0;
+}
+.recordButton > span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.recordLabel {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.field {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--editor-space-2);
+}
+.field > label {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--editor-space-2);
+}
+.field input,
+.field textarea,
+.field [role='combobox'],
+.panelBody > [role='combobox'],
+.formStack input,
+.formStack textarea {
+  width: 100%;
+  min-width: 0;
+}
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+.row > * {
+  min-width: 0;
+}
+.row input,
+.row [role='combobox'] {
+  flex: 1;
+}
+.divider {
+  border: 0;
+  border-top: 1px solid var(--color-kumo-line);
+  margin: var(--editor-space-2) 0;
+}
+.muted {
+  color: var(--text-color-kumo-subtle);
+  font-size: 12px;
+  line-height: 1.6;
+}
+.blockList {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+  display: grid;
+  gap: var(--editor-space-2);
+}
+.block {
+  position: relative;
+  margin: 0;
+}
+.blockButton {
+  width: 100%;
+  min-height: 48px;
+  justify-content: space-between;
+  text-align: left;
+  cursor: grab;
+  user-select: none;
+  touch-action: none;
+}
+.blockButton:active {
+  cursor: grabbing;
+}
+.block[data-dragging='true'] {
+  opacity: 0.4;
+}
+.block[data-drop]::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--color-kumo-brand);
+  pointer-events: none;
+}
+.block[data-drop='before']::after {
+  top: -5px;
+}
+.block[data-drop='after']::after {
+  bottom: -5px;
+}
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+.preview {
+  container-type: inline-size;
+  margin-left: calc(var(--navigation-width) + var(--drawer-width));
+  margin-top: 60px;
+  min-height: calc(100vh - 60px);
+  color: #26342b;
+  background: #fafbf8;
+  overflow: hidden;
+  transition: max-width 0.2s;
+}
+.preview[data-theme='dark'] {
+  color: #e7eee6;
+  background: #17231c;
+}
+.preview[data-size='mobile'] {
+  width: 390px;
+  max-width: calc(100vw - var(--navigation-width) - var(--drawer-width));
+  margin-right: auto;
+  border-right: 1px solid #647063;
+}
+.previewBlock {
+  position: relative;
+}
+.previewBlock[data-selected='true'] {
+  outline: 2px solid #91b673;
+  outline-offset: -2px;
+}
+.previewNav {
+  max-width: var(--site-content-max-width);
+  margin-inline: auto;
+  padding: 24px var(--site-page-gutter);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 24px;
+  align-items: center;
+}
+.previewNav a {
+  font-size: 0.9em;
+  color: inherit;
+  text-decoration: none;
+}
+.previewNav nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+}
+.previewFooter {
+  max-width: var(--site-content-max-width);
+  margin-inline: auto;
+  padding: 60px var(--site-page-gutter);
+  border-top: 1px solid #cdd3cb;
+  font-size: 0.85em;
+}
+
+/* A sibling portal container keeps Kumo overlays above the app and out of the preview. */
+.portal {
+  position: relative;
+  z-index: 3;
+}
+.toastDescription {
+  display: block;
+  white-space: pre-line;
+  overflow-wrap: anywhere;
+  max-height: 50vh;
+  overflow: auto;
+}
+.popup {
+  padding: var(--editor-space-6);
+  max-height: 85vh;
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--editor-space-4);
+}
+.popup h2 {
+  font-size: 22px;
+  font-weight: 600;
+  margin: 0;
+  letter-spacing: -0.035em;
+}
+.popup p {
+  line-height: 1.5;
+  margin: 0;
+}
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--editor-space-3);
+  margin: 0;
+}
+.grid button {
+  width: 100%;
+  min-height: 64px;
+  text-align: left;
+  justify-content: flex-start;
+}
+.gate {
+  display: grid;
+  min-height: 100vh;
+  place-items: center;
+  background: var(--color-kumo-canvas);
+}
+.gate form {
+  width: min(380px, calc(100vw - 40px));
+  padding: var(--editor-space-6);
+  display: flex;
+  flex-direction: column;
+  gap: var(--editor-space-4);
+}
+.gate h1 {
+  font-size: 28px;
+  letter-spacing: -0.04em;
+  margin: 0 0 var(--editor-space-2);
+}
+.gate input,
+.gate button {
+  width: 100%;
+}
+.empty {
+  padding: 80px 24px;
+  text-align: center;
+  color: #637068;
+}
+.mediaCard {
+  border: 1px solid var(--color-kumo-line);
+  padding: var(--editor-space-4);
+  border-radius: 8px;
+  margin: 0;
+  overflow-wrap: anywhere;
+  display: flex;
+  flex-direction: column;
+  gap: var(--editor-space-2);
+}
+.mediaCard img {
+  width: 100%;
+  max-height: 140px;
+  object-fit: contain;
+  background: var(--color-kumo-recessed);
+}
+.mediaCard p {
+  margin: 0;
+}
+.richText {
+  border: 1px solid var(--color-kumo-line);
+  border-radius: 8px;
+  overflow: hidden;
+}
+.editable {
+  padding: 12px;
+  min-height: 140px;
+  outline: none;
+  line-height: 1.6;
+  background: var(--color-kumo-control);
+}
+.editable h2 {
+  margin: 16px 0 10px;
+}
+.editable h3 {
+  margin: 12px 0 8px;
+}
+.editable ul {
+  list-style: disc;
+  padding-left: 24px;
+}
+.editable ol {
+  list-style: decimal;
+  padding-left: 24px;
+}
+.formatBar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--editor-space-1);
+  padding: var(--editor-space-2);
+  background: var(--color-kumo-recessed);
+}
+.formatBar input {
+  width: 140px;
+}
+.paragraph {
+  margin: 0 0 10px;
+}
+.bold {
+  font-weight: bold;
+}
+.italic {
+  font-style: italic;
+}
+.full {
+  width: 100%;
+}
+@media (max-width: 800px) {
+  .workspace {
+    --navigation-width: 0px;
+    --drawer-width: 320px;
+  }
+  .navigation {
+    display: none;
+  }
+  .navigationToggle {
+    display: inline-flex;
+  }
+  .home {
+    padding: 92px 20px 40px;
+  }
+  .preview {
+    min-width: 360px;
+  }
+  .topbar {
+    gap: 6px;
+  }
+  .brand {
+    font-size: 15px;
+  }
+  .preview[data-size='mobile'] {
+    max-width: none;
+  }
+  .app {
+    overflow-x: auto;
+  }
+}
+
+.bindingField {
+  border: 0;
+  border-top: 1px solid var(--color-kumo-line);
+  padding: var(--editor-space-6) 0 0;
+  margin: 0;
+  display: grid;
+  gap: var(--editor-space-4);
+  min-width: 0;
+}
+.bindingField legend {
+  font-weight: 600;
+  padding-right: 8px;
+}
+.embedControls {
+  padding: var(--editor-space-3);
+  display: grid;
+  gap: var(--editor-space-4);
+  border-bottom: 1px solid var(--color-kumo-line);
+}
+.embed {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--editor-space-2);
+  border: 1px solid var(--color-kumo-line);
+  border-radius: 8px;
+  padding: var(--editor-space-3);
+  margin: 12px 0;
+}
+.embed img {
+  max-width: 100%;
+  max-height: 320px;
+  object-fit: contain;
+}
+
+@media (max-width: 600px) {
+  .brand {
+    display: none;
+  }
+  .navigationToggle {
+    margin-right: auto;
+  }
+}

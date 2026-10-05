@@ -1,0 +1,28 @@
+{
+  "type": "quote",
+  "version": 1,
+  "label": "Quote",
+  "framework": "vanilla",
+  "activation": "never",
+  "component": "quote.ts",
+  "fields": [
+    {
+      "key": "quote",
+      "label": "Quote",
+      "type": "text",
+      "required": true,
+      "multiline": true
+    },
+    {
+      "key": "author",
+      "label": "Attribution",
+      "type": "text",
+      "required": false
+    }
+  ],
+  "defaults": {
+    "quote": "Simplicity is the ultimate sophistication.",
+    "author": ""
+  },
+  "dependencies": {}
+}
