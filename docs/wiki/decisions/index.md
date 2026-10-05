@@ -55,3 +55,46 @@ Accepted from [round-four answers](../journal/2026-10-05-grill-eb7e62a0-bf4d-447
 | DEC-023 | Generate standard listing and entry pages automatically for collections created through the portal. | Q22. Entry bodies use the block editor. A portal template designer is not required initially. |
 | DEC-024 | Automatically produce a web-optimized image set from sufficiently large uploads, using resizing and light compression with simple methods. | Q23 selection and notes. This extends original-file media uploads with image processing; it does not request a Next.js image server or audio/video transcoding. Exact widths, encodings, quality, and limits are implementation choices. |
 | DEC-025 | Media URLs may be publicly accessible immediately after upload, before the referencing page is published. | Q24. Page publication remains governed by the Git draft/main workflow; private draft-media promotion is unnecessary. |
+
+## Technical foundations — 2026-10-05
+
+Accepted from [technical-round-one answers](../journal/2026-10-05-grill-103bfb33-1e8a-4133-9528-3baf8aa57275.md); see the [interpretation](../journal/2026-10-05-technical-foundations.md).
+
+| ID | Decision | Basis and rationale |
+| --- | --- | --- |
+| DEC-026 | Use Astro with TypeScript as the public site's static build foundation. | Q25. |
+| DEC-027 | Use React with TypeScript for the admin drawer and CMS screens. | Q26. Blocks retain their independent framework choice. |
+| DEC-028 | Store structured content and definitions as JSON. | Q27. |
+| DEC-029 | Use separate files per page, entry, and definition. | Q28. DEC-036 subsequently selects permanent-ID filenames; concrete records are defined in the technical contracts. |
+| DEC-030 | Use a small purpose-built, serializable field model. | Q29. The agreed basic collection field set remains in force. |
+| DEC-031 | Share rendering source between published output and preview by default; separate implementations require parity checks. | Q30. No requirement to make build-only templates magically browser-renderable. |
+| DEC-032 | Keep editor and preview in one document, scope their styles, and share runtimes. | Q31. No iframe exception to runtime sharing is selected. |
+| DEC-033 | Offer built-in field controls and optional custom widgets. | Q32. The technical contracts define the React custom-widget interface; implementation remains unverified. |
+| DEC-034 | Serve shared block libraries as registered static vendor assets, minified where practical; avoid duplicate compatible framework/library versions. | Q30 custom suggestion reinforces DEC-005. Package/version examples in the answer are illustrative, not version pins. DEC-035 subsequently selects build-generated shared assets. |
+
+## Content and block contracts — 2026-10-05
+
+Accepted from [technical-round-two answers](../journal/2026-10-05-grill-534ae93e-c689-4899-b4a0-b2c01b8f8134.md); see the [interpretation](../journal/2026-10-05-content-block-contracts.md).
+
+| ID | Decision | Basis and rationale |
+| --- | --- | --- |
+| DEC-035 | The build generates self-hosted shared vendor modules. | Q33 settles the mechanism left open in DEC-034. Keep compatible dependencies shared and minified where practical. |
+| DEC-036 | Use permanent IDs for document filenames, with editable public paths/slugs inside. | Q34. Content identity does not change when a URL changes. |
+| DEC-037 | Store formatted block prose as Markdown strings inside JSON props. | Q35. This does not enable executable MDX or arbitrary scripts. DEC-046 subsequently selects visual formatting controls. |
+| DEC-038 | Retain deprecated block implementations alongside newer versions and expose a version selector. | Q36 custom answer. Users manually switch and fill unmatched/new/renamed/incompatible fields, which start empty. Preserve directly compatible fields; do not infer renamed-field mappings. Explicit automated migration functions were not selected. |
+| DEC-039 | Use framework adapters with mount/update/destroy for browser preview. | Q37. Normal framework components use adapters; custom/vanilla blocks implement the shared lifecycle. |
+| DEC-040 | Block authors declare never/visible/idle/load public activation behavior. | Q38. Immediate editor preview is separate from public activation timing. |
+| DEC-041 | Use stable IDs for internal content/media references, and URLs for external resources. | Q39. Resolve references when rendering output. |
+
+## Editor and saving — 2026-10-05
+
+Accepted from [technical-round-three answers](../journal/2026-10-05-grill-b9adf54c-f21e-4219-b2a3-932c862859dc.md); see the [interpretation](../journal/2026-10-05-editor-saving.md).
+
+| ID | Decision | Basis and rationale |
+| --- | --- | --- |
+| DEC-042 | Use Base UI with CSS Modules for the React editor. | Q40. Native controls remain suitable where sufficient; grill-form stays native HTML. |
+| DEC-043 | Use CSS Modules or framework-scoped styles for blocks. | Q41. Shared shell owns global styles; block styles must not leak into the editor or other blocks. |
+| DEC-044 | Save all pending editor changes in one draft commit. | Q42. Related page, schema, navigation, and media metadata changes persist together. |
+| DEC-045 | Recover unsaved edits within the tab session, including reloads. | Q43. This does not select indefinite device-wide recovery or storing binary uploads. |
+| DEC-046 | Provide visual formatting controls that save Markdown. | Q44. Keep the supported formatting set small and round-trip it consistently. |
+| DEC-047 | Save incomplete drafts; require valid required content and references before Publish. | Q45. Structural corruption is still rejected. Newly empty fields after a version switch may be saved for later completion. |

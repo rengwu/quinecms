@@ -1,6 +1,6 @@
 # lean-sitebuilder
 
-The product interview is complete; agreed scope is in `docs/wiki/discussions/agreed-design.md`. Application implementation has not started. Use jstack from `/Users/rengwu/Desktop/Projects/jstack`.
+The product interview is complete; agreed scope is in `docs/wiki/discussions/agreed-design.md`. The technical interview is also complete; read `docs/wiki/discussions/technical-contracts.md` for interfaces, engineering recommendations, and validation targets. Application implementation has not started. Use jstack from `/Users/rengwu/Desktop/Projects/jstack`.
 
 On resume, read `docs/wiki/index.md`, the decision register, open questions, and latest journals. Keep accepted decisions distinct from proposals. Update the existing records after substantive discussion; Markdown is authoritative. Rebuild and check with:
 
