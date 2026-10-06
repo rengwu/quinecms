@@ -5,6 +5,8 @@ status: Implemented foundation; live providers unverified
 ---
 # Technical contracts
 
+Planned extension: the [accepted block-library scope](block-library.md) adds theme/tag catalog metadata, schema lists and bindings, collection card mappings, shared header/footer and external forms. Those contracts are pending implementation; the current code described below has not yet gained them.
+
 The generic-page redesign (DEC-058–DEC-073) is implemented following authorization on 2026-10-06. The current page, entry, collection, binding and rich-text contracts below replace the earlier entry-block model. See [implementation and verification](../verification/runs/2026-10-05T1650Z-generic-pages.md). Live providers remain unverified.
 
 The accepted foundation and contract choices are DEC-026–DEC-050 in the [decision register](../decisions/index.md). The technical interview is complete. Concrete definitions below are engineering specifications derived from those decisions. The [feature map](../features/index.md) links the implemented API, recipes, and build-specific evidence. Supporting library choices and exact adapter integration remain subject to implementation validation.

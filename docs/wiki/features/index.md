@@ -1,11 +1,12 @@
 ---
 title: Feature map
-updated: 2026-10-05
+updated: 2026-10-06
 ---
 # Feature map
 
 The first implementation follows the [agreed design](../discussions/agreed-design.md) and [technical contracts](../discussions/technical-contracts.md). This map describes intended behavior and executable checks; verification results apply only to the recorded build.
 
+- [Searchable block library](block-library.md) — FEAT-block-library.
 - [Static pages and registered blocks](static-blocks.md) — FEAT-static-blocks.
 - [Generic pages and collection content](generic-pages.md) — FEAT-generic-pages.
 - [Visual editing and recovery](editor.md) — FEAT-editor.

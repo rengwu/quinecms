@@ -16,6 +16,8 @@ Run the [standard setup](../verification/setup.md). Public fixtures are `/`, `/b
 
 ## Expected outcomes
 
+The [block library](block-library.md) adds themed/tagged browsing, shared chrome, repeated content and schema lists. Its record owns the expanded contract and verification recipe.
+
 Astro generates static-page routes and assigned collection-entry routes with imports for only their used blocks. Generic pages themselves have no public route; collection indexes require an explicit static page. See [generic pages](generic-pages.md). React/Svelte/Vue use Astro hydration; vanilla modules expose render/mount with matching activation timing. Preview mounts immediately. Root dependency pins and manifest compatibility checks govern all retained implementations. Framework/runtime modules have one emitted implementation and shared URLs. Public routes never load the editor, GitHub client, or R2 client. Styles are scoped; the shell owns resets.
 
 DEC-075 adds **Site → Content max-width (px)**, persisted in `site.globals.contentMaxWidth`. Omitted or cleared values use 1200px. Public output and preview inherit `--site-content-max-width`; starter block containers and header/footer follow it, while blocks may retain narrower text measures or opt out. Admin workspace widths are unaffected.
@@ -46,3 +48,5 @@ Build graph checks establish emitted sharing, not a browser network trace. React
 - [Shared content width and development reloads](../verification/runs/2026-10-05T1735Z-content-width.md).
 
 - [Site typography and page gutter](../verification/runs/2026-10-05T1810Z-site-design.md).
+
+- [Block library and repeated fields](../verification/runs/2026-10-06T1320Z-block-library.md).

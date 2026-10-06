@@ -1,9 +1,17 @@
 ---
 title: Open questions
-updated: 2026-10-05
+updated: 2026-10-06
 status: Scoped interviews complete
 ---
 # Open questions
+
+## Block library — resolved
+
+Q60–Q68 are resolved as DEC-082–DEC-091. See [round one](../journal/2026-10-06-block-library-round-one.md), [round two](../journal/2026-10-06-block-library-round-two.md) and the [consolidated implementation scope](block-library.md).
+
+The scope includes a themed/tagged searchable catalog with direct add and separate Preview, refitted static and useful generic blocks, editable block/schema lists, generic list bindings, collection-backed Blog cards, external form submission, a shared footer and grouped-navigation header. Block appearance comes from themes and site settings; per-block visual customization was rejected. The six reference sites remain capability/design benchmarks.
+
+No consequential product questions remain for this phase. The proposed first selection is three variants per category (45 base variants, including shared Footer choices), plus useful generic counterparts and a shared navigation header. Exact field/metadata interfaces and variant implementation details remain engineering choices. This is accepted scope; application implementation and verification are pending.
 
 ## Generic pages and schema-only entries — resolved
 

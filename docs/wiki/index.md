@@ -5,6 +5,12 @@ status: Accepted
 ---
 # lean-sitebuilder
 
+Implemented: [searchable block library](features/block-library.md), with 45 base layouts, 27 generic counterparts, repeatable content/schema lists, collection mappings, native forms and shared header/footer. [Implementation journal](journal/2026-10-06-block-library-implementation.md) and [verification report](verification/runs/2026-10-06T1320Z-block-library.md).
+
+Latest refinement: [catalog dialog polish](verification/runs/2026-10-06T0619Z-catalog-polish.md), with one scrolling body, a single-line tag strip, a persistent Reset control, smaller cards and a top-right close icon.
+
+Sortable lists now use [optimistic FLIP motion inspired by Chartr](verification/runs/2026-10-06T0845Z-sortable-flip.md): direct vertical carrying, animated neighbors, edge scrolling and commit on release anywhere. Website preview order changes only after release.
+
 Current design: [generic pages and schema-only entries](journal/2026-10-05-generic-pages-discussion.md). DEC-058–DEC-073 revise the collection/page model described by the existing implementation below. Reconciliation through grill-form is complete; the user authorized implementation on 2026-10-06. See [the implementation and verification](verification/runs/2026-10-05T1650Z-generic-pages.md).
 
 [Round-one template decisions](journal/2026-10-05-generic-pages-round-one.md) and [submitted answers](journal/2026-10-05-grill-d557fd13-2a71-44e6-9b9a-4543b858f2b0.md) resolve Q48–Q55. [Round-two decisions](journal/2026-10-05-generic-pages-round-two.md) and [submitted answers](journal/2026-10-05-grill-192c91a8-c5db-4b3b-9e4f-84772508186b.md) resolve Q56–Q59. The interview itself changed only records; the subsequent implementation is documented in the [implementation journal](journal/2026-10-06-generic-pages-implementation.md).

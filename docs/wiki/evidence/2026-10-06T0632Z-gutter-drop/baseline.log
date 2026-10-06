@@ -1,0 +1,118 @@
+
+ RUN  v5.0.3 /Users/rengwu/Desktop/Projects/lean-sitebuilder
+
+ ❯ tests/block-list.test.ts (17 tests | 8 failed) 115ms
+   × drops item 0 in the gutter at y=105 10ms
+   × drops item 0 in the gutter at y=108 6ms
+   × drops item 0 in the gutter at y=111 5ms
+   × drops item 3 in the gutter at y=105 5ms
+   × drops item 3 in the gutter at y=108 4ms
+   × drops item 3 in the gutter at y=111 4ms
+   × uses the release position when the final pointer move was over a different row 6ms
+   × cancels a release outside the list even after a valid drop indicator 9ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 8 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/block-list.test.ts > drops item 0 in the gutter at y=105
+ FAIL  tests/block-list.test.ts > drops item 0 in the gutter at y=108
+ FAIL  tests/block-list.test.ts > drops item 0 in the gutter at y=111
+ FAIL  tests/block-list.test.ts > drops item 3 in the gutter at y=105
+ FAIL  tests/block-list.test.ts > drops item 3 in the gutter at y=108
+ FAIL  tests/block-list.test.ts > drops item 3 in the gutter at y=111
+AssertionError: expected null to be 'before' // Object.is equality
+
+- Expected:
+"before"
+
++ Received:
+null
+
+ ❯ tests/block-list.test.ts:120:45
+    118|   await pointer(button, 'pointerdown', source * 56 + 24);
+    119|   await pointer(button, 'pointermove', y);
+    120|   expect(rows[2].getAttribute('data-drop')).toBe('before');
+       |                                             ^
+    121|   await pointer(button, 'pointerup', y);
+    122|   await act(async () => button.click());
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/8]⎯
+
+ FAIL  tests/block-list.test.ts > uses the release position when the final pointer move was over a different row
+AssertionError: expected 'bcda' to be 'bacd' // Object.is equality
+
+Expected: "bacd"
+Received: "bcda"
+
+ ❯ tests/block-list.test.ts:142:42
+    140|   document.elementFromPoint = vi.fn(() => host.querySelector('ol'));
+    141|   await pointer(button, 'pointerup', 108);
+    142|   expect(ids(onChange.mock.calls[0][0])).toBe('bacd');
+       |                                          ^
+    143| });
+    144|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/8]⎯
+
+ FAIL  tests/block-list.test.ts > cancels a release outside the list even after a valid drop indicator
+AssertionError: expected "vi.fn()" to not be called at all, but actually been called 1 times
+
+Received:
+
+  1st vi.fn() call:
+
+    Array [
+      Array [
+        Object {
+          "id": "b",
+          "props": Object {
+            "heading": "b",
+          },
+          "type": "hero",
+          "version": 2,
+        },
+        Object {
+          "id": "c",
+          "props": Object {
+            "heading": "c",
+          },
+          "type": "hero",
+          "version": 2,
+        },
+        Object {
+          "id": "a",
+          "props": Object {
+            "heading": "a",
+          },
+          "type": "hero",
+          "version": 2,
+        },
+        Object {
+          "id": "d",
+          "props": Object {
+            "heading": "d",
+          },
+          "type": "hero",
+          "version": 2,
+        },
+      ],
+    ]
+
+
+Number of calls: 1
+
+ ❯ tests/block-list.test.ts:153:24
+    151|   document.elementFromPoint = vi.fn(() => document.body);
+    152|   await pointer(button, 'pointerup', 300);
+    153|   expect(onChange).not.toHaveBeenCalled();
+       |                        ^
+    154|   expect(host.querySelector('[data-drop]')).toBeNull();
+    155| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/8]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  8 failed | 9 passed (17)
+   Start at  14:30:49
+   Duration  2.59s (import 69%, environment 23%, tests 5%, transform 3%)
+

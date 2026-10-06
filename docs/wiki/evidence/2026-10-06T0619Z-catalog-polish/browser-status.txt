@@ -1,0 +1,5 @@
+Native browser verification was attempted after the requested catalog polish.
+Computer-use inventory listed running browsers, with no connected browser tabs.
+Selecting Helium returned: "This session has been stopped because Computer Use is not allowed on the current browser URL."
+No further computer-use actions were taken. No browser tabs, servers, or test content were created for this run.
+Dialog geometry, horizontal tag overflow and scrolling were not visually observed.

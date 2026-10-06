@@ -1,0 +1,3 @@
+{"method":"POST","url":"/submit","body":"name=Verification+User&email=verification%40example.test&message=Controlled+local+submission"}
+{"method":"GET","url":"/favicon.ico","body":""}
+{"method":"POST","url":"/submit","body":"name=Verification+User&email=verification%40example.test&message=fail"}

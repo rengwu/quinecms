@@ -211,3 +211,35 @@ Implementation of DEC-058–DEC-073 was authorized on 2026-10-06 and is recorded
 | ID | Decision | Basis and rationale |
 | --- | --- | --- |
 | DEC-078 | Add site-wide body font, heading font, body font size, body line height and page gutter settings. | Direct user selection from the proposed globals. These supplement content max-width and apply to public rendering/live preview; block adoption remains advised. Section spacing, text width, palette and radius were not selected. [Implementation](../journal/2026-10-06-site-design.md). |
+
+## Block library — 2026-10-06
+
+| ID | Decision | Basis and rationale |
+| --- | --- | --- |
+| DEC-079 | Each block belongs to one theme and has multiple tags. | Direct user request, with Tailwind UI / hero / header examples. Theme denotes the block library/design family; detailed metadata mechanics remain implementation work. |
+| DEC-080 | Enlarge and redesign Add a block for searching and filtering by theme, tags and block name, with controls above a block grid. | Direct screenshot feedback anticipates a large catalog. Card preview/selection behavior remains open. |
+| DEC-081 | Adapt approximately 3–5 distinct blocks per category from the legacy TailwindBlocks library to the current system. | User requests refitting/reimplementation and working behavior, not verbatim copying. Inventory contains 15 categories and 123 variants. [Planning record](../journal/2026-10-06-block-library-plan.md); behavioral scope remains under discussion. |
+
+## Block library — round one, 2026-10-06
+
+Accepted from [Q60–Q65](../journal/2026-10-05-grill-821c1394-1fd0-47f5-a950-f71d9c006099.md); [interpretation and references](../journal/2026-10-06-block-library-round-one.md).
+
+| ID | Decision | Basis and rationale |
+| --- | --- | --- |
+| DEC-082 | The block card's primary action adds immediately; Preview is a separate action. | Q60 rejects preview-before-add as the default click behavior. |
+| DEC-083 | Include useful generic counterparts with the static block import now. | Q61; retain the distinction between fixed page content and schema-bound generic layouts. |
+| DEC-084 | Repeated block content supports adding, removing and reordering items. | Q62 selects editable lists over fixed item slots. Whether collection schemas also gain list fields remains Q67. |
+| DEC-085 | Blog blocks populate cards from collection entries using field mappings. | Q63 selects collection data rather than duplicate manually authored article cards. |
+| DEC-086 | Contact and newsletter forms submit to an editor-configured external endpoint. | Q64; an actual destination is required for publication, with delivery handled outside the static builder. |
+| DEC-087 | Footer layouts are configured once as a shared site-wide footer. | Q65 rejects ordinary per-page footers. Shared header/navigation remains Q66. |
+| DEC-088 | Use TDCX, Accenture, ASML, Couchbase, Convex and Source Network as capability/design benchmarks. | Direct user clarification of the desired range of sites. This does not independently select exact reproduction, every animation, or new backend integrations. |
+
+## Block library — round two, 2026-10-06
+
+Accepted from [Q66–Q68](../journal/2026-10-06-grill-d9dd6be8-d154-41d3-a042-1d645992c592.md); see the [round-two interpretation](../journal/2026-10-06-block-library-round-two.md) and [consolidated scope](../discussions/block-library.md).
+
+| ID | Decision | Basis and rationale |
+| --- | --- | --- |
+| DEC-089 | Add a shared configurable header with grouped navigation in this pass. | Q66 selects shared header/navigation now, alongside the shared footer from DEC-087. |
+| DEC-090 | Add structured list fields to collection schemas and compatible list bindings in generic blocks. | Q67 extends the earlier scalar/rich-text field contract. Initial rows use existing field types; unrestricted recursive nesting is outside this selected increment. |
+| DEC-091 | Block authoring edits content only; appearance comes from the block theme and site settings. | Q68 rejects the proposed per-block Design controls. New theme blocks should not expose arbitrary color, spacing, alignment or CSS override panels. Shared site typography/width/gutter remain available. |

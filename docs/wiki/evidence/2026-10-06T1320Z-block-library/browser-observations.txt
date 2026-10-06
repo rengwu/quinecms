@@ -1,0 +1,32 @@
+Observed through native Safari UI, 2026-10-06. Development server at 127.0.0.1:4321.
+Owned window C30B0A07-1103-4C85-9F86-4C996CD6BC7B. Existing user window 2B0D6665-1FC9-43B0-9961-37D6640FC74C was not edited.
+
+Admin, isolated /admin/?verify=block-library-20261006:
+- Opened Home > Add block. 50 static page choices (42 new page layouts + 8 latest starter choices). Three footer choices are excluded here.
+- Initial visual inspection exposed grid cards shrinking to strips and a preview header above the dialog. Fixed grid row sizing/flex constraints and isolated preview stacking. Re-inspection showed a three-column grid, top controls, and separate Preview actions.
+- Search hero returned four choices: Starter Hero, Centered statement, Split image, Image mosaic. Actual rendered thumbnails were visible. Searching faq returned exactly three new FAQ variants.
+- Preview Split image opened a separate view. Desktop/Mobile toggle showed a 375px mobile composition. Back returned to results, without insertion.
+- Add Split accordion closed the catalog and opened its content editor. Page preview included one new FAQ block.
+- Opened the first repeated item, changed its question to Verified question, then Back. The preview updated.
+- Pointer-dragged that row below the next. Accessibility status reported Block moved to position 2 of 4. Reloaded, reopened Home: the single added block persisted and the preview ordered Can it grow with my team? before Verified question.
+- Site displayed standard admin settings without a live preview. Choose footer showed exactly three shared layouts. Add Mission and links revealed its content fields, nested Columns list, Social links and Remove footer action.
+
+Temporary public fixture /block-library-verification:
+- Rendered representative layouts for all 15 categories through the same React sources; blog titles, summaries and entry routes came from existing Journal entries.
+- Captured served HTML had no duplicate IDs, including contact and newsletter input IDs. Forms had native method=post and the configured loopback endpoint.
+- Empty contact submission stayed on the form and Safari displayed Fill out this field.
+- Test-only name/email/message POST reached 127.0.0.1:4338/submit and browser showed Submission received. A second POST with message=fail showed Endpoint unavailable (test 503), not a false success. See form-requests.log. No external form service received data.
+- Grouped desktop navigation opened Product and Resources sections with descriptions/links.
+- At a 375px containing width, Menu opened the mobile navigation; Tab then Return expanded Explore. The grouped links and contact action fit within the container. This was a container-width check, not physical mobile-device testing.
+- Footer at the same narrow width showed the mission, a two-column link layout and copyright/social links without visible horizontal overflow.
+
+Automated tests separately cover schema list validation/bindings, catalog combined filters/reset, add-vs-preview behavior, repeatable-field add/delete/keyboard reorder, legacy preview navigation, all 72 new renderers with default/empty/long text, generator footer selection and idempotent writes.
+
+No live GitHub, R2 or Netlify changes were made. External form-service-specific responses and a complete visual audit of all 72 layouts are outside this run.
+
+Final production smoke / cleanup:
+- pnpm verify passed: 89 tests in 16 files, zero Astro errors/warnings/hints, six static routes, successful runtime-sharing/public-asset checks.
+- Owned Astro production preview on 127.0.0.1:4339 returned HTTP 200 for /admin/.
+- Native UI calls then failed with cgWindowNotFound for Safari and Helium; a fresh CUA session also failed. Production React mounting was therefore not observed. HTTP 200 is not treated as browser-mount evidence.
+- Temporary source page was removed before the final build. Its endpoint (PID 14413, port 4338) and the owned production preview (PID 15440, port 4339) were stopped. Preview status reported no server and neither port had a listener. Temporary logs were removed after preserving evidence.
+- The pre-existing development server was left running. Browser window cleanup could not be confirmed after the UI tool lost access; no attempt was made to kill the user's browser processes or clear their sessions.

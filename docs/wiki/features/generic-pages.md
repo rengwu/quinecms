@@ -16,6 +16,8 @@ Use [verification setup](../verification/setup.md). Pages → Add page selects S
 
 ## Expected outcomes
 
+The [block library](block-library.md) adds themed/tagged browsing, shared chrome, repeated content and schema lists. Its record owns the expanded contract and verification recipe.
+
 - The Pages table lists title, type and URL. Generic pages have no URL field or public route. Their block catalog contains only generic blocks; static pages offer normal blocks, including Collection list.
 - Generic block fields have an optional Schema field string and a fixed/fallback value. Preview shows bound field-name placeholders. Compatible schemas may share a template.
 - Schemas with no assignment remain data-only. Assigned entries render at collection prefix plus slug. A static page at the prefix supplies an optional index; absent that page the route is 404. Collection list renders entry links only when entry routes exist.
@@ -38,3 +40,5 @@ Local build, mounted UI tests and native browser flows are covered by the run be
 ## Verification history
 
 - [Generic-page implementation](../verification/runs/2026-10-05T1650Z-generic-pages.md).
+
+- [Block library and repeated fields](../verification/runs/2026-10-06T1320Z-block-library.md).

@@ -1,0 +1,18 @@
+{
+  "repository": "/Users/rengwu/Desktop/Projects/chartr",
+  "baseCommit": "bdfcf9df13f8a8a9c9914f7e143e28d37ea6ea62",
+  "files": [
+    {
+      "path": "crates/chartr/src/components/list_sorter.rs",
+      "sha256": "f77fecc81823d010e9404016796e1c94674f8caf88c28799f53d01684616531f"
+    },
+    {
+      "path": "crates/chartr/src/chrome/tab_sorter.rs",
+      "sha256": "8c0b3daad321fe4fe959879f02250d42fc47b5d790ba836e447c9cec2406937d"
+    },
+    {
+      "path": "crates/chartr/src/chrome/sidebar.rs",
+      "sha256": "ffa0155b228b763e5f18d80021581c034c6c53f3222c5031b2089c359603931b"
+    }
+  ]
+}

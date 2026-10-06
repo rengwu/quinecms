@@ -26,6 +26,10 @@ Open `/admin/` using [setup](../verification/setup.md). Without a configured pas
 
 ## Expected outcomes
 
+The [block library](block-library.md) adds themed/tagged browsing, shared chrome, repeated content and schema lists. Its record owns the expanded contract and verification recipe.
+
+The shared sortable list uses optimistic FLIP animations for page blocks and every repeated-content list. From mouse-down, the carried row follows cursor Y at the original grab offset, with X locked; it is drawn above clipping containers. Neighbors animate into the temporary order over 150ms and interrupted movements start from the current visual position. The blue insertion marker has been removed. Edge scrolling uses a 32px activation band and a capped speed, following Chartr's shared sorter reference. Only the list changes while held; the site's content/preview order updates once on release. Releasing outside still commits, with positions above/below the list resolving to its ends. This explicitly supersedes the earlier outside-release cancellation behavior. Escape, system pointer cancellation, or conflicting content/disabled changes abort safely. Reduced motion retains exact pointer carrying and immediate reordering while skipping FLIP/settle motion.
+
 Create/edit/delete pages and entries; reorder blocks by dragging their rows (Alt+Up/Down with keyboard focus). Kumo supplies admin controls, dialogs, and toasts; its styles are scoped away from preview blocks. Select a block to edit its fields and version. This replaces the parent editor controls, including page fields and the parent back link. Back returns to the same document and restores those controls. Same-key compatible values survive a version switch, unmatched values are null, and Cancel restores the last loaded/saved instance. Unknown versions preserve raw data and prevent publication.
 
 Schema rich-text fields and Text blocks provide visual headings, paragraphs, bold/italic, links, and lists with Markdown storage. Uploaded-image references and YouTube embeds round-trip in the visual editor. Unsupported Markdown remains available as source text. Custom React widgets and shared pure validators support compound block fields. Content browses collections → entry lists → schema-defined entry values only. Collection schemas browses models → collection definitions → individual fields, with label/key/type/required/options/default controls. Schema editing protects populated keys/types/options. Entries remain in Content and never appear in the Pages table. Add entry is confined to entry lists; Add collection belongs to the schema list. All Add actions (page, block, entry, collection, field and link) use the same blue Kumo primary variant, base size and plus icon. Add block remains aligned right beside Blocks, outside the draggable list. Main navigation preserves all local content edits. Site settings manage title, optional theme, and ID-based navigation.
@@ -37,7 +41,7 @@ Local development skips the unsaved-edit reload confirmation at the user's reque
 ## Verification recipe
 
 1. Open Pages. Verify all pages appear in a table with title/type/path columns, main navigation with Pages highlighted, and no builder drawer or preview. Open Home: page settings/blocks appear with a ← Back button, no selector or Add page. Open Hero: the sidebar starts with ← Back and shows no page fields, parent back link, or global destination menu. Back restores the page controls; reopen Hero. Change Heading and observe preview. Switch v2 → v1 → v2: Heading remains; Eyebrow/Alignment/Design start empty. Cancel restores the original.
-2. Move Text up; its preview moves above Hero. Edit Body visually and reload; development reloads directly, while production may require accepting the browser warning. Order and text should persist.
+2. Drag Text up: the row follows cursor Y with X locked, neighboring rows animate and the website preview holds its original order until release. Try releasing over a row, a gutter and outside the list; the final sort commits in every case. Hover at a scroll edge to reach offscreen rows. Reverse midway through an animation, try variable-height row labels and reduced motion. Escape cancels; ordinary clicks still open an item. Edit Body visually and reload; development reloads directly, while production may require accepting the browser warning. Order and text should persist.
 3. Preview is always interactive. Increment the Svelte counter; select it in the drawer and change Starting number. Verify the preview uses the new number and retains its interactive increment until removal/reload.
 4. Content → Journal shows an entry list and Add entry in a standard admin view, with no model controls or preview. Open an entry, change Title and verify its heading updates; verify there is no block list or Add block action, then return to the entry list. Values persist and no live rendering appears at any level. Collection schemas → Journal instead shows the model and compact field rows in the same admin layout. Open Title: populated key/type and removal are disabled. Add a field with a default, then create an entry through Content and verify the default. A blank required title produces no proactive issue notice; Publish reports validation through a toast.
 5. Add a block through the header action and dialog. Switch directly to Site through the main sidebar; the builder drawer and preview disappear. Site → Discard edits resets local test content. Export/import and password/Lock browser paths still require a follow-up browser run.
@@ -53,6 +57,8 @@ The initial run observed core interactions on an intermediate build. The startup
 
 ## Verification history
 
+- [Optimistic FLIP sorting and Chartr reference behavior](../verification/runs/2026-10-06T0845Z-sortable-flip.md).
+- [Gutter drop regression repair](../verification/runs/2026-10-06T0632Z-gutter-drop.md).
 - [Initial implementation run](../verification/runs/2026-10-05T0819Z-implementation.md).
 - [Admin startup repair](../verification/runs/2026-10-05T0910Z-admin-startup.md).
 
@@ -79,3 +85,5 @@ The initial run observed core interactions on an intermediate build. The startup
 - [Table rows and consistent Back labels](../verification/runs/2026-10-05T1752Z-page-row.md).
 
 - [Site typography and page gutter](../verification/runs/2026-10-05T1810Z-site-design.md).
+
+- [Block library and repeated fields](../verification/runs/2026-10-06T1320Z-block-library.md).
