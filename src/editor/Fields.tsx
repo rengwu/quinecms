@@ -1,4 +1,5 @@
 import ListField from './ListField';
+import { PanelNavigation, usePanelNavigation } from './PanelNavigation';
 import { Input } from '@cloudflare/kumo/components/input';
 import { InputArea } from '@cloudflare/kumo/components/input';
 import { Select } from '@cloudflare/kumo/components/select';
@@ -28,6 +29,20 @@ export default function Fields({
   readOnly?: boolean;
 }) {
   const prefix = useId();
+  const navigation = usePanelNavigation();
+  if (!navigation)
+    return (
+      <PanelNavigation>
+        <Fields
+          fields={fields}
+          values={values}
+          onChange={onChange}
+          media={media}
+          collections={collections}
+          readOnly={readOnly}
+        />
+      </PanelNavigation>
+    );
   return (
     <div className={styles.formStack}>
       {fields.map((f) => {

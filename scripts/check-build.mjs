@@ -1,6 +1,7 @@
 import { readFile, readdir, stat } from 'node:fs/promises';
 import assert from 'node:assert/strict';
 import { gzipSync } from 'node:zlib';
+import installedLayouts from '../layouts.config.mjs';
 const graph = JSON.parse(await readFile('.astro/client-graph.json', 'utf8'));
 const assets = new Set(await readdir('dist/_astro'));
 const packages = new Map(),
@@ -95,17 +96,32 @@ for (const file of await htmlFiles('dist')) {
     );
   }
 }
-assert.equal(
-  summary.find((p) => p.page === 'journal/index.html')?.javascriptModules,
-  0,
-  'Collection listing should have no JS',
+const site = JSON.parse(await readFile('content/site.json', 'utf8'));
+const selected = site.layout ?? { id: 'starter', version: 1 };
+const layouts = await Promise.all(
+  installedLayouts.map(async (path) =>
+    JSON.parse(
+      await readFile(`src/site-layouts/${path}/definition.json`, 'utf8'),
+    ),
+  ),
 );
-assert.equal(
-  summary.find((p) => p.page === 'journal/a-slower-way-to-build/index.html')
-    ?.javascriptModules,
-  0,
-  'Generic entry should have no JS',
+const layout = layouts.find(
+  (d) => d.id === selected.id && d.version === selected.version,
 );
+assert(layout, 'Active layout version must be installed');
+if (layout.activation === 'never') {
+  assert.equal(
+    summary.find((p) => p.page === 'journal/index.html')?.javascriptModules,
+    0,
+    'Collection listing should have no JS',
+  );
+  assert.equal(
+    summary.find((p) => p.page === 'journal/a-slower-way-to-build/index.html')
+      ?.javascriptModules,
+    0,
+    'Generic entry should have no JS',
+  );
+}
 console.log(
   JSON.stringify(
     {

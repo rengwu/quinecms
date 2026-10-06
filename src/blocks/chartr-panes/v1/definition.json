@@ -1,0 +1,40 @@
+{
+  "type": "chartr-panes",
+  "version": 1,
+  "label": "chartr · Pane layout",
+  "description": "From the chartr website. Works independently in any site layout.",
+  "theme": "chartr",
+  "tags": ["features"],
+  "framework": "vanilla",
+  "activation": "load",
+  "component": "View.ts",
+  "fields": [
+    {
+      "key": "label",
+      "label": "Section label",
+      "type": "text"
+    },
+    {
+      "key": "heading",
+      "label": "Heading",
+      "type": "text"
+    },
+    {
+      "key": "description",
+      "label": "Description",
+      "type": "text"
+    },
+    {
+      "key": "anchor",
+      "label": "Section anchor",
+      "type": "text"
+    }
+  ],
+  "defaults": {
+    "label": "Layout & Paning",
+    "heading": "Work the way you want",
+    "description": "Split a pane, move a tab, or drop in a plugin surface. Organize different ways of working within each space.",
+    "anchor": "workspace"
+  },
+  "dependencies": {}
+}

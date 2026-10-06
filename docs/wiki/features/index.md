@@ -6,6 +6,8 @@ updated: 2026-10-06
 
 The first implementation follows the [agreed design](../discussions/agreed-design.md) and [technical contracts](../discussions/technical-contracts.md). This map describes intended behavior and executable checks; verification results apply only to the recorded build.
 
+- [Site Layout library](site-layouts.md) — FEAT-site-layouts.
+- [chartr layout and blocks](chartr.md) — FEAT-chartr.
 - [Searchable block library](block-library.md) — FEAT-block-library.
 - [Static pages and registered blocks](static-blocks.md) — FEAT-static-blocks.
 - [Generic pages and collection content](generic-pages.md) — FEAT-generic-pages.

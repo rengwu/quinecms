@@ -5,6 +5,7 @@ import type { Collection, Field, Media, Values } from '../core/types';
 import { fieldDefaults, listRows, rowId } from '../core/lists';
 import BlockList from './BlockList';
 import Fields from './Fields';
+import { PanelLevel } from './PanelNavigation';
 import styles from './editor.module.css';
 
 export default function ListField({
@@ -30,6 +31,14 @@ export default function ListField({
     _rowId: String(row._rowId || `legacy-${i}`),
   }));
   const row = identified.find((r) => r._rowId === selected);
+  const rowLabel = (row: Values, i: number) =>
+    String(
+      field.fields
+        .filter((f) => ['text', 'date', 'number'].includes(f.type))
+        .map((f) => row[f.key])
+        .find((v) => v !== null && v !== undefined && v !== '') ??
+        `Item ${i + 1}`,
+    );
   const save = (next: Values[]) =>
     onChange(
       next.map((r) => ({
@@ -39,10 +48,11 @@ export default function ListField({
     );
   if (row)
     return (
-      <div className={styles.formStack}>
-        <Button variant="ghost" onClick={() => select('')}>
-          ← Back
-        </Button>
+      <PanelLevel
+        title={rowLabel(row, identified.indexOf(row))}
+        context={field.label}
+        onBack={() => select('')}
+      >
         <Fields
           fields={field.fields}
           values={row}
@@ -63,7 +73,7 @@ export default function ListField({
         >
           Remove item
         </Button>
-      </div>
+      </PanelLevel>
     );
   const blocks = identified.map((r) => ({
     id: r._rowId,

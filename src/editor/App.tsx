@@ -1,13 +1,14 @@
 import { fieldDefaults } from '../core/lists';
 import BlockCatalog from './BlockCatalog';
-import SiteHeader from '../site/Header';
-import { headerFields, headerValues } from '../core/header';
+import LayoutSurface, { PageBlocks } from './LayoutSurface';
+import LayoutSettings from './LayoutSettings';
+import { migrateSite, activeLayout, layoutKey } from '../core/layouts';
+import { PanelNavigation } from './PanelNavigation';
 import { Button } from '@cloudflare/kumo/components/button';
 import { Input } from '@cloudflare/kumo/components/input';
 import { Select } from '@cloudflare/kumo/components/select';
 import { Label } from '@cloudflare/kumo/components/label';
 import { useEffect, useRef, useState } from 'react';
-import type { CSSProperties } from 'react';
 import { Dialog } from '@cloudflare/kumo/components/dialog';
 import { CaretRightIcon, PlusIcon, XIcon } from '@phosphor-icons/react';
 import CollectionSchema from './CollectionSchema';
@@ -44,13 +45,11 @@ import type { StorageConfig } from '../integrations/media';
 import { digest, download, readRecovery, retain } from './recovery';
 import Fields from './Fields';
 import BlockFields from './BlockFields';
-import { bindingPlaceholders } from '../core/bindings';
-import { siteStyle } from '../core/site-style';
 import SiteDesign from './SiteDesign';
-import Island from './Island';
 import styles from './editor.module.css';
 export interface Config extends Repository {
   passwordHash: string;
+  allowedLayoutIds?: string[];
   r2: Pick<StorageConfig, 'accountId' | 'bucket' | 'publicURL'>;
 }
 function stored<T>(key: string, fallback: T): T {
@@ -156,8 +155,8 @@ function Editor({
   onLock(): void;
 }) {
   const recovery = useRef(readRecovery());
-  const [content, setContent] = useState<Content>(
-    () => recovery.current?.content ?? initial,
+  const [content, setContent] = useState<Content>(() =>
+    migrateSite(recovery.current?.content ?? initial),
   );
   const [base, setBase] = useState<Snapshot | null>(
     () => recovery.current?.base ?? null,
@@ -213,7 +212,14 @@ function Editor({
     [size, setSize] = useState('desktop');
   const importRef = useRef<HTMLInputElement>(null);
   const uploadRef = useRef<HTMLInputElement>(null);
-  const page = content.pages.find((p) => p.id === selected);
+  const [layoutPageId, setLayoutPageId] = useState('');
+  const page =
+    tab === 'layout'
+      ? (content.pages.find((p) => p.id === layoutPageId) ??
+        content.pages.find((p) => p.id === selected) ??
+        content.pages.find((p) => p.path === '/') ??
+        content.pages[0])
+      : content.pages.find((p) => p.id === selected);
   const doc = page ?? content.entries.find((e) => e.id === selected);
   const selectedBlock = page?.blocks.find((b) => b.id === blockId);
   const blockDefinition =
@@ -233,7 +239,7 @@ function Editor({
   );
   const editingBlock = editingDocument && Boolean(selectedBlock);
   const listingPages = tab === 'pages' && !editingDocument;
-  const showPreview = tab === 'pages' && editingDocument;
+  const showPreview = (tab === 'pages' && editingDocument) || tab === 'layout';
   const EditorSurface = showPreview ? 'aside' : 'main';
   function openArea(area: string) {
     setModal('');
@@ -366,7 +372,7 @@ function Editor({
       setDraftRepository(repo);
       if (!dirty) {
         setBase(remote);
-        setContent(remote.content);
+        setContent(migrateSite(remote.content));
         setSelected('');
         setCollectionId('');
         setSchemaId('');
@@ -392,7 +398,7 @@ function Editor({
           const next = await store.load();
           setDraftRepository(store.repository);
           setBase(next);
-          setContent(next.content);
+          setContent(migrateSite(next.content));
           setBlockId('');
           setMessage('Loaded the latest draft.');
           setModal('');
@@ -449,7 +455,7 @@ function Editor({
         throw Error('Connect to the repository first.');
       const next = await store.save(base, content);
       setBase(next);
-      setContent(next.content);
+      setContent(migrateSite(next.content));
       setMessage('All changes saved to the draft branch.');
     });
   }
@@ -537,7 +543,7 @@ function Editor({
         title: 'Restore this backup?',
         body: 'The backup replaces local content. Review it before saving; your current repository connection stays the same.',
         action: () => {
-          setContent(data.content);
+          setContent(migrateSite(data.content));
           setSelected('');
           setBlockId('');
           setMessage('Backup restored as unsaved edits.');
@@ -617,133 +623,162 @@ function Editor({
           >
             <div className={showPreview ? undefined : styles.adminPanel}>
               <fieldset disabled={busy} className={styles.panelBody}>
-                {(tab === 'pages' ||
-                  (tab === 'content' && editingDocument)) && (
-                  <>
-                    {!editingBlock && tab === 'pages' && (
-                      <>
-                        <Button
-                          className={styles.back}
-                          variant="ghost"
-                          onClick={() => openArea('pages')}
-                        >
-                          ← Back
-                        </Button>
-                        <h2>
-                          {doc && 'kind' in doc
-                            ? doc.title || 'Untitled page'
-                            : 'Page'}
-                        </h2>
-                      </>
-                    )}
-                    {!editingBlock && tab === 'content' && collection && (
-                      <>
-                        <Button
-                          className={styles.back}
-                          variant="ghost"
-                          onClick={() => {
-                            setSelected('');
-                            setBlockId('');
-                          }}
-                        >
-                          ← Back
-                        </Button>
-                        <h2>
-                          {doc && 'values' in doc ? entryTitle(doc) : 'Entry'}
-                        </h2>
-                      </>
-                    )}
-                    {editingDocument && doc && (
-                      <>
-                        {editingBlock && 'kind' in doc ? (
-                          <>
-                            <Button
-                              className={styles.back}
-                              variant="ghost"
-                              onClick={() => setBlockId('')}
-                            >
-                              ← Back
-                            </Button>
-                            <h2>
-                              {blockDefinition?.label ?? 'Unavailable block'}
-                            </h2>
-                            {selectedBlock && (
-                              <>
-                                <div className={styles.field}>
-                                  <Label htmlFor="version">Version</Label>
-                                  <Select
-                                    className={styles.full}
-                                    id="version"
-                                    renderValue={(version) =>
-                                      `Version ${version}`
-                                    }
-                                    value={selectedBlock.version}
-                                    disabled={!blockDefinition}
-                                    onValueChange={(value) => {
-                                      const next = definitions.find(
-                                        (d) =>
-                                          d.type === selectedBlock.type &&
-                                          d.version === Number(value ?? ''),
-                                      );
-                                      if (blockDefinition && next)
-                                        changeBlock(
-                                          switchVersion(
-                                            selectedBlock,
-                                            blockDefinition,
-                                            next,
-                                          ),
+                <PanelNavigation
+                  key={[
+                    tab,
+                    selected,
+                    blockId,
+                    collectionId,
+                    schemaId,
+                    layoutKey(activeLayout(content.site)),
+                  ].join(':')}
+                >
+                  {(tab === 'pages' ||
+                    (tab === 'content' && editingDocument)) && (
+                    <>
+                      {!editingBlock && tab === 'pages' && (
+                        <>
+                          <Button
+                            className={styles.back}
+                            variant="ghost"
+                            onClick={() => openArea('pages')}
+                          >
+                            ← Back
+                          </Button>
+                          <h2>
+                            {doc && 'kind' in doc
+                              ? doc.title || 'Untitled page'
+                              : 'Page'}
+                          </h2>
+                        </>
+                      )}
+                      {!editingBlock && tab === 'content' && collection && (
+                        <>
+                          <Button
+                            className={styles.back}
+                            variant="ghost"
+                            onClick={() => {
+                              setSelected('');
+                              setBlockId('');
+                            }}
+                          >
+                            ← Back
+                          </Button>
+                          <h2>
+                            {doc && 'values' in doc ? entryTitle(doc) : 'Entry'}
+                          </h2>
+                        </>
+                      )}
+                      {editingDocument && doc && (
+                        <>
+                          {editingBlock && 'kind' in doc ? (
+                            <>
+                              <Button
+                                className={styles.back}
+                                variant="ghost"
+                                onClick={() => setBlockId('')}
+                              >
+                                ← Back
+                              </Button>
+                              <h2>
+                                {blockDefinition?.label ?? 'Unavailable block'}
+                              </h2>
+                              {selectedBlock && (
+                                <>
+                                  <div className={styles.field}>
+                                    <Label htmlFor="version">Version</Label>
+                                    <Select
+                                      className={styles.full}
+                                      id="version"
+                                      renderValue={(version) =>
+                                        `Version ${version}`
+                                      }
+                                      value={selectedBlock.version}
+                                      disabled={!blockDefinition}
+                                      onValueChange={(value) => {
+                                        const next = definitions.find(
+                                          (d) =>
+                                            d.type === selectedBlock.type &&
+                                            d.version === Number(value ?? ''),
                                         );
-                                    }}
-                                  >
-                                    {definitions
-                                      .filter(
-                                        (d) => d.type === selectedBlock.type,
-                                      )
-                                      .map((d) => (
-                                        <Select.Option
-                                          value={d.version}
-                                          key={d.version}
-                                        >
-                                          Version {d.version}
-                                          {d.deprecated ? ' · deprecated' : ''}
-                                        </Select.Option>
-                                      ))}
-                                  </Select>
-                                </div>
-                                {blockDefinition ? (
-                                  <BlockFields
-                                    key={
-                                      selectedBlock.id +
-                                      '@' +
-                                      selectedBlock.version
-                                    }
-                                    fields={blockDefinition.fields}
-                                    block={selectedBlock}
-                                    generic={doc.kind === 'generic'}
-                                    onChange={changeBlock}
-                                    collections={content.collections}
-                                    media={content.media}
-                                    readOnly={busy}
-                                  />
-                                ) : (
-                                  <p className={styles.muted}>
-                                    The block data is preserved. Install its
-                                    implementation to edit it.
-                                  </p>
-                                )}
-                                <div className={styles.actionFooter}>
-                                  <Button
-                                    onClick={() => {
-                                      const previous = (
-                                        base?.content ?? initial
-                                      ).pages
-                                        .find((d) => d.id === doc.id)
-                                        ?.blocks.find(
-                                          (b) => b.id === selectedBlock.id,
-                                        );
-                                      if (previous)
-                                        changeBlock(structuredClone(previous));
-                                      else {
+                                        if (blockDefinition && next)
+                                          changeBlock(
+                                            switchVersion(
+                                              selectedBlock,
+                                              blockDefinition,
+                                              next,
+                                            ),
+                                          );
+                                      }}
+                                    >
+                                      {definitions
+                                        .filter(
+                                          (d) => d.type === selectedBlock.type,
+                                        )
+                                        .map((d) => (
+                                          <Select.Option
+                                            value={d.version}
+                                            key={d.version}
+                                          >
+                                            Version {d.version}
+                                            {d.deprecated
+                                              ? ' · deprecated'
+                                              : ''}
+                                          </Select.Option>
+                                        ))}
+                                    </Select>
+                                  </div>
+                                  {blockDefinition ? (
+                                    <BlockFields
+                                      key={
+                                        selectedBlock.id +
+                                        '@' +
+                                        selectedBlock.version
+                                      }
+                                      fields={blockDefinition.fields}
+                                      block={selectedBlock}
+                                      generic={doc.kind === 'generic'}
+                                      onChange={changeBlock}
+                                      collections={content.collections}
+                                      media={content.media}
+                                      readOnly={busy}
+                                    />
+                                  ) : (
+                                    <p className={styles.muted}>
+                                      The block data is preserved. Install its
+                                      implementation to edit it.
+                                    </p>
+                                  )}
+                                  <div className={styles.actionFooter}>
+                                    <Button
+                                      onClick={() => {
+                                        const previous = (
+                                          base?.content ?? initial
+                                        ).pages
+                                          .find((d) => d.id === doc.id)
+                                          ?.blocks.find(
+                                            (b) => b.id === selectedBlock.id,
+                                          );
+                                        if (previous)
+                                          changeBlock(
+                                            structuredClone(previous),
+                                          );
+                                        else {
+                                          changeDoc({
+                                            ...doc,
+                                            blocks: doc.blocks.filter(
+                                              (b) => b.id !== selectedBlock.id,
+                                            ),
+                                          });
+                                          setBlockId('');
+                                        }
+                                      }}
+                                    >
+                                      Cancel block changes
+                                    </Button>
+                                    <Button
+                                      variant="secondary-destructive"
+                                      onClick={() => {
                                         changeDoc({
                                           ...doc,
                                           blocks: doc.blocks.filter(
@@ -751,214 +786,271 @@ function Editor({
                                           ),
                                         });
                                         setBlockId('');
-                                      }
-                                    }}
-                                  >
-                                    Cancel block changes
-                                  </Button>
-                                  <Button
-                                    variant="secondary-destructive"
-                                    onClick={() => {
-                                      changeDoc({
-                                        ...doc,
-                                        blocks: doc.blocks.filter(
-                                          (b) => b.id !== selectedBlock.id,
-                                        ),
-                                      });
-                                      setBlockId('');
-                                    }}
-                                  >
-                                    Remove
-                                  </Button>
-                                </div>
-                              </>
-                            )}
-                          </>
-                        ) : (
-                          <>
-                            {'kind' in doc ? (
-                              <>
-                                <div className={styles.field}>
-                                  <Label htmlFor="page-title">Page title</Label>
-                                  <Input
-                                    aria-label="Page title"
-                                    id="page-title"
-                                    value={doc.title}
-                                    onChange={(e) =>
-                                      changeDoc({
-                                        ...doc,
-                                        title: e.target.value,
-                                      })
-                                    }
-                                  />
-                                </div>
-                                {doc.kind === 'static' && (
+                                      }}
+                                    >
+                                      Remove
+                                    </Button>
+                                  </div>
+                                </>
+                              )}
+                            </>
+                          ) : (
+                            <>
+                              {'kind' in doc ? (
+                                <>
                                   <div className={styles.field}>
-                                    <Label htmlFor="page-path">URL path</Label>
+                                    <Label htmlFor="page-title">
+                                      Page title
+                                    </Label>
                                     <Input
-                                      aria-label="URL path"
-                                      id="page-path"
-                                      value={doc.path ?? ''}
+                                      aria-label="Page title"
+                                      id="page-title"
+                                      value={doc.title}
                                       onChange={(e) =>
                                         changeDoc({
                                           ...doc,
-                                          path: e.target.value,
+                                          title: e.target.value,
                                         })
                                       }
                                     />
                                   </div>
-                                )}
-                              </>
-                            ) : (
-                              <>
-                                <div className={styles.field}>
-                                  <Label htmlFor="slug">URL slug</Label>
-                                  <Input
-                                    aria-label="URL slug"
-                                    id="slug"
-                                    value={doc.slug}
-                                    onChange={(e) =>
-                                      changeDoc({
-                                        ...doc,
-                                        slug: e.target.value,
-                                      })
+                                  {doc.kind === 'static' && (
+                                    <div className={styles.field}>
+                                      <Label htmlFor="page-path">
+                                        URL path
+                                      </Label>
+                                      <Input
+                                        aria-label="URL path"
+                                        id="page-path"
+                                        value={doc.path ?? ''}
+                                        onChange={(e) =>
+                                          changeDoc({
+                                            ...doc,
+                                            path: e.target.value,
+                                          })
+                                        }
+                                      />
+                                    </div>
+                                  )}
+                                </>
+                              ) : (
+                                <>
+                                  <div className={styles.field}>
+                                    <Label htmlFor="slug">URL slug</Label>
+                                    <Input
+                                      aria-label="URL slug"
+                                      id="slug"
+                                      value={doc.slug}
+                                      onChange={(e) =>
+                                        changeDoc({
+                                          ...doc,
+                                          slug: e.target.value,
+                                        })
+                                      }
+                                    />
+                                  </div>
+                                  <Fields
+                                    fields={
+                                      content.collections.find(
+                                        (c) => c.id === doc.collectionId,
+                                      )?.fields ?? []
+                                    }
+                                    values={doc.values}
+                                    onChange={(values) =>
+                                      changeDoc({ ...doc, values })
+                                    }
+                                    media={content.media}
+                                    readOnly={busy}
+                                  />
+                                </>
+                              )}
+                              {'kind' in doc && (
+                                <>
+                                  <div className={styles.sectionHeader}>
+                                    <h2>Blocks</h2>
+                                    <Button
+                                      variant="primary"
+                                      icon={<PlusIcon />}
+                                      onClick={() => setModal('blocks')}
+                                    >
+                                      Add block
+                                    </Button>
+                                  </div>
+                                  <BlockList
+                                    blocks={doc.blocks}
+                                    definitions={definitions}
+                                    disabled={busy}
+                                    onSelect={setBlockId}
+                                    onChange={(blocks) =>
+                                      changeDoc({ ...doc, blocks })
                                     }
                                   />
-                                </div>
-                                <Fields
-                                  fields={
-                                    content.collections.find(
-                                      (c) => c.id === doc.collectionId,
-                                    )?.fields ?? []
+                                </>
+                              )}
+                              <div className={styles.actionFooter}>
+                                <Button
+                                  variant="secondary-destructive"
+                                  onClick={() =>
+                                    setConfirm({
+                                      title: 'Delete this document?',
+                                      body: 'This change is local until you save the draft.',
+                                      action: () => {
+                                        setContent({
+                                          ...content,
+                                          pages: content.pages.filter(
+                                            (p) => p.id !== doc.id,
+                                          ),
+                                          entries: content.entries.filter(
+                                            (e) => e.id !== doc.id,
+                                          ),
+                                        });
+                                        setSelected('');
+                                      },
+                                    })
                                   }
-                                  values={doc.values}
-                                  onChange={(values) =>
-                                    changeDoc({ ...doc, values })
-                                  }
-                                  media={content.media}
-                                  readOnly={busy}
-                                />
-                              </>
-                            )}
-                            {'kind' in doc && (
-                              <>
-                                <div className={styles.sectionHeader}>
-                                  <h2>Blocks</h2>
-                                  <Button
-                                    variant="primary"
-                                    icon={<PlusIcon />}
-                                    onClick={() => setModal('blocks')}
-                                  >
-                                    Add block
-                                  </Button>
-                                </div>
-                                <BlockList
-                                  blocks={doc.blocks}
-                                  definitions={definitions}
-                                  disabled={busy}
-                                  onSelect={setBlockId}
-                                  onChange={(blocks) =>
-                                    changeDoc({ ...doc, blocks })
-                                  }
-                                />
-                              </>
-                            )}
-                            <div className={styles.actionFooter}>
-                              <Button
-                                variant="secondary-destructive"
-                                onClick={() =>
-                                  setConfirm({
-                                    title: 'Delete this document?',
-                                    body: 'This change is local until you save the draft.',
-                                    action: () => {
-                                      setContent({
-                                        ...content,
-                                        pages: content.pages.filter(
-                                          (p) => p.id !== doc.id,
-                                        ),
-                                        entries: content.entries.filter(
-                                          (e) => e.id !== doc.id,
-                                        ),
-                                      });
-                                      setSelected('');
-                                    },
-                                  })
-                                }
-                              >
-                                Delete {'kind' in doc ? 'page' : 'entry'}
-                              </Button>
-                            </div>
-                          </>
-                        )}
-                      </>
-                    )}
-                  </>
-                )}
-                {tab === 'content' && !editingDocument && (
-                  <>
-                    {collection ? (
-                      <>
-                        <Button
-                          className={styles.back}
-                          variant="ghost"
-                          onClick={() => {
-                            setCollectionId('');
-                            setSelected('');
-                          }}
-                        >
-                          ← Back
-                        </Button>
-                        <div className={styles.sectionHeader}>
-                          <h2>{collection.name || 'Untitled collection'}</h2>
+                                >
+                                  Delete {'kind' in doc ? 'page' : 'entry'}
+                                </Button>
+                              </div>
+                            </>
+                          )}
+                        </>
+                      )}
+                    </>
+                  )}
+                  {tab === 'content' && !editingDocument && (
+                    <>
+                      {collection ? (
+                        <>
                           <Button
-                            variant="primary"
-                            icon={<PlusIcon />}
-                            onClick={addEntry}
+                            className={styles.back}
+                            variant="ghost"
+                            onClick={() => {
+                              setCollectionId('');
+                              setSelected('');
+                            }}
                           >
-                            Add entry
+                            ← Back
                           </Button>
-                        </div>
-                        <ul className={styles.recordList} aria-label="Entries">
-                          {content.entries
-                            .filter((e) => e.collectionId === collection.id)
-                            .map((entry) => (
-                              <li key={entry.id}>
+                          <div className={styles.sectionHeader}>
+                            <h2>{collection.name || 'Untitled collection'}</h2>
+                            <Button
+                              variant="primary"
+                              icon={<PlusIcon />}
+                              onClick={addEntry}
+                            >
+                              Add entry
+                            </Button>
+                          </div>
+                          <ul
+                            className={styles.recordList}
+                            aria-label="Entries"
+                          >
+                            {content.entries
+                              .filter((e) => e.collectionId === collection.id)
+                              .map((entry) => (
+                                <li key={entry.id}>
+                                  <Button
+                                    className={styles.recordButton}
+                                    onClick={() => openDocument(entry.id)}
+                                  >
+                                    <span className={styles.recordLabel}>
+                                      {entryTitle(entry)}
+                                      <span className={styles.muted}>
+                                        /{entry.slug}
+                                      </span>
+                                    </span>
+                                    <CaretRightIcon aria-hidden="true" />
+                                  </Button>
+                                </li>
+                              ))}
+                          </ul>
+                          {!content.entries.some(
+                            (e) => e.collectionId === collection.id,
+                          ) && <p className={styles.muted}>No entries yet.</p>}
+                        </>
+                      ) : (
+                        <>
+                          <h2>Content</h2>
+                          <ul
+                            className={styles.recordList}
+                            aria-label="Content collections"
+                          >
+                            {content.collections.map((c) => (
+                              <li key={c.id}>
                                 <Button
                                   className={styles.recordButton}
-                                  onClick={() => openDocument(entry.id)}
+                                  onClick={() => {
+                                    setCollectionId(c.id);
+                                    setSelected('');
+                                  }}
                                 >
-                                  <span className={styles.recordLabel}>
-                                    {entryTitle(entry)}
-                                    <span className={styles.muted}>
-                                      /{entry.slug}
-                                    </span>
-                                  </span>
+                                  <span>{c.name || 'Untitled collection'}</span>
                                   <CaretRightIcon aria-hidden="true" />
                                 </Button>
                               </li>
                             ))}
-                        </ul>
-                        {!content.entries.some(
-                          (e) => e.collectionId === collection.id,
-                        ) && <p className={styles.muted}>No entries yet.</p>}
-                      </>
+                          </ul>
+                          {!content.collections.length && (
+                            <p className={styles.muted}>
+                              Create a collection in Collection schemas to start
+                              adding content.
+                            </p>
+                          )}
+                        </>
+                      )}
+                    </>
+                  )}
+                  {tab === 'schemas' &&
+                    (schema ? (
+                      <CollectionSchema
+                        key={schema.id}
+                        collection={schema}
+                        pages={content.pages}
+                        entries={content.entries.filter(
+                          (e) => e.collectionId === schema.id,
+                        )}
+                        media={content.media}
+                        onChange={changeCollection}
+                        onBack={() => setSchemaId('')}
+                        onDelete={() => {
+                          setContent({
+                            ...content,
+                            collections: content.collections.filter(
+                              (c) => c.id !== schema.id,
+                            ),
+                          });
+                          setSchemaId('');
+                        }}
+                      />
                     ) : (
                       <>
-                        <h2>Content</h2>
+                        <div className={styles.sectionHeader}>
+                          <h2>Collection schemas</h2>
+                          <Button
+                            variant="primary"
+                            icon={<PlusIcon />}
+                            onClick={addCollection}
+                          >
+                            Add collection
+                          </Button>
+                        </div>
                         <ul
                           className={styles.recordList}
-                          aria-label="Content collections"
+                          aria-label="Collection schemas"
                         >
                           {content.collections.map((c) => (
                             <li key={c.id}>
                               <Button
                                 className={styles.recordButton}
-                                onClick={() => {
-                                  setCollectionId(c.id);
-                                  setSelected('');
-                                }}
+                                onClick={() => setSchemaId(c.id)}
                               >
-                                <span>{c.name || 'Untitled collection'}</span>
+                                <span className={styles.recordLabel}>
+                                  {c.name || 'Untitled collection'}
+                                  <span className={styles.muted}>
+                                    {c.fields.length} fields
+                                  </span>
+                                </span>
                                 <CaretRightIcon aria-hidden="true" />
                               </Button>
                             </li>
@@ -966,335 +1058,165 @@ function Editor({
                         </ul>
                         {!content.collections.length && (
                           <p className={styles.muted}>
-                            Create a collection in Collection schemas to start
-                            adding content.
+                            No collection schemas yet.
                           </p>
                         )}
                       </>
-                    )}
-                  </>
-                )}
-                {tab === 'schemas' &&
-                  (schema ? (
-                    <CollectionSchema
-                      key={schema.id}
-                      collection={schema}
-                      pages={content.pages}
-                      entries={content.entries.filter(
-                        (e) => e.collectionId === schema.id,
-                      )}
-                      media={content.media}
-                      onChange={changeCollection}
-                      onBack={() => setSchemaId('')}
-                      onDelete={() => {
-                        setContent({
-                          ...content,
-                          collections: content.collections.filter(
-                            (c) => c.id !== schema.id,
-                          ),
-                        });
-                        setSchemaId('');
-                      }}
-                    />
-                  ) : (
-                    <>
-                      <div className={styles.sectionHeader}>
-                        <h2>Collection schemas</h2>
-                        <Button
-                          variant="primary"
-                          icon={<PlusIcon />}
-                          onClick={addCollection}
-                        >
-                          Add collection
-                        </Button>
-                      </div>
-                      <ul
-                        className={styles.recordList}
-                        aria-label="Collection schemas"
-                      >
-                        {content.collections.map((c) => (
-                          <li key={c.id}>
-                            <Button
-                              className={styles.recordButton}
-                              onClick={() => setSchemaId(c.id)}
-                            >
-                              <span className={styles.recordLabel}>
-                                {c.name || 'Untitled collection'}
-                                <span className={styles.muted}>
-                                  {c.fields.length} fields
-                                </span>
-                              </span>
-                              <CaretRightIcon aria-hidden="true" />
-                            </Button>
-                          </li>
-                        ))}
-                      </ul>
-                      {!content.collections.length && (
-                        <p className={styles.muted}>
-                          No collection schemas yet.
-                        </p>
-                      )}
-                    </>
-                  ))}
-                {tab === 'media' && (
-                  <PanelSection
-                    title="Media"
-                    action={
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => setModal('storage')}
-                      >
-                        Storage settings
-                      </Button>
-                    }
-                  >
-                    <div className={styles.formStack}>
-                      <Button
-                        variant="primary"
-                        onClick={() => uploadRef.current?.click()}
-                      >
-                        Upload file
-                      </Button>
-                      <p className={styles.muted}>
-                        Uploads go to R2 and may be public before publishing.
-                      </p>
-                      <input
-                        ref={uploadRef}
-                        hidden
-                        type="file"
-                        onChange={(e) => {
-                          const file = e.target.files?.[0];
-                          if (!file) return;
-                          void run(async () => {
-                            const { upload } =
-                              await import('../integrations/media');
-                            const media = await upload(file, r2, () => {});
-                            setContent((c) => ({
-                              ...c,
-                              media: [...c.media, media],
-                            }));
-                            setMessage(
-                              'Upload complete. Save the draft to record it.',
-                            );
-                          });
-                          e.target.value = '';
-                        }}
-                      />
-                    </div>
-                    <div className={styles.formStack}>
-                      {content.media.map((m) => (
-                        <div className={styles.mediaCard} key={m.id}>
-                          {m.original.mime.startsWith('image/') && (
-                            <img
-                              src={m.variants[0]?.url ?? m.original.url}
-                              alt={m.name}
-                            />
-                          )}
-                          <p>{m.name}</p>
-                          <p className={styles.muted}>
-                            {Math.round(m.original.bytes / 1024)} KB ·{' '}
-                            {m.variants.length} variants
-                          </p>
-                          <Link
-                            href={m.original.url}
-                            target="_blank"
-                            rel="noreferrer"
-                          >
-                            Open original
-                          </Link>
-                        </div>
-                      ))}
-                    </div>
-                  </PanelSection>
-                )}
-                {tab === 'site' && (
-                  <>
-                    <PanelSection title="Site settings">
-                      <div className={styles.field}>
-                        <Label htmlFor="site-title">Site title</Label>
-                        <Input
-                          aria-label="Site title"
-                          id="site-title"
-                          value={content.site.title}
-                          onChange={(e) =>
-                            setContent({
-                              ...content,
-                              site: { ...content.site, title: e.target.value },
-                            })
-                          }
-                        />
-                      </div>
-                      <div className={styles.field}>
-                        <Label htmlFor="theme">Theme</Label>
-                        <Select
-                          className={styles.full}
-                          id="theme"
-                          value={String(content.site.globals.theme ?? 'light')}
-                          onValueChange={(value) =>
-                            setContent({
-                              ...content,
-                              site: {
-                                ...content.site,
-                                globals: {
-                                  ...content.site.globals,
-                                  theme: value ?? '',
-                                },
-                              },
-                            })
-                          }
-                        >
-                          <Select.Option value="light">light</Select.Option>
-                          <Select.Option value="dark">dark</Select.Option>
-                        </Select>
-                      </div>
-                    </PanelSection>
-                    <SiteDesign
-                      globals={content.site.globals}
-                      onChange={(globals) =>
-                        setContent({
-                          ...content,
-                          site: { ...content.site, globals },
-                        })
-                      }
-                    />
-                    <PanelSection title="Header">
-                      <Fields
-                        fields={headerFields}
-                        values={headerValues(content)}
-                        media={content.media}
-                        collections={content.collections}
-                        onChange={(header) =>
-                          setContent({
-                            ...content,
-                            site: { ...content.site, header },
-                          })
-                        }
-                      />
-                    </PanelSection>
+                    ))}
+                  {tab === 'media' && (
                     <PanelSection
-                      title="Footer"
+                      title="Media"
                       action={
                         <Button
-                          variant="primary"
-                          icon={<PlusIcon />}
-                          onClick={() => setModal('footer')}
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => setModal('storage')}
                         >
-                          {content.site.footer
-                            ? 'Change footer'
-                            : 'Choose footer'}
+                          Storage settings
                         </Button>
                       }
                     >
-                      {content.site.footer ? (
-                        <>
-                          <p>
-                            {definitions.find(
-                              (d) =>
-                                d.type === content.site.footer?.type &&
-                                d.version === content.site.footer?.version,
-                            )?.label ?? 'Unavailable footer'}
-                          </p>
-                          <Fields
-                            fields={
-                              definitions.find(
-                                (d) =>
-                                  d.type === content.site.footer?.type &&
-                                  d.version === content.site.footer?.version,
-                              )?.fields ?? []
-                            }
-                            values={content.site.footer.props}
-                            media={content.media}
-                            collections={content.collections}
-                            onChange={(props) =>
-                              setContent({
-                                ...content,
-                                site: {
-                                  ...content.site,
-                                  footer: { ...content.site.footer!, props },
+                      <div className={styles.formStack}>
+                        <Button
+                          variant="primary"
+                          onClick={() => uploadRef.current?.click()}
+                        >
+                          Upload file
+                        </Button>
+                        <p className={styles.muted}>
+                          Uploads go to R2 and may be public before publishing.
+                        </p>
+                        <input
+                          ref={uploadRef}
+                          hidden
+                          type="file"
+                          onChange={(e) => {
+                            const file = e.target.files?.[0];
+                            if (!file) return;
+                            void run(async () => {
+                              const { upload } =
+                                await import('../integrations/media');
+                              const media = await upload(file, r2, () => {});
+                              setContent((c) => ({
+                                ...c,
+                                media: [...c.media, media],
+                              }));
+                              setMessage(
+                                'Upload complete. Save the draft to record it.',
+                              );
+                            });
+                            e.target.value = '';
+                          }}
+                        />
+                      </div>
+                      <div className={styles.formStack}>
+                        {content.media.map((m) => (
+                          <div className={styles.mediaCard} key={m.id}>
+                            {m.original.mime.startsWith('image/') && (
+                              <img
+                                src={m.variants[0]?.url ?? m.original.url}
+                                alt={m.name}
+                              />
+                            )}
+                            <p>{m.name}</p>
+                            <p className={styles.muted}>
+                              {Math.round(m.original.bytes / 1024)} KB ·{' '}
+                              {m.variants.length} variants
+                            </p>
+                            <Link
+                              href={m.original.url}
+                              target="_blank"
+                              rel="noreferrer"
+                            >
+                              Open original
+                            </Link>
+                          </div>
+                        ))}
+                      </div>
+                    </PanelSection>
+                  )}
+                  {tab === 'layout' && (
+                    <LayoutSettings
+                      content={content}
+                      allowedIds={config.allowedLayoutIds}
+                      previewPage={page}
+                      onPreviewPage={setLayoutPageId}
+                      onChange={setContent}
+                    />
+                  )}
+                  {tab === 'settings' && (
+                    <>
+                      <SiteDesign
+                        globals={content.site.globals}
+                        onChange={(globals) =>
+                          setContent({
+                            ...content,
+                            site: { ...content.site, globals },
+                          })
+                        }
+                      />
+                      <PanelSection title="Backups">
+                        <p className={styles.muted}>
+                          Export or restore site content. Credentials are
+                          excluded.
+                        </p>
+                        <div className={styles.row}>
+                          <Button onClick={backup}>Export backup</Button>
+                          <Button onClick={() => importRef.current?.click()}>
+                            Import backup
+                          </Button>
+                        </div>
+                        <input
+                          ref={importRef}
+                          hidden
+                          type="file"
+                          accept="application/json"
+                          onChange={(e) => {
+                            const file = e.target.files?.[0];
+                            if (file) void importBackup(file);
+                            e.target.value = '';
+                          }}
+                        />
+                      </PanelSection>
+                      <PanelSection title="Session">
+                        <div className={styles.row}>
+                          <Button
+                            variant="secondary-destructive"
+                            onClick={() =>
+                              setConfirm({
+                                title: 'Discard unsaved edits?',
+                                body: 'Return to the last loaded or saved content.',
+                                action: () => {
+                                  setContent(
+                                    migrateSite(
+                                      structuredClone(base?.content ?? initial),
+                                    ),
+                                  );
+                                  setBlockId('');
+                                  setMessage('Local edits discarded.');
                                 },
                               })
                             }
-                          />
-                          <Button
-                            variant="secondary-destructive"
-                            onClick={() => {
-                              const site = { ...content.site };
-                              delete site.footer;
-                              setContent({ ...content, site });
-                            }}
                           >
-                            Remove footer
+                            Discard edits
                           </Button>
-                        </>
-                      ) : (
-                        <p className={styles.muted}>
-                          The site title is shown until you choose a footer.
-                        </p>
-                      )}
-                    </PanelSection>
-                    <PanelSection title="Backups">
-                      <p className={styles.muted}>
-                        Export or restore site content. Credentials are
-                        excluded.
-                      </p>
-                      <div className={styles.row}>
-                        <Button onClick={backup}>Export backup</Button>
-                        <Button onClick={() => importRef.current?.click()}>
-                          Import backup
-                        </Button>
-                      </div>
-                      <input
-                        ref={importRef}
-                        hidden
-                        type="file"
-                        accept="application/json"
-                        onChange={(e) => {
-                          const file = e.target.files?.[0];
-                          if (file) void importBackup(file);
-                          e.target.value = '';
-                        }}
-                      />
-                    </PanelSection>
-                    <PanelSection title="Session">
-                      <div className={styles.row}>
-                        <Button
-                          variant="secondary-destructive"
-                          onClick={() =>
-                            setConfirm({
-                              title: 'Discard unsaved edits?',
-                              body: 'Return to the last loaded or saved content.',
-                              action: () => {
-                                setContent(
-                                  structuredClone(base?.content ?? initial),
-                                );
-                                setBlockId('');
-                                setMessage('Local edits discarded.');
-                              },
-                            })
-                          }
-                        >
-                          Discard edits
-                        </Button>
-                        <Button onClick={onLock}>Lock editor</Button>
-                      </div>
-                    </PanelSection>
-                  </>
-                )}
+                          <Button onClick={onLock}>Lock editor</Button>
+                        </div>
+                      </PanelSection>
+                    </>
+                  )}
+                </PanelNavigation>
               </fieldset>
             </div>
           </EditorSurface>
           {showPreview && (
             <main
-              className={`site-surface ${styles.preview}`}
-              style={siteStyle(content.site.globals) as CSSProperties}
+              className={styles.preview}
               data-size={size}
-              data-theme={content.site.globals.theme}
               aria-label="Live preview"
             >
-              <SiteHeader
+              <LayoutSurface
                 content={content}
-                preview
                 onNavigate={(url, documentId) => {
                   if (documentId) openDocument(documentId);
                   else {
@@ -1304,43 +1226,19 @@ function Editor({
                     if (id) openDocument(id);
                   }
                 }}
-              />
-              {page?.blocks.map((b) => (
-                <section
+              >
+                <PageBlocks
+                  content={content}
+                  page={page}
+                  selectedId={blockId}
                   className={styles.previewBlock}
-                  key={b.id}
-                  data-selected={blockId === b.id}
-                >
-                  <Island
-                    block={b}
-                    context={{
-                      ...contextFor(content, b.id),
-                      preview: true,
-                      ...(page?.kind === 'generic'
-                        ? { bindingPlaceholders: bindingPlaceholders(b) }
-                        : {}),
-                    }}
-                  />
-                </section>
-              ))}
-              {!page?.blocks.length && (
-                <div className={styles.empty}>
-                  Add a block to start building.
-                </div>
-              )}
-              {content.site.footer ? (
-                <Island
-                  block={content.site.footer}
-                  context={{
-                    ...contextFor(content, content.site.footer.id),
-                    preview: true,
-                  }}
                 />
-              ) : (
-                <footer className={styles.previewFooter}>
-                  {content.site.title}
-                </footer>
-              )}
+                {!page?.blocks.length && (
+                  <div className={styles.empty}>
+                    Add a block to start building.
+                  </div>
+                )}
+              </LayoutSurface>
             </main>
           )}
         </>
@@ -1356,13 +1254,11 @@ function Editor({
       >
         <Dialog
           size="lg"
-          className={`${styles.popup} ${['blocks', 'footer'].includes(modal) ? styles.catalogPopup : ''}`}
+          className={`${styles.popup} ${modal === 'blocks' ? styles.catalogPopup : ''}`}
         >
           <Dialog.Title
             className={
-              ['blocks', 'footer'].includes(modal) && !confirm
-                ? styles.srOnly
-                : undefined
+              modal === 'blocks' && !confirm ? styles.srOnly : undefined
             }
           >
             {confirm?.title ??
@@ -1370,7 +1266,6 @@ function Editor({
                 navigation: 'Navigation',
                 page: 'Add page',
                 blocks: 'Add a block',
-                footer: 'Choose a footer',
                 connection: 'Repository connection',
                 storage: 'R2 storage',
               }[modal] ??
@@ -1421,7 +1316,7 @@ function Editor({
                   </p>
                 </div>
               )}
-              {['blocks', 'footer'].includes(modal) && (
+              {modal === 'blocks' && (
                 <>
                   <Dialog.Close
                     render={
@@ -1438,18 +1333,10 @@ function Editor({
                   <BlockCatalog
                     definitions={definitions}
                     content={content}
-                    kind={
-                      modal === 'footer' ? 'static' : (page?.kind ?? 'static')
-                    }
-                    placement={modal === 'footer' ? 'footer' : 'page'}
+                    kind={page?.kind ?? 'static'}
                     onAdd={(d) => {
                       const b = newBlock(d);
-                      if (modal === 'footer')
-                        setContent({
-                          ...content,
-                          site: { ...content.site, footer: b },
-                        });
-                      else if (page) {
+                      if (page) {
                         changeDoc({ ...page, blocks: [...page.blocks, b] });
                         setBlockId(b.id);
                       }

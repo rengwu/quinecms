@@ -18,13 +18,18 @@ it('generates only the selected shared footer and leaves unchanged registry file
   try {
     await mkdir(join(dir, 'src'), { recursive: true });
     await cp('src/blocks', join(dir, 'src/blocks'), { recursive: true });
+    await cp('src/site-layouts', join(dir, 'src/site-layouts'), {
+      recursive: true,
+    });
     await cp('scripts', join(dir, 'scripts'), { recursive: true });
     await cp('content', join(dir, 'content'), { recursive: true });
+    await cp('public', join(dir, 'public'), { recursive: true });
     for (const f of [
       'package.json',
       'pnpm-lock.yaml',
       'astro.config.mjs',
       'blocks.config.mjs',
+      'layouts.config.mjs',
       'tsconfig.json',
     ])
       await cp(f, join(dir, f));
@@ -74,6 +79,46 @@ it('generates only the selected shared footer and leaves unchanged registry file
     );
     expect(routes).toContain('<Public');
     expect(routes).not.toContain('renderers');
+    // Installing another retained implementation must not silently upgrade the
+    // public renderer or remove the prior settings editor from the registry.
+    await cp(
+      join(dir, 'src/site-layouts/starter/v1'),
+      join(dir, 'src/site-layouts/starter/v2'),
+      { recursive: true },
+    );
+    const newer = JSON.parse(
+      await readFile(
+        join(dir, 'src/site-layouts/starter/v2/definition.json'),
+        'utf8',
+      ),
+    );
+    newer.version = 2;
+    await writeFile(
+      join(dir, 'src/site-layouts/starter/v2/definition.json'),
+      JSON.stringify(newer),
+    );
+    execFileSync(
+      process.execPath,
+      [
+        '--input-type=module',
+        '-e',
+        `
+      import { writeFile } from 'node:fs/promises';
+      import { generateLayouts } from ${JSON.stringify(resolve(root, 'scripts/generate-layouts.mjs'))};
+      await generateLayouts(writeFile, { layout: { id: 'starter', version: 1 } }, ['starter/v1', 'starter/v2']);
+    `,
+      ],
+      { cwd: dir, stdio: 'pipe' },
+    );
+    expect(
+      await readFile(join(dir, 'src/generated/SelectedLayout.astro'), 'utf8'),
+    ).toContain('starter/v1/View.tsx');
+    expect(
+      await readFile(join(dir, 'src/generated/layout-browser.ts'), 'utf8'),
+    ).toContain('starter/v2/Settings.tsx');
+    expect(
+      await readFile(join(dir, 'src/generated/layout-browser.ts'), 'utf8'),
+    ).toContain('starter/v1/Settings.tsx');
   } finally {
     await rm(dir, { recursive: true, force: true });
   }

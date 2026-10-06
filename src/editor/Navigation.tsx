@@ -17,7 +17,8 @@ export default function Navigation({
         ['content', 'Content'],
         ['schemas', 'Collection schemas'],
         ['media', 'Media'],
-        ['site', 'Site'],
+        ['layout', 'Site Layout'],
+        ['settings', 'Settings'],
       ].map(([area, label]) => (
         <Button
           key={area}

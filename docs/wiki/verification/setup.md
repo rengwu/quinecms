@@ -14,7 +14,7 @@ pnpm verify
 pnpm preview --port 4321
 ```
 
-The preview serves the built static `dist/` on `http://127.0.0.1:4321`. Check `/` and `/admin/` return HTTP 200. Use a different explicit port if another process owns 4321; do not stop unrelated processes. `pnpm dev` is the source development alternative. Re-run it after adding routes or changing registrations, because generation happens before startup.
+The preview serves the built static `dist/` on `http://127.0.0.1:4321`. Check `/` and `/admin/` return HTTP 200. Use a different explicit port if another process owns 4321; do not stop unrelated processes. `pnpm dev` is the source development alternative. After adding generated imports, routes or registrations, stop the existing instance with `pnpm exec astro dev stop`, then run `pnpm dev`. Generation happens before startup; an already-running daemon may retain unresolved imports. Check both a public route and `/admin/` in the final running instance, not just an isolated production build.
 
 For editor startup changes, exercise `/admin/` in both development and production preview. HTTP 200 and a successful build do not prove that React mounted: verify the Pages table and main sidebar first, then open a page row to check the drawer and live preview, change a block field and cancel it, and check the browser console. The [startup repair](runs/2026-10-05T0910Z-admin-startup.md) caught a development-only missing React preamble that the initial production checks missed.
 
@@ -22,7 +22,7 @@ For editor startup changes, exercise `/admin/` in both development and productio
 
 Record `git rev-parse HEAD` and dirty status. Hash application files, tests, content, configuration, and lockfile for a dirty build; the initial report links its manifest. `pnpm build` produces `.astro/client-graph.json`; `pnpm check:build` verifies output references/sharing and reports gzip module sizes. These sizes exclude dynamically loaded editor tools and runtime-fetched content; they are not a full page transfer measurement.
 
-Use a fresh browser tab for local fixtures. No password or provider configuration is needed for local editing. Session recovery survives reload; Site → Discard edits resets to the loaded baseline. Browser-only changes do not alter local content files. Do not reuse the user's unrelated tabs or data as fixtures.
+Use a fresh browser tab for local fixtures. No password or provider configuration is needed for local editing. Session recovery survives reload; Settings → Discard edits resets to the loaded baseline. Browser-only changes do not alter local content files. Do not reuse the user's unrelated tabs or data as fixtures.
 
 ## Available drivers and fixtures
 
@@ -31,7 +31,7 @@ Use a fresh browser tab for local fixtures. No password or provider configuratio
 - Native browser automation can drive the actual editor. The initial run lost window access; the startup repair subsequently verified development editing and production mounting/interactions in Safari.
 - Live GitHub/R2/Netlify checks require separately configured disposable resources and credentials. None were available or modified during the initial run.
 
-Public fixtures are Home, Block examples, an explicit static Journal index, and two entries rendered through the Journal entry generic page. Generic pages are editable under Pages but have no standalone public route. Main and draft content live in Git once connected; the local demo is read-only at the filesystem boundary.
+Public fixtures are Home, Block examples, the nine-block chartr page, an explicit static Journal index, and two entries rendered through the Journal entry generic page. To review the full recreation, select chartr in Site Layout and choose chartr as Preview page; the committed site keeps Starter selected. Generic pages are editable under Pages but have no standalone public route. Main and draft content live in Git once connected; the local demo is read-only at the filesystem boundary.
 
 ## Evidence and cleanup
 

@@ -5,6 +5,7 @@ import { createRoot, type Root } from 'react-dom/client';
 import App from '../src/editor/App';
 import type { Block, Content } from '../src/core/types';
 import { readRecovery } from '../src/editor/recovery';
+import { layoutDefinitions, selectLayout } from '../src/core/layouts';
 vi.mock('../src/editor/Island', () => ({
   default: ({ block }: { block: Block }) =>
     createElement('div', { 'data-preview-island': block.id }),
@@ -68,7 +69,7 @@ afterEach(async () => {
   sessionStorage.clear();
   vi.restoreAllMocks();
 });
-async function mount(initial = content) {
+async function mount(initial = content, allowedLayoutIds?: string[]) {
   (globalThis as any).IS_REACT_ACT_ENVIRONMENT = true;
   globalThis.ResizeObserver = class {
     observe() {}
@@ -85,7 +86,10 @@ async function mount(initial = content) {
   root = createRoot(host);
   await act(async () =>
     root.render(
-      createElement(App, { initial: structuredClone(initial), config }),
+      createElement(App, {
+        initial: structuredClone(initial),
+        config: { ...config, allowedLayoutIds },
+      }),
     ),
   );
 }
@@ -95,13 +99,133 @@ const editorPanel = () =>
   )!;
 function button(label: string, scope: Element = host) {
   const found = [...scope.querySelectorAll('button')].find(
-    (el) => el.textContent === label,
+    (el) => el.textContent?.trim() === label && !el.closest('[hidden]'),
   );
-  expect(found, `button ${label}`).toBeDefined();
+  expect(
+    found,
+    `button ${label}: ${[...scope.querySelectorAll('button')]
+      .filter((b) => !b.closest('[hidden]'))
+      .map((b) => b.textContent)
+      .join(' | ')}`,
+  ).toBeDefined();
   return found!;
 }
+
+it('opens layout navigation and footer items in dedicated levels, hiding all parent settings', async () => {
+  const chartr = layoutDefinitions.find((d) => d.id === 'chartr')!;
+  await mount(selectLayout(structuredClone(content), chartr));
+  await click('Site Layout');
+  await click('Workspace');
+  const level = () =>
+    editorPanel().querySelector<HTMLElement>(
+      '[data-panel-level]:not([hidden])',
+    )!;
+  expect(level().querySelector('h2')?.textContent).toBe('Workspace');
+  expect(level().querySelector('[aria-label="Label"]')).not.toBeNull();
+  expect(level().querySelector('[aria-label="Source link label"]')).toBeNull();
+  expect(
+    editorPanel()
+      .querySelector('[aria-label="Source link label"]')
+      ?.closest('[hidden]'),
+  ).not.toBeNull();
+  await click('← Back', level());
+  expect(level()).toBeNull();
+  await click('GitHub');
+  expect(level().textContent).toContain('Footer links');
+  expect(level().querySelector('[aria-label="Copyright"]')).toBeNull();
+  await click('← Back', level());
+  expect(
+    editorPanel()
+      .querySelector('[aria-label="Copyright"]')
+      ?.closest('[hidden]'),
+  ).toBeNull();
+  await click('Workspace');
+  await click('Settings');
+  expect(editorPanel().querySelector('[data-panel-level]')).toBeNull();
+  expectAdminView();
+});
+
+it('focuses chartr mobile navigation and returns focus on Escape', async () => {
+  const chartr = layoutDefinitions.find((d) => d.id === 'chartr')!;
+  await mount(selectLayout(structuredClone(content), chartr));
+  await click('Site Layout');
+  const toggle = host.querySelector<HTMLButtonElement>('[data-menu-toggle]')!;
+  await act(async () => toggle.click());
+  expect(toggle.getAttribute('aria-expanded')).toBe('true');
+  const firstLink = host.querySelector('nav.mobile-menu a')!;
+  expect(document.activeElement).toBe(firstLink);
+  await act(async () =>
+    firstLink.dispatchEvent(
+      new KeyboardEvent('keydown', {
+        key: 'Escape',
+        bubbles: true,
+      }),
+    ),
+  );
+  expect(toggle.getAttribute('aria-expanded')).toBe('false');
+  expect(document.activeElement).toBe(toggle);
+});
+
+it('gives nested navigation items their own levels, returning one parent at a time', async () => {
+  const initial = structuredClone(content);
+  initial.site.header = {
+    brand: 'Site',
+    items: [
+      {
+        _rowId: 'group-one',
+        label: 'Resources',
+        links: [
+          {
+            _rowId: 'link-one',
+            label: 'Documentation',
+            url: '/docs',
+            description: 'Manual',
+          },
+        ],
+      },
+    ],
+  };
+  await mount(initial);
+  await click('Site Layout');
+  await click('Resources');
+  const level = () =>
+    editorPanel().querySelector<HTMLElement>(
+      '[data-panel-level]:not([hidden])',
+    )!;
+  expect(level().querySelector('h2')?.textContent).toBe('Resources');
+  expect(
+    editorPanel()
+      .querySelector('[aria-label="Site title"]')
+      ?.closest('[hidden]'),
+  ).not.toBeNull();
+  await click('Documentation');
+  expect(level().querySelector('h2')?.textContent).toBe('Documentation');
+  expect(
+    editorPanel().querySelector('[aria-label="Label"]')?.closest('[hidden]'),
+  ).not.toBeNull();
+  await input('Description', 'Updated manual');
+  await click('← Back', level());
+  expect(level().querySelector('h2')?.textContent).toBe('Resources');
+  expect(level().textContent).toContain('Documentation');
+  await click('← Back', level());
+  expect(level()).toBeNull();
+  expect(
+    editorPanel()
+      .querySelector('[aria-label="Site title"]')
+      ?.closest('[hidden]'),
+  ).toBeNull();
+  expect(
+    (readRecovery()!.content.site.layout!.settings.header as any).items[0]
+      .links[0].description,
+  ).toBe('Updated manual');
+});
 async function click(label: string, scope?: Element) {
-  await act(async () => button(label, scope).click());
+  await act(async () => {
+    button(label, scope).click();
+  });
+  await act(async () => {
+    await vi.dynamicImportSettled();
+  });
 }
 async function input(label: string, value: string) {
   const el = editorPanel().querySelector<HTMLInputElement>(
@@ -139,13 +263,15 @@ function expectAdminView() {
 
 it('preserves site width across navigation and scopes it to the live preview', async () => {
   await mount();
-  await click('Site');
+  await click('Settings');
   await input('Content max-width', '880');
   expect(readRecovery()?.content.site.globals.contentMaxWidth).toBe(880);
   await click('Pages');
   await click('Home');
   const preview = () =>
-    host.querySelector<HTMLElement>('[aria-label="Live preview"]')!;
+    host.querySelector<HTMLElement>(
+      '[aria-label="Live preview"] .starter-layout',
+    )!;
   expect(preview().style.getPropertyValue('--site-content-max-width')).toBe(
     '880px',
   );
@@ -154,7 +280,7 @@ it('preserves site width across navigation and scopes it to the live preview', a
       .querySelector<HTMLElement>('aside')!
       .style.getPropertyValue('--site-content-max-width'),
   ).toBe('');
-  await click('Site');
+  await click('Settings');
   expect(
     editorPanel().querySelector<HTMLInputElement>(
       '[aria-label="Content max-width"]',
@@ -170,31 +296,35 @@ it('preserves site width across navigation and scopes it to the live preview', a
 
 it('edits site fonts, size, line height and gutter together, recovers them and clears numeric overrides', async () => {
   await mount();
-  await click('Site');
+  await click('Site Layout');
   for (const [label, choice] of [
     ['Body font', 'Arial'],
     ['Heading font', 'Georgia'],
   ]) {
-    await act(async () =>
-      editorPanel()
-        .querySelector<HTMLButtonElement>(`[aria-label="${label}"]`)!
-        .click(),
+    const trigger = editorPanel().querySelector<HTMLButtonElement>(
+      `[aria-label="${label}"]`,
+    )!;
+    await act(async () => trigger.click());
+    const popup = document.getElementById(
+      trigger.getAttribute('aria-controls')!,
     );
+    expect(popup).not.toBeNull();
     await act(async () =>
-      [...document.querySelectorAll<HTMLElement>('[role="option"]')]
+      [...popup!.querySelectorAll<HTMLElement>('[role="option"]')]
         .find((option) => option.textContent === choice)!
         .click(),
     );
   }
   await input('Body font size', '18');
   await input('Body line height', '1.8');
+  await click('Settings');
   await input('Page gutter', '40');
-  expect(readRecovery()?.content.site.globals).toMatchObject({
+  expect(readRecovery()?.content.site.globals.pageGutter).toBe(40);
+  expect(readRecovery()?.content.site.layout?.settings).toMatchObject({
     bodyFont: 'arial',
     headingFont: 'georgia',
     bodyFontSize: 18,
     bodyLineHeight: 1.8,
-    pageGutter: 40,
   });
   // A remount exercises actual tab recovery rather than passing edited initial props.
   await act(async () => root.unmount());
@@ -203,7 +333,9 @@ it('edits site fonts, size, line height and gutter together, recovers them and c
   await click('Pages');
   await click('Home');
   const preview = () =>
-    host.querySelector<HTMLElement>('[aria-label="Live preview"]')!;
+    host.querySelector<HTMLElement>(
+      '[aria-label="Live preview"] .starter-layout',
+    )!;
   expect(preview().classList.contains('site-surface')).toBe(true);
   const expected = {
     '--site-body-font': 'Arial, Helvetica, sans-serif',
@@ -221,7 +353,7 @@ it('edits site fonts, size, line height and gutter together, recovers them and c
         ?.closest('.site-surface'),
     ).toBeNull();
   }
-  await click('Site');
+  await click('Site Layout');
   expect(
     editorPanel().querySelector('[aria-label="Body font"]')?.textContent,
   ).toContain('Arial');
@@ -230,6 +362,7 @@ it('edits site fonts, size, line height and gutter together, recovers them and c
   ).toContain('Georgia');
   await input('Body font size', '');
   await input('Body line height', '');
+  await click('Settings');
   await input('Page gutter', '');
   await click('Pages');
   await click('Home');
@@ -343,7 +476,7 @@ it('starts at Pages and keeps navigation available outside the nested editing si
   expect(host.querySelector('[aria-label="Live preview"]')).toBeNull();
   expect(
     host.querySelectorAll('[aria-label="Editor areas"] button'),
-  ).toHaveLength(5);
+  ).toHaveLength(6);
   await click('Pages');
   expect(editorPanel()).toBeNull();
   expect(host.querySelector('[aria-label="Live preview"]')).toBeNull();
@@ -352,7 +485,7 @@ it('starts at Pages and keeps navigation available outside the nested editing si
   expect(button('Pages').getAttribute('aria-current')).toBe('page');
   expect(
     host.querySelectorAll('[aria-label="Editor areas"] button'),
-  ).toHaveLength(5);
+  ).toHaveLength(6);
   expect(editorPanel().querySelector('[aria-label="Editor areas"]')).toBeNull();
   expect(editorPanel().querySelector('[aria-label="Page"]')).toBeNull();
   await input('Page title', 'Changed page');
@@ -371,11 +504,12 @@ it('starts at Pages and keeps navigation available outside the nested editing si
   expect(button('Media').getAttribute('aria-current')).toBe('page');
   expect(editorPanel().textContent).toContain('Storage settings');
   expect(editorPanel().querySelector('[aria-label="Editor areas"]')).toBeNull();
-  await click('Site');
+  await click('Settings');
   expectAdminView();
   expect(
-    editorPanel().querySelector('[aria-label="Site title"]'),
+    editorPanel().querySelector('[aria-label="Content max-width"]'),
   ).not.toBeNull();
+  expect(editorPanel().querySelector('[aria-label="Site title"]')).toBeNull();
 });
 
 it('lists every page and keeps page edits through the table and block hierarchy', async () => {
@@ -537,4 +671,53 @@ it('assigns only generic pages to schemas and persists an explicit data-only sel
   );
   expect(selector().textContent).toContain('None · data only');
   expect(readRecovery()?.content.collections[0].genericPageId).toBeUndefined();
+});
+
+it('keeps an excluded active layout editable while restricting future selections and keeping previews nonmutating', async () => {
+  await mount(content, ['chartr']);
+  await click('Site Layout');
+  const before = structuredClone(readRecovery()!.content);
+  expect(
+    editorPanel().querySelector('[aria-label="Site title"]'),
+  ).not.toBeNull();
+  await click('Change layout');
+  let dialog = host.querySelector('[role="dialog"]')!;
+  expect(dialog.querySelector('[aria-label="Use Starter layout"]')).toBeNull();
+  expect(
+    dialog.querySelector('[aria-label="Use chartr layout"]'),
+  ).not.toBeNull();
+  await act(async () =>
+    (
+      dialog.querySelector(
+        '[aria-label="Preview chartr layout"]',
+      ) as HTMLElement
+    ).click(),
+  );
+  await act(async () => {
+    await vi.dynamicImportSettled();
+  });
+  expect(readRecovery()!.content).toEqual(before);
+  await act(async () =>
+    (
+      dialog.querySelector('[aria-label="Close layout library"]') as HTMLElement
+    ).click(),
+  );
+  expect(readRecovery()!.content).toEqual(before);
+  await click('Change layout');
+  dialog = host.querySelector('[role="dialog"]')!;
+  await act(async () =>
+    (
+      dialog.querySelector('[aria-label="Use chartr layout"]') as HTMLElement
+    ).click(),
+  );
+  await act(async () => {
+    await vi.dynamicImportSettled();
+  });
+  expect(readRecovery()!.content.site.layout?.id).toBe('chartr');
+  expect(readRecovery()!.content.pages).toEqual(before.pages);
+  expect(readRecovery()!.content.entries).toEqual(before.entries);
+  await click('Change layout');
+  expect(
+    host.querySelector('[role="dialog"] [aria-label="Use Starter layout"]'),
+  ).toBeNull();
 });

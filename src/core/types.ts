@@ -68,11 +68,32 @@ export interface Media extends Envelope {
   variants: MediaFile[];
 }
 export interface Site extends Envelope {
-  title: string;
   globals: Values;
-  navigation: { id: string; label: string; to: Link }[];
+  layout?: LayoutSelection;
+  /** Legacy Site Options, read losslessly into the starter layout. */
+  title?: string;
+  navigation?: { id: string; label: string; to: Link }[];
   header?: Values;
   footer?: Block;
+}
+export interface LayoutSelection {
+  id: string;
+  version: number;
+  settings: Values;
+}
+export interface LayoutDefinition {
+  id: string;
+  version: number;
+  label: string;
+  description: string;
+  deprecated?: boolean;
+  activation: 'never' | 'load';
+  defaults: Values;
+  fields: Field[];
+  component: string;
+  settingsComponent: string;
+  policy: string;
+  headComponent?: string;
 }
 export interface Content {
   site: Site;

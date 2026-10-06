@@ -1,0 +1,26 @@
+[
+  {
+    "path": "/",
+    "status": 200,
+    "errorPage": false,
+    "title": "Home · A place for good ideas"
+  },
+  {
+    "path": "/chartr/",
+    "status": 200,
+    "errorPage": false,
+    "title": "chartr · A place for good ideas"
+  },
+  {
+    "path": "/admin/",
+    "status": 200,
+    "errorPage": false,
+    "title": "Site editor"
+  },
+  {
+    "path": "/journal/a-slower-way-to-build/",
+    "status": 200,
+    "errorPage": false,
+    "title": "A slower way to build · A place for good ideas"
+  }
+]

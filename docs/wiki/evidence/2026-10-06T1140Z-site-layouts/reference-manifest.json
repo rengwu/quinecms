@@ -1,0 +1,54 @@
+{
+  "source": "../chartr-site-v2/site",
+  "readOnly": true,
+  "files": [
+    {
+      "path": "index.html",
+      "sha256": "25b243b199effaa86abab528b03dab11296a9582ae8f2b9cb03316b6eae056ae"
+    },
+    {
+      "path": "assets/chartr.css",
+      "sha256": "f642bc38fa5b3808c928aaca455e59f21c84eaa7883065b5bd9d74f8ef9b1ad1"
+    },
+    {
+      "path": "assets/themes.css",
+      "sha256": "e964fa0e15d982f5a896fadc8774b5288b7f0832e7b40726979d2a5a4b7badfa"
+    },
+    {
+      "path": "assets/themes.js",
+      "sha256": "a88eb0e880ae2922b13ed4d3e00635423dcb12a0b8e08158b81a9c884dec75fd"
+    },
+    {
+      "path": "assets/theme-init.js",
+      "sha256": "d823a33fd6f8cd68ac4472c93e40e9fde8693e6022bd928ecd02c639ab68726b"
+    },
+    {
+      "path": "assets/workspace-demo.js",
+      "sha256": "7f6d822a2d90e09f67fd4a70d9e4f7a822845ee7880513de4595045e7bc8b785"
+    },
+    {
+      "path": "assets/pane-demo.js",
+      "sha256": "20292ad188a2f4c81cc00162ef8e520e15ba02f12156bfe768e42323195625e3"
+    },
+    {
+      "path": "assets/theme-picker.js",
+      "sha256": "e71f0df4a012b440d7f972781cdcba2ba8bf164f038ce14df116e427d4ef31d8"
+    },
+    {
+      "path": "assets/demo-primitives.js",
+      "sha256": "4107b825a103de45bb0d67b9c8b197e8f33b8e5e5c619e4b7f868ed41dd6e4bf"
+    },
+    {
+      "path": "assets/demo-motion.js",
+      "sha256": "aa04f430f36dafbcb89f5dd6d8a3e5fcc72232cf748c25975aa6b4c135a98239"
+    },
+    {
+      "path": "assets/native-themes.js",
+      "sha256": "d0c11b190b7147476aa1bbb314bbac517b54f1e696c02421792aa1e72641812e"
+    }
+  ],
+  "liveURL": "https://chartr.dev/",
+  "observedRelease": "v0.3.0",
+  "observedDate": "2026-10-06",
+  "liveHTMLSha256": "9bcdfbbdd0a5fc8e8a22c46a7571a3806a11c0a8d706d9e2b1a6dcc2a0b98e49"
+}

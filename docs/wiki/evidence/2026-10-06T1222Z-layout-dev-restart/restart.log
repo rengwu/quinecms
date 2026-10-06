@@ -1,0 +1,11 @@
+
+> lean-sitebuilder@0.1.0 dev /Users/rengwu/Desktop/Projects/lean-sitebuilder
+> pnpm prepare:blocks && astro dev --host 127.0.0.1
+
+
+> lean-sitebuilder@0.1.0 prepare:blocks /Users/rengwu/Desktop/Projects/lean-sitebuilder
+> node scripts/generate-blocks.mjs
+
+Registered 93 block versions.
+Registered 2 layout versions.
+{"message":"Dev server running at http://127.0.0.1:4321 (pid 32762)\n  Stop:   astro dev stop\n  Status: astro dev status\n  Logs:   astro dev logs","label":"SKIP_FORMAT","level":"info"}

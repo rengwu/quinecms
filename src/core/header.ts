@@ -29,8 +29,8 @@ export const headerFields: Field[] = [
 export function headerValues(content: Content): Values {
   return (
     content.site.header ?? {
-      brand: content.site.title,
-      items: content.site.navigation.map((n) => ({
+      brand: content.site.title ?? '',
+      items: (content.site.navigation ?? []).map((n) => ({
         _rowId: n.id,
         label: n.label,
         url: resolveLink(content, n.to) ?? '',

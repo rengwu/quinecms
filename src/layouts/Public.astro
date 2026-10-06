@@ -1,8 +1,8 @@
 ---
 import type { Content } from '../core/types';
-import SiteHeader from '../site/Header';
-import Footer from '../generated/Footer.astro';
-import { siteStyle } from '../core/site-style';
+import SelectedLayout from '../generated/SelectedLayout.astro';
+import SelectedHead from '../generated/SelectedHead.astro';
+import { layoutTitle } from '../core/layouts';
 import '../styles/public.css';
 interface Props {
   content: Content;
@@ -12,22 +12,17 @@ const { content, title } = Astro.props;
 ---
 
 <!doctype html>
-<html
-  lang="en"
-  data-theme={content.site.globals.theme}
-  style={siteStyle(content.site.globals)}
->
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width" />
     <meta name="generator" content={Astro.generator} />
-    <title>{title} · {content.site.title}</title>
+    <title>{[title, layoutTitle(content.site)].filter(Boolean).join(' · ')}</title>
+    <SelectedHead content={content} />
   </head>
-  <body class="site-surface">
-    <SiteHeader content={content} />
-    <main>
+  <body data-layout-surface>
+    <SelectedLayout content={content}>
       <slot />
-    </main>
-    <Footer content={content} />
+    </SelectedLayout>
   </body>
 </html>

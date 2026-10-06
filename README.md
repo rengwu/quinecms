@@ -18,7 +18,7 @@ pnpm build
 pnpm preview
 ```
 
-Stop the background preview with `pnpm exec astro preview stop`.
+Stop the background development instance with `pnpm exec astro dev stop`; stop the production preview with `pnpm exec astro preview stop`. After adding generated imports, routes or registry entries, stop the existing dev instance before running `pnpm dev` again; starting another launcher does not replace the already-running server.
 
 `dist/` contains deployable static files. `/` demonstrates React, Svelte, Vue, and vanilla blocks; `/blocks/` contains two independent interactive React islands; `/journal/` and its two sample entries need no JavaScript.
 
@@ -60,7 +60,7 @@ Live GitHub writes, R2 CORS/uploads, and Netlify deployment require your account
 
 ## Content and blocks
 
-- `content/site.json`: title, optional globals, ID-based navigation.
+- `content/site.json`: active layout ID/version/settings and optional shared width/gutter globals; legacy Site Options convert to Starter on editor load.
 - `content/pages/<id>.json`: stable ID, static/generic kind, ordered blocks; only static pages have a public path.
 - `content/collections/<id>.json`: schema fields, URL prefix and an optional generic page ID.
 - `content/entries/<collectionId>/<id>.json`: slug and schema values only.
@@ -73,7 +73,7 @@ To install a block, create its version directory, add `definition.json` and a sh
 
 React/Svelte/Vue renderers receive `{ props, context }`. Vanilla modules export `render(props, context)` and `mount(host, props, context)` returning `{ update, destroy }`. Framework adapters supply that lifecycle automatically for live preview. Public activation is `never`, `visible`, `idle`, or `load`. Use CSS Modules or framework-scoped CSS and container-relative sizing for preview parity; shell resets belong to the layout. Keep installed code trusted and tolerate blank draft props.
 
-**Site → Content max-width (px)** sets `site.globals.contentMaxWidth`. It defaults to 1200px when omitted or cleared. The public shell and live preview expose the same `--site-content-max-width` CSS variable. Block authors are encouraged to use it for their centered content container; adherence is optional. Full-width backgrounds and narrower line lengths remain block design choices. The limit includes the container's padding and never forces a minimum viewport width:
+**Settings → Content max-width (px)** sets `site.globals.contentMaxWidth`. It defaults to 1200px when omitted or cleared. The public shell and live preview expose the same `--site-content-max-width` CSS variable. Block authors are encouraged to use it for their centered content container; adherence is optional. Full-width backgrounds and narrower line lengths remain block design choices. The limit includes the container's padding and never forces a minimum viewport width:
 
 ```css
 .content {
@@ -87,7 +87,7 @@ React/Svelte/Vue renderers receive `{ props, context }`. Vanilla modules export 
 
 The raw setting is also available in `context.globals.contentMaxWidth`; `contentMaxWidth()` from `src/core/site-style.ts` resolves the numeric default for JavaScript uses such as image sizing. Admin controls do not inherit the public-site variable.
 
-Site also exposes **Body font**, **Heading font**, **Body font size (px)**, **Body line height** (a unitless multiplier) and **Page gutter (px)**. Globals are `bodyFont`, `headingFont`, `bodyFontSize`, `bodyLineHeight` and `pageGutter`. Defaults are `system`, `system`, 16, 1.6 and 24. Font IDs `system`, `arial`, `georgia`, `times` and `mono` select built-in system/fallback stacks; no font download is required. Missing/null values use defaults. Font size and line height must be finite positive numbers; gutter permits zero.
+The Starter layout exposes **Body font**, **Heading font**, **Body font size (px)** and **Body line height** in its own settings (`bodyFont`, `headingFont`, `bodyFontSize`, `bodyLineHeight`). **Page gutter (px)** remains in shared Settings as `site.globals.pageGutter`. Defaults are `system`, `system`, 16, 1.6 and 24. Font IDs `system`, `arial`, `georgia`, `times` and `mono` select built-in system/fallback stacks; no font download is required. Missing/null values use defaults. Font size and line height must be finite positive numbers; gutter permits zero.
 
 The matching tokens are `--site-body-font`, `--site-heading-font`, `--site-body-font-size`, `--site-body-line-height` and `--site-page-gutter`. The public shell and preview apply body typography and heading fonts at their `.site-surface` boundary. Starter blocks inherit body line height and use `em` for relative font sizes so changes behave equally in the public document and preview. Display-heading line heights and vertical block spacing remain block choices. The gutter controls horizontal container padding and is included inside content max-width. These are recommended defaults for block authors, not enforced styling for every custom block; admin UI retains its own typography and 867px layout.
 
@@ -95,6 +95,26 @@ The matching tokens are `--site-body-font`, `--site-heading-font`, `--site-body-
 Block widgets are registered in `src/editor/widgets.ts`. They receive the JSON value, field, change callback, read-only state, and errors. Compound fields register a shared pure validator in `src/core/custom-fields.ts`. The Hero v2 design control demonstrates both. Collection fields remain limited to text, rich text, number, date, toggle, select, and media.
 
 Retain old version directories and their widgets/validators. A version switch carries compatible same-key fields; unmatched fields are null until explicitly entered. **Cancel block changes** restores the last loaded/saved instance. A missing implementation preserves content but blocks publication.
+
+## Site Layouts
+
+**Site Layout** owns the active wrapper and author settings, with a selected-page live preview. **Settings** retains content max-width, page gutter, Backups and Session. Layout cards apply defaults to the local draft; their separate Preview action does not change it. Switching layouts or implementation versions resets settings, preserves page/block/entry content and shared geometry, and keeps no inactive settings cache. Save/Publish works as before.
+
+The site's canonical selection is `site.layout = { id, version, settings }`. Legacy Site Options convert to Starter v1 on editor load. Keep old layout versions installed: an existing site stays pinned until an explicit version change. Layout variables are optional for every block; the picker adds no styling-adherence categories or compatibility restrictions.
+
+To install a layout, add `src/site-layouts/<id>/vN/definition.json`, register the directory in `layouts.config.mjs`, and rebuild. The definition names a React wrapper, React settings component and pure policy module, plus defaults, optional field definitions (`fields: []` is valid), display metadata, public activation (`never`/`load`) and optional server-rendered Head component. The wrapper receives settings, public content and block children; the settings UI receives settings/content and `onChange`. Policies may derive title/globals and validate author-defined data. See `src/core/layout-contract.ts` and the [authoring contract](docs/wiki/features/site-layouts.md).
+
+Scope styles to the website surface and release listeners/observers on unmount. Use shared `Fields` for standard controls and `PanelLevel` for custom drill-downs: nested item editing always occupies a dedicated level, with Back returning to its parent. Never place a detail editor inline among parent or sibling controls.
+
+A hidden build environment setting controls the offered layouts:
+
+```sh
+SITE_LAYOUT_WHITELIST=starter,chartr
+```
+
+Unset offers all installed layouts. An explicitly empty list or unknown ID fails configuration. An excluded active layout still renders, previews, edits and validates normally; the restriction applies to future selections. It is not an access-control mechanism.
+
+For the chartr recreation, choose **chartr** in the layout picker and select **chartr** as the preview page. `/chartr` contains nine independent blocks with editable content, real DOM workspace/pane demonstrations, fifteen app palettes and a download dialog. The existing source site's Starter selection is preserved. `examples/chartr-backup.json` is an optional importable composition with chartr selected and the existing pages/entries retained; importing replaces the local draft. The adjacent reference repository was not changed. See [chartr details](docs/wiki/features/chartr.md).
 
 ## Generic pages and collections
 

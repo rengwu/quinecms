@@ -1,0 +1,8 @@
+Native Safari via CUA, 2026-10-06, http://127.0.0.1:4321.
+Created an owned test tab from the existing Start Page.
+Home rendered headings Make something lasting. and Room for your ideas, with no import error.
+Svelte Add one changed its count to 1; Vue FAQ expanded and showed its answer.
+/chartr/ rendered all nine section headings, workspace view cards and fifteen palette controls.
+Tabs card changed from 0 to 1, selected the internal Tabs tab, and announced Tabs view. expensif, 4 tabs. claude and Wayfinder selected.
+The existing source content remains on Starter; these checks intentionally exercise its public wrapper with the generated empty Head.
+No browser content edits were saved and no providers were contacted.

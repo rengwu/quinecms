@@ -1,0 +1,11 @@
+Browser observations by the implementing agent, 2026-10-06.
+Native Safari through CUA, using a separate owned window. These are visual observations, not scripted DOM geometry measurements or a full pixel comparison.
+
+1. Public /chartr/ under committed Starter settings (1200px maximum width, 24px gutter): blocks are centered within the page. Section rules and labels stay within content bounds and align with the Starter header content edge. The section background continues across the viewport. All nine blocks are returned by the running development route.
+2. In the owned /admin/ tab draft only, changed width to 680px and gutter to 48px, then selected the chartr preview page. Under Starter, the blocks remain centered and use the narrower available width; the side rail collapses above the section content.
+3. Switched the owned draft to the chartr layout with the same shared geometry. Content bounds remain consistent with the preceding Starter preview. The header aligns with block content, its navigation collapses for the available width, and no second content gutter is added.
+4. Toggled to the 390px mobile preview. Visually observed one 20px mobile gutter, fitting header actions, wrapped hero text, stacked cards and a fitting native app preview. No horizontal overflow was visible in the sampled preview.
+
+The user-provided screenshots supplied the reference and failing baseline. This run did not perform a full reference pixel diff or a physical-device matrix. Smaller explicit gutters, including zero, are preserved by the CSS min() rule; they were not separately exercised in this browser run.
+
+No Save draft, Publish, backup import or provider write was performed. The owned Safari window was closed and the original Start Page window restored. The user's browser was not altered. content/site.json is unchanged. The development server at http://127.0.0.1:4321 remains running.

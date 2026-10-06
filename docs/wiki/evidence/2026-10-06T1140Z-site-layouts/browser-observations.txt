@@ -1,0 +1,30 @@
+2026-10-06 — native Safari browser observations by implementing agent.
+Drivers: CUA native accessibility tree and screenshots. No injected browser evaluation.
+Development: http://127.0.0.1:4321/admin/. Production fixture: http://127.0.0.1:4339/.
+Production built with active chartr v1 and SITE_LAYOUT_WHITELIST=starter; no .env credentials copied.
+
+Observed during implementation:
+- Development editor mounted its Pages table and six destinations.
+- Starter custom settings and Home preview rendered; candidate chartr Preview could be left without changing the active Starter selection, and Use chartr applied it locally.
+- Existing mixed-framework Home content rendered inside chartr. Reload recovered the active layout.
+- Preview page -> chartr showed all nine sections and actual interactive DOM demos.
+- Header navigation -> Workspace replaced every parent settings section with Back / Workspace / Header navigation / Label / URL / Remove item. Focus moved to Workspace heading. Back restored settings.
+- Footer links -> GitHub did the same. Final compiled editor repeated this check: screenshot showed only Back / GitHub / Footer links / Label / URL / Remove item in the entire inspector; preview remained visible.
+- Public /chartr/ rendered compact desktop header, section rail and text column, view cards, native app preview and reference typography. Switching website appearance changed dark to light; button became Switch to dark mode.
+- Workspace Tabs card selected Tabs in the app preview; status became Tabs view. expensif, 4 tabs. claude and Wayfinder selected. The other app preview remained Spaces.
+- App palette chartr Light became selected and announced chartr Light applied to all chartr previews. Website appearance was independent.
+- Header Download chartr opened the native download dialog with six v0.3.0 package links (macOS, Ubuntu x86_64/ARM64, Arch/Omarchy, Linux x86_64/ARM64). Close returned focus to the header action. No package installation was attempted.
+
+Final compiled fixture observations:
+- Production editor mounted Pages and all six sidebar destinations. Site Layout resolved active chartr although excluded by the whitelist, with title, description, appearance, header and footer controls intact.
+- Change layout offered only Use Starter layout and Preview Starter layout. Closing retained chartr and its title.
+- At the 390px mobile preview width, the header collapsed to brand / appearance / Download / menu, the introduction and rails stacked, and view cards became vertical. Light and dark website appearances were visually checked; editor colors and controls remained unchanged.
+- Opening mobile navigation focused Workspace. Escape collapsed the menu and restored Open navigation button focus (confirmed in accessibility output after the final focus fix).
+- Safari Web Inspector Console was empty in the compiled editor sample. Navigating to public /chartr/ with the console open showed no error/warning entries after hydration.
+- The owned Safari test tab was closed back to the pre-existing Start Page. The user's Helium session was left alone during final checks.
+
+Boundaries:
+- Visual review is sampled and source-backed, not a pixel-diff or physical-device matrix.
+- Reduced motion, multiple instance isolation and lifecycle cleanup are additionally tested with controlled jsdom observers/frame scheduling. This is not a browser memory/profile assertion.
+- Package destination URLs were inspected; no binary was installed.
+- Live GitHub writes, R2 uploads/CORS and Netlify deployment were not exercised.

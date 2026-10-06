@@ -1,0 +1,106 @@
+.library {
+  width: 100%;
+  padding: 56px 24px 24px;
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.heading {
+  padding-right: 32px;
+}
+.heading h2 {
+  margin: 0 0 8px;
+  font-size: 22px;
+}
+.heading p {
+  margin: 0;
+  color: var(--color-kumo-subtle);
+  font-size: 13px;
+}
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 20px;
+}
+.card {
+  border: 1px solid var(--color-kumo-line);
+  background: var(--color-kumo-base);
+  border-radius: 10px;
+  overflow: hidden;
+  padding-bottom: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.card > button:last-child {
+  align-self: flex-start;
+  margin-left: 14px;
+}
+.choose {
+  border: 0;
+  background: none;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+  padding: 0 0 0;
+}
+.choose > strong,
+.choose > span {
+  display: block;
+  margin: 12px 14px 0;
+}
+.choose > span {
+  color: var(--color-kumo-subtle);
+  font-size: 12px;
+  line-height: 1.5;
+}
+.choose:hover {
+  background: var(--color-kumo-tint);
+}
+.thumbnail {
+  height: 180px;
+  overflow: hidden;
+  background: #f0f1f0;
+  container-type: inline-size;
+}
+.miniature {
+  width: 1000px;
+  transform: scale(0.3);
+  transform-origin: top left;
+  pointer-events: none;
+}
+.sample {
+  height: 290px;
+  padding: 64px 100px;
+  display: grid;
+  gap: 18px;
+}
+.sample div {
+  border-radius: 6px;
+  background: currentColor;
+  opacity: 0.12;
+}
+.sample div:first-child {
+  width: 50%;
+}
+.sample div:last-child {
+  width: 75%;
+}
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.preview {
+  width: 100%;
+  background: white;
+  margin: auto;
+  container-type: inline-size;
+}
+.preview[data-mobile='true'] {
+  max-width: 390px;
+}

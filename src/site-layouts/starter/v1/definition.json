@@ -1,0 +1,12 @@
+{
+  "id": "starter",
+  "version": 1,
+  "label": "Starter",
+  "description": "A flexible header, grouped navigation, optional footer and familiar typography controls.",
+  "activation": "never",
+  "defaults": { "title": "My site", "theme": "light", "navigation": [] },
+  "fields": [],
+  "component": "View.tsx",
+  "settingsComponent": "Settings.tsx",
+  "policy": "policy.ts"
+}

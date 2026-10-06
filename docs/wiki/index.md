@@ -5,6 +5,12 @@ status: Accepted
 ---
 # lean-sitebuilder
 
+Latest repair: [chartr content width and spacing](verification/runs/2026-10-06T1426Z-chartr-spacing.md); independent blocks now own centered bounds under either layout, consume shared geometry, and avoid duplicate gutters. Desktop/mobile browser checks and all 132 tests pass.
+
+Implemented: [Site Layout library](features/site-layouts.md) and [chartr layout with nine independent blocks](features/chartr.md). Site Layout owns selection, author settings and a selected-page preview; Settings retains shared width/gutter, Backups and Session. Active layout versions are pinned, switching uses defaults, and the hidden whitelist filters only future choices. The user's latest correction requires dedicated nested editor levels everywhere (DEC-108).
+
+[Implementation journal](journal/2026-10-06-site-layouts-implementation.md) · [Verification report](verification/runs/2026-10-06T1140Z-site-layouts.md). Accepted design and interview history remain in [Site Layouts](discussions/site-layouts.md), [chartr recreation](discussions/chartr-recreation.md) and the [decision register](decisions/index.md).
+
 Implemented: [searchable block library](features/block-library.md), with 45 base layouts, 27 generic counterparts, repeatable content/schema lists, collection mappings, native forms and shared header/footer. [Implementation journal](journal/2026-10-06-block-library-implementation.md) and [verification report](verification/runs/2026-10-06T1320Z-block-library.md).
 
 Latest refinement: [catalog dialog polish](verification/runs/2026-10-06T0619Z-catalog-polish.md), with one scrolling body, a single-line tag strip, a persistent Reset control, smaller cards and a top-right close icon.

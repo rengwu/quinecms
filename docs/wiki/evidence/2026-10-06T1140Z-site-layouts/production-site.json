@@ -1,0 +1,59 @@
+{
+  "formatVersion": 1,
+  "id": "site_main",
+  "globals": {
+    "contentMaxWidth": 1200,
+    "theme": "light",
+    "bodyFont": "system",
+    "headingFont": "system",
+    "bodyFontSize": 16,
+    "bodyLineHeight": 1.6,
+    "pageGutter": 24
+  },
+  "layout": {
+    "id": "chartr",
+    "version": 1,
+    "settings": {
+      "title": "chartr",
+      "brand": "chartr",
+      "appearance": "system",
+      "allowToggle": true,
+      "homeURL": "/",
+      "navigation": [
+        {
+          "_rowId": "nav-0",
+          "label": "Workspace",
+          "url": "#preview"
+        },
+        {
+          "_rowId": "nav-1",
+          "label": "Plugins",
+          "url": "#plugins"
+        },
+        {
+          "_rowId": "nav-2",
+          "label": "Docs",
+          "url": "https://github.com/rengwu/chartr/tree/v0.3.0/docs"
+        }
+      ],
+      "sourceLabel": "GitHub",
+      "sourceURL": "https://github.com/rengwu/chartr",
+      "downloadLabel": "Download chartr",
+      "downloadURL": "https://github.com/rengwu/chartr/releases/tag/v0.3.0",
+      "footerLinks": [
+        {
+          "_rowId": "footer-0",
+          "label": "GitHub",
+          "url": "https://github.com/rengwu/chartr"
+        },
+        {
+          "_rowId": "footer-1",
+          "label": "License",
+          "url": "https://github.com/rengwu/chartr/blob/v0.3.0/LICENSE-GPL"
+        }
+      ],
+      "copyright": "© 2026 chartr",
+      "description": "chartr is a native workspace for terminal agents. Organize projects, arrange panes, add tools through plugins, and return to your running sessions."
+    }
+  }
+}

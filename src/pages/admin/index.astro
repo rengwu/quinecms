@@ -1,11 +1,13 @@
 ---
 import { createHash } from 'node:crypto';
 import { loadContent } from '../../core/load';
+import { layoutWhitelist } from '../../core/layouts';
 import App from '../../editor/App';
 import '../../styles/public.css';
 const initial = await loadContent();
 const password = import.meta.env.ADMIN_PASSWORD;
 const config = {
+  allowedLayoutIds: layoutWhitelist(import.meta.env.SITE_LAYOUT_WHITELIST),
   passwordHash: password
     ? createHash('sha256').update(password).digest('hex')
     : '',

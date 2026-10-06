@@ -1,0 +1,15 @@
+{
+  "generatedHeadExists": true,
+  "generatedHeadBytes": 8,
+  "headErrorCount": 58,
+  "lastError": {
+    "message": "Could not import `../generated/SelectedHead.astro`.\n  Hint:\n    This is often caused by a typo in the import path. Please make sure the file exists.\n  Error reference:\n    https://docs.astro.build/en/reference/errors/failed-to-load-module-ssr/\n  Stack trace:\n    at loadAndTransform (file:///Users/rengwu/Desktop/Projects/lean-sitebuilder/node_modules/.pnpm/vite@8.3.2_@types+node@22.20.5_esbuild@0.28.2_yaml@2.9.1/node_modules/vite/dist/node/chunks/node.js:19977:31)\n    at async handleInvoke (file:///Users/rengwu/Desktop/Projects/lean-sitebuilder/node_modules/.pnpm/vite@8.3.2_@types+node@22.20.5_esbuild@0.28.2_yaml@2.9.1/node_modules/vite/dist/node/chunks/node.js:25138:21)",
+    "label": null,
+    "level": "error"
+  },
+  "routes": {
+    "/": 500,
+    "/chartr/": 500,
+    "/admin/": 200
+  }
+}

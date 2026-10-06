@@ -1,0 +1,164 @@
+{
+  "type": "chartr-agents",
+  "version": 1,
+  "label": "chartr · Agents",
+  "description": "From the chartr website. Works independently in any site layout.",
+  "theme": "chartr",
+  "tags": ["logos"],
+  "framework": "vanilla",
+  "activation": "never",
+  "component": "View.ts",
+  "fields": [
+    {
+      "key": "label",
+      "label": "Section label",
+      "type": "text"
+    },
+    {
+      "key": "heading",
+      "label": "Heading",
+      "type": "text"
+    },
+    {
+      "key": "agents",
+      "label": "Agents",
+      "type": "list",
+      "fields": [
+        {
+          "key": "name",
+          "label": "Name",
+          "type": "text",
+          "required": true
+        },
+        {
+          "key": "mark",
+          "label": "Logo",
+          "type": "select",
+          "options": [
+            {
+              "value": "codex",
+              "label": "codex"
+            },
+            {
+              "value": "claude",
+              "label": "claude"
+            },
+            {
+              "value": "opencode",
+              "label": "opencode"
+            },
+            {
+              "value": "grok",
+              "label": "grok"
+            },
+            {
+              "value": "pi",
+              "label": "pi"
+            },
+            {
+              "value": "kimi",
+              "label": "kimi"
+            },
+            {
+              "value": "omp",
+              "label": "omp"
+            },
+            {
+              "value": "hermes",
+              "label": "hermes"
+            },
+            {
+              "value": "goose",
+              "label": "goose"
+            },
+            {
+              "value": "gemini",
+              "label": "gemini"
+            },
+            {
+              "value": "aider",
+              "label": "aider"
+            },
+            {
+              "value": "kilo",
+              "label": "kilo"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "anchor",
+      "label": "Section anchor",
+      "type": "text"
+    }
+  ],
+  "defaults": {
+    "label": "Agents",
+    "heading": "Run agents you already own",
+    "agents": [
+      {
+        "_rowId": "agents-0",
+        "name": "Codex",
+        "mark": "codex"
+      },
+      {
+        "_rowId": "agents-1",
+        "name": "Claude Code",
+        "mark": "claude"
+      },
+      {
+        "_rowId": "agents-2",
+        "name": "OpenCode",
+        "mark": "opencode"
+      },
+      {
+        "_rowId": "agents-3",
+        "name": "Grok",
+        "mark": "grok"
+      },
+      {
+        "_rowId": "agents-4",
+        "name": "Pi",
+        "mark": "pi"
+      },
+      {
+        "_rowId": "agents-5",
+        "name": "Kimi",
+        "mark": "kimi"
+      },
+      {
+        "_rowId": "agents-6",
+        "name": "OMP",
+        "mark": "omp"
+      },
+      {
+        "_rowId": "agents-7",
+        "name": "Hermes",
+        "mark": "hermes"
+      },
+      {
+        "_rowId": "agents-8",
+        "name": "Goose",
+        "mark": "goose"
+      },
+      {
+        "_rowId": "agents-9",
+        "name": "Gemini",
+        "mark": "gemini"
+      },
+      {
+        "_rowId": "agents-10",
+        "name": "Aider",
+        "mark": "aider"
+      },
+      {
+        "_rowId": "agents-11",
+        "name": "Kilo",
+        "mark": "kilo"
+      }
+    ],
+    "anchor": "agents"
+  },
+  "dependencies": {}
+}

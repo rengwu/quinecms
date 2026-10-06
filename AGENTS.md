@@ -12,3 +12,5 @@ node docs/wiki/_build.mjs --check
 Use grill-form to present interview rounds. Do not treat unanswered recommendations as decisions. Run `pnpm verify` for implementation changes, preserve retained block versions, and keep live-provider checks distinct from mocked tests.
 
 The user authorized implementation of the agreed generic-page/schema-only-entry redesign on 2026-10-06. Read `docs/wiki/journal/2026-10-05-generic-pages-discussion.md` and its round-two outcome; DEC-058–DEC-073 define its accepted behavior.
+
+The user authorized the Site Layout foundation and chartr recreation on 2026-10-06. Read `docs/wiki/discussions/site-layouts.md` and `docs/wiki/discussions/chartr-recreation.md`; DEC-092–DEC-107 define the accepted scope. DEC-108 requires dedicated navigation levels sitewide: never render nested item editing inline among parent/sibling controls. Preserve retained layout implementations as well as blocks.

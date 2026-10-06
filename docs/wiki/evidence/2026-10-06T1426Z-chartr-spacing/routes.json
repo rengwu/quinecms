@@ -1,0 +1,20 @@
+[
+  {
+    "path": "/",
+    "status": 200,
+    "importError": false,
+    "chartrBlockContainers": 0
+  },
+  {
+    "path": "/chartr/",
+    "status": 200,
+    "importError": false,
+    "chartrBlockContainers": 9
+  },
+  {
+    "path": "/admin/",
+    "status": 200,
+    "importError": false,
+    "chartrBlockContainers": 0
+  }
+]

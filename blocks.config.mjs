@@ -1,4 +1,13 @@
 export default [
+  'chartr-intro/v1',
+  'chartr-workspace/v1',
+  'chartr-agents/v1',
+  'chartr-panes/v1',
+  'chartr-sessions/v1',
+  'chartr-plugins/v1',
+  'chartr-themes/v1',
+  'chartr-foundation/v1',
+  'chartr-download/v1',
   'hero/v1',
   'hero/v2',
   'text/v1',

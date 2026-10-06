@@ -1,6 +1,6 @@
 ---
 title: Decisions
-updated: 2026-10-05
+updated: 2026-10-06
 status: Accepted
 ---
 # Decisions
@@ -243,3 +243,67 @@ Accepted from [Q66–Q68](../journal/2026-10-06-grill-d9dd6be8-d154-41d3-a042-1d
 | DEC-089 | Add a shared configurable header with grouped navigation in this pass. | Q66 selects shared header/navigation now, alongside the shared footer from DEC-087. |
 | DEC-090 | Add structured list fields to collection schemas and compatible list bindings in generic blocks. | Q67 extends the earlier scalar/rich-text field contract. Initial rows use existing field types; unrestricted recursive nesting is outside this selected increment. |
 | DEC-091 | Block authoring edits content only; appearance comes from the block theme and site settings. | Q68 rejects the proposed per-block Design controls. New theme blocks should not expose arbitrary color, spacing, alignment or CSS override panels. Shared site typography/width/gutter remain available. |
+
+## Site Layouts — direct discussion requirements, 2026-10-06
+
+From the user's request and follow-up clarifications; see the [discussion](../discussions/site-layouts.md) and [journal](../journal/2026-10-06-site-layouts-discussion.md). These are accepted design directions, not implemented behavior. Q69–Q73 were subsequently resolved in the next section.
+
+| ID | Decision | Basis and rationale |
+| --- | --- | --- |
+| DEC-092 | Select one Site Layout for the entire public site, wrapping and containing its page blocks. | Direct request uses the familiar application-layout analogy. The required visual composition contract is the block-containing wrapper, not a fixed header/footer/navigation arrangement. Affects [public rendering](../features/static-blocks.md). |
+| DEC-093 | Each layout owns its own settings page and surrounding design/customizations, without a fixed product-imposed list of options. | The user explicitly includes fonts, navigation, header/footer, theme behavior and site title as examples, not limits. Revises central ownership in DEC-078, DEC-087 and DEC-089; DEC-097 subsequently retains width/gutter outside layouts. Affects the [editor](../features/editor.md) and [shared chrome](../features/block-library.md). |
+| DEC-094 | Editors switch the site layout through a picker similar to the block picker dialog. | Direct follow-up. DEC-100 subsequently settles card activation/preview behavior. |
+| DEC-095 | Persist only the selected layout and its current settings; switching layouts may reset settings to the selected layout's defaults. | The user rejects the assistant's per-layout settings-retention suggestion and accepts resets on repeated switches. No retained configuration per inactive layout or cross-layout settings mapping is required. |
+| DEC-096 | Layouts can supply optional styling variables; each block independently consumes any subset or none, with no styling-adherence categorization or discrimination. | The user clarifies that adaptability/rigidity is a spectrum. Do not add styling categories, badges, filters, compatibility restrictions or preferential treatment. Reinforces DEC-020; static/generic content-binding rules remain a separate dimension. |
+
+## Site Layouts — round one, 2026-10-06
+
+Accepted from [Q69–Q73](../journal/2026-10-06-grill-3dfa46b2-2cec-4d74-8d0f-2079848d280d.md); see the [interpretation](../journal/2026-10-06-site-layouts-round-one.md) and [consolidated design](../discussions/site-layouts.md). The scoped product interview is complete; implementation is pending.
+
+| ID | Decision | Basis and rationale |
+| --- | --- | --- |
+| DEC-097 | Keep content max-width and page gutter as shared, optional values outside individual layouts. | Q69. Values survive layout switches; layouts/blocks may consume them without a forced container. Retains DEC-075's advisory width contract and DEC-078's gutter control. |
+| DEC-098 | Separate Site Layout and Settings destinations in the main sidebar. | Q70. Site Layout contains selection and author settings; Settings contains shared width/gutter, Backups and Session. Revises the Site destination from DEC-074. Affects the [editor](../features/editor.md). |
+| DEC-099 | Show a live selected-page preview alongside Site Layout settings, with desktop/mobile widths. | Q71. Revises DEC-057's preview boundary for Site Layout; other standard admin areas keep their existing behavior. Generic-page field placeholders remain governed by DEC-069. |
+| DEC-100 | A layout card applies the layout and its defaults directly to the local draft; a separate Preview action inspects without applying. | Q72. Extends the block picker's interaction pattern. Save draft/Publish remain the persistence/publication workflow; DEC-095 governs resets and active-settings-only storage. |
+| DEC-101 | Developers install layout implementations in project source and rebuild; editors choose installed layouts. | Q73. Follows the existing block installation model. An admin-side package import workflow was not selected. |
+
+## Site Layout library — direct requirements, 2026-10-06
+
+Added after the first-round answers; see the [library discussion journal](../journal/2026-10-06-site-layouts-library-discussion.md) and [consolidated design](../discussions/site-layouts.md). The core choices above remain accepted; Q74–Q75 were subsequently resolved in the next section.
+
+| ID | Decision | Basis and rationale |
+| --- | --- | --- |
+| DEC-102 | Maintain this repository as a growing library of reusable Site Layouts, accumulating implementations as the developer builds client sites. | Direct user clarification. Layout registration must support continued additions; this does not itself select a multi-tenant runtime or a repository distribution strategy. |
+| DEC-103 | Provide a hidden layout-whitelist environment variable that exposes only selected layouts and hides other layouts from the picker. | Direct user requirement for client-specific choices. This is developer configuration outside editor settings. DEC-104–DEC-105 subsequently settle absent-variable and excluded-active behavior. It does not introduce styling-based block discrimination. |
+
+## Site Layouts — round two, 2026-10-06
+
+Accepted from [Q74–Q75](../journal/2026-10-06-grill-955ea450-7b57-4225-91b5-95d6a5b3986c.md); see the [interpretation](../journal/2026-10-06-site-layouts-round-two.md) and [consolidated design](../discussions/site-layouts.md). The scoped product interview is complete; implementation remains pending.
+
+| ID | Decision | Basis and rationale |
+| --- | --- | --- |
+| DEC-104 | Show all installed layouts when the whitelist environment variable is absent. | Q74 selects full-library availability by default. Client-specific configuration narrows the offered choices. |
+| DEC-105 | Keep an excluded active layout working with its current settings; apply the whitelist to future picker choices. | Q75 selects the alternative to the recommended build/configuration rejection. Continue rendering, previewing and configuring the active layout under the normal save workflow. Once switched away, it cannot be reselected while excluded. Whitelist exclusion alone must not invalidate existing content, block a build/publication or reset settings. |
+
+## chartr recreation — follow-on request, 2026-10-06
+
+| ID | Decision | Basis and rationale |
+| --- | --- | --- |
+| DEC-106 | After implementing the Site Layout system, recreate chartr.dev as a selectable layout and independent content blocks, using `../chartr-site-v2` as the source reference. | Direct user request. The [scope](../discussions/chartr-recreation.md) and [journal](../journal/2026-10-06-chartr-recreation-plan.md) separate the requested result from proposed component boundaries and unexecuted validation. The recreation follows the foundation and uses the ordinary layout/block contracts. |
+
+## Site Layouts — retained versions, 2026-10-06
+
+Accepted from [Q76](../journal/2026-10-06-grill-7a73a1dd-dfe9-4d9a-9118-fd7107ac2d9c.md); see the [round-three interpretation](../journal/2026-10-06-site-layouts-round-three.md) and [design](../discussions/site-layouts.md#layout-versions).
+
+| ID | Decision | Basis and rationale |
+| --- | --- | --- |
+| DEC-107 | Retain selectable layout implementation versions and pin the active version; upgrade only through an explicit selection. | Q76 selects the recommended retained-version model, following blocks. Adding a new version must not automatically replace the selected renderer/settings implementation on the next deployment. The site still stores only the active layout/version and current settings, without inactive-layout settings caches. |
+
+Implementation of DEC-092–DEC-107 was authorized by “lets go” and is recorded in the [Site Layout/chartr journal](../journal/2026-10-06-site-layouts-implementation.md). Earlier pending-status descriptions above refer to their interview stage.
+
+## Editor navigation — direct implementation correction, 2026-10-06
+
+| ID | Decision | Basis and rationale |
+| --- | --- | --- |
+| DEC-108 | Nested editing always opens a dedicated navigation level, replacing the parent controls; never show a Back/detail editor inline among sibling settings. | Direct user correction, with header-navigation and footer-link screenshots, explicitly extended sitewide. Applies to layout settings, block lists, entry lists and schema defaults. Back returns one level; deeper nested lists follow the same rule. |

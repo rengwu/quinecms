@@ -1,17 +1,16 @@
-import { normalizeLists, listRows } from './lists';
-import { headerFields } from './header';
+import { normalizeLists } from './lists';
+import {
+  activeLayout,
+  layoutDefinition,
+  layoutPolicy,
+  layoutGlobals,
+} from './layouts';
 import { entryPath } from './routes';
 export { entryPath } from './routes';
 import { bindingCompatible, resolveBlock } from './bindings';
 import { embedDestination, embeddedDestinations } from './embeds';
 import { customValidators } from './custom-fields';
-import {
-  validContentMaxWidth,
-  validBodyFontSize,
-  validBodyLineHeight,
-  validPageGutter,
-  validSiteFont,
-} from './site-style';
+import { validContentMaxWidth, validPageGutter } from './site-style';
 import type {
   Block,
   Collection,
@@ -125,7 +124,7 @@ export function contextFor(c: Content, instanceId: string): Context {
   );
   return {
     instanceId,
-    globals: c.site.globals,
+    globals: layoutGlobals(c.site),
     media: c.media,
     collections: c.collections.map((col) => ({
       id: col.id,
@@ -664,50 +663,36 @@ export function validate(content: Content, definitions: Definition[]): Issue[] {
         'Entries contain schema fields only. Legacy block content must be mapped explicitly before importing.',
       );
   }
-  if (
-    typeof content.site.title !== 'string' ||
-    !object(content.site.globals) ||
-    !Array.isArray(content.site.navigation)
+  if (!object(content.site.globals))
+    add('site.globals', 'Invalid shared settings.');
+  else if (
+    content.site.layout !== undefined &&
+    (!object(content.site.layout) ||
+      typeof content.site.layout.id !== 'string' ||
+      !Number.isInteger(content.site.layout.version) ||
+      !object(content.site.layout.settings))
   )
-    add('site', 'Invalid site settings.');
-  else if (content.site.header === undefined)
-    for (const n of content.site.navigation) {
-      if (
-        !object(n) ||
-        typeof n.label !== 'string' ||
-        !object(n.to) ||
-        !resolveLink(content, n.to)
-      )
-        add(
-          'navigation',
-          'A navigation link is invalid or missing.',
-          'publish',
-        );
-    }
-  if (content.site.header !== undefined) {
-    fields(headerFields, content.site.header, 'site.header');
-    if (object(content.site.header)) {
-      for (const item of listRows(content.site.header.items)) {
-        if (
-          object(item) &&
-          blank(item.url) &&
-          (!Array.isArray(item.links) || item.links.length === 0)
-        )
-          add(
-            'site.header',
-            'Navigation items need a URL or dropdown links.',
-            'publish',
-          );
-      }
-      if (
-        !blank(content.site.header.actionLabel) &&
-        blank(content.site.header.actionURL)
-      )
-        add('site.header', 'The header action needs a URL.', 'publish');
+    add(
+      'site.layout',
+      'A layout needs an ID, installed version and settings object.',
+    );
+  else {
+    const active = activeLayout(content.site);
+    const definition = layoutDefinition(content.site);
+    if (!definition)
+      add(
+        'site.layout',
+        `Layout ${active.id}@${active.version} is not installed. Restore its retained implementation.`,
+      );
+    else {
+      fields(definition.fields, active.settings, 'site.layout.settings');
+      layoutPolicy(content.site)?.validate?.(active.settings, content, {
+        fields,
+        blocks,
+        add,
+      });
     }
   }
-  if (content.site.footer !== undefined)
-    blocks([content.site.footer], 'site.footer', 'static', 'footer');
   for (const m of content.media) {
     if (!object(m) || !Array.isArray(m.variants) || !object(m.original)) {
       add('media', 'Invalid media record.');
@@ -724,26 +709,12 @@ export function validate(content: Content, definitions: Definition[]): Issue[] {
       )
         add(m.id, 'Invalid media file metadata.');
   }
-  if (blank(content.site.title))
-    add('site', 'Site title is required.', 'publish');
   if (object(content.site.globals)) {
     const settings: [string, (value: unknown) => boolean, string][] = [
       [
         'contentMaxWidth',
         validContentMaxWidth,
         'Content max-width must be a positive number in pixels.',
-      ],
-      ['bodyFont', validSiteFont, 'Choose a supported body font.'],
-      ['headingFont', validSiteFont, 'Choose a supported heading font.'],
-      [
-        'bodyFontSize',
-        validBodyFontSize,
-        'Body font size must be a positive number in pixels.',
-      ],
-      [
-        'bodyLineHeight',
-        validBodyLineHeight,
-        'Body line height must be a positive number.',
       ],
       [
         'pageGutter',

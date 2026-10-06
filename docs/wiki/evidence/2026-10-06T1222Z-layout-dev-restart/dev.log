@@ -1,0 +1,16 @@
+8:21:03 PM [vite-plugin-svelte] no Svelte config found at /Users/rengwu/Desktop/Projects/lean-sitebuilder - using default configuration.
+{"message":"connected.","label":"vite","level":"info"}
+{"message":"Generated 1ms","label":"types","level":"info"}
+{"message":"connected.","label":"vite","level":"info"}
+{"message":"Re-optimizing dependencies because vite config has changed","label":"vite","level":"info"}
+{"message":" astro  v7.3.5 ready in 760 ms\n┃ Local    http://127.0.0.1:4321/","label":"SKIP_FORMAT","level":"info"}
+{"message":"watching for file changes...","label":null,"level":"info"}
+{"message":"[200] /admin/ 26ms","label":null,"level":"info"}
+{"message":"[200] / 25ms","label":null,"level":"info"}
+{"message":"[200] /chartr/ 21ms","label":null,"level":"info"}
+{"message":"[200] /admin/ 5ms","label":null,"level":"info"}
+{"message":"[200] /journal/a-slower-way-to-build/ 11ms","label":null,"level":"info"}
+{"message":"[200] / 13ms","label":null,"level":"info"}
+{"message":"[200] /admin/ 8ms","label":null,"level":"info"}
+{"message":"[200] /chartr/ 10ms","label":null,"level":"info"}
+{"message":"[200] /admin/ 28ms","label":null,"level":"info"}

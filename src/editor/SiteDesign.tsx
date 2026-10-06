@@ -16,9 +16,11 @@ import styles from './editor.module.css';
 export default function SiteDesign({
   globals,
   onChange,
+  section = 'geometry',
 }: {
   globals: Values;
   onChange: (globals: Values) => void;
+  section?: 'typography' | 'geometry';
 }) {
   function numberField(
     key: string,
@@ -55,66 +57,72 @@ export default function SiteDesign({
   }
   return (
     <>
-      <PanelSection title="Typography">
-        {(['bodyFont', 'headingFont'] as const).map((key) => {
-          const label = key === 'bodyFont' ? 'Body font' : 'Heading font';
-          return (
-            <div className={styles.field} key={key}>
-              <Label htmlFor={`site-${key}`}>{label}</Label>
-              <Select
-                className={styles.full}
-                id={`site-${key}`}
-                aria-label={label}
-                renderValue={(value) =>
-                  SITE_FONTS.find((font) => font.id === value)?.label ??
-                  'System sans'
-                }
-                value={
-                  validSiteFont(globals[key]) ? String(globals[key]) : 'system'
-                }
-                onValueChange={(value) =>
-                  onChange({ ...globals, [key]: value ?? 'system' })
-                }
-              >
-                {SITE_FONTS.map((font) => (
-                  <Select.Option key={font.id} value={font.id}>
-                    {font.label}
-                  </Select.Option>
-                ))}
-              </Select>
-            </div>
-          );
-        })}
-        {numberField(
-          'bodyFontSize',
-          'Body font size',
-          DEFAULT_BODY_FONT_SIZE,
-          'px',
-        )}
-        {numberField(
-          'bodyLineHeight',
-          'Body line height',
-          DEFAULT_BODY_LINE_HEIGHT,
-        )}
-      </PanelSection>
-      <PanelSection title="Layout">
-        {numberField(
-          'contentMaxWidth',
-          'Content max-width',
-          DEFAULT_CONTENT_MAX_WIDTH,
-          'px',
-          1,
-          1,
-        )}
-        {numberField(
-          'pageGutter',
-          'Page gutter',
-          DEFAULT_PAGE_GUTTER,
-          'px',
-          0,
-          1,
-        )}
-      </PanelSection>
+      {section === 'typography' && (
+        <PanelSection title="Typography">
+          {(['bodyFont', 'headingFont'] as const).map((key) => {
+            const label = key === 'bodyFont' ? 'Body font' : 'Heading font';
+            return (
+              <div className={styles.field} key={key}>
+                <Label htmlFor={`site-${key}`}>{label}</Label>
+                <Select
+                  className={styles.full}
+                  id={`site-${key}`}
+                  aria-label={label}
+                  renderValue={(value) =>
+                    SITE_FONTS.find((font) => font.id === value)?.label ??
+                    'System sans'
+                  }
+                  value={
+                    validSiteFont(globals[key])
+                      ? String(globals[key])
+                      : 'system'
+                  }
+                  onValueChange={(value) =>
+                    onChange({ ...globals, [key]: value ?? 'system' })
+                  }
+                >
+                  {SITE_FONTS.map((font) => (
+                    <Select.Option key={font.id} value={font.id}>
+                      {font.label}
+                    </Select.Option>
+                  ))}
+                </Select>
+              </div>
+            );
+          })}
+          {numberField(
+            'bodyFontSize',
+            'Body font size',
+            DEFAULT_BODY_FONT_SIZE,
+            'px',
+          )}
+          {numberField(
+            'bodyLineHeight',
+            'Body line height',
+            DEFAULT_BODY_LINE_HEIGHT,
+          )}
+        </PanelSection>
+      )}
+      {section === 'geometry' && (
+        <PanelSection title="Content spacing">
+          {numberField(
+            'contentMaxWidth',
+            'Content max-width',
+            DEFAULT_CONTENT_MAX_WIDTH,
+            'px',
+            1,
+            1,
+          )}
+          {numberField(
+            'pageGutter',
+            'Page gutter',
+            DEFAULT_PAGE_GUTTER,
+            'px',
+            0,
+            1,
+          )}
+        </PanelSection>
+      )}
     </>
   );
 }

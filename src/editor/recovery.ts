@@ -68,9 +68,7 @@ function editableShape(c: unknown): c is Content {
   if (
     !object(c) ||
     !object(c.site) ||
-    typeof c.site.title !== 'string' ||
     !object(c.site.globals) ||
-    !Array.isArray(c.site.navigation) ||
     !['pages', 'entries', 'collections', 'media'].every((k) =>
       Array.isArray(c[k]),
     )
@@ -123,6 +121,19 @@ function editableShape(c: unknown): c is Content {
     )
   )
     return false;
+  if (
+    c.site.layout !== undefined &&
+    (!object(c.site.layout) ||
+      typeof c.site.layout.id !== 'string' ||
+      !Number.isInteger(c.site.layout.version) ||
+      !object(c.site.layout.settings))
+  )
+    return false;
+  if (
+    c.site.layout === undefined &&
+    (typeof c.site.title !== 'string' || !Array.isArray(c.site.navigation))
+  )
+    return false;
   if (c.site.header !== undefined && !object(c.site.header)) return false;
   if (
     c.site.footer !== undefined &&
@@ -132,7 +143,7 @@ function editableShape(c: unknown): c is Content {
   )
     return false;
   return (
-    c.site.navigation.every(
+    (c.site.navigation ?? []).every(
       (n: any) =>
         object(n) &&
         typeof n.id === 'string' &&

@@ -1,11 +1,17 @@
 ---
 title: Agreed design
-updated: 2026-10-05
+updated: 2026-10-06
 status: Accepted
 ---
 # Agreed design
 
 Product scope established through four interview rounds. The [decision register](../decisions/index.md) preserves each choice and its source; this page consolidates the intended behavior. Nothing here is a claim of implemented or verified software.
+
+DEC-106 adds [recreating chartr.dev as a layout and independent blocks](chartr-recreation.md) after the Site Layout foundation, using the adjacent `chartr-site-v2` source repository. The requested sequence is foundation first, then the chartr recreation; the [implementation journal](../journal/2026-10-06-site-layouts-implementation.md) and [verification](../verification/runs/2026-10-06T1140Z-site-layouts.md) record the completed work and checked scope.
+
+DEC-107 additionally selects [retained layout implementation versions](site-layouts.md#layout-versions). Existing sites remain on their selected version when newer versions are installed and upgrade explicitly. Only the active layout/version and current settings are stored; no settings cache per inactive layout is required.
+
+Latest accepted design: [Site Layouts](site-layouts.md), DEC-092–DEC-105, will move the surrounding site design and author-defined customization into one selected layout. It contains the page blocks, is selected through a picker and retains only its active settings. Layout-supplied styling variables are optional for every block, without categorization or discrimination. Site Layout settings gain a live selected-page preview; a separate Settings area retains advisory width/gutter values, Backups and Session. Cards apply defaults to the local draft, with a separate Preview action. Developers install layouts in source and rebuild. This repository will accumulate layouts for client sites; a hidden environment whitelist limits the layouts offered to each client. An absent whitelist offers all installed layouts. An excluded active layout keeps working with its settings; only future picker choices are restricted. The scoped interview is complete and the redesign is implemented; see [Site Layouts](../features/site-layouts.md). DEC-108 additionally requires nested item editing to replace its parent controls with a dedicated level sitewide. The descriptions below retain the existing system's baseline, revised by these layout decisions where applicable.
 
 DEC-058–DEC-073 subsequently revise entries to schema fields only and introduce generic page templates. The [round-one](../journal/2026-10-05-generic-pages-round-one.md) and [round-two](../journal/2026-10-05-generic-pages-round-two.md) interpretations record accepted changes. The user authorized implementation on 2026-10-06; the [implementation run](../verification/runs/2026-10-05T1650Z-generic-pages.md) records the resulting behavior and checks.
 

@@ -1,0 +1,159 @@
+{
+  "id": "chartr",
+  "version": 1,
+  "label": "chartr",
+  "description": "Monospaced typography, a compact header, section rails and independent website appearance.",
+  "activation": "load",
+  "defaults": {
+    "title": "chartr",
+    "brand": "chartr",
+    "appearance": "system",
+    "allowToggle": true,
+    "homeURL": "/",
+    "navigation": [
+      {
+        "_rowId": "nav-0",
+        "label": "Workspace",
+        "url": "#preview"
+      },
+      {
+        "_rowId": "nav-1",
+        "label": "Plugins",
+        "url": "#plugins"
+      },
+      {
+        "_rowId": "nav-2",
+        "label": "Docs",
+        "url": "https://github.com/rengwu/chartr/tree/v0.3.0/docs"
+      }
+    ],
+    "sourceLabel": "GitHub",
+    "sourceURL": "https://github.com/rengwu/chartr",
+    "downloadLabel": "Download chartr",
+    "downloadURL": "https://github.com/rengwu/chartr/releases/tag/v0.3.0",
+    "footerLinks": [
+      {
+        "_rowId": "footer-0",
+        "label": "GitHub",
+        "url": "https://github.com/rengwu/chartr"
+      },
+      {
+        "_rowId": "footer-1",
+        "label": "License",
+        "url": "https://github.com/rengwu/chartr/blob/v0.3.0/LICENSE-GPL"
+      }
+    ],
+    "copyright": "\u00a9 2026 chartr",
+    "description": "chartr is a native workspace for terminal agents. Organize projects, arrange panes, add tools through plugins, and return to your running sessions."
+  },
+  "fields": [
+    {
+      "key": "title",
+      "label": "Site title",
+      "type": "text"
+    },
+    {
+      "key": "description",
+      "label": "Site description",
+      "type": "text",
+      "multiline": true
+    },
+    {
+      "key": "brand",
+      "label": "Brand name",
+      "type": "text"
+    },
+    {
+      "key": "homeURL",
+      "label": "Home URL",
+      "type": "url"
+    },
+    {
+      "key": "appearance",
+      "label": "Initial appearance",
+      "type": "select",
+      "options": [
+        {
+          "value": "system",
+          "label": "Follow system"
+        },
+        {
+          "value": "light",
+          "label": "Light"
+        },
+        {
+          "value": "dark",
+          "label": "Dark"
+        }
+      ]
+    },
+    {
+      "key": "allowToggle",
+      "label": "Show appearance switch",
+      "type": "toggle"
+    },
+    {
+      "key": "navigation",
+      "label": "Header navigation",
+      "type": "list",
+      "fields": [
+        {
+          "key": "label",
+          "label": "Label",
+          "type": "text"
+        },
+        {
+          "key": "url",
+          "label": "URL",
+          "type": "url"
+        }
+      ]
+    },
+    {
+      "key": "sourceLabel",
+      "label": "Source link label",
+      "type": "text"
+    },
+    {
+      "key": "sourceURL",
+      "label": "Source URL",
+      "type": "url"
+    },
+    {
+      "key": "downloadLabel",
+      "label": "Header action label",
+      "type": "text"
+    },
+    {
+      "key": "downloadURL",
+      "label": "Header action URL",
+      "type": "url"
+    },
+    {
+      "key": "footerLinks",
+      "label": "Footer links",
+      "type": "list",
+      "fields": [
+        {
+          "key": "label",
+          "label": "Label",
+          "type": "text"
+        },
+        {
+          "key": "url",
+          "label": "URL",
+          "type": "url"
+        }
+      ]
+    },
+    {
+      "key": "copyright",
+      "label": "Copyright",
+      "type": "text"
+    }
+  ],
+  "component": "View.tsx",
+  "settingsComponent": "Settings.tsx",
+  "policy": "policy.ts",
+  "headComponent": "Head.tsx"
+}

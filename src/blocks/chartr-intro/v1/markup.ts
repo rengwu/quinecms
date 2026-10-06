@@ -1,0 +1,3 @@
+export const template =
+  '<section class="layout-row hero" aria-labelledby="{{instance}}-hero-title">\n        <div class="section-rail" aria-hidden="true"></div>\n        <div class="section-body hero-content">\n          <h1 id="{{instance}}-hero-title">{{heading}}</h1>\n          <p class="hero-description">{{description}}</p>\n\n          <div class="hero-actions">\n            <a class="button button-primary" href="{{primaryURL}}" data-download="">{{primaryLabel}}</a>\n            <a class="button button-secondary" href="{{secondaryURL}}">{{secondaryLabel}}</a>\n          </div>\n        </div>\n      </section>';
+export const rows = {};

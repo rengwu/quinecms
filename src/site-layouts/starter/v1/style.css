@@ -1,0 +1,25 @@
+.starter-layout {
+  min-height: 100%;
+  background: #fafbf8;
+  color: #26342b;
+  font-family: var(--site-body-font);
+  font-size: var(--site-body-font-size);
+  line-height: var(--site-body-line-height);
+}
+.starter-layout[data-theme='dark'] {
+  color: #e7eee6;
+  background: #17231c;
+}
+.starter-layout :where(h1, h2, h3, h4, h5, h6) {
+  font-family: var(--site-heading-font);
+}
+.starter-layout .site-footer {
+  padding: 60px var(--site-page-gutter);
+  margin: auto;
+  max-width: var(--site-content-max-width);
+  font-size: 0.85em;
+  border-top: 1px solid #cdd3cb;
+}
+.starter-layout > main {
+  container-type: inline-size;
+}

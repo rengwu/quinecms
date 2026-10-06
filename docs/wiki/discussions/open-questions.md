@@ -1,9 +1,48 @@
 ---
 title: Open questions
 updated: 2026-10-06
-status: Scoped interviews complete
+status: Scoped interviews complete; implementation recorded
 ---
 # Open questions
+
+Site Layouts and chartr were authorized and implemented after the interview records below. No product question blocks this scope. [Current contracts](../features/site-layouts.md), [implementation journal](../journal/2026-10-06-site-layouts-implementation.md) and [verification](../verification/runs/2026-10-06T1140Z-site-layouts.md) distinguish shipped engineering choices from the original proposals.
+
+## Layout updates — resolved
+
+[Q76](../journal/2026-10-06-grill-7a73a1dd-dfe9-4d9a-9118-fd7107ac2d9c.md) is accepted as DEC-107: retain selectable layout code versions, pin the active version and upgrade explicitly. See the [version contract](site-layouts.md#layout-versions) and [round-three interpretation](../journal/2026-10-06-site-layouts-round-three.md). This retains only the active layout/version and current settings; it does not restore settings caches for inactive layouts. Exact version-picker presentation and settings-transition mechanics are engineering work, without an assumed automated migration requirement.
+
+## chartr recreation — follow-on scope recorded
+
+DEC-106 requests recreating [chartr.dev](https://chartr.dev/) as a layout and independent blocks after the Site Layout foundation. The [scope](chartr-recreation.md) proposes the shared shell and nine content blocks, with source references and unexecuted verification targets. No new product interview is needed for this sequencing request. Exact fields, lifecycle adaptation and reusable component boundaries are engineering work. Live release/download text differs from the local source and must be reconciled against the live target during implementation.
+
+## Site Layout library and whitelist — resolved
+
+The user adds a growing repository-based layout library and hidden environment-configured client whitelist (DEC-102–DEC-103). See [Site Layouts](site-layouts.md) and the [library discussion journal](../journal/2026-10-06-site-layouts-library-discussion.md). This follows, and does not undo, the accepted first-round choices below.
+
+Q74–Q75 are resolved as DEC-104–DEC-105 by the [submitted answers](../journal/2026-10-06-grill-955ea450-7b57-4225-91b5-95d6a5b3986c.md); see the [round-two interpretation](../journal/2026-10-06-site-layouts-round-two.md).
+
+| Question | Decision | Accepted outcome |
+| --- | --- | --- |
+| Q74 | DEC-104 | Show all installed layouts when the variable is absent. |
+| Q75 | DEC-105 | Keep an excluded active layout working with current settings; restrict future picker choices. |
+
+The recommendation to reject a build/configuration because its active layout is excluded was not selected. The active layout must remain resolvable for rendering, preview, settings and the normal save workflow. The product scope is settled. Exact variable name/format, empty/invalid-list handling, validation messages and build imports remain engineering work. Proposed mechanics are recorded in the design, not accepted by implication. No block-adherence categorization or restriction is introduced by a layout whitelist.
+
+## Site Layouts — resolved
+
+DEC-092–DEC-096 establish the site-wide wrapper, author-owned settings/customizations, layout picker, active-layout-only persistence and unrestricted optional adoption of layout variables by blocks. No styling categories or discrimination are wanted. See [Site Layouts](site-layouts.md) and the [discussion journal](../journal/2026-10-06-site-layouts-discussion.md).
+
+Q69–Q73 are resolved as DEC-097–DEC-101 by the [submitted answers](../journal/2026-10-06-grill-3dfa46b2-2cec-4d74-8d0f-2079848d280d.md); see the [interpretation](../journal/2026-10-06-site-layouts-round-one.md).
+
+| Question | Decision | Accepted outcome |
+| --- | --- | --- |
+| Q69 | DEC-097 | Shared, optional content max-width and page gutter values outside layouts. |
+| Q70 | DEC-098 | Separate Site Layout and Settings sidebar areas. |
+| Q71 | DEC-099 | Live selected-page preview alongside layout settings, with desktop/mobile widths. |
+| Q72 | DEC-100 | Card applies layout/defaults to the local draft; separate Preview leaves active state intact. |
+| Q73 | DEC-101 | Developer installation in source and rebuild, as with blocks. |
+
+No consequential product questions remain from the Site Layout rounds or the versioning review. Authoring/runtime interfaces and first-time conversion of Site Options remain engineering work; proposed approaches and validation targets are recorded in [Site Layouts](site-layouts.md). They are not separately accepted product decisions. The questionnaire submissions themselves requested no implementation; the chartr follow-on request is recorded above with the foundation-first sequence.
 
 ## Block library — resolved
 

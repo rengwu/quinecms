@@ -10,6 +10,7 @@ import { createHash } from 'node:crypto';
 import semver from 'semver';
 import blocks from '../blocks.config.mjs';
 import { publicRoutes } from '../src/core/routes.ts';
+import { generateLayouts } from './generate-layouts.mjs';
 // Keep unchanged files in place so a running dev server never sees an empty registry.
 const written = new Set();
 async function writeFile(path, text) {
@@ -97,6 +98,7 @@ await writeFile(
 console.log(`Registered ${defs.length} block versions.`);
 
 const site = JSON.parse(await readFile('content/site.json', 'utf8'));
+await generateLayouts(writeFile, site);
 const footerIndex = site.footer
   ? defs.findIndex(
       (d) =>
@@ -220,11 +222,13 @@ async function sourceDir(dir) {
 }
 await sourceDir('src');
 await sourceDir('scripts');
+await sourceDir('public');
 for (const path of [
   'package.json',
   'pnpm-lock.yaml',
   'astro.config.mjs',
   'blocks.config.mjs',
+  'layouts.config.mjs',
   'tsconfig.json',
 ])
   await sourceFile(path);

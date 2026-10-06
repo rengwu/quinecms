@@ -11,6 +11,7 @@ import { Select } from '@cloudflare/kumo/components/select';
 import { CaretLeftIcon, CaretRightIcon, PlusIcon } from '@phosphor-icons/react';
 import type { Block, Content, Context, Definition } from '../core/types';
 import { contextFor } from '../core/content';
+import { layoutGlobals } from '../core/layouts';
 import { siteStyle } from '../core/site-style';
 import { catalogDefinitions, filterCatalog, tagsOf, themeOf } from './catalog';
 import Island from './Island';
@@ -98,10 +99,10 @@ function Thumbnail({
       {visible && (
         <div
           className={'site-surface ' + styles.scaled}
-          data-theme={content.site.globals.theme}
+          data-theme={layoutGlobals(content.site).theme}
           style={
             {
-              ...siteStyle(content.site.globals),
+              ...siteStyle(layoutGlobals(content.site)),
               transform: `scale(${scale})`,
             } as CSSProperties
           }
@@ -206,8 +207,8 @@ export default function BlockCatalog({
           <div
             className={'site-surface ' + styles.fullPreview}
             data-mobile={mobile}
-            data-theme={content.site.globals.theme}
-            style={siteStyle(content.site.globals) as CSSProperties}
+            data-theme={layoutGlobals(content.site).theme}
+            style={siteStyle(layoutGlobals(content.site)) as CSSProperties}
             onClick={(e) => {
               if ((e.target as HTMLElement).closest('a')) e.preventDefault();
             }}

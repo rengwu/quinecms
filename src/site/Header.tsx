@@ -52,7 +52,7 @@ export default function Header({
             data-document-id={
               !content.site.header
                 ? (() => {
-                    const ref = content.site.navigation.find(
+                    const ref = content.site.navigation?.find(
                       (n) => n.id === item._rowId,
                     )?.to;
                     return ref && ref.kind !== 'external' ? ref.id : undefined;
