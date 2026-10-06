@@ -1,0 +1,41 @@
+{
+  "type": "tw-header-1",
+  "version": 1,
+  "label": "Centered introduction",
+  "theme": "Tailwind UI",
+  "tags": ["header", "introduction"],
+  "description": "A focused, spacious layout.",
+  "kind": "static",
+  "placement": "page",
+  "framework": "react",
+  "activation": "never",
+  "component": "View.tsx",
+  "fields": [
+    {
+      "key": "eyebrow",
+      "label": "Eyebrow",
+      "type": "text"
+    },
+    {
+      "key": "heading",
+      "label": "Heading",
+      "type": "text",
+      "required": true
+    },
+    {
+      "key": "description",
+      "label": "Description",
+      "type": "text",
+      "multiline": true
+    }
+  ],
+  "defaults": {
+    "eyebrow": "Built for what comes next",
+    "heading": "Meet the people behind the progress.",
+    "description": "Connect your people, products and possibilities. Make the complex feel simple, and move forward with confidence."
+  },
+  "dependencies": {
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0"
+  }
+}

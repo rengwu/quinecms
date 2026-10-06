@@ -332,6 +332,7 @@
   line-height: 1.6;
 }
 .blockList {
+  position: relative;
   padding: 0;
   margin: 0;
   list-style: none;
@@ -355,22 +356,26 @@
   cursor: grabbing;
 }
 .block[data-dragging='true'] {
-  opacity: 0.4;
+  opacity: 0;
 }
-.block[data-drop]::after {
-  content: '';
-  position: absolute;
-  left: 0;
-  right: 0;
-  height: 2px;
-  background: var(--color-kumo-brand);
+.dragOverlay {
+  position: fixed;
+  top: 0;
+  z-index: 50;
   pointer-events: none;
+  color: var(--text-color-kumo-default);
+  background: var(--color-kumo-base);
+  font:
+    14px/1.5 Inter,
+    system-ui,
+    sans-serif;
+  color-scheme: dark;
+  border-radius: 8px;
+  box-shadow: 0 8px 24px #0004;
+  will-change: transform;
 }
-.block[data-drop='before']::after {
-  top: -5px;
-}
-.block[data-drop='after']::after {
-  bottom: -5px;
+.dragOverlay > button {
+  height: 100%;
 }
 .srOnly {
   position: absolute;
@@ -384,6 +389,7 @@
   border: 0;
 }
 .preview {
+  isolation: isolate;
   container-type: inline-size;
   margin-left: calc(var(--navigation-width) + var(--drawer-width));
   margin-top: 60px;
@@ -458,16 +464,13 @@
   flex-direction: column;
   gap: var(--editor-space-4);
 }
-.popup h2 {
+.popup > h2 {
   font-size: 22px;
   font-weight: 600;
   margin: 0;
   letter-spacing: -0.035em;
 }
-.popup p {
-  line-height: 1.5;
-  margin: 0;
-}
+
 .grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -589,6 +592,7 @@
     padding: 92px 20px 40px;
   }
   .preview {
+    isolation: isolate;
     min-width: 360px;
   }
   .topbar {
@@ -647,4 +651,26 @@
   .navigationToggle {
     margin-right: auto;
   }
+}
+
+.catalogPopup {
+  width: min(1440px, 96vw) !important;
+  max-width: 96vw !important;
+  height: min(900px, 92vh);
+  max-height: 92vh !important;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden !important;
+  padding: 0;
+  gap: 0;
+}
+.catalogClose {
+  position: absolute;
+  top: 12px;
+  right: 16px;
+  z-index: 1;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  background: var(--color-kumo-base);
 }

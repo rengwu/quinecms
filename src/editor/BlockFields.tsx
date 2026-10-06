@@ -55,6 +55,12 @@ export default function BlockFields({
                 }}
               />
             </div>
+            {field.type === 'list' && (
+              <p className={styles.muted}>
+                Item fields:{' '}
+                {field.fields.map((f) => `${f.key} (${f.type})`).join(', ')}.
+              </p>
+            )}
             <Fields
               fields={[
                 {

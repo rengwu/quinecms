@@ -1,0 +1,47 @@
+{
+  "type": "tw-header-2-generic",
+  "version": 1,
+  "label": "Image backdrop",
+  "theme": "Tailwind UI",
+  "tags": ["header", "introduction"],
+  "description": "An expressive layout with a clear visual balance.",
+  "kind": "generic",
+  "placement": "page",
+  "framework": "react",
+  "activation": "never",
+  "component": "View.tsx",
+  "fields": [
+    {
+      "key": "eyebrow",
+      "label": "Eyebrow",
+      "type": "text"
+    },
+    {
+      "key": "heading",
+      "label": "Heading",
+      "type": "text",
+      "required": true
+    },
+    {
+      "key": "description",
+      "label": "Description",
+      "type": "text",
+      "multiline": true
+    },
+    {
+      "key": "image",
+      "label": "Image",
+      "type": "media"
+    }
+  ],
+  "defaults": {
+    "eyebrow": "Built for what comes next",
+    "heading": "Meet the people behind the progress.",
+    "description": "Connect your people, products and possibilities. Make the complex feel simple, and move forward with confidence.",
+    "image": null
+  },
+  "dependencies": {
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0"
+  }
+}

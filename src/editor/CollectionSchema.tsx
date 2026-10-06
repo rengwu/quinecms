@@ -1,13 +1,11 @@
+import SchemaFieldEditor from './SchemaFieldEditor';
 import { useState } from 'react';
 import { Button } from '@cloudflare/kumo/components/button';
-import { Input, InputArea } from '@cloudflare/kumo/components/input';
+import { Input } from '@cloudflare/kumo/components/input';
 import { Select } from '@cloudflare/kumo/components/select';
-import { Checkbox } from '@cloudflare/kumo/components/checkbox';
 import { Label } from '@cloudflare/kumo/components/label';
 import { CaretRightIcon, PlusIcon } from '@phosphor-icons/react';
 import type { Collection, Entry, Field, Media, Page } from '../core/types';
-import { blank } from '../core/content';
-import Fields from './Fields';
 import styles from './editor.module.css';
 
 export default function CollectionSchema({
@@ -29,7 +27,6 @@ export default function CollectionSchema({
 }) {
   const [fieldIndex, setFieldIndex] = useState<number | null>(null);
   const field = fieldIndex === null ? undefined : collection.fields[fieldIndex];
-  const populated = field && entries.some((e) => !blank(e.values[field.key]));
   function updateField(next: Field) {
     onChange({
       ...collection,
@@ -40,135 +37,21 @@ export default function CollectionSchema({
   }
   if (field)
     return (
-      <>
-        <Button
-          className={styles.back}
-          variant="ghost"
-          onClick={() => setFieldIndex(null)}
-        >
-          ← Back
-        </Button>
-        <h2>{field.label || 'Untitled field'}</h2>
-        <div className={styles.field}>
-          <Label htmlFor="schema-label">Label</Label>
-          <Input
-            id="schema-label"
-            aria-label="Label"
-            value={field.label}
-            onChange={(e) => updateField({ ...field, label: e.target.value })}
-          />
-        </div>
-        <div className={styles.field}>
-          <Label htmlFor="schema-key">Field key</Label>
-          <Input
-            id="schema-key"
-            aria-label="Field key"
-            value={field.key}
-            disabled={populated}
-            onChange={(e) => updateField({ ...field, key: e.target.value })}
-          />
-        </div>
-        <div className={styles.field}>
-          <Label htmlFor="schema-type">Field type</Label>
-          <Select
-            id="schema-type"
-            aria-label="Field type"
-            value={field.type}
-            disabled={populated || field.type === 'custom'}
-            onValueChange={(value) => {
-              if (!value) return;
-              updateField({
-                key: field.key,
-                label: field.label,
-                required: field.required,
-                type: value,
-                ...(value === 'select' ? { options: [] } : {}),
-              } as Field);
-            }}
-          >
-            {[
-              'text',
-              'richtext',
-              'number',
-              'date',
-              'toggle',
-              'select',
-              'media',
-              ...(field.type === 'custom' ? ['custom'] : []),
-            ].map((type) => (
-              <Select.Option key={type} value={type}>
-                {type}
-              </Select.Option>
-            ))}
-          </Select>
-        </div>
-        {populated && (
-          <p className={styles.muted}>
-            The key and type are fixed because this field contains content.
-          </p>
-        )}
-        {field.type === 'select' && (
-          <div className={styles.field}>
-            <Label htmlFor="schema-options">Options (one value per line)</Label>
-            <InputArea
-              id="schema-options"
-              aria-label="Options (one value per line)"
-              value={field.options.map((o) => o.value).join('\n')}
-              onChange={(e) =>
-                updateField({
-                  ...field,
-                  options: e.target.value.split('\n').map((value) => ({
-                    value,
-                    label:
-                      field.options.find((o) => o.value === value)?.label ??
-                      value,
-                  })),
-                })
-              }
-            />
-          </div>
-        )}
-        <div className={styles.field}>
-          <Checkbox
-            label="Required"
-            checked={!!field.required}
-            onCheckedChange={(required) => updateField({ ...field, required })}
-          />
-        </div>
-        {field.type !== 'custom' && (
-          <Fields
-            fields={[
-              {
-                ...field,
-                key: 'default',
-                label: 'Default value',
-                required: false,
-                widget: undefined,
-              },
-            ]}
-            values={{ default: field.default ?? null }}
-            media={media}
-            onChange={(values) =>
-              updateField({ ...field, default: values.default })
-            }
-          />
-        )}
-        <div className={styles.actionFooter}>
-          <Button
-            variant="secondary-destructive"
-            disabled={populated || collection.titleField === field.key}
-            onClick={() => {
-              onChange({
-                ...collection,
-                fields: collection.fields.filter((_, i) => i !== fieldIndex),
-              });
-              setFieldIndex(null);
-            }}
-          >
-            Remove field
-          </Button>
-        </div>
-      </>
+      <SchemaFieldEditor
+        field={field}
+        media={media}
+        values={entries.map((e) => e.values[field.key])}
+        titleField={collection.titleField === field.key}
+        onChange={updateField}
+        onBack={() => setFieldIndex(null)}
+        onDelete={() => {
+          onChange({
+            ...collection,
+            fields: collection.fields.filter((_, i) => i !== fieldIndex),
+          });
+          setFieldIndex(null);
+        }}
+      />
     );
   return (
     <>

@@ -314,7 +314,9 @@ it('opens entries from public preview links in Content and returns deletion to t
   await click('Pages');
   await click('Home');
   await act(async () =>
-    host.querySelector<HTMLAnchorElement>('main a')!.click(),
+    host
+      .querySelector<HTMLAnchorElement>('main a[data-document-id="entry_one"]')!
+      .click(),
   );
   expectAdminView();
   expect(editorPanel().textContent).toContain('← Back');

@@ -1,0 +1,105 @@
+{
+  "type": "tw-team-1-generic",
+  "version": 1,
+  "label": "Round portrait grid",
+  "theme": "Tailwind UI",
+  "tags": ["team", "people", "company"],
+  "description": "A focused, spacious layout.",
+  "kind": "generic",
+  "placement": "page",
+  "framework": "react",
+  "activation": "never",
+  "component": "View.tsx",
+  "fields": [
+    {
+      "key": "eyebrow",
+      "label": "Eyebrow",
+      "type": "text"
+    },
+    {
+      "key": "heading",
+      "label": "Heading",
+      "type": "text",
+      "required": true
+    },
+    {
+      "key": "description",
+      "label": "Description",
+      "type": "text",
+      "multiline": true
+    },
+    {
+      "key": "items",
+      "label": "Items",
+      "type": "list",
+      "fields": [
+        {
+          "key": "name",
+          "label": "Name",
+          "type": "text",
+          "required": true
+        },
+        {
+          "key": "role",
+          "label": "Role",
+          "type": "text"
+        },
+        {
+          "key": "bio",
+          "label": "Bio",
+          "type": "text",
+          "multiline": true
+        },
+        {
+          "key": "image",
+          "label": "Image",
+          "type": "media"
+        },
+        {
+          "key": "url",
+          "label": "Profile URL",
+          "type": "url"
+        }
+      ]
+    }
+  ],
+  "defaults": {
+    "eyebrow": "Built for what comes next",
+    "heading": "Different perspectives. Shared ambition.",
+    "description": "Connect your people, products and possibilities. Make the complex feel simple, and move forward with confidence.",
+    "items": [
+      {
+        "name": "Alex Morgan",
+        "role": "Co-founder",
+        "bio": "Turning ideas into useful, lasting experiences. Curious by nature, collaborative by choice.",
+        "image": null,
+        "url": "/"
+      },
+      {
+        "name": "Sam Rivera",
+        "role": "Design director",
+        "bio": "Turning ideas into useful, lasting experiences. Curious by nature, collaborative by choice.",
+        "image": null,
+        "url": "/"
+      },
+      {
+        "name": "Jamie Chen",
+        "role": "Engineering lead",
+        "bio": "Turning ideas into useful, lasting experiences. Curious by nature, collaborative by choice.",
+        "image": null,
+        "url": "/"
+      },
+      {
+        "name": "Taylor Park",
+        "role": "Strategy lead",
+        "bio": "Turning ideas into useful, lasting experiences. Curious by nature, collaborative by choice.",
+        "image": null,
+        "url": "/"
+      }
+    ]
+  },
+  "dependencies": {
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0"
+  }
+}

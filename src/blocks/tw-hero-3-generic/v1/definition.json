@@ -1,0 +1,94 @@
+{
+  "type": "tw-hero-3-generic",
+  "version": 1,
+  "label": "Image mosaic",
+  "theme": "Tailwind UI",
+  "tags": ["hero", "header", "landing"],
+  "description": "A flexible editorial composition.",
+  "kind": "generic",
+  "placement": "page",
+  "framework": "react",
+  "activation": "never",
+  "component": "View.tsx",
+  "fields": [
+    {
+      "key": "eyebrow",
+      "label": "Eyebrow",
+      "type": "text"
+    },
+    {
+      "key": "heading",
+      "label": "Heading",
+      "type": "text",
+      "required": true
+    },
+    {
+      "key": "description",
+      "label": "Description",
+      "type": "text",
+      "multiline": true
+    },
+    {
+      "key": "actionLabel",
+      "label": "Action label",
+      "type": "text"
+    },
+    {
+      "key": "actionURL",
+      "label": "Action URL",
+      "type": "url"
+    },
+    {
+      "key": "secondaryLabel",
+      "label": "Secondary action label",
+      "type": "text"
+    },
+    {
+      "key": "secondaryURL",
+      "label": "Secondary action URL",
+      "type": "url"
+    },
+    {
+      "key": "items",
+      "label": "Items",
+      "type": "list",
+      "fields": [
+        {
+          "key": "image",
+          "label": "Image",
+          "type": "media"
+        }
+      ]
+    }
+  ],
+  "defaults": {
+    "eyebrow": "Built for what comes next",
+    "heading": "Good ideas deserve a bigger stage.",
+    "description": "Connect your people, products and possibilities. Make the complex feel simple, and move forward with confidence.",
+    "actionLabel": "Explore the possibilities",
+    "actionURL": "/",
+    "secondaryLabel": "Our story",
+    "secondaryURL": "/",
+    "items": [
+      {
+        "image": null
+      },
+      {
+        "image": null
+      },
+      {
+        "image": null
+      },
+      {
+        "image": null
+      },
+      {
+        "image": null
+      }
+    ]
+  },
+  "dependencies": {
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0"
+  }
+}

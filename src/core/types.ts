@@ -29,8 +29,12 @@ export type Field = {
   required?: boolean;
   default?: Json;
   widget?: string;
+  format?: 'form-endpoint';
+  collectionField?: { collectionKey: string; types: string[] };
 } & (
   | { type: 'text'; multiline?: boolean }
+  | { type: 'url' }
+  | { type: 'list'; fields: Field[]; min?: number; max?: number }
   | { type: 'number'; min?: number; max?: number }
   | { type: 'richtext' }
   | { type: 'collection' }
@@ -67,6 +71,8 @@ export interface Site extends Envelope {
   title: string;
   globals: Values;
   navigation: { id: string; label: string; to: Link }[];
+  header?: Values;
+  footer?: Block;
 }
 export interface Content {
   site: Site;
@@ -88,6 +94,10 @@ export interface Definition {
   defaults: Values;
   dependencies: Record<string, string>;
   component: string;
+  theme?: string;
+  tags?: string[];
+  description?: string;
+  placement?: 'page' | 'footer';
 }
 export interface Context {
   instanceId: string;
@@ -95,10 +105,11 @@ export interface Context {
   media: Media[];
   links: Record<string, string>;
   bindingPlaceholders?: Record<string, string>;
+  preview?: boolean;
   collections?: {
     id: string;
     name: string;
-    entries: { id: string; title: string; url?: string }[];
+    entries: { id: string; title: string; url?: string; values?: Values }[];
   }[];
 }
 export interface ViewProps {

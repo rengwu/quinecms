@@ -1,9 +1,10 @@
+import ListField from './ListField';
 import { Input } from '@cloudflare/kumo/components/input';
 import { InputArea } from '@cloudflare/kumo/components/input';
 import { Select } from '@cloudflare/kumo/components/select';
 import { Checkbox } from '@cloudflare/kumo/components/checkbox';
 import { Label } from '@cloudflare/kumo/components/label';
-import { lazy, Suspense } from 'react';
+import { lazy, Suspense, useId } from 'react';
 import type { Field, Media, Values, Collection } from '../core/types';
 import { blank, compatible } from '../core/content';
 import { widgets } from './widgets';
@@ -26,6 +27,7 @@ export default function Fields({
   collections?: Collection[];
   readOnly?: boolean;
 }) {
+  const prefix = useId();
   return (
     <div className={styles.formStack}>
       {fields.map((f) => {
@@ -43,7 +45,7 @@ export default function Fields({
           f.type === 'richtext'
             ? controls.markdown
             : f.widget && controls[f.widget];
-        const inputId = 'field-' + f.key;
+        const inputId = prefix + '-field-' + f.key;
         if (Widget)
           return (
             <fieldset className={styles.widgetField} key={f.key}>
@@ -69,7 +71,47 @@ export default function Fields({
               {f.label}
               {f.required ? ' *' : ''}
             </Label>
-            {f.type === 'collection' ? (
+            {f.type === 'list' ? (
+              <ListField
+                field={f}
+                value={value}
+                onChange={set}
+                media={media}
+                collections={collections}
+                readOnly={readOnly}
+              />
+            ) : f.collectionField ? (
+              <Select
+                id={inputId}
+                aria-label={f.label}
+                value={String(value ?? '')}
+                disabled={readOnly}
+                placeholder="Choose field…"
+                renderValue={(key) =>
+                  collections
+                    .find(
+                      (c) => c.id === values[f.collectionField!.collectionKey],
+                    )
+                    ?.fields.find((x) => x.key === key)?.label ||
+                  key ||
+                  'None'
+                }
+                onValueChange={(key) => set(key || null)}
+              >
+                <Select.Option value="">None</Select.Option>
+                {(
+                  collections.find(
+                    (c) => c.id === values[f.collectionField!.collectionKey],
+                  )?.fields ?? []
+                )
+                  .filter((x) => f.collectionField!.types.includes(x.type))
+                  .map((x) => (
+                    <Select.Option key={x.key} value={x.key}>
+                      {x.label}
+                    </Select.Option>
+                  ))}
+              </Select>
+            ) : f.type === 'collection' ? (
               <Select
                 id={inputId}
                 aria-label={f.label}

@@ -1,0 +1,85 @@
+{
+  "type": "tw-testimonials-2-generic",
+  "version": 1,
+  "label": "Paired customer stories",
+  "theme": "Tailwind UI",
+  "tags": ["testimonials", "social proof", "customers"],
+  "description": "An expressive layout with a clear visual balance.",
+  "kind": "generic",
+  "placement": "page",
+  "framework": "react",
+  "activation": "never",
+  "component": "View.tsx",
+  "fields": [
+    {
+      "key": "eyebrow",
+      "label": "Eyebrow",
+      "type": "text"
+    },
+    {
+      "key": "heading",
+      "label": "Heading",
+      "type": "text",
+      "required": true
+    },
+    {
+      "key": "description",
+      "label": "Description",
+      "type": "text",
+      "multiline": true
+    },
+    {
+      "key": "items",
+      "label": "Items",
+      "type": "list",
+      "fields": [
+        {
+          "key": "quote",
+          "label": "Quote",
+          "type": "text",
+          "required": true,
+          "multiline": true
+        },
+        {
+          "key": "name",
+          "label": "Name",
+          "type": "text",
+          "required": true
+        },
+        {
+          "key": "role",
+          "label": "Role",
+          "type": "text"
+        },
+        {
+          "key": "image",
+          "label": "Image",
+          "type": "media"
+        }
+      ]
+    }
+  ],
+  "defaults": {
+    "eyebrow": "Built for what comes next",
+    "heading": "Better together.",
+    "description": "Connect your people, products and possibilities. Make the complex feel simple, and move forward with confidence.",
+    "items": [
+      {
+        "quote": "We finally have the space to focus on what matters: building something our customers love.",
+        "name": "Alex Morgan",
+        "role": "Product lead, Northstar",
+        "image": null
+      },
+      {
+        "quote": "A thoughtful foundation that grows with our ambition. Everything feels connected.",
+        "name": "Sam Rivera",
+        "role": "Founder, Form",
+        "image": null
+      }
+    ]
+  },
+  "dependencies": {
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0"
+  }
+}

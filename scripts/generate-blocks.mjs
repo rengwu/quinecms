@@ -1,9 +1,22 @@
-import { readFile, writeFile, mkdir, rm, readdir } from 'node:fs/promises';
+import {
+  readFile,
+  writeFile as rawWriteFile,
+  mkdir,
+  rm,
+  readdir,
+} from 'node:fs/promises';
 import { resolve, relative } from 'node:path';
 import { createHash } from 'node:crypto';
 import semver from 'semver';
 import blocks from '../blocks.config.mjs';
 import { publicRoutes } from '../src/core/routes.ts';
+// Keep unchanged files in place so a running dev server never sees an empty registry.
+const written = new Set();
+async function writeFile(path, text) {
+  written.add(resolve(path));
+  if ((await readFile(path, 'utf8').catch(() => null)) !== text)
+    await rawWriteFile(path, text);
+}
 const pkg = JSON.parse(await readFile('package.json', 'utf8'));
 const defs = [];
 const keys = new Set();
@@ -20,6 +33,12 @@ for (const path of blocks) {
     !['never', 'visible', 'idle', 'load'].includes(d.activation) ||
     !Array.isArray(d.fields) ||
     (d.kind !== undefined && !['static', 'generic'].includes(d.kind)) ||
+    (d.theme !== undefined &&
+      (typeof d.theme !== 'string' || !d.theme.trim())) ||
+    (d.tags !== undefined &&
+      (!Array.isArray(d.tags) ||
+        d.tags.some((t) => typeof t !== 'string' || !t.trim()))) ||
+    (d.placement !== undefined && !['page', 'footer'].includes(d.placement)) ||
     !d.defaults
   )
     throw Error(`Invalid block definition: ${path}`);
@@ -46,7 +65,7 @@ for (const path of blocks) {
   await readFile(file);
   defs.push({ ...d, source: file });
 }
-await rm('src/generated', { recursive: true, force: true });
+
 await mkdir('src/generated', { recursive: true });
 await writeFile(
   'src/generated/definitions.ts',
@@ -76,6 +95,34 @@ await writeFile(
   `export const renderers = {\n${defs.map((d) => `${JSON.stringify(d.type + '@' + d.version)}: () => import(${JSON.stringify('../' + relative(resolve('src'), d.source))})`).join(',\n')}\n};\n`,
 );
 console.log(`Registered ${defs.length} block versions.`);
+
+const site = JSON.parse(await readFile('content/site.json', 'utf8'));
+const footerIndex = site.footer
+  ? defs.findIndex(
+      (d) =>
+        d.type === site.footer.type &&
+        d.version === site.footer.version &&
+        d.placement === 'footer',
+    )
+  : -1;
+if (site.footer && footerIndex === -1)
+  throw Error('Missing installed site footer');
+await writeFile(
+  'src/generated/Footer.astro',
+  footerIndex === -1
+    ? `---
+const {content}=Astro.props;
+---
+<footer class="site-footer">{content.site.title}</footer>
+`
+    : `---
+import Block from './Block${footerIndex}.astro';
+import {contextFor} from '../core/content';
+const {content}=Astro.props;
+---
+<Block props={content.site.footer.props} context={contextFor(content,content.site.footer.id)}/>
+`,
+);
 
 const content = { pages: [], collections: [], entries: [] };
 async function walk(dir, kind) {
@@ -185,3 +232,12 @@ await writeFile(
   'src/generated/sources.ts',
   `export const sourceFiles: Record<string,string> = ${JSON.stringify(sources, null, 2)};\n`,
 );
+
+async function prune(dir) {
+  for (const item of await readdir(dir, { withFileTypes: true })) {
+    const path = resolve(dir, item.name);
+    if (item.isDirectory()) await prune(path);
+    else if (!written.has(path)) await rm(path);
+  }
+}
+await prune('src/generated');

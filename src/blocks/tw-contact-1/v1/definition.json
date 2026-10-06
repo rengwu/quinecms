@@ -1,0 +1,68 @@
+{
+  "type": "tw-contact-1",
+  "version": 1,
+  "label": "Centered contact form",
+  "theme": "Tailwind UI",
+  "tags": ["contact", "form", "conversion"],
+  "description": "A focused, spacious layout.",
+  "kind": "static",
+  "placement": "page",
+  "framework": "react",
+  "activation": "never",
+  "component": "View.tsx",
+  "fields": [
+    {
+      "key": "eyebrow",
+      "label": "Eyebrow",
+      "type": "text"
+    },
+    {
+      "key": "heading",
+      "label": "Heading",
+      "type": "text",
+      "required": true
+    },
+    {
+      "key": "description",
+      "label": "Description",
+      "type": "text",
+      "multiline": true
+    },
+    {
+      "key": "endpoint",
+      "label": "Submission endpoint",
+      "type": "url",
+      "required": true,
+      "format": "form-endpoint"
+    },
+    {
+      "key": "submitLabel",
+      "label": "Submit label",
+      "type": "text"
+    },
+    {
+      "key": "privacy",
+      "label": "Privacy notice",
+      "type": "text",
+      "multiline": true
+    },
+    {
+      "key": "privacyURL",
+      "label": "Privacy policy URL",
+      "type": "url"
+    }
+  ],
+  "defaults": {
+    "eyebrow": "Built for what comes next",
+    "heading": "Let\u2019s start a conversation.",
+    "description": "Connect your people, products and possibilities. Make the complex feel simple, and move forward with confidence.",
+    "endpoint": null,
+    "submitLabel": "Send message",
+    "privacy": "Your details are used only to respond to your message.",
+    "privacyURL": null
+  },
+  "dependencies": {
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0"
+  }
+}

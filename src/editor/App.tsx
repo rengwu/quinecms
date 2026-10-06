@@ -1,3 +1,7 @@
+import { fieldDefaults } from '../core/lists';
+import BlockCatalog from './BlockCatalog';
+import SiteHeader from '../site/Header';
+import { headerFields, headerValues } from '../core/header';
 import { Button } from '@cloudflare/kumo/components/button';
 import { Input } from '@cloudflare/kumo/components/input';
 import { Select } from '@cloudflare/kumo/components/select';
@@ -5,7 +9,7 @@ import { Label } from '@cloudflare/kumo/components/label';
 import { useEffect, useRef, useState } from 'react';
 import type { CSSProperties } from 'react';
 import { Dialog } from '@cloudflare/kumo/components/dialog';
-import { CaretRightIcon, PlusIcon } from '@phosphor-icons/react';
+import { CaretRightIcon, PlusIcon, XIcon } from '@phosphor-icons/react';
 import CollectionSchema from './CollectionSchema';
 import PanelSection from './PanelSection';
 import PageList from './PageList';
@@ -28,7 +32,6 @@ import {
   filesFor,
   id,
   newBlock,
-  resolveLink,
   schemaChanges,
   serialize,
   switchVersion,
@@ -497,9 +500,7 @@ function Editor({
       id: id('entry'),
       collectionId: collection.id,
       slug: 'entry-' + content.entries.length,
-      values: Object.fromEntries(
-        collection.fields.map((f) => [f.key, f.default ?? null]),
-      ),
+      values: fieldDefaults(collection.fields),
     };
     setContent({ ...content, entries: [...content.entries, e] });
     setSelected(e.id);
@@ -1157,169 +1158,80 @@ function Editor({
                         })
                       }
                     />
+                    <PanelSection title="Header">
+                      <Fields
+                        fields={headerFields}
+                        values={headerValues(content)}
+                        media={content.media}
+                        collections={content.collections}
+                        onChange={(header) =>
+                          setContent({
+                            ...content,
+                            site: { ...content.site, header },
+                          })
+                        }
+                      />
+                    </PanelSection>
                     <PanelSection
-                      title="Navigation"
+                      title="Footer"
                       action={
                         <Button
                           variant="primary"
                           icon={<PlusIcon />}
-                          onClick={() =>
-                            setContent({
-                              ...content,
-                              site: {
-                                ...content.site,
-                                navigation: [
-                                  ...content.site.navigation,
-                                  {
-                                    id: id('nav'),
-                                    label: 'Link',
-                                    to: { kind: 'external', url: '/' },
-                                  },
-                                ],
-                              },
-                            })
-                          }
+                          onClick={() => setModal('footer')}
                         >
-                          Add link
+                          {content.site.footer
+                            ? 'Change footer'
+                            : 'Choose footer'}
                         </Button>
                       }
                     >
-                      <div className={styles.formStack}>
-                        {content.site.navigation.map((n, i) => {
-                          const update = (next: typeof n) =>
-                            setContent({
-                              ...content,
-                              site: {
-                                ...content.site,
-                                navigation: content.site.navigation.map(
-                                  (x, j) => (i === j ? next : x),
-                                ),
-                              },
-                            });
-                          return (
-                            <fieldset
-                              key={n.id}
-                              className={styles.navigationItem}
-                            >
-                              <legend className={styles.srOnly}>
-                                Navigation link {i + 1}
-                              </legend>
-                              <div className={styles.field}>
-                                <Label>
-                                  Label
-                                  <Input
-                                    aria-label="Label"
-                                    value={n.label}
-                                    onChange={(e) =>
-                                      update({ ...n, label: e.target.value })
-                                    }
-                                  />
-                                </Label>
-                              </div>
-                              <Select
-                                label="Destination"
-                                className={styles.full}
-                                aria-label="Link destination"
-                                renderValue={(value) => {
-                                  const [kind, id] = value.split(':');
-                                  return kind === 'external'
-                                    ? 'URL'
-                                    : content.pages.find((p) => p.id === id)
-                                        ?.title ||
-                                        content.entries.find((e) => e.id === id)
-                                          ?.slug ||
-                                        'Choose…';
-                                }}
-                                value={
-                                  n.to.kind === 'external'
-                                    ? 'external'
-                                    : n.to.kind + ':' + n.to.id
-                                }
-                                onValueChange={(value) => {
-                                  const [kind, id] = (value ?? '').split(':');
-                                  update({
-                                    ...n,
-                                    to:
-                                      kind === 'external'
-                                        ? { kind: 'external', url: '/' }
-                                        : {
-                                            kind: kind as 'page' | 'entry',
-                                            id,
-                                          },
-                                  });
-                                }}
-                              >
-                                <Select.Option value="external">
-                                  URL
-                                </Select.Option>
-                                {content.pages
-                                  .filter((p) => p.kind === 'static')
-                                  .map((p) => (
-                                    <Select.Option
-                                      key={p.id}
-                                      value={'page:' + p.id}
-                                    >
-                                      {p.title}
-                                    </Select.Option>
-                                  ))}
-                                {content.entries
-                                  .filter((e) =>
-                                    resolveLink(content, {
-                                      kind: 'entry',
-                                      id: e.id,
-                                    }),
-                                  )
-                                  .map((e) => (
-                                    <Select.Option
-                                      key={e.id}
-                                      value={'entry:' + e.id}
-                                    >
-                                      {e.slug}
-                                    </Select.Option>
-                                  ))}
-                              </Select>
-                              {n.to.kind === 'external' && (
-                                <div className={styles.field}>
-                                  <Input
-                                    label="URL"
-                                    aria-label="Destination URL"
-                                    value={n.to.url}
-                                    onChange={(e) =>
-                                      update({
-                                        ...n,
-                                        to: {
-                                          kind: 'external',
-                                          url: e.target.value,
-                                        },
-                                      })
-                                    }
-                                  />
-                                </div>
-                              )}
-                              <div className={styles.row}>
-                                <Button
-                                  variant="secondary-destructive"
-                                  size="sm"
-                                  onClick={() =>
-                                    setContent({
-                                      ...content,
-                                      site: {
-                                        ...content.site,
-                                        navigation:
-                                          content.site.navigation.filter(
-                                            (_, j) => j !== i,
-                                          ),
-                                      },
-                                    })
-                                  }
-                                >
-                                  Remove link
-                                </Button>
-                              </div>
-                            </fieldset>
-                          );
-                        })}
-                      </div>
+                      {content.site.footer ? (
+                        <>
+                          <p>
+                            {definitions.find(
+                              (d) =>
+                                d.type === content.site.footer?.type &&
+                                d.version === content.site.footer?.version,
+                            )?.label ?? 'Unavailable footer'}
+                          </p>
+                          <Fields
+                            fields={
+                              definitions.find(
+                                (d) =>
+                                  d.type === content.site.footer?.type &&
+                                  d.version === content.site.footer?.version,
+                              )?.fields ?? []
+                            }
+                            values={content.site.footer.props}
+                            media={content.media}
+                            collections={content.collections}
+                            onChange={(props) =>
+                              setContent({
+                                ...content,
+                                site: {
+                                  ...content.site,
+                                  footer: { ...content.site.footer!, props },
+                                },
+                              })
+                            }
+                          />
+                          <Button
+                            variant="secondary-destructive"
+                            onClick={() => {
+                              const site = { ...content.site };
+                              delete site.footer;
+                              setContent({ ...content, site });
+                            }}
+                          >
+                            Remove footer
+                          </Button>
+                        </>
+                      ) : (
+                        <p className={styles.muted}>
+                          The site title is shown until you choose a footer.
+                        </p>
+                      )}
                     </PanelSection>
                     <PanelSection title="Backups">
                       <p className={styles.muted}>
@@ -1380,25 +1292,19 @@ function Editor({
               data-theme={content.site.globals.theme}
               aria-label="Live preview"
             >
-              <header className={styles.previewNav}>
-                <strong>{content.site.title}</strong>
-                <nav>
-                  {content.site.navigation.map((n) => (
-                    <a
-                      key={n.id}
-                      href={resolveLink(content, n.to)}
-                      onClick={(e) => {
-                        e.preventDefault();
-                        if (n.to.kind !== 'external') {
-                          openDocument(n.to.id);
-                        }
-                      }}
-                    >
-                      {n.label}
-                    </a>
-                  ))}
-                </nav>
-              </header>
+              <SiteHeader
+                content={content}
+                preview
+                onNavigate={(url, documentId) => {
+                  if (documentId) openDocument(documentId);
+                  else {
+                    const id = Object.entries(
+                      contextFor(content, 'navigation').links,
+                    ).find(([, path]) => path === url)?.[0];
+                    if (id) openDocument(id);
+                  }
+                }}
+              />
               {page?.blocks.map((b) => (
                 <section
                   className={styles.previewBlock}
@@ -1409,6 +1315,7 @@ function Editor({
                     block={b}
                     context={{
                       ...contextFor(content, b.id),
+                      preview: true,
                       ...(page?.kind === 'generic'
                         ? { bindingPlaceholders: bindingPlaceholders(b) }
                         : {}),
@@ -1421,9 +1328,19 @@ function Editor({
                   Add a block to start building.
                 </div>
               )}
-              <footer className={styles.previewFooter}>
-                {content.site.title}
-              </footer>
+              {content.site.footer ? (
+                <Island
+                  block={content.site.footer}
+                  context={{
+                    ...contextFor(content, content.site.footer.id),
+                    preview: true,
+                  }}
+                />
+              ) : (
+                <footer className={styles.previewFooter}>
+                  {content.site.title}
+                </footer>
+              )}
             </main>
           )}
         </>
@@ -1437,13 +1354,23 @@ function Editor({
           }
         }}
       >
-        <Dialog size="lg" className={styles.popup}>
-          <Dialog.Title>
+        <Dialog
+          size="lg"
+          className={`${styles.popup} ${['blocks', 'footer'].includes(modal) ? styles.catalogPopup : ''}`}
+        >
+          <Dialog.Title
+            className={
+              ['blocks', 'footer'].includes(modal) && !confirm
+                ? styles.srOnly
+                : undefined
+            }
+          >
             {confirm?.title ??
               {
                 navigation: 'Navigation',
                 page: 'Add page',
                 blocks: 'Add a block',
+                footer: 'Choose a footer',
                 connection: 'Repository connection',
                 storage: 'R2 storage',
               }[modal] ??
@@ -1494,39 +1421,42 @@ function Editor({
                   </p>
                 </div>
               )}
-              {modal === 'blocks' && (
-                <div className={styles.grid}>
-                  {definitions
-                    .filter(
-                      (d) =>
-                        (d.kind ?? 'static') === page?.kind &&
-                        !d.deprecated &&
-                        !definitions.some(
-                          (n) =>
-                            n.type === d.type &&
-                            !n.deprecated &&
-                            n.version > d.version,
-                        ),
-                    )
-                    .map((d) => (
+              {['blocks', 'footer'].includes(modal) && (
+                <>
+                  <Dialog.Close
+                    render={
                       <Button
-                        key={d.type}
-                        onClick={() => {
-                          if (page) {
-                            const b = newBlock(d);
-                            changeDoc({
-                              ...page,
-                              blocks: [...page.blocks, b],
-                            });
-                            setBlockId(b.id);
-                            setModal('');
-                          }
-                        }}
-                      >
-                        {d.label}
-                      </Button>
-                    ))}
-                </div>
+                        variant="ghost"
+                        shape="square"
+                        className={styles.catalogClose}
+                        aria-label="Close block library"
+                      />
+                    }
+                  >
+                    <XIcon size={20} />
+                  </Dialog.Close>
+                  <BlockCatalog
+                    definitions={definitions}
+                    content={content}
+                    kind={
+                      modal === 'footer' ? 'static' : (page?.kind ?? 'static')
+                    }
+                    placement={modal === 'footer' ? 'footer' : 'page'}
+                    onAdd={(d) => {
+                      const b = newBlock(d);
+                      if (modal === 'footer')
+                        setContent({
+                          ...content,
+                          site: { ...content.site, footer: b },
+                        });
+                      else if (page) {
+                        changeDoc({ ...page, blocks: [...page.blocks, b] });
+                        setBlockId(b.id);
+                      }
+                      setModal('');
+                    }}
+                  />
+                </>
               )}
               {modal === 'connection' && (
                 <>
@@ -1707,25 +1637,6 @@ function Editor({
                     </Button>
                   </div>
                 </>
-              )}
-              {modal === 'page' && (
-                <div className={styles.formStack}>
-                  <Button onClick={() => addPage('static')}>Static page</Button>
-                  <p className={styles.muted}>
-                    A public page with its own content and URL.
-                  </p>
-                  <Button onClick={() => addPage('generic')}>
-                    Generic page
-                  </Button>
-                  <p className={styles.muted}>
-                    A reusable layout populated by collection entries.
-                  </p>
-                </div>
-              )}
-              {modal === 'blocks' && (
-                <div className={styles.dialogActions}>
-                  <Dialog.Close render={<Button />}>Close</Dialog.Close>
-                </div>
               )}
             </>
           )}

@@ -119,30 +119,16 @@ function editableShape(c: unknown): c is Content {
         typeof col.name === 'string' &&
         typeof col.path === 'string' &&
         Array.isArray(col.fields) &&
-        col.fields.every(
-          (f: any) =>
-            object(f) &&
-            typeof f.key === 'string' &&
-            typeof f.label === 'string' &&
-            [
-              'text',
-              'richtext',
-              'number',
-              'date',
-              'toggle',
-              'select',
-              'media',
-            ].includes(f.type) &&
-            (f.type !== 'select' ||
-              (Array.isArray(f.options) &&
-                f.options.every(
-                  (o: any) =>
-                    object(o) &&
-                    typeof o.value === 'string' &&
-                    typeof o.label === 'string',
-                ))),
-        ),
+        col.fields.every((f: unknown) => fieldShape(f)),
     )
+  )
+    return false;
+  if (c.site.header !== undefined && !object(c.site.header)) return false;
+  if (
+    c.site.footer !== undefined &&
+    (!object(c.site.footer) ||
+      typeof c.site.footer.type !== 'string' ||
+      !object(c.site.footer.props))
   )
     return false;
   return (
@@ -160,5 +146,35 @@ function editableShape(c: unknown): c is Content {
         typeof m.original.mime === 'string' &&
         Array.isArray(m.variants),
     )
+  );
+}
+
+function fieldShape(f: any, nested = false): boolean {
+  return (
+    object(f) &&
+    typeof f.key === 'string' &&
+    typeof f.label === 'string' &&
+    [
+      'text',
+      'url',
+      'richtext',
+      'number',
+      'date',
+      'toggle',
+      'select',
+      'media',
+      ...(!nested ? ['list'] : []),
+    ].includes(f.type) &&
+    (f.type !== 'list' ||
+      (Array.isArray(f.fields) &&
+        f.fields.every((child: any) => fieldShape(child, true)))) &&
+    (f.type !== 'select' ||
+      (Array.isArray(f.options) &&
+        f.options.every(
+          (o: any) =>
+            object(o) &&
+            typeof o.value === 'string' &&
+            typeof o.label === 'string',
+        )))
   );
 }

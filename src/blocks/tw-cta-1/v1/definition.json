@@ -1,0 +1,65 @@
+{
+  "type": "tw-cta-1",
+  "version": 1,
+  "label": "Centered invitation",
+  "theme": "Tailwind UI",
+  "tags": ["cta", "conversion"],
+  "description": "A focused, spacious layout.",
+  "kind": "static",
+  "placement": "page",
+  "framework": "react",
+  "activation": "never",
+  "component": "View.tsx",
+  "fields": [
+    {
+      "key": "eyebrow",
+      "label": "Eyebrow",
+      "type": "text"
+    },
+    {
+      "key": "heading",
+      "label": "Heading",
+      "type": "text",
+      "required": true
+    },
+    {
+      "key": "description",
+      "label": "Description",
+      "type": "text",
+      "multiline": true
+    },
+    {
+      "key": "actionLabel",
+      "label": "Action label",
+      "type": "text"
+    },
+    {
+      "key": "actionURL",
+      "label": "Action URL",
+      "type": "url"
+    },
+    {
+      "key": "secondaryLabel",
+      "label": "Secondary action label",
+      "type": "text"
+    },
+    {
+      "key": "secondaryURL",
+      "label": "Secondary action URL",
+      "type": "url"
+    }
+  ],
+  "defaults": {
+    "eyebrow": "Built for what comes next",
+    "heading": "Your next chapter starts here.",
+    "description": "Connect your people, products and possibilities. Make the complex feel simple, and move forward with confidence.",
+    "actionLabel": "Explore the possibilities",
+    "actionURL": "/",
+    "secondaryLabel": "Our story",
+    "secondaryURL": "/"
+  },
+  "dependencies": {
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0"
+  }
+}

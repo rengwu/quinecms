@@ -1,3 +1,5 @@
+import { normalizeLists, listRows } from './lists';
+import { headerFields } from './header';
 import { entryPath } from './routes';
 export { entryPath } from './routes';
 import { bindingCompatible, resolveBlock } from './bindings';
@@ -110,6 +112,17 @@ export function resolveLink(c: Content, ref: Link): string | undefined {
     : undefined;
 }
 export function contextFor(c: Content, instanceId: string): Context {
+  const block =
+    c.pages.flatMap((p) => p.blocks).find((b) => b.id === instanceId) ??
+    (c.site.footer?.id === instanceId ? c.site.footer : undefined);
+  const mappedKeys = [
+    'titleField',
+    'summaryField',
+    'imageField',
+    'dateField',
+  ].flatMap((key) =>
+    typeof block?.props[key] === 'string' ? [String(block.props[key])] : [],
+  );
   return {
     instanceId,
     globals: c.site.globals,
@@ -122,6 +135,13 @@ export function contextFor(c: Content, instanceId: string): Context {
         .map((e) => ({
           id: e.id,
           title: String(e.values[col.titleField] ?? e.slug),
+          ...(block?.props.collection === col.id
+            ? {
+                values: Object.fromEntries(
+                  mappedKeys.map((key) => [key, e.values[key] ?? null]),
+                ),
+              }
+            : {}),
           ...(contentTemplate(c, col) ? { url: entryPath(col, e) } : {}),
         })),
     })),
@@ -144,13 +164,46 @@ export const safeURL = (v: unknown): v is string =>
   typeof v === 'string' &&
   /^(https?:\/\/|mailto:|tel:|\/(?!\/)|#)/i.test(v) &&
   !/[\\\u0000-\u0020]/.test(v);
+export function safeFormEndpoint(v: unknown): v is string {
+  if (!safeURL(v)) return false;
+  try {
+    const url = new URL(v);
+    return (
+      ['http:', 'https:'].includes(url.protocol) &&
+      !!url.hostname &&
+      !url.username &&
+      !url.password
+    );
+  } catch {
+    return false;
+  }
+}
 export const safePublicPath = (v: unknown): v is string =>
   typeof v === 'string' &&
   /^\/(?:[a-zA-Z0-9_-]+\/)*[a-zA-Z0-9_-]*$/.test(v) &&
   !/^\/(admin|_astro|assets)(\/|$)/.test(v);
 export function compatible(f: Field, v: unknown): boolean {
+  if (!f || typeof f !== 'object') return false;
   if (blank(v)) return true;
   switch (f.type) {
+    case 'url':
+      return safeURL(v);
+    case 'list':
+      return (
+        Array.isArray(v) &&
+        Array.isArray(f.fields) &&
+        (f.max === undefined || v.length <= f.max) &&
+        v.every(
+          (row) =>
+            object(row) &&
+            f.fields.every((child) => compatible(child, row[child.key])),
+        ) &&
+        v.every(
+          (row) => row._rowId === undefined || typeof row._rowId === 'string',
+        ) &&
+        new Set(v.filter((row) => row._rowId).map((row) => row._rowId)).size ===
+          v.filter((row) => row._rowId).length
+      );
     case 'richtext':
     case 'collection':
     case 'text':
@@ -223,7 +276,15 @@ export function newBlock(d: Definition): Block {
     id: id('block'),
     type: d.type,
     version: d.version,
-    props: structuredClone(d.defaults),
+    props: Object.fromEntries(
+      d.fields.map((f) => [
+        f.key,
+        normalizeLists(
+          f,
+          structuredClone(d.defaults[f.key] ?? f.default ?? null),
+        ),
+      ]),
+    ),
   };
 }
 export function validate(content: Content, definitions: Definition[]): Issue[] {
@@ -299,8 +360,39 @@ export function validate(content: Content, definitions: Definition[]): Issue[] {
           `${f.label} has an incompatible value.`,
           phase,
         );
-      if (f.required && blank(v))
+      if (
+        f.required &&
+        (blank(v) || (f.type === 'list' && Array.isArray(v) && v.length === 0))
+      )
         add(`${where}.${f.key}`, `${f.label} is required.`, 'publish');
+      if (f.type === 'list' && Array.isArray(f.fields) && Array.isArray(v)) {
+        if (f.min !== undefined && v.length < f.min)
+          add(
+            `${where}.${f.key}`,
+            `${f.label} needs at least ${f.min} items.`,
+            'publish',
+          );
+        for (const [index, row] of v.entries())
+          fields(f.fields, row as Values, `${where}.${f.key}.${index}`, phase);
+      }
+      if (f.collectionField && !blank(v)) {
+        const col = content.collections.find(
+          (c) => c.id === values[f.collectionField!.collectionKey],
+        );
+        const mapped = col?.fields.find((field) => field.key === v);
+        if (!mapped || !f.collectionField.types.includes(mapped.type))
+          add(
+            `${where}.${f.key}`,
+            `${f.label}: choose a compatible collection field.`,
+            'publish',
+          );
+      }
+      if (f.format === 'form-endpoint' && !blank(v) && !safeFormEndpoint(v))
+        add(
+          `${where}.${f.key}`,
+          'Form endpoint must be an HTTP or HTTPS URL.',
+          'publish',
+        );
       if (
         (f.type === 'richtext' || f.widget === 'markdown') &&
         typeof v === 'string'
@@ -339,7 +431,12 @@ export function validate(content: Content, definitions: Definition[]): Issue[] {
         add(`${where}.${f.key}`, 'Select an existing media file.', 'publish');
     }
   };
-  const blocks = (bs: Block[], where: string, kind: 'static' | 'generic') => {
+  const blocks = (
+    bs: Block[],
+    where: string,
+    kind: 'static' | 'generic',
+    placement: 'page' | 'footer' = 'page',
+  ) => {
     if (!Array.isArray(bs)) {
       add(where, 'Blocks must be an ordered list.');
       return;
@@ -370,6 +467,12 @@ export function validate(content: Content, definitions: Definition[]): Issue[] {
         );
         continue;
       }
+      if ((d.placement ?? 'page') !== placement)
+        add(
+          `${where}.${b.id}`,
+          `This block belongs in the ${d.placement ?? 'page'}.`,
+          'publish',
+        );
       if ((d.kind ?? 'static') !== kind)
         add(
           `${where}.${b.id}`,
@@ -413,6 +516,63 @@ export function validate(content: Content, definitions: Definition[]): Issue[] {
       );
     }
   };
+  function validateSchema(fs: Field[], where: string, depth = 0) {
+    const keys = new Set<string>();
+    for (const f of fs) {
+      if (
+        !object(f) ||
+        !/^[a-zA-Z][\w]*$/.test(f.key) ||
+        keys.has(f.key) ||
+        typeof f.label !== 'string' ||
+        ![
+          'text',
+          'url',
+          'richtext',
+          'number',
+          'date',
+          'toggle',
+          'select',
+          'media',
+          ...(depth === 0 ? ['list'] : []),
+        ].includes(f.type)
+      ) {
+        add(where, 'Invalid or duplicate field definition.');
+        continue;
+      }
+      keys.add(f.key);
+      if (
+        (f.type === 'number' || f.type === 'list') &&
+        ((f.min !== undefined && !Number.isFinite(f.min)) ||
+          (f.max !== undefined && !Number.isFinite(f.max)) ||
+          (f.min !== undefined && f.max !== undefined && f.min > f.max))
+      )
+        add(where, 'Invalid number limits.');
+      if (f.type === 'list') {
+        if (!Array.isArray(f.fields))
+          add(where, 'List fields must define their item fields.');
+        else validateSchema(f.fields, where + '.' + f.key, depth + 1);
+      }
+      if (
+        f.type === 'select' &&
+        (!Array.isArray(f.options) ||
+          f.options.some(
+            (o) =>
+              !object(o) ||
+              typeof o.value !== 'string' ||
+              !o.value ||
+              typeof o.label !== 'string',
+          ) ||
+          new Set(f.options.map((o) => o.value)).size !== f.options.length)
+      )
+        add(where, 'Select options must have unique values.');
+      if (f.default !== undefined)
+        fields(
+          [{ ...f, required: false }],
+          { [f.key]: f.default },
+          where + '.default',
+        );
+    }
+  }
   for (const c of content.collections) {
     if (!object(c)) continue;
     if (!safePublicPath(c.path))
@@ -426,48 +586,7 @@ export function validate(content: Content, definitions: Definition[]): Issue[] {
       add(c.id, 'Invalid collection definition.');
       continue;
     }
-    const keys = new Set<string>();
-    for (const f of c.fields) {
-      if (
-        !object(f) ||
-        !/^[a-zA-Z][\w]*$/.test(f.key) ||
-        keys.has(f.key) ||
-        typeof f.label !== 'string' ||
-        ![
-          'text',
-          'richtext',
-          'number',
-          'date',
-          'toggle',
-          'select',
-          'media',
-        ].includes(f.type)
-      ) {
-        add(c.id, 'Invalid or duplicate field definition.');
-        continue;
-      }
-      keys.add(f.key);
-      if (
-        f.type === 'number' &&
-        ((f.min !== undefined && !Number.isFinite(f.min)) ||
-          (f.max !== undefined && !Number.isFinite(f.max)) ||
-          (f.min !== undefined && f.max !== undefined && f.min > f.max))
-      )
-        add(c.id, 'Invalid number limits.');
-      if (
-        f.type === 'select' &&
-        (!Array.isArray(f.options) ||
-          f.options.some(
-            (o) =>
-              !object(o) ||
-              typeof o.value !== 'string' ||
-              !o.value ||
-              typeof o.label !== 'string',
-          ) ||
-          new Set(f.options.map((o) => o.value)).size !== f.options.length)
-      )
-        add(c.id, 'Select options must have unique values.');
-    }
+    validateSchema(c.fields, c.id);
     if (!c.fields.some((f) => f && f.key === c.titleField && f.type === 'text'))
       add(c.id, 'Choose a text field for entry titles.');
   }
@@ -551,7 +670,7 @@ export function validate(content: Content, definitions: Definition[]): Issue[] {
     !Array.isArray(content.site.navigation)
   )
     add('site', 'Invalid site settings.');
-  else
+  else if (content.site.header === undefined)
     for (const n of content.site.navigation) {
       if (
         !object(n) ||
@@ -565,6 +684,30 @@ export function validate(content: Content, definitions: Definition[]): Issue[] {
           'publish',
         );
     }
+  if (content.site.header !== undefined) {
+    fields(headerFields, content.site.header, 'site.header');
+    if (object(content.site.header)) {
+      for (const item of listRows(content.site.header.items)) {
+        if (
+          object(item) &&
+          blank(item.url) &&
+          (!Array.isArray(item.links) || item.links.length === 0)
+        )
+          add(
+            'site.header',
+            'Navigation items need a URL or dropdown links.',
+            'publish',
+          );
+      }
+      if (
+        !blank(content.site.header.actionLabel) &&
+        blank(content.site.header.actionURL)
+      )
+        add('site.header', 'The header action needs a URL.', 'publish');
+    }
+  }
+  if (content.site.footer !== undefined)
+    blocks([content.site.footer], 'site.footer', 'static', 'footer');
   for (const m of content.media) {
     if (!object(m) || !Array.isArray(m.variants) || !object(m.original)) {
       add('media', 'Invalid media record.');
@@ -640,7 +783,22 @@ export function schemaChanges(before: Content, after: Content): Issue[] {
       if (
         !nf ||
         nf.type !== f.type ||
-        entries.some((e) => !compatible(nf, e.values[f.key]))
+        entries.some((e) => !compatible(nf, e.values[f.key])) ||
+        (f.type === 'list' &&
+          nf.type === 'list' &&
+          f.fields.some(
+            (child) =>
+              entries.some(
+                (e) =>
+                  Array.isArray(e.values[f.key]) &&
+                  (e.values[f.key] as Values[]).some(
+                    (row) => !blank(row[child.key]),
+                  ),
+              ) &&
+              !nf.fields.some(
+                (next) => next.key === child.key && next.type === child.type,
+              ),
+          ))
       )
         issues.push({
           path: old.id + '.' + f.key,

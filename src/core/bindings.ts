@@ -1,6 +1,11 @@
 import type { Block, Field, Values } from './types';
 
-export function bindingCompatible(source: Field, target: Field) {
+export function bindingCompatible(source: Field, target: Field): boolean {
+  if (source.type === 'list' && target.type === 'list')
+    return target.fields.every((field) => {
+      const child = source.fields.find((f) => f.key === field.key);
+      return child ? bindingCompatible(child, field) : !field.required;
+    });
   return (
     source.type === target.type &&
     source.type !== 'custom' &&
@@ -17,7 +22,8 @@ export function resolveBlock(block: Block, values: Values): Block {
     const empty =
       value === undefined ||
       value === null ||
-      (typeof value === 'string' && !value.trim());
+      (typeof value === 'string' && !value.trim()) ||
+      (Array.isArray(value) && value.length === 0);
     props[key] = empty ? (props[key] ?? null) : value;
   }
   return { ...block, props };
