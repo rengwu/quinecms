@@ -5,14 +5,13 @@
     "site": {
       "formatVersion": 1,
       "id": "site_main",
-      "globals": {
-        "contentMaxWidth": 1512,
-        "pageGutter": 40
-      },
+      "globals": {},
       "layout": {
         "id": "chartr",
         "version": 1,
         "settings": {
+          "contentMaxWidth": 1512,
+          "pageGutter": 40,
           "title": "chartr",
           "brand": "chartr",
           "appearance": "system",

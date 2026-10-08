@@ -1,4 +1,5 @@
 // @vitest-environment jsdom
+import { modelFixture } from './support/content-model';
 import { it, expect, afterEach } from 'vitest';
 import { readRecovery, retain, recoveryKey } from '../src/editor/recovery';
 import { parseFiles } from '../src/core/content';
@@ -30,4 +31,32 @@ it('recovers incomplete content with its repository identity', () => {
   expect(readRecovery()?.repository).toEqual(repository);
   expect(readRecovery()?.content.pages[0].blocks[0].props.title).toBe('');
   expect(sessionStorage.getItem(recoveryKey)).not.toContain('secretAccessKey');
+});
+
+it('recovers unfinished recursive definitions without expanding them and preserves unreadable drafts', () => {
+  const content = modelFixture();
+  content.objects[0].fields.push({
+    key: 'self',
+    label: 'Self',
+    type: 'object',
+    objectId: content.objects[0].id,
+  });
+  retain({
+    version: 1,
+    repository: { owner: '', repo: '', branch: 'draft' },
+    base: null,
+    content,
+  });
+  expect(readRecovery()?.content).toEqual(content);
+  sessionStorage.setItem(recoveryKey, '{broken');
+  expect(readRecovery()).toBeNull();
+  expect(() =>
+    retain({
+      version: 1,
+      repository: { owner: '', repo: '', branch: 'draft' },
+      base: null,
+      content,
+    }),
+  ).toThrow('preserved');
+  expect(sessionStorage.getItem(recoveryKey)).toBe('{broken');
 });

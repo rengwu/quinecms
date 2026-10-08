@@ -1,0 +1,62 @@
+{
+  "type": "structured-details",
+  "version": 1,
+  "label": "Structured details",
+  "theme": "Content examples",
+  "tags": ["specifications", "nested content"],
+  "description": "Grouped specification rows with an author, for structured content.",
+  "kind": "generic",
+  "framework": "react",
+  "activation": "never",
+  "component": "View.tsx",
+  "fields": [
+    {
+      "key": "heading",
+      "label": "Heading",
+      "type": "text"
+    },
+    {
+      "key": "author",
+      "label": "Author",
+      "type": "text"
+    },
+    {
+      "key": "groups",
+      "label": "Groups",
+      "type": "list",
+      "fields": [
+        {
+          "key": "title",
+          "label": "Title",
+          "type": "text"
+        },
+        {
+          "key": "rows",
+          "label": "Rows",
+          "type": "list",
+          "fields": [
+            {
+              "key": "label",
+              "label": "Label",
+              "type": "text"
+            },
+            {
+              "key": "value",
+              "label": "Value",
+              "type": "text"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "defaults": {
+    "heading": "Specifications",
+    "author": "",
+    "groups": []
+  },
+  "dependencies": {
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0"
+  }
+}

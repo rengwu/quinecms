@@ -122,15 +122,18 @@ it('round trips stable list identities, rejects malformed values and protects po
   expect(compatible(list, [{ _rowId: 'same' }, { _rowId: 'same' }])).toBe(
     false,
   );
-  c.collections[0].fields.push(structuredClone(list));
+  c.collections[0].fields.push({
+    key: list.key,
+    label: list.label,
+    type: 'array',
+    of: { type: 'object', fields: structuredClone(list.fields) },
+  });
   c.entries[0].values.faqs = [{ question: 'Q', answer: 'A' }];
   const next = structuredClone(c);
-  (
-    next.collections[0].fields.at(-1) as Extract<Field, { type: 'list' }>
-  ).fields[0].key = 'renamed';
+  (next.collections[0].fields.at(-1) as any).of.fields[0].key = 'renamed';
   expect(schemaChanges(c, next)).toContainEqual(
     expect.objectContaining({
-      path: c.collections[0].id + '.faqs',
+      path: c.entries[0].id + '.faqs[0].question',
       phase: 'structure',
     }),
   );
@@ -141,11 +144,13 @@ it('round trips stable list identities, rejects malformed values and protects po
       phase: 'publish',
     }),
   );
-  (c.collections[0].fields.at(-1) as any).fields = [{ ...list, default: [{}] }];
+  (c.collections[0].fields.at(-1) as any).of.fields = [
+    { ...list, default: [{}] },
+  ];
   expect(validate(c, definitions).some((i) => i.phase === 'structure')).toBe(
     true,
   );
-  (c.collections[0].fields.at(-1) as any).fields = [null];
+  (c.collections[0].fields.at(-1) as any).of.fields = [null];
   expect(() => validate(c, definitions)).not.toThrow();
 });
 it('binds compatible schema lists with empty optional fallback and validates child types', () => {
@@ -170,7 +175,12 @@ it('binds compatible schema lists with empty optional fallback and validates chi
   const c = fixture();
   const page = c.pages.find((p) => p.kind === 'generic')!;
   page.blocks = [b];
-  c.collections[0].fields.push(structuredClone(list));
+  c.collections[0].fields.push({
+    key: list.key,
+    label: list.label,
+    type: 'array',
+    of: { type: 'object', fields: structuredClone(list.fields) },
+  });
   c.entries[0].values.faqs = values.faqs;
   expect(validate(c, definitions)).toEqual([]);
   c.entries[0].values.faqs = [{ question: 12, answer: 'A' }];

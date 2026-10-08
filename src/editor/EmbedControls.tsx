@@ -93,15 +93,15 @@ export default function EmbedControls({
             disabled={readOnly}
             onChange={(e) => setAlt(e.target.value)}
           />
-          <div className={styles.row}>
+          <div className={styles.dialogActions}>
+            <Button variant="ghost" onClick={() => setMode('')}>
+              Cancel
+            </Button>
             <Button
               disabled={readOnly || !images.some((m) => m.id === image)}
               onClick={() => insert(`media:${image}`, alt)}
             >
               Insert image
-            </Button>
-            <Button variant="ghost" onClick={() => setMode('')}>
-              Cancel
             </Button>
           </div>
         </div>
@@ -115,7 +115,10 @@ export default function EmbedControls({
             disabled={readOnly}
             onChange={(e) => setURL(e.target.value)}
           />
-          <div className={styles.row}>
+          <div className={styles.dialogActions}>
+            <Button variant="ghost" onClick={() => setMode('')}>
+              Cancel
+            </Button>
             <Button
               disabled={readOnly || !youtubeId(url)}
               onClick={() =>
@@ -123,9 +126,6 @@ export default function EmbedControls({
               }
             >
               Insert video
-            </Button>
-            <Button variant="ghost" onClick={() => setMode('')}>
-              Cancel
             </Button>
           </div>
         </div>

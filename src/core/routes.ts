@@ -1,7 +1,12 @@
 import type { Collection, Content, Entry, Page } from './types';
 
 export function entryPath(collection: Collection, entry: Entry) {
-  return `${collection.path.replace(/\/$/, '')}/${entry.slug}`;
+  if (!collection.genericPageId || !collection.path) return undefined;
+  return collection.mode === 'single'
+    ? collection.path
+    : entry.slug
+      ? `${collection.path.replace(/\/$/, '')}/${entry.slug}`
+      : undefined;
 }
 
 // Used by static generation and tests. Collections never own an index route.
@@ -23,9 +28,10 @@ export function publicRoutes(
     const page = content.pages.find(
       (p) => p.id === collection?.genericPageId && p.kind === 'generic',
     );
-    if (collection && page)
+    const path = collection && entryPath(collection, entry);
+    if (collection && page && path)
       routes.push({
-        path: entryPath(collection, entry),
+        path,
         page,
         entry,
         collection,

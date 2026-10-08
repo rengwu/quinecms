@@ -45,6 +45,21 @@ export function validPageGutter(value: unknown): value is number {
   return typeof value === 'number' && Number.isFinite(value) && value >= 0;
 }
 
+/** Layout-owned defaults also apply when an editor clears an override. */
+export function contentSpacing(
+  settings: Values,
+  defaults: { contentMaxWidth: number; pageGutter: number },
+) {
+  return {
+    contentMaxWidth: validContentMaxWidth(settings.contentMaxWidth)
+      ? settings.contentMaxWidth
+      : defaults.contentMaxWidth,
+    pageGutter: validPageGutter(settings.pageGutter)
+      ? settings.pageGutter
+      : defaults.pageGutter,
+  };
+}
+
 export function contentMaxWidth(globals: Values): number {
   return validContentMaxWidth(globals.contentMaxWidth)
     ? globals.contentMaxWidth

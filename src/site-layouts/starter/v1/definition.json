@@ -4,7 +4,13 @@
   "label": "Starter",
   "description": "A flexible header, grouped navigation, optional footer and familiar typography controls.",
   "activation": "never",
-  "defaults": { "title": "My site", "theme": "light", "navigation": [] },
+  "defaults": {
+    "title": "My site",
+    "theme": "light",
+    "navigation": [],
+    "contentMaxWidth": 1200,
+    "pageGutter": 24
+  },
   "fields": [],
   "component": "View.tsx",
   "settingsComponent": "Settings.tsx",

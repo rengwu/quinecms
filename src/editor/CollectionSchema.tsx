@@ -7,6 +7,7 @@ import { Label } from '@cloudflare/kumo/components/label';
 import { CaretRightIcon, PlusIcon } from '@phosphor-icons/react';
 import type { Collection, Entry, Field, Media, Page } from '../core/types';
 import styles from './editor.module.css';
+import FormScreen from './FormScreen';
 
 export default function CollectionSchema({
   collection,
@@ -16,25 +17,48 @@ export default function CollectionSchema({
   onChange,
   onBack,
   onDelete,
+  onCreate,
 }: {
   collection: Collection;
   pages: Page[];
   entries: Entry[];
   media: Media[];
-  onChange(next: Collection): void;
+  onChange(next: Collection): boolean | void;
   onBack(): void;
   onDelete(): void;
+  onCreate?(): void;
 }) {
   const [fieldIndex, setFieldIndex] = useState<number | null>(null);
+  const [pendingField, setPendingField] = useState<Field | null>(null);
   const field = fieldIndex === null ? undefined : collection.fields[fieldIndex];
   function updateField(next: Field) {
-    onChange({
+    return onChange({
       ...collection,
       titleField:
         collection.titleField === field?.key ? next.key : collection.titleField,
       fields: collection.fields.map((f, i) => (i === fieldIndex ? next : f)),
     });
   }
+  if (pendingField)
+    return (
+      <SchemaFieldEditor
+        field={pendingField}
+        media={media}
+        values={[]}
+        onChange={setPendingField}
+        onBack={() => setPendingField(null)}
+        onDelete={() => {}}
+        onCreate={() => {
+          if (
+            onChange({
+              ...collection,
+              fields: [...collection.fields, pendingField],
+            }) !== false
+          )
+            setPendingField(null);
+        }}
+      />
+    );
   if (field)
     return (
       <SchemaFieldEditor
@@ -54,11 +78,15 @@ export default function CollectionSchema({
       />
     );
   return (
-    <>
-      <Button className={styles.back} variant="ghost" onClick={onBack}>
-        ← Back
-      </Button>
-      <h2>{collection.name || 'Untitled collection'} schema</h2>
+    <FormScreen
+      title={
+        onCreate
+          ? 'New collection'
+          : `${collection.name || 'Untitled collection'} schema`
+      }
+      onBack={onBack}
+      creation={onCreate ? { label: 'Create collection', onCreate } : undefined}
+    >
       <div className={styles.field}>
         <Label htmlFor="collection-name">Name</Label>
         <Input
@@ -68,15 +96,22 @@ export default function CollectionSchema({
           onChange={(e) => onChange({ ...collection, name: e.target.value })}
         />
       </div>
-      <div className={styles.field}>
-        <Label htmlFor="collection-path">URL path</Label>
-        <Input
-          id="collection-path"
-          aria-label="URL path"
-          value={collection.path}
-          onChange={(e) => onChange({ ...collection, path: e.target.value })}
-        />
-      </div>
+      <p className={styles.muted}>
+        {collection.mode === 'single' ? 'Single entry' : 'Multiple entries'}
+      </p>
+      {collection.genericPageId && (
+        <div className={styles.field}>
+          <Label htmlFor="collection-path">
+            {collection.mode === 'single' ? 'Public path' : 'URL prefix'}
+          </Label>
+          <Input
+            id="collection-path"
+            aria-label="URL path"
+            value={collection.path ?? ''}
+            onChange={(e) => onChange({ ...collection, path: e.target.value })}
+          />
+        </div>
+      )}
       <div className={styles.field}>
         <Label htmlFor="generic-page">Generic page</Label>
         <Select
@@ -133,14 +168,11 @@ export default function CollectionSchema({
           onClick={() => {
             let n = collection.fields.length;
             while (collection.fields.some((f) => f.key === 'field' + n)) n++;
-            onChange({
-              ...collection,
-              fields: [
-                ...collection.fields,
-                { key: 'field' + n, label: 'New field', type: 'text' },
-              ],
+            setPendingField({
+              key: 'field' + n,
+              label: 'New field',
+              type: 'text',
             });
-            setFieldIndex(collection.fields.length);
           }}
         >
           Add field
@@ -165,15 +197,19 @@ export default function CollectionSchema({
           </li>
         ))}
       </ul>
-      <div className={styles.actionFooter}>
-        <Button
-          variant="secondary-destructive"
-          disabled={entries.length > 0}
-          onClick={onDelete}
-        >
-          Delete empty collection
-        </Button>
-      </div>
-    </>
+      {!onCreate && (
+        <div className={styles.actionFooter}>
+          <Button
+            variant="secondary-destructive"
+            disabled={collection.mode === 'many' && entries.length > 0}
+            onClick={onDelete}
+          >
+            {collection.mode === 'single'
+              ? 'Delete collection and its entry'
+              : 'Delete empty collection'}
+          </Button>
+        </div>
+      )}
+    </FormScreen>
   );
 }

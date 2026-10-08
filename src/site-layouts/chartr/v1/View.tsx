@@ -3,6 +3,7 @@ import type { LayoutProps } from '../../../core/layout-contract';
 import type { Values } from '../../../core/types';
 import { safeURL } from '../../../core/content';
 import { siteStyle } from '../../../core/site-style';
+import { layoutGlobals } from '../../../core/layouts';
 import '../../../themes/chartr/v1/styles.css';
 
 const preferenceKey = 'chartr-website-theme';
@@ -108,7 +109,7 @@ export default function Chartr({
       suppressHydrationWarning
       style={
         {
-          ...siteStyle(content.site.globals),
+          ...siteStyle(layoutGlobals(content.site)),
           '--site-body-font': '"IBM Plex Mono", monospace',
           '--site-heading-font': '"IBM Plex Mono", monospace',
         } as CSSProperties

@@ -2,6 +2,7 @@ import type { LayoutSettingsProps } from '../../../core/layout-contract';
 import type { Field } from '../../../core/types';
 import PanelSection from '../../../editor/PanelSection';
 import Fields from '../../../editor/Fields';
+import SiteDesign from '../../../editor/SiteDesign';
 import definition from './definition.json';
 export default function Settings({
   content,
@@ -10,6 +11,11 @@ export default function Settings({
 }: LayoutSettingsProps) {
   return (
     <>
+      <SiteDesign
+        globals={settings}
+        defaults={definition.defaults}
+        onChange={onChange}
+      />
       {[
         [
           'Identity and appearance',

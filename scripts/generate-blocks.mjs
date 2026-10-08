@@ -184,7 +184,7 @@ ${
     ? `const entry=content.entries.find(e=>e.id===${JSON.stringify(entry.id)})!;
 const collection=content.collections.find(c=>c.id===entry.collectionId)!;
 const title=String(entry.values[collection.titleField] ?? entry.slug);
-const blocks=page.blocks.map(b=>resolveBlock(b,entry.values));`
+const blocks=page.blocks.map(b=>resolveBlock(b,entry.values,content,collection.fields));`
     : `const title=page.title;
 const blocks=page.blocks;`
 }

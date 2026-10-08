@@ -184,7 +184,9 @@ describe('content contract', () => {
       label: 'Title',
       type: 'number',
     };
-    expect(schemaChanges(c, next)).toHaveLength(1);
+    expect(schemaChanges(c, next).map((i) => i.path)).toEqual(
+      c.entries.map((e) => `${e.id}.title`),
+    );
     next.collections[0].fields[0] = {
       key: 'title',
       label: 'New label',

@@ -34,5 +34,6 @@
       "type": "media"
     }
   ],
-  "genericPageId": "page_journal_entry"
+  "genericPageId": "page_journal_entry",
+  "mode": "many"
 }

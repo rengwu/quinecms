@@ -200,7 +200,7 @@ export default function BlockCatalog({
             icon={<PlusIcon />}
             onClick={() => onAdd(preview)}
           >
-            Add block
+            {placement === 'footer' ? 'Add footer' : 'Add block'}
           </Button>
         </div>
         <div className={styles.previewCanvas}>

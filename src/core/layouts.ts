@@ -12,16 +12,11 @@ export const layoutKey = (layout: Pick<LayoutSelection, 'id' | 'version'>) =>
   `${layout.id}@${layout.version}`;
 export function activeLayout(site: Site): LayoutSelection {
   if (site.layout) return site.layout;
-  const {
-    contentMaxWidth: _width,
-    pageGutter: _gutter,
-    ...appearance
-  } = site.globals;
   return {
     id: 'starter',
     version: 1,
     settings: {
-      ...appearance,
+      ...site.globals,
       title: site.title ?? '',
       navigation: site.navigation ?? [],
       ...(site.header ? { header: site.header } : {}),
@@ -32,16 +27,12 @@ export function activeLayout(site: Site): LayoutSelection {
 /** Conversion is lossless; canonical records contain no inactive settings. */
 export function migrateSite(content: Content): Content {
   if (content.site.layout) return content;
-  const { contentMaxWidth, pageGutter } = content.site.globals;
   return {
     ...content,
     site: {
       formatVersion: content.site.formatVersion,
       id: content.site.id,
-      globals: {
-        ...(contentMaxWidth !== undefined ? { contentMaxWidth } : {}),
-        ...(pageGutter !== undefined ? { pageGutter } : {}),
-      },
+      globals: {},
       layout: activeLayout(content.site),
     },
   };
@@ -59,7 +50,7 @@ export function layoutPolicy(site: Site) {
 }
 export function layoutGlobals(site: Site): Values {
   const active = activeLayout(site);
-  return { ...layoutPolicy(site)?.globals?.(active.settings), ...site.globals };
+  return layoutPolicy(site)?.globals?.(active.settings) ?? {};
 }
 export function layoutTitle(site: Site): string {
   return layoutPolicy(site)?.title?.(activeLayout(site).settings) ?? '';

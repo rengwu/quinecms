@@ -82,7 +82,8 @@ it('edits, adds, keyboard reorders and deletes repeatable content while keeping 
   });
   await click('Add item');
   await input('Question', 'Another question');
-  await click('← Back');
+  expect(latest.items).toHaveLength(4);
+  await click('Create item');
   expect(latest.items).toHaveLength(5);
   await click('Another question');
   await click('Remove item');
@@ -99,6 +100,7 @@ it('combines search/tag filters, has reset and separate preview, and only insert
       navigation: [],
     },
     pages: [],
+    objects: [],
     collections: [],
     entries: [],
     media: [],

@@ -1,4 +1,5 @@
 export default [
+  'structured-details/v1',
   'chartr-intro/v1',
   'chartr-workspace/v1',
   'chartr-agents/v1',

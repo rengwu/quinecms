@@ -2,10 +2,12 @@ import { useState } from 'react';
 import { Button } from '@cloudflare/kumo/components/button';
 import { PlusIcon } from '@phosphor-icons/react';
 import type { Collection, Field, Media, Values } from '../core/types';
-import { fieldDefaults, listRows, rowId } from '../core/lists';
+import { fieldDefaults, listRows, rowId, normalizeLists } from '../core/lists';
 import BlockList from './BlockList';
 import Fields from './Fields';
 import { PanelLevel } from './PanelNavigation';
+import { rowFields } from '../core/schema';
+import { useModel } from './ModelContext';
 import styles from './editor.module.css';
 
 export default function ListField({
@@ -15,8 +17,10 @@ export default function ListField({
   media,
   collections,
   readOnly,
+  depth = 0,
 }: {
-  field: Extract<Field, { type: 'list' }>;
+  field: Extract<Field, { type: 'list' | 'array' }>;
+  depth?: number;
   value: unknown;
   onChange(value: Values[]): void;
   media: Media[];
@@ -24,6 +28,11 @@ export default function ListField({
   readOnly: boolean;
 }) {
   const [selected, select] = useState('');
+  const [pending, setPending] = useState<Values | null>(null);
+  const model = useModel();
+  const fields = rowFields(field, model) ?? [];
+  if (depth >= 3)
+    return <p role="alert">This list exceeds the three-level nesting limit.</p>;
   const rows = listRows(value);
   // Older/imported lists without IDs remain editable; assign identities on the first mutation.
   const identified: (Values & { _rowId: string })[] = rows.map((row, i) => ({
@@ -33,7 +42,7 @@ export default function ListField({
   const row = identified.find((r) => r._rowId === selected);
   const rowLabel = (row: Values, i: number) =>
     String(
-      field.fields
+      fields
         .filter((f) => ['text', 'date', 'number'].includes(f.type))
         .map((f) => row[f.key])
         .find((v) => v !== null && v !== undefined && v !== '') ??
@@ -46,6 +55,31 @@ export default function ListField({
         _rowId: String(r._rowId).startsWith('legacy-') ? rowId() : r._rowId,
       })),
     );
+  if (pending)
+    return (
+      <PanelLevel
+        title="New item"
+        context={field.label}
+        onBack={() => setPending(null)}
+        creation={{
+          label: 'Create item',
+          onCreate: () => {
+            save([...identified, pending]);
+            setPending(null);
+          },
+        }}
+      >
+        <Fields
+          fields={fields}
+          depth={depth + 1}
+          values={pending}
+          media={media}
+          collections={collections}
+          readOnly={readOnly}
+          onChange={setPending}
+        />
+      </PanelLevel>
+    );
   if (row)
     return (
       <PanelLevel
@@ -54,7 +88,8 @@ export default function ListField({
         onBack={() => select('')}
       >
         <Fields
-          fields={field.fields}
+          fields={fields}
+          depth={depth + 1}
           values={row}
           media={media}
           collections={collections}
@@ -63,6 +98,20 @@ export default function ListField({
             onChange(identified.map((r) => (r._rowId === selected ? next : r)))
           }
         />
+        <Button
+          disabled={
+            readOnly || (field.max !== undefined && rows.length >= field.max)
+          }
+          onClick={() => {
+            const copy = (
+              normalizeLists(field, [row], model, depth) as Values[]
+            )[0];
+            save([...identified, copy]);
+            select(String(copy._rowId));
+          }}
+        >
+          Duplicate item
+        </Button>
         <Button
           variant="secondary-destructive"
           disabled={readOnly}
@@ -90,7 +139,7 @@ export default function ListField({
             type: r._rowId,
             version: 1,
             label: String(
-              field.fields
+              fields
                 .filter((f) => ['text', 'date', 'number'].includes(f.type))
                 .map((f) => r[f.key])
                 .find((v) => v !== null && v !== undefined && v !== '') ??
@@ -112,9 +161,11 @@ export default function ListField({
           readOnly || (field.max !== undefined && rows.length >= field.max)
         }
         onClick={() => {
-          const item = { ...fieldDefaults(field.fields), _rowId: rowId() };
-          save([...identified, item]);
-          select(item._rowId);
+          const item = {
+            ...fieldDefaults(fields, model, depth + 1),
+            _rowId: rowId(),
+          };
+          setPending(item);
         }}
       >
         Add item

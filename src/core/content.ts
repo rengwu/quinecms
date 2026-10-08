@@ -7,7 +7,26 @@ import {
 } from './layouts';
 import { entryPath } from './routes';
 export { entryPath } from './routes';
-import { bindingCompatible, resolveBlock } from './bindings';
+import {
+  bindingCompatible,
+  bindingShape,
+  bindingSource,
+  bindingValid,
+  resolveBlock,
+} from './bindings';
+import {
+  emptyModel,
+  objectFields,
+  rowFields,
+  schemaIssues,
+  incomingUsage,
+  definitionUses,
+  collectionUses,
+  resolvePath,
+  entryLabel,
+  hasValue,
+  type Model,
+} from './schema';
 import { embedDestination, embeddedDestinations } from './embeds';
 import { customValidators } from './custom-fields';
 import { validContentMaxWidth, validPageGutter } from './site-style';
@@ -24,7 +43,7 @@ import type {
 } from './types';
 export const id = (prefix: string) => `${prefix}_${crypto.randomUUID()}`;
 export const recordPath = (path: string) =>
-  /^content\/(?:site\.json|(?:pages|collections|media)\/[\w-]+\.json|entries\/[\w-]+\/[\w-]+\.json)$/.test(
+  /^content\/(?:site\.json|(?:pages|collections|objects|media)\/[\w-]+\.json|entries\/[\w-]+\/[\w-]+\.json)$/.test(
     path,
   );
 export function serialize(value: unknown): string {
@@ -50,6 +69,7 @@ export function filesFor(c: Content): Record<string, string> {
   for (const [kind, records] of [
     ['pages', c.pages],
     ['collections', c.collections],
+    ['objects', c.objects],
     ['media', c.media],
   ] as const)
     for (const r of records)
@@ -63,6 +83,7 @@ export function parseFiles(files: Record<string, string>): Content {
     site: null as unknown as Content['site'],
     pages: [],
     collections: [],
+    objects: [],
     entries: [],
     media: [],
   };
@@ -79,7 +100,7 @@ export function parseFiles(files: Record<string, string>): Content {
       )
         throw new Error(`Collection does not match ${path}`);
       const key = path.split('/')[1] as
-        'pages' | 'collections' | 'entries' | 'media';
+        'pages' | 'collections' | 'objects' | 'entries' | 'media';
       (c[key] as unknown[]).push(r);
     }
   }
@@ -133,24 +154,32 @@ export function contextFor(c: Content, instanceId: string): Context {
         .filter((e) => e.collectionId === col.id)
         .map((e) => ({
           id: e.id,
-          title: String(e.values[col.titleField] ?? e.slug),
+          title: entryLabel(e, c),
           ...(block?.props.collection === col.id
             ? {
                 values: Object.fromEntries(
-                  mappedKeys.map((key) => [key, e.values[key] ?? null]),
+                  mappedKeys.map((key) => [
+                    key,
+                    resolvePath(
+                      key,
+                      { fields: col.fields, values: e.values },
+                      c,
+                    )?.value ?? null,
+                  ]),
                 ),
               }
             : {}),
-          ...(contentTemplate(c, col) ? { url: entryPath(col, e) } : {}),
+          ...(contentTemplate(c, col) && entryPath(col, e)
+            ? { url: entryPath(col, e) }
+            : {}),
         })),
     })),
     links: Object.fromEntries([
       ...c.pages.filter((p) => p.kind === 'static').map((p) => [p.id, p.path!]),
       ...c.entries.flatMap((e) => {
         const col = c.collections.find((x) => x.id === e.collectionId);
-        return col && contentTemplate(c, col)
-          ? [[e.id, entryPath(col, e)]]
-          : [];
+        const path = col && contentTemplate(c, col) && entryPath(col, e);
+        return path ? [[e.id, path]] : [];
       }),
     ]),
   };
@@ -181,12 +210,42 @@ export const safePublicPath = (v: unknown): v is string =>
   typeof v === 'string' &&
   /^\/(?:[a-zA-Z0-9_-]+\/)*[a-zA-Z0-9_-]*$/.test(v) &&
   !/^\/(admin|_astro|assets)(\/|$)/.test(v);
-export function compatible(f: Field, v: unknown): boolean {
+export function compatible(
+  f: Field,
+  v: unknown,
+  model: Model = emptyModel,
+  depth = 0,
+): boolean {
+  if (depth > 4) return false;
   if (!f || typeof f !== 'object') return false;
   if (blank(v)) return true;
   switch (f.type) {
     case 'url':
       return safeURL(v);
+    case 'reference':
+      return typeof v === 'string' && /^[\w-]+$/.test(v);
+    case 'object':
+      return (
+        object(v) &&
+        objectFields(f, model).every((child) =>
+          compatible(child, v[child.key], model, depth + 1),
+        )
+      );
+    case 'array':
+      if (!Array.isArray(v) || (f.max !== undefined && v.length > f.max))
+        return false;
+      if (f.of?.type === 'reference')
+        return (
+          v.every((id) => typeof id === 'string' && /^[\w-]+$/.test(id)) &&
+          new Set(v).size === v.length
+        );
+      if (f.of?.type !== 'object') return false;
+      return compatible(
+        { ...f, type: 'list', fields: objectFields(f.of, model) },
+        v,
+        model,
+        depth,
+      );
     case 'list':
       return (
         Array.isArray(v) &&
@@ -195,7 +254,9 @@ export function compatible(f: Field, v: unknown): boolean {
         v.every(
           (row) =>
             object(row) &&
-            f.fields.every((child) => compatible(child, row[child.key])),
+            f.fields.every((child) =>
+              compatible(child, row[child.key], model, depth + 1),
+            ),
         ) &&
         v.every(
           (row) => row._rowId === undefined || typeof row._rowId === 'string',
@@ -296,7 +357,7 @@ export function validate(content: Content, definitions: Definition[]): Issue[] {
   if (
     !object(content) ||
     !object(content.site) ||
-    !['pages', 'entries', 'collections', 'media'].every((k) =>
+    !['pages', 'entries', 'collections', 'objects', 'media'].every((k) =>
       Array.isArray((content as any)[k]),
     )
   )
@@ -314,6 +375,7 @@ export function validate(content: Content, definitions: Definition[]): Issue[] {
     ...content.pages,
     ...content.entries,
     ...content.collections,
+    ...content.objects,
     ...content.media,
   ];
   for (const r of records) {
@@ -353,7 +415,7 @@ export function validate(content: Content, definitions: Definition[]): Issue[] {
     }
     for (const f of fs) {
       const v = values[f.key];
-      if (!compatible(f, v))
+      if (!compatible(f, v, content))
         add(
           `${where}.${f.key}`,
           `${f.label} has an incompatible value.`,
@@ -361,24 +423,64 @@ export function validate(content: Content, definitions: Definition[]): Issue[] {
         );
       if (
         f.required &&
-        (blank(v) || (f.type === 'list' && Array.isArray(v) && v.length === 0))
+        (blank(v) ||
+          ((f.type === 'list' || f.type === 'array') &&
+            Array.isArray(v) &&
+            v.length === 0))
       )
         add(`${where}.${f.key}`, `${f.label} is required.`, 'publish');
-      if (f.type === 'list' && Array.isArray(f.fields) && Array.isArray(v)) {
+      if (f.type === 'object' && object(v))
+        fields(
+          objectFields(f, content),
+          v as Values,
+          `${where}.${f.key}`,
+          phase,
+        );
+      const children = rowFields(f, content);
+      if ((f.type === 'array' || f.type === 'list') && Array.isArray(v)) {
         if (f.min !== undefined && v.length < f.min)
           add(
             `${where}.${f.key}`,
             `${f.label} needs at least ${f.min} items.`,
             'publish',
           );
-        for (const [index, row] of v.entries())
-          fields(f.fields, row as Values, `${where}.${f.key}.${index}`, phase);
+        if (children)
+          for (const [index, row] of v.entries())
+            fields(
+              children,
+              row as Values,
+              `${where}.${f.key}.${index}`,
+              phase,
+            );
       }
+      const reference =
+        f.type === 'reference'
+          ? f
+          : f.type === 'array' && f.of.type === 'reference'
+            ? f.of
+            : undefined;
+      if (reference)
+        for (const target of Array.isArray(v) ? v : blank(v) ? [] : [v]) {
+          if (
+            !content.entries.some(
+              (e) =>
+                e.id === target && e.collectionId === reference.collectionId,
+            )
+          )
+            add(
+              `${where}.${f.key}`,
+              'Select an existing entry from the target collection.',
+              'publish',
+            );
+        }
       if (f.collectionField && !blank(v)) {
         const col = content.collections.find(
           (c) => c.id === values[f.collectionField!.collectionKey],
         );
-        const mapped = col?.fields.find((field) => field.key === v);
+        const mapped =
+          col && typeof v === 'string'
+            ? resolvePath(v, { fields: col.fields, values: {} }, content)?.field
+            : undefined;
         if (!mapped || !f.collectionField.types.includes(mapped.type))
           add(
             `${where}.${f.key}`,
@@ -481,11 +583,11 @@ export function validate(content: Content, definitions: Definition[]): Issue[] {
       if (
         b.bindings !== undefined &&
         (!object(b.bindings) ||
-          Object.values(b.bindings).some((v) => typeof v !== 'string'))
+          Object.values(b.bindings).some((v) => !bindingShape(v)))
       ) {
         add(
           `${where}.${b.id}`,
-          'Bindings must map block field keys to schema field names.',
+          'Bindings must use valid forward paths or typed array projections.',
         );
         continue;
       }
@@ -496,10 +598,7 @@ export function validate(content: Content, definitions: Definition[]): Issue[] {
           'publish',
         );
       for (const [key, source] of Object.entries(b.bindings ?? {})) {
-        if (
-          !d.fields.some((f) => f.key === key) ||
-          !/^[a-zA-Z][\w]*$/.test(source)
-        )
+        if (!d.fields.some((f) => f.key === key) || !bindingShape(source))
           add(
             `${where}.${b.id}.${key}`,
             'Choose an existing block field and a valid schema field key.',
@@ -515,69 +614,21 @@ export function validate(content: Content, definitions: Definition[]): Issue[] {
       );
     }
   };
-  function validateSchema(fs: Field[], where: string, depth = 0) {
-    const keys = new Set<string>();
-    for (const f of fs) {
-      if (
-        !object(f) ||
-        !/^[a-zA-Z][\w]*$/.test(f.key) ||
-        keys.has(f.key) ||
-        typeof f.label !== 'string' ||
-        ![
-          'text',
-          'url',
-          'richtext',
-          'number',
-          'date',
-          'toggle',
-          'select',
-          'media',
-          ...(depth === 0 ? ['list'] : []),
-        ].includes(f.type)
-      ) {
-        add(where, 'Invalid or duplicate field definition.');
-        continue;
-      }
-      keys.add(f.key);
-      if (
-        (f.type === 'number' || f.type === 'list') &&
-        ((f.min !== undefined && !Number.isFinite(f.min)) ||
-          (f.max !== undefined && !Number.isFinite(f.max)) ||
-          (f.min !== undefined && f.max !== undefined && f.min > f.max))
-      )
-        add(where, 'Invalid number limits.');
-      if (f.type === 'list') {
-        if (!Array.isArray(f.fields))
-          add(where, 'List fields must define their item fields.');
-        else validateSchema(f.fields, where + '.' + f.key, depth + 1);
-      }
-      if (
-        f.type === 'select' &&
-        (!Array.isArray(f.options) ||
-          f.options.some(
-            (o) =>
-              !object(o) ||
-              typeof o.value !== 'string' ||
-              !o.value ||
-              typeof o.label !== 'string',
-          ) ||
-          new Set(f.options.map((o) => o.value)).size !== f.options.length)
-      )
-        add(where, 'Select options must have unique values.');
-      if (f.default !== undefined)
-        fields(
-          [{ ...f, required: false }],
-          { [f.key]: f.default },
-          where + '.default',
-        );
-    }
-  }
+  issues.push(...schemaIssues(content));
   for (const c of content.collections) {
     if (!object(c)) continue;
-    if (!safePublicPath(c.path))
-      add(c.id, 'Choose a valid collection URL prefix.', 'publish');
+    if (c.genericPageId && !safePublicPath(c.path))
+      add(
+        c.id,
+        c.mode === 'single'
+          ? 'Choose a valid public path.'
+          : 'Choose a valid collection URL prefix.',
+        'publish',
+      );
     if (
       typeof c.name !== 'string' ||
+      !['many', 'single'].includes(c.mode) ||
+      (c.path !== undefined && typeof c.path !== 'string') ||
       (c.genericPageId !== undefined && typeof c.genericPageId !== 'string') ||
       'template' in c ||
       !Array.isArray(c.fields)
@@ -585,11 +636,31 @@ export function validate(content: Content, definitions: Definition[]): Issue[] {
       add(c.id, 'Invalid collection definition.');
       continue;
     }
-    validateSchema(c.fields, c.id);
+    if (
+      c.mode === 'single' &&
+      content.entries.filter((e) => e.collectionId === c.id).length !== 1
+    )
+      add(c.id, 'A single-entry collection must contain exactly one entry.');
     if (!c.fields.some((f) => f && f.key === c.titleField && f.type === 'text'))
       add(c.id, 'Choose a text field for entry titles.');
   }
   if (issues.some((i) => i.phase === 'structure')) return issues;
+  const defaults = (fs: Field[], where: string, depth = 0) => {
+    if (depth > 3) return;
+    for (const f of fs) {
+      if (f.default !== undefined)
+        fields(
+          [{ ...f, required: false }],
+          { [f.key]: f.default },
+          where + '.default',
+        );
+      const children =
+        f.type === 'object' ? objectFields(f, content) : rowFields(f, content);
+      if (children) defaults(children, where + '.' + f.key, depth + 1);
+    }
+  };
+  for (const o of content.objects) defaults(o.fields, o.id);
+  for (const c of content.collections) defaults(c.fields, c.id);
   for (const p of content.pages) {
     if (!object(p)) continue;
     if (!['static', 'generic'].includes(p.kind))
@@ -615,11 +686,18 @@ export function validate(content: Content, definitions: Definition[]): Issue[] {
       if (!d || !object(b.bindings)) continue;
       for (const [key, source] of Object.entries(b.bindings)) {
         const target = d.fields.find((f) => f.key === key);
-        const field = c.fields.find((f) => f.key === source);
-        if (!target || !field || !bindingCompatible(field, target))
+        if (
+          !target ||
+          !bindingValid(
+            source,
+            target,
+            { fields: c.fields, values: {} },
+            content,
+          )
+        )
           add(
             `${template.id}.${b.id}.${key}`,
-            `${c.name}: binding "${source}" is missing or has an incompatible field type.`,
+            `${c.name}: binding "${bindingSource(source)}" is missing or has an incompatible field type.`,
             'publish',
           );
       }
@@ -632,9 +710,14 @@ export function validate(content: Content, definitions: Definition[]): Issue[] {
       add(e.id, 'Collection is missing.', 'publish');
       continue;
     }
-    if (typeof e.slug !== 'string' || !/^[\w-]+$/.test(e.slug))
-      add(e.id, 'Choose an entry slug.', 'publish');
-    else if (contentTemplate(content, c)) route(entryPath(c, e), e.id);
+    if (contentTemplate(content, c)) {
+      if (
+        c.mode === 'many' &&
+        (typeof e.slug !== 'string' || !/^[\w-]+$/.test(e.slug))
+      )
+        add(e.id, 'Choose an entry slug.', 'publish');
+      else if (c.path) route(entryPath(c, e), e.id);
+    }
     if (Array.isArray(c.fields)) fields(c.fields, e.values, e.id);
     const template = contentTemplate(content, c);
     if (template && object(e.values))
@@ -651,17 +734,13 @@ export function validate(content: Content, definitions: Definition[]): Issue[] {
             d.fields
               .filter((f) => b.bindings?.[f.key])
               .map((f) => ({ ...f, required: false })),
-            resolveBlock(b, e.values).props,
+            resolveBlock(b, e.values, content, c.fields).props,
             `${e.id}.${b.id}`,
             'publish',
           );
         }
       }
-    if ('blocks' in e)
-      add(
-        e.id,
-        'Entries contain schema fields only. Legacy block content must be mapped explicitly before importing.',
-      );
+    if ('blocks' in e) add(e.id, 'Entries contain schema fields only.');
   }
   if (!object(content.site.globals))
     add('site.globals', 'Invalid shared settings.');
@@ -709,7 +788,13 @@ export function validate(content: Content, definitions: Definition[]): Issue[] {
       )
         add(m.id, 'Invalid media file metadata.');
   }
-  if (object(content.site.globals)) {
+  if (
+    object(content.site.globals) &&
+    (content.site.layout === undefined ||
+      (object(content.site.layout) && object(content.site.layout.settings)))
+  ) {
+    const values = activeLayout(content.site).settings;
+    const path = content.site.layout ? 'site.layout.settings' : 'site.globals';
     const settings: [string, (value: unknown) => boolean, string][] = [
       [
         'contentMaxWidth',
@@ -723,11 +808,8 @@ export function validate(content: Content, definitions: Definition[]): Issue[] {
       ],
     ];
     for (const [key, valid, message] of settings) {
-      if (
-        content.site.globals[key] != null &&
-        !valid(content.site.globals[key])
-      )
-        add(`site.globals.${key}`, message);
+      if (values[key] != null && !valid(values[key]))
+        add(`${path}.${key}`, message);
     }
   }
   if (!content.pages.some((p) => p.kind === 'static' && p.path === '/'))
@@ -736,48 +818,121 @@ export function validate(content: Content, definitions: Definition[]): Issue[] {
 }
 export function schemaChanges(before: Content, after: Content): Issue[] {
   const issues: Issue[] = [];
-  for (const old of before.collections) {
-    const next = after.collections.find((c) => c.id === old.id);
-    const entries = before.entries.filter((e) => e.collectionId === old.id);
-    if (!entries.length) continue;
-    if (!next) {
-      issues.push({
-        path: old.id,
-        message: 'Remove the entries before deleting this collection.',
-        phase: 'structure',
-      });
-      continue;
+  const add = (path: string, message: string) =>
+    issues.push({ path, message, phase: 'structure' as const });
+  const uses = incomingUsage(after);
+  for (const entry of before.entries)
+    if (!after.entries.some((e) => e.id === entry.id)) {
+      for (const use of uses.get(entry.id) ?? [])
+        add(
+          use.path,
+          `Remove the reference from ${use.label} before deleting this entry.`,
+        );
     }
-    for (const f of old.fields) {
-      if (!entries.some((e) => !blank(e.values[f.key]))) continue;
-      const nf = next.fields.find((x) => x.key === f.key);
+  for (const old of before.collections)
+    if (!after.collections.some((c) => c.id === old.id)) {
+      if (after.entries.some((e) => e.collectionId === old.id))
+        add(old.id, 'Remove the entries before deleting this collection.');
+      for (const use of collectionUses(after, old.id))
+        add(use.path, `This collection is a reference target in ${use.label}.`);
+    }
+  for (const old of before.objects)
+    if (!after.objects.some((o) => o.id === old.id)) {
+      for (const use of definitionUses(after, old.id))
+        add(use.path, `This object definition is used by ${use.label}.`);
+    }
+  function compare(
+    fs: Field[],
+    next: Field[],
+    values: Values,
+    where: string,
+    depth = 0,
+  ) {
+    if (!object(values) || depth > 3) return;
+    for (const f of fs) {
+      const value = values[f.key];
+      if (!hasValue(value)) continue;
+      const nf = next.find((n) => n.key === f.key);
+      const path = `${where}.${f.key}`;
       if (
         !nf ||
         nf.type !== f.type ||
-        entries.some((e) => !compatible(nf, e.values[f.key])) ||
-        (f.type === 'list' &&
-          nf.type === 'list' &&
-          f.fields.some(
-            (child) =>
-              entries.some(
-                (e) =>
-                  Array.isArray(e.values[f.key]) &&
-                  (e.values[f.key] as Values[]).some(
-                    (row) => !blank(row[child.key]),
-                  ),
-              ) &&
-              !nf.fields.some(
-                (next) => next.key === child.key && next.type === child.type,
-              ),
-          ))
-      )
-        issues.push({
-          path: old.id + '.' + f.key,
-          message:
-            'This field contains content. Keep its key, type, and existing values compatible.',
-          phase: 'structure',
-        });
+        !compatible(nf, value, after) ||
+        (f.type === 'reference' &&
+          nf.type === 'reference' &&
+          f.collectionId !== nf.collectionId) ||
+        (f.type === 'array' &&
+          nf.type === 'array' &&
+          (f.of.type !== nf.of.type ||
+            (f.of.type === 'reference' &&
+              nf.of.type === 'reference' &&
+              f.of.collectionId !== nf.of.collectionId)))
+      ) {
+        add(
+          path,
+          'This field contains content. Keep its key, type, and existing values compatible.',
+        );
+        continue;
+      }
+      if (f.type === 'object' && nf.type === 'object')
+        compare(
+          objectFields(f, before),
+          objectFields(nf, after),
+          value as Values,
+          path,
+          depth + 1,
+        );
+      const oldFields = rowFields(f, before),
+        newFields = rowFields(nf, after);
+      if (oldFields && newFields && Array.isArray(value))
+        value.forEach((row, i) =>
+          compare(
+            oldFields,
+            newFields,
+            row as Values,
+            `${path}[${i}]`,
+            depth + 1,
+          ),
+        );
     }
+  }
+  for (const entry of after.entries) {
+    const old = before.collections.find((c) => c.id === entry.collectionId),
+      next = after.collections.find((c) => c.id === entry.collectionId);
+    if (old && next) compare(old.fields, next.fields, entry.values, entry.id);
+  }
+  function compareDefaults(
+    old: Field[],
+    next: Field[],
+    where: string,
+    depth = 0,
+  ) {
+    if (depth > 3) return;
+    for (const f of next) {
+      const previous = old.find((o) => o.key === f.key);
+      if (!previous) continue;
+      if (hasValue(f.default))
+        compare(
+          [previous],
+          [f],
+          { [f.key]: f.default! },
+          where + '.default',
+          depth,
+        );
+      const a =
+        previous.type === 'object'
+          ? objectFields(previous, before)
+          : rowFields(previous, before);
+      const b =
+        f.type === 'object' ? objectFields(f, after) : rowFields(f, after);
+      if (a && b) compareDefaults(a, b, `${where}.${f.key}`, depth + 1);
+    }
+  }
+  for (const next of [...after.collections, ...after.objects]) {
+    const old = [...before.collections, ...before.objects].find(
+      (o) => o.id === next.id,
+    );
+    if (old) compareDefaults(old.fields, next.fields, next.id);
   }
   return issues;
 }

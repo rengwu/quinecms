@@ -5,6 +5,8 @@
   "description": "Monospaced typography, a compact header, section rails and independent website appearance.",
   "activation": "load",
   "defaults": {
+    "contentMaxWidth": 1512,
+    "pageGutter": 40,
     "title": "chartr",
     "brand": "chartr",
     "appearance": "system",

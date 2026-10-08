@@ -9,8 +9,20 @@ export interface Recovery {
   content: Content;
 }
 export const recoveryKey = 'lean-sitebuilder:recovery:v2';
+let rejected = false;
+export const recoveryProblem = () =>
+  rejected
+    ? 'The retained tab draft cannot be read. It has been preserved. Download it from Settings before discarding edits to resume tab recovery.'
+    : '';
+export function discardRecovery() {
+  sessionStorage.removeItem(recoveryKey);
+  rejected = false;
+}
 export function readRecovery(): Recovery | null {
+  rejected = false;
   try {
+    if (!sessionStorage.getItem(recoveryKey)) return null;
+    rejected = true;
     const value = JSON.parse(sessionStorage.getItem(recoveryKey) ?? 'null');
     if (
       value?.version !== 1 ||
@@ -32,12 +44,16 @@ export function readRecovery(): Recovery | null {
         ))
     )
       return null;
+    rejected = false;
     return value;
   } catch {
     return null;
   }
 }
 export function retain(value: Recovery) {
+  if (rejected && sessionStorage.getItem(recoveryKey) !== null)
+    throw Error(recoveryProblem());
+  rejected = false;
   sessionStorage.setItem(recoveryKey, JSON.stringify(value));
 }
 export function download(value: unknown, name: string) {
@@ -69,15 +85,19 @@ function editableShape(c: unknown): c is Content {
     !object(c) ||
     !object(c.site) ||
     !object(c.site.globals) ||
-    !['pages', 'entries', 'collections', 'media'].every((k) =>
+    !['pages', 'entries', 'collections', 'objects', 'media'].every((k) =>
       Array.isArray(c[k]),
     )
   )
     return false;
   if (
-    ![...c.pages, ...c.entries, ...c.collections, ...c.media].every(
-      (r) => object(r) && typeof r.id === 'string',
-    )
+    ![
+      ...c.pages,
+      ...c.entries,
+      ...c.collections,
+      ...c.objects,
+      ...c.media,
+    ].every((r) => object(r) && typeof r.id === 'string')
   )
     return false;
   if (
@@ -104,7 +124,7 @@ function editableShape(c: unknown): c is Content {
     ) ||
     !c.entries.every(
       (e: any) =>
-        typeof e.slug === 'string' &&
+        (e.slug === undefined || typeof e.slug === 'string') &&
         typeof e.collectionId === 'string' &&
         !('blocks' in e) &&
         object(e.values),
@@ -115,9 +135,19 @@ function editableShape(c: unknown): c is Content {
     !c.collections.every(
       (col: any) =>
         typeof col.name === 'string' &&
-        typeof col.path === 'string' &&
+        ['many', 'single'].includes(col.mode) &&
+        (col.path === undefined || typeof col.path === 'string') &&
         Array.isArray(col.fields) &&
         col.fields.every((f: unknown) => fieldShape(f)),
+    )
+  )
+    return false;
+  if (
+    !c.objects.every(
+      (o: any) =>
+        typeof o.name === 'string' &&
+        Array.isArray(o.fields) &&
+        o.fields.every(fieldShape),
     )
   )
     return false;
@@ -160,12 +190,11 @@ function editableShape(c: unknown): c is Content {
   );
 }
 
-function fieldShape(f: any, nested = false): boolean {
-  return (
-    object(f) &&
-    typeof f.key === 'string' &&
-    typeof f.label === 'string' &&
-    [
+function fieldShape(f: any): boolean {
+  if (!object(f) || typeof f.key !== 'string' || typeof f.label !== 'string')
+    return false;
+  if (
+    ![
       'text',
       'url',
       'richtext',
@@ -174,18 +203,35 @@ function fieldShape(f: any, nested = false): boolean {
       'toggle',
       'select',
       'media',
-      ...(!nested ? ['list'] : []),
-    ].includes(f.type) &&
-    (f.type !== 'list' ||
-      (Array.isArray(f.fields) &&
-        f.fields.every((child: any) => fieldShape(child, true)))) &&
-    (f.type !== 'select' ||
-      (Array.isArray(f.options) &&
-        f.options.every(
-          (o: any) =>
-            object(o) &&
-            typeof o.value === 'string' &&
-            typeof o.label === 'string',
-        )))
+      'object',
+      'array',
+      'reference',
+    ].includes(f.type)
+  )
+    return false;
+  if (f.type === 'object') return objectShape(f);
+  if (f.type === 'reference') return typeof f.collectionId === 'string';
+  if (f.type === 'array')
+    return (
+      object(f.of) &&
+      (f.of.type === 'object'
+        ? objectShape(f.of)
+        : f.of.type === 'reference' && typeof f.of.collectionId === 'string')
+    );
+  return (
+    f.type !== 'select' ||
+    (Array.isArray(f.options) &&
+      f.options.every(
+        (o: any) =>
+          object(o) &&
+          typeof o.value === 'string' &&
+          typeof o.label === 'string',
+      ))
+  );
+}
+function objectShape(shape: any): boolean {
+  return (
+    typeof shape.objectId === 'string' ||
+    (Array.isArray(shape.fields) && shape.fields.every(fieldShape))
   );
 }

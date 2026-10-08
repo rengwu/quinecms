@@ -1,10 +1,12 @@
+import { modelFixture } from './support/content-model';
+import { filesFor } from '../src/core/content';
 import { it, expect, describe } from 'vitest';
 import { readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { definitions } from '../src/generated/definitions';
 import { GitHubStore, Conflict } from '../src/integrations/github';
 import type { Request } from '../src/integrations/github';
-function mock() {
+function mock(model = false) {
   const initial: Record<string, string> = {};
   function walk(dir: string) {
     for (const f of readdirSync(dir, { withFileTypes: true })) {
@@ -15,6 +17,7 @@ function mock() {
     }
   }
   walk('content');
+  if (model) Object.assign(initial, filesFor(modelFixture()));
   const commits: Record<string, { tree: string; parents: string[] }> = {
     c0: { tree: 't0', parents: [] },
   };
@@ -211,4 +214,27 @@ describe('Git transactions (mock transport)', () => {
     await expect(m.store.publish(saved)).rejects.toThrow('diverged');
     expect(m.refs.main).toBe('other');
   });
+});
+
+it('saves, reloads and publishes object definitions and nested relations through the Git transport', async () => {
+  const m = mock(true),
+    base = await m.store.load(),
+    next = structuredClone(base.content);
+  next.objects[0].fields.push({
+    key: 'description',
+    label: 'Description',
+    type: 'text',
+  });
+  next.entries[0].values.seo = {
+    title: 'Updated SEO',
+    description: 'Description',
+  };
+  const saved = await m.store.save(base, next);
+  const reloaded = await m.store.load();
+  expect(reloaded.content).toEqual(next);
+  expect(reloaded.files['content/objects/object_seo.json']).toContain(
+    'description',
+  );
+  await m.store.publish(saved);
+  expect((await m.store.read(m.refs.main)).content).toEqual(next);
 });

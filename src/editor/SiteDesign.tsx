@@ -5,8 +5,6 @@ import type { Values } from '../core/types';
 import {
   DEFAULT_BODY_FONT_SIZE,
   DEFAULT_BODY_LINE_HEIGHT,
-  DEFAULT_CONTENT_MAX_WIDTH,
-  DEFAULT_PAGE_GUTTER,
   SITE_FONTS,
   validSiteFont,
 } from '../core/site-style';
@@ -16,10 +14,12 @@ import styles from './editor.module.css';
 export default function SiteDesign({
   globals,
   onChange,
+  defaults,
   section = 'geometry',
 }: {
   globals: Values;
   onChange: (globals: Values) => void;
+  defaults: { contentMaxWidth: number; pageGutter: number };
   section?: 'typography' | 'geometry';
 }) {
   function numberField(
@@ -108,7 +108,7 @@ export default function SiteDesign({
           {numberField(
             'contentMaxWidth',
             'Content max-width',
-            DEFAULT_CONTENT_MAX_WIDTH,
+            defaults.contentMaxWidth,
             'px',
             1,
             1,
@@ -116,7 +116,7 @@ export default function SiteDesign({
           {numberField(
             'pageGutter',
             'Page gutter',
-            DEFAULT_PAGE_GUTTER,
+            defaults.pageGutter,
             'px',
             0,
             1,

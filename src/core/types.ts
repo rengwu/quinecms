@@ -1,12 +1,14 @@
 export type Json =
   null | boolean | number | string | Json[] | { [key: string]: Json };
 export type Values = Record<string, Json>;
+export type Binding =
+  string | { source: string; fields: Record<string, Binding> };
 export interface Block {
   id: string;
   type: string;
   version: number;
   props: Values;
-  bindings?: Record<string, string>;
+  bindings?: Record<string, Binding>;
 }
 export interface Envelope {
   formatVersion: 1;
@@ -20,7 +22,7 @@ export interface Page extends Envelope {
 }
 export interface Entry extends Envelope {
   collectionId: string;
-  slug: string;
+  slug?: string;
   values: Values;
 }
 export type Field = {
@@ -35,6 +37,9 @@ export type Field = {
   | { type: 'text'; multiline?: boolean }
   | { type: 'url' }
   | { type: 'list'; fields: Field[]; min?: number; max?: number }
+  | ({ type: 'object' } & ObjectShape)
+  | { type: 'array'; of: ArrayItem; min?: number; max?: number }
+  | { type: 'reference'; collectionId: string }
   | { type: 'number'; min?: number; max?: number }
   | { type: 'richtext' }
   | { type: 'collection' }
@@ -44,9 +49,19 @@ export type Field = {
   | { type: 'media' }
   | { type: 'custom'; widget: string; validator: string }
 );
+export type ObjectShape =
+  { objectId: string; fields?: never } | { fields: Field[]; objectId?: never };
+export type ArrayItem =
+  | ({ type: 'object' } & ObjectShape)
+  | { type: 'reference'; collectionId: string };
+export interface ObjectDefinition extends Envelope {
+  name: string;
+  fields: Field[];
+}
 export interface Collection extends Envelope {
   name: string;
-  path: string;
+  mode: 'many' | 'single';
+  path?: string;
   fields: Field[];
   titleField: string;
   genericPageId?: string;
@@ -99,6 +114,7 @@ export interface Content {
   site: Site;
   pages: Page[];
   collections: Collection[];
+  objects: ObjectDefinition[];
   entries: Entry[];
   media: Media[];
 }

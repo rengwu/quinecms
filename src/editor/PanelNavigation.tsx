@@ -8,8 +8,8 @@ import {
   type ReactNode,
 } from 'react';
 import { createPortal } from 'react-dom';
-import { Button } from '@cloudflare/kumo/components/button';
 import styles from './editor.module.css';
+import FormScreen, { type Creation } from './FormScreen';
 
 const NavigationContext = createContext<{
   outlet: HTMLDivElement | null;
@@ -69,13 +69,17 @@ export function PanelNavigation({ children }: { children: ReactNode }) {
 
 export function PanelLevel({
   title,
+  subtitle,
   context,
   onBack,
+  creation,
   children,
 }: {
   title: string;
+  subtitle?: string;
   context?: string;
   onBack(): void;
+  creation?: Creation;
   children: ReactNode;
 }) {
   const navigation = usePanelNavigation();
@@ -95,12 +99,15 @@ export function PanelLevel({
       className={styles.formStack}
       data-panel-level={id}
     >
-      <Button variant="ghost" className={styles.back} onClick={onBack}>
-        ← Back
-      </Button>
-      <h2 tabIndex={-1}>{title}</h2>
-      {context && <p className={styles.muted}>{context}</p>}
-      {children}
+      <FormScreen
+        title={title}
+        subtitle={subtitle}
+        onBack={onBack}
+        creation={creation}
+      >
+        {context && <p className={styles.muted}>{context}</p>}
+        {children}
+      </FormScreen>
     </div>,
     navigation.outlet,
   );

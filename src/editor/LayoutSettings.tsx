@@ -4,7 +4,6 @@ import { Select } from '@cloudflare/kumo/components/select';
 import { Label } from '@cloudflare/kumo/components/label';
 import { Dialog } from '@cloudflare/kumo/components/dialog';
 import { Input } from '@cloudflare/kumo/components/input';
-import { XIcon } from '@phosphor-icons/react';
 import type { Content, LayoutDefinition, Page } from '../core/types';
 import type { LayoutSettingsProps } from '../core/layout-contract';
 import {
@@ -16,6 +15,7 @@ import {
 } from '../core/layouts';
 import { layoutEditors } from '../generated/layout-browser';
 import PanelSection from './PanelSection';
+import CatalogHeader from './CatalogHeader';
 import LayoutSurface, { PageBlocks } from './LayoutSurface';
 import styles from './editor.module.css';
 import catalog from './layout-catalog.module.css';
@@ -174,29 +174,12 @@ export default function LayoutSettings({
       </Suspense>
       <Dialog.Root open={open} onOpenChange={setOpen}>
         <Dialog size="lg" className={`${styles.popup} ${styles.catalogPopup}`}>
-          <Dialog.Title className={styles.srOnly}>
-            Choose a site layout
-          </Dialog.Title>
-          <Dialog.Close
-            render={
-              <Button
-                variant="ghost"
-                shape="square"
-                className={styles.catalogClose}
-                aria-label="Close layout library"
-              />
-            }
-          >
-            <XIcon size={20} />
-          </Dialog.Close>
+          <CatalogHeader
+            title={preview ? preview.label : 'Site layouts'}
+            closeLabel="Close layout library"
+            description="Switching layouts starts with its defaults. Your pages and blocks stay in place."
+          />
           <div className={catalog.library}>
-            <div className={catalog.heading}>
-              <h2>{preview ? preview.label : 'Site layouts'}</h2>
-              <p>
-                Switching layouts starts with its defaults. Your pages and
-                blocks stay in place.
-              </p>
-            </div>
             {preview ? (
               <>
                 <div className={catalog.toolbar}>

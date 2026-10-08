@@ -6,7 +6,9 @@ import {
   validSiteFont,
   validBodyFontSize,
   validBodyLineHeight,
+  contentSpacing,
 } from '../../../core/site-style';
+import definition from './definition.json';
 
 export function starterContent(content: Content, settings: Values): Content {
   return {
@@ -28,7 +30,7 @@ const policy: LayoutPolicy = {
     footer: _footer,
     navigation: _nav,
     ...appearance
-  }) => appearance,
+  }) => ({ ...appearance, ...contentSpacing(appearance, definition.defaults) }),
   validate(settings, content, { fields, blocks, add }) {
     const legacy = !content.site.layout;
     const path = legacy ? 'site' : 'site.layout.settings';

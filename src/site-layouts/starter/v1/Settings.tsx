@@ -4,9 +4,8 @@ import { Dialog } from '@cloudflare/kumo/components/dialog';
 import { Input } from '@cloudflare/kumo/components/input';
 import { Label } from '@cloudflare/kumo/components/label';
 import { Select } from '@cloudflare/kumo/components/select';
-import { XIcon } from '@phosphor-icons/react';
 import type { LayoutSettingsProps } from '../../../core/layout-contract';
-import type { Values } from '../../../core/types';
+import type { Block, Values } from '../../../core/types';
 import { newBlock } from '../../../core/content';
 import { headerFields, headerValues } from '../../../core/header';
 import { definitions } from '../../../generated/definitions';
@@ -14,8 +13,11 @@ import Fields from '../../../editor/Fields';
 import PanelSection from '../../../editor/PanelSection';
 import SiteDesign from '../../../editor/SiteDesign';
 import BlockCatalog from '../../../editor/BlockCatalog';
+import CatalogHeader from '../../../editor/CatalogHeader';
+import BlockCreation from '../../../editor/BlockCreation';
 import styles from '../../../editor/editor.module.css';
 import { starterContent } from './policy';
+import layoutDefinition from './definition.json';
 
 export default function Settings({
   settings,
@@ -23,11 +25,27 @@ export default function Settings({
   onChange,
 }: LayoutSettingsProps) {
   const [picking, setPicking] = useState(false);
+  const [pendingFooter, setPendingFooter] = useState<Block | null>(null);
   const view = starterContent(content, settings);
   const footer = view.site.footer;
   const definition = definitions.find(
     (d) => d.type === footer?.type && d.version === footer.version,
   );
+  if (pendingFooter)
+    return (
+      <BlockCreation
+        block={pendingFooter}
+        content={content}
+        footer
+        level
+        onChange={setPendingFooter}
+        onCancel={() => setPendingFooter(null)}
+        onCreate={() => {
+          onChange({ ...settings, footer: pendingFooter as unknown as Values });
+          setPendingFooter(null);
+        }}
+      />
+    );
   return (
     <>
       <PanelSection title="Site identity">
@@ -55,7 +73,17 @@ export default function Settings({
           </Select>
         </div>
       </PanelSection>
-      <SiteDesign section="typography" globals={settings} onChange={onChange} />
+      <SiteDesign
+        section="typography"
+        globals={settings}
+        defaults={layoutDefinition.defaults}
+        onChange={onChange}
+      />
+      <SiteDesign
+        globals={settings}
+        defaults={layoutDefinition.defaults}
+        onChange={onChange}
+      />
       <PanelSection title="Header">
         <Fields
           fields={headerFields}
@@ -107,19 +135,10 @@ export default function Settings({
       </PanelSection>
       <Dialog.Root open={picking} onOpenChange={setPicking}>
         <Dialog size="lg" className={`${styles.popup} ${styles.catalogPopup}`}>
-          <Dialog.Title className={styles.srOnly}>Choose a footer</Dialog.Title>
-          <Dialog.Close
-            render={
-              <Button
-                variant="ghost"
-                shape="square"
-                className={styles.catalogClose}
-                aria-label="Close footer library"
-              />
-            }
-          >
-            <XIcon size={20} />
-          </Dialog.Close>
+          <CatalogHeader
+            title="Choose a footer"
+            closeLabel="Close footer library"
+          />
           <BlockCatalog
             definitions={definitions.filter((d) =>
               /^tw-footer-[123]$/.test(d.type),
@@ -128,10 +147,7 @@ export default function Settings({
             kind="static"
             placement="footer"
             onAdd={(d) => {
-              onChange({
-                ...settings,
-                footer: newBlock(d) as unknown as Values,
-              });
+              setPendingFooter(newBlock(d));
               setPicking(false);
             }}
           />

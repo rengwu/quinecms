@@ -1,3 +1,7 @@
+import ObjectField from './ObjectField';
+import ReferenceField from './ReferenceField';
+import { useModel } from './ModelContext';
+import { fieldPaths } from '../core/schema';
 import ListField from './ListField';
 import { PanelNavigation, usePanelNavigation } from './PanelNavigation';
 import { Input } from '@cloudflare/kumo/components/input';
@@ -18,7 +22,8 @@ export default function Fields({
   values,
   onChange,
   media,
-  collections = [],
+  collections: suppliedCollections,
+  depth = 0,
   readOnly = false,
 }: {
   fields: Field[];
@@ -27,7 +32,10 @@ export default function Fields({
   media: Media[];
   collections?: Collection[];
   readOnly?: boolean;
+  depth?: number;
 }) {
+  const model = useModel();
+  const collections = suppliedCollections ?? model.collections;
   const prefix = useId();
   const navigation = usePanelNavigation();
   if (!navigation)
@@ -40,6 +48,7 @@ export default function Fields({
           media={media}
           collections={collections}
           readOnly={readOnly}
+          depth={depth}
         />
       </PanelNavigation>
     );
@@ -49,7 +58,7 @@ export default function Fields({
         const value = values[f.key];
         const set = (v: any) => onChange({ ...values, [f.key]: v });
         const errors = [
-          ...(!compatible(f, value)
+          ...(!compatible(f, value, model)
             ? [`${f.label} has an incompatible value.`]
             : []),
           ...(f.required && blank(value)
@@ -86,9 +95,35 @@ export default function Fields({
               {f.label}
               {f.required ? ' *' : ''}
             </Label>
-            {f.type === 'list' ? (
+            {f.type === 'object' ? (
+              <ObjectField
+                field={f}
+                value={value}
+                onChange={set}
+                media={media}
+                readOnly={readOnly}
+                depth={depth}
+              />
+            ) : f.type === 'reference' ||
+              (f.type === 'array' && f.of.type === 'reference') ? (
+              <ReferenceField
+                label={f.label}
+                collectionId={
+                  f.type === 'reference'
+                    ? f.collectionId
+                    : f.type === 'array' && f.of.type === 'reference'
+                      ? f.of.collectionId
+                      : ''
+                }
+                multiple={f.type === 'array'}
+                value={value}
+                onChange={set}
+                readOnly={readOnly}
+              />
+            ) : f.type === 'list' || f.type === 'array' ? (
               <ListField
                 field={f}
+                depth={depth}
                 value={value}
                 onChange={set}
                 media={media}
@@ -114,15 +149,18 @@ export default function Fields({
                 onValueChange={(key) => set(key || null)}
               >
                 <Select.Option value="">None</Select.Option>
-                {(
+                {fieldPaths(
                   collections.find(
                     (c) => c.id === values[f.collectionField!.collectionKey],
-                  )?.fields ?? []
+                  )?.fields ?? [],
+                  model,
                 )
-                  .filter((x) => f.collectionField!.types.includes(x.type))
+                  .filter((x) =>
+                    f.collectionField!.types.includes(x.field.type),
+                  )
                   .map((x) => (
-                    <Select.Option key={x.key} value={x.key}>
-                      {x.label}
+                    <Select.Option key={x.path} value={x.path}>
+                      {x.path} · {x.field.label}
                     </Select.Option>
                   ))}
               </Select>

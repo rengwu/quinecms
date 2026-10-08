@@ -1,73 +1,129 @@
 import { useState } from 'react';
+import { PlusIcon } from '@phosphor-icons/react';
 import { Button } from '@cloudflare/kumo/components/button';
 import { Input, InputArea } from '@cloudflare/kumo/components/input';
 import { Select } from '@cloudflare/kumo/components/select';
 import { Checkbox } from '@cloudflare/kumo/components/checkbox';
 import { Label } from '@cloudflare/kumo/components/label';
-import { PlusIcon, CaretRightIcon } from '@phosphor-icons/react';
-import type { Field, Media } from '../core/types';
-import { blank } from '../core/content';
-import { listRows } from '../core/lists';
+import type { Field, Media, ObjectShape } from '../core/types';
+import { hasValue, isRecord } from '../core/schema';
+import { useModel } from './ModelContext';
+import { PanelLevel } from './PanelNavigation';
 import Fields from './Fields';
 import styles from './editor.module.css';
+import FormScreen from './FormScreen';
 
 export default function SchemaFieldEditor({
   field,
   values,
   media,
   titleField = false,
-  nested = false,
+  depth = 0,
   onChange,
   onBack,
   onDelete,
+  onCreate,
 }: {
   field: Field;
   values: unknown[];
   media: Media[];
   titleField?: boolean;
-  nested?: boolean;
-  onChange(field: Field): void;
+  depth?: number;
+  onChange(field: Field): boolean | void;
   onBack(): void;
   onDelete(): void;
+  onCreate?(): void;
 }) {
-  const [childIndex, selectChild] = useState<number | null>(null);
-  const populated = values.some(
-    (v) => !blank(v) && (!Array.isArray(v) || v.length > 0),
-  );
-  const child =
-    field.type === 'list' && childIndex !== null
-      ? field.fields[childIndex]
-      : undefined;
-  if (child && field.type === 'list')
+  const model = useModel();
+  const [childIndex, selectChild] = useState<number | null>(null),
+    [editingDefault, setEditingDefault] = useState(false);
+  const [pendingChild, setPendingChild] = useState<Field | null>(null);
+  const populated = values.some(hasValue);
+  const shape =
+    field.type === 'object'
+      ? field
+      : field.type === 'array' && field.of.type === 'object'
+        ? field.of
+        : undefined;
+  const children = shape?.fields ?? [];
+  const child = childIndex === null ? undefined : children[childIndex];
+  function setShape(next: ObjectShape) {
+    if (field.type === 'object') {
+      const { objectId, fields, ...rest } = field;
+      return onChange({ ...rest, ...next });
+    } else if (field.type === 'array')
+      return onChange({ ...field, of: { type: 'object', ...next } });
+  }
+  if (pendingChild)
+    return (
+      <SchemaFieldEditor
+        field={pendingChild}
+        media={media}
+        values={[]}
+        depth={depth + 1}
+        onChange={setPendingChild}
+        onBack={() => setPendingChild(null)}
+        onDelete={() => {}}
+        onCreate={() => {
+          if (setShape({ fields: [...children, pendingChild] }) !== false)
+            setPendingChild(null);
+        }}
+      />
+    );
+  if (child)
     return (
       <SchemaFieldEditor
         key={childIndex}
         field={child}
-        nested
         media={media}
-        values={values.flatMap(listRows).map((r) => r[child.key])}
+        depth={depth + 1}
+        values={(field.type === 'array'
+          ? values.flatMap((v) => (Array.isArray(v) ? v : []))
+          : values
+        )
+          .filter(isRecord)
+          .map((v) => v[child.key])}
         onBack={() => selectChild(null)}
         onChange={(next) =>
-          onChange({
-            ...field,
-            fields: field.fields.map((f, i) => (i === childIndex ? next : f)),
+          setShape({
+            fields: children.map((f, i) => (i === childIndex ? next : f)),
           })
         }
         onDelete={() => {
-          onChange({
-            ...field,
-            fields: field.fields.filter((_, i) => i !== childIndex),
-          });
+          setShape({ fields: children.filter((_, i) => i !== childIndex) });
           selectChild(null);
         }}
       />
     );
+  const reference =
+    field.type === 'reference'
+      ? field
+      : field.type === 'array' && field.of.type === 'reference'
+        ? field.of
+        : undefined;
+  if (editingDefault)
+    return (
+      <PanelLevel
+        title={`Default · ${field.label}`}
+        onBack={() => setEditingDefault(false)}
+      >
+        <Fields
+          fields={[
+            { ...field, key: 'default', label: field.label, required: false },
+          ]}
+          values={{ default: field.default ?? null }}
+          media={media}
+          depth={depth}
+          onChange={(v) => onChange({ ...field, default: v.default })}
+        />
+      </PanelLevel>
+    );
   return (
-    <>
-      <Button variant="ghost" className={styles.back} onClick={onBack}>
-        ← Back
-      </Button>
-      <h2>{field.label || 'Untitled field'}</h2>
+    <FormScreen
+      title={onCreate ? 'New field' : field.label || 'Untitled field'}
+      onBack={onBack}
+      creation={onCreate ? { label: 'Create field', onCreate } : undefined}
+    >
       <div className={styles.field}>
         <Label htmlFor="schema-label">Label</Label>
         <Input
@@ -93,7 +149,7 @@ export default function SchemaFieldEditor({
           id="schema-type"
           aria-label="Field type"
           value={field.type}
-          disabled={populated || field.type === 'custom'}
+          disabled={populated}
           onValueChange={(type) => {
             if (type)
               onChange({
@@ -102,7 +158,21 @@ export default function SchemaFieldEditor({
                 required: field.required,
                 type,
                 ...(type === 'select' ? { options: [] } : {}),
-                ...(type === 'list' ? { fields: [] } : {}),
+                ...(type === 'object' ? { fields: [] } : {}),
+                ...(type === 'reference'
+                  ? { collectionId: model.collections[0]?.id ?? '' }
+                  : {}),
+                ...(type === 'array'
+                  ? {
+                      of:
+                        depth >= 3
+                          ? {
+                              type: 'reference',
+                              collectionId: model.collections[0]?.id ?? '',
+                            }
+                          : { type: 'object', fields: [] },
+                    }
+                  : {}),
               } as Field);
           }}
         >
@@ -115,8 +185,8 @@ export default function SchemaFieldEditor({
             'toggle',
             'select',
             'media',
-            ...(!nested ? ['list'] : []),
-            ...(field.type === 'custom' ? ['custom'] : []),
+            'reference',
+            ...(depth < 3 ? ['object', 'array'] : ['array']),
           ].map((type) => (
             <Select.Option key={type} value={type}>
               {type}
@@ -126,8 +196,137 @@ export default function SchemaFieldEditor({
       </div>
       {populated && (
         <p className={styles.muted}>
-          The key and type are fixed because this field contains content.
+          This field contains content. Clear affected values before changing its
+          key or type.
         </p>
+      )}
+      {field.type === 'array' && (
+        <div className={styles.field}>
+          <Label htmlFor="array-items">Array items</Label>
+          <Select
+            id="array-items"
+            aria-label="Array items"
+            value={field.of.type}
+            disabled={populated}
+            onValueChange={(type) =>
+              onChange({
+                ...field,
+                of:
+                  type === 'reference'
+                    ? {
+                        type: 'reference',
+                        collectionId: model.collections[0]?.id ?? '',
+                      }
+                    : { type: 'object', fields: [] },
+              })
+            }
+          >
+            {depth < 3 && (
+              <Select.Option value="object">Owned objects</Select.Option>
+            )}
+            <Select.Option value="reference">References</Select.Option>
+          </Select>
+        </div>
+      )}
+      {reference && (
+        <div className={styles.field}>
+          <Label htmlFor="reference-collection">Target collection</Label>
+          <Select
+            id="reference-collection"
+            aria-label="Target collection"
+            value={reference.collectionId}
+            disabled={populated}
+            renderValue={(id) =>
+              model.collections.find((c) => c.id === id)?.name ??
+              'Choose collection'
+            }
+            onValueChange={(collectionId) => {
+              if (field.type === 'reference')
+                onChange({ ...field, collectionId: collectionId ?? '' });
+              else if (field.type === 'array')
+                onChange({
+                  ...field,
+                  of: { type: 'reference', collectionId: collectionId ?? '' },
+                });
+            }}
+          >
+            {model.collections.map((c) => (
+              <Select.Option key={c.id} value={c.id}>
+                {c.name}
+              </Select.Option>
+            ))}
+          </Select>
+        </div>
+      )}
+      {shape && (
+        <>
+          <div className={styles.field}>
+            <Label htmlFor="object-definition">Object definition</Label>
+            <Select
+              id="object-definition"
+              aria-label="Object definition"
+              value={shape.objectId ?? ''}
+              disabled={populated}
+              renderValue={(id) =>
+                id
+                  ? (model.objects.find((o) => o.id === id)?.name ??
+                    'Missing object')
+                  : 'Inline fields'
+              }
+              onValueChange={(objectId) =>
+                setShape(objectId ? { objectId } : { fields: [] })
+              }
+            >
+              <Select.Option value="">Inline fields</Select.Option>
+              {model.objects.map((o) => (
+                <Select.Option key={o.id} value={o.id}>
+                  {o.name}
+                </Select.Option>
+              ))}
+            </Select>
+          </div>
+          {shape.objectId ? (
+            <p className={styles.muted}>
+              Edit the shared definition in Schemas → Objects. Each entry owns
+              its values.
+            </p>
+          ) : (
+            <>
+              <div className={styles.sectionHeader}>
+                <h3>
+                  {field.type === 'array' ? 'Item fields' : 'Object fields'}
+                </h3>
+                <Button
+                  variant="primary"
+                  icon={<PlusIcon />}
+                  onClick={() => {
+                    let n = children.length;
+                    while (children.some((f) => f.key === 'field' + n)) n++;
+                    setPendingChild({
+                      key: 'field' + n,
+                      label: 'New field',
+                      type: 'text',
+                    });
+                  }}
+                >
+                  Add field
+                </Button>
+              </div>
+              <ul className={styles.recordList}>
+                {children.map((f, i) => (
+                  <li key={i}>
+                    <Button
+                      className={styles.recordButton}
+                      onClick={() => selectChild(i)}
+                    >
+                      {f.label} · {f.type} →
+                    </Button>
+                  </li>
+                ))}
+              </ul>
+            </>
+          )}
+        </>
       )}
       {field.type === 'select' && (
         <div className={styles.field}>
@@ -147,79 +346,51 @@ export default function SchemaFieldEditor({
           />
         </div>
       )}
+      {(field.type === 'number' || field.type === 'array') && (
+        <div className={styles.row}>
+          {(['min', 'max'] as const).map((key) => (
+            <div className={styles.field} key={key}>
+              <Label htmlFor={`field-${key}`}>
+                {key === 'min' ? 'Minimum' : 'Maximum'}
+              </Label>
+              <Input
+                id={`field-${key}`}
+                aria-label={key === 'min' ? 'Minimum' : 'Maximum'}
+                type="number"
+                value={field[key] ?? ''}
+                onChange={(e) =>
+                  onChange({
+                    ...field,
+                    [key]:
+                      e.target.value === ''
+                        ? undefined
+                        : Number(e.target.value),
+                  })
+                }
+              />
+            </div>
+          ))}
+        </div>
+      )}
       <Checkbox
         label="Required"
         checked={!!field.required}
         onCheckedChange={(required) => onChange({ ...field, required })}
       />
-      {field.type === 'list' && (
-        <>
-          <div className={styles.sectionHeader}>
-            <h3>Item fields</h3>
-            <Button
-              variant="primary"
-              icon={<PlusIcon />}
-              onClick={() => {
-                let n = field.fields.length;
-                while (field.fields.some((f) => f.key === 'field' + n)) n++;
-                onChange({
-                  ...field,
-                  fields: [
-                    ...field.fields,
-                    { key: 'field' + n, label: 'New field', type: 'text' },
-                  ],
-                });
-                selectChild(field.fields.length);
-              }}
-            >
-              Add field
-            </Button>
-          </div>
-          <ul className={styles.recordList} aria-label="Item fields">
-            {field.fields.map((f, i) => (
-              <li key={i}>
-                <Button
-                  className={styles.recordButton}
-                  onClick={() => selectChild(i)}
-                >
-                  <span className={styles.recordLabel}>
-                    {f.label}
-                    <span className={styles.muted}>
-                      {f.key} · {f.type}
-                    </span>
-                  </span>
-                  <CaretRightIcon />
-                </Button>
-              </li>
-            ))}
-          </ul>
-        </>
+      <Button onClick={() => setEditingDefault(true)}>
+        Edit default value
+      </Button>
+      {!onCreate && (
+        <div className={styles.actionFooter}>
+          <Button
+            variant="secondary-destructive"
+            disabled={populated || titleField}
+            onClick={onDelete}
+          >
+            Remove field
+          </Button>
+        </div>
       )}
-      {field.type !== 'custom' && (
-        <Fields
-          fields={[
-            {
-              ...field,
-              key: 'default',
-              label: 'Default value',
-              required: false,
-              widget: undefined,
-            },
-          ]}
-          values={{ default: field.default ?? null }}
-          media={media}
-          onChange={(v) => onChange({ ...field, default: v.default })}
-        />
-      )}
-      <div className={styles.actionFooter}>
-        <Button
-          variant="secondary-destructive"
-          disabled={populated || titleField}
-          onClick={onDelete}
-        >
-          Remove field
-        </Button>
-      </div>
-    </>
+    </FormScreen>
   );
 }

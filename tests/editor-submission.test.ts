@@ -34,6 +34,7 @@ const content: Content = {
     },
   ],
   entries: [],
+  objects: [],
   collections: [],
   media: [],
 };
@@ -100,6 +101,7 @@ it('blocks a structurally invalid save with a toast before contacting a provider
     formatVersion: 1,
     id: 'collection_journal',
     name: 'Journal',
+    mode: 'many',
     path: '/journal',
     titleField: 'title',
     fields: [{ key: '', label: 'Title', type: 'text' }],
