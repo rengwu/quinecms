@@ -1,0 +1,108 @@
+
+> lean-sitebuilder@0.1.0 verify /private/var/folders/00/h_k67s0j5dq0qvg6ylqysk2w0000gn/T/lean-client-verify-q7092nxy
+> pnpm check && pnpm test && pnpm build && pnpm check:build
+
+
+> lean-sitebuilder@0.1.0 check /private/var/folders/00/h_k67s0j5dq0qvg6ylqysk2w0000gn/T/lean-client-verify-q7092nxy
+> pnpm prepare:blocks && astro check
+
+
+> lean-sitebuilder@0.1.0 prepare:blocks /private/var/folders/00/h_k67s0j5dq0qvg6ylqysk2w0000gn/T/lean-client-verify-q7092nxy
+> node scripts/generate-blocks.mjs
+
+Registered 94 block versions.
+Registered 2 layout versions.
+17:21:43 [vite] Re-optimizing dependencies because vite config has changed
+17:21:44 [types] Generated 148ms
+17:21:44 [check] Getting diagnostics for Astro files in /private/var/folders/00/h_k67s0j5dq0qvg6ylqysk2w0000gn/T/lean-client-verify-q7092nxy...
+[96msrc/generated/pages/page_client.astro[0m:[93m10[0m:[93m7[0m - [93mwarning[0m[90m ts(6133): [0m'blocks' is declared but its value is never read.
+
+[7m10[0m const blocks=page.blocks;
+[7m  [0m [93m      ~~~~~~[0m
+[96msrc/generated/pages/page_client.astro[0m:[93m4[0m:[93m1[0m - [93mwarning[0m[90m ts(6133): [0m'contextFor' is declared but its value is never read.
+
+[7m4[0m import {contextFor} from '../../core/content';
+[7m [0m [93m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+Result (338 files): 
+- 0 errors
+- 0 warnings
+- 2 hints
+
+
+> lean-sitebuilder@0.1.0 test /private/var/folders/00/h_k67s0j5dq0qvg6ylqysk2w0000gn/T/lean-client-verify-q7092nxy
+> pnpm prepare:blocks && vitest run
+
+
+> lean-sitebuilder@0.1.0 prepare:blocks /private/var/folders/00/h_k67s0j5dq0qvg6ylqysk2w0000gn/T/lean-client-verify-q7092nxy
+> node scripts/generate-blocks.mjs
+
+Registered 94 block versions.
+Registered 2 layout versions.
+
+ RUN  v5.0.3 /private/var/folders/00/h_k67s0j5dq0qvg6ylqysk2w0000gn/T/lean-client-verify-q7092nxy
+
+
+ Test Files  21 passed (21)
+      Tests  158 passed (158)
+   Start at  17:21:57
+   Duration  10.08s (import 43%, tests 36%, environment 15%, transform 6%)
+
+    Isolate  21 workers spawned · ~493ms startup each (spawn + environment, per file)
+             at least ~657ms faster with isolate: false — reuses workers across files instead of one per file
+
+
+> lean-sitebuilder@0.1.0 build /private/var/folders/00/h_k67s0j5dq0qvg6ylqysk2w0000gn/T/lean-client-verify-q7092nxy
+> pnpm prepare:blocks && astro build
+
+
+> lean-sitebuilder@0.1.0 prepare:blocks /private/var/folders/00/h_k67s0j5dq0qvg6ylqysk2w0000gn/T/lean-client-verify-q7092nxy
+> node scripts/generate-blocks.mjs
+
+Registered 94 block versions.
+Registered 2 layout versions.
+17:22:08 [vite] Re-optimizing dependencies because vite config has changed
+17:22:08 [types] Generated 141ms
+17:22:08 [build] output: "static"
+17:22:08 [build] mode: "static"
+17:22:08 [build] directory: /private/var/folders/00/h_k67s0j5dq0qvg6ylqysk2w0000gn/T/lean-client-verify-q7092nxy/dist/
+17:22:08 [build] Collecting build info...
+17:22:08 [build] ✓ Completed in 200ms.
+17:22:08 [build] Building static entrypoints...
+17:22:08 [vite] ✓ built in 106ms
+17:22:09 [vite] ✓ built in 774ms
+17:22:09 [build] Rearranging server assets...
+
+ generating static routes 
+17:22:09   ├─ /admin/index.html (+11ms) 
+17:22:09   ├─ /index.html (+93ms) 
+17:22:09 ✓ Completed in 159ms.
+
+17:22:09 [build] ✓ Completed in 1.09s.
+17:22:09 [build] 2 page(s) built in 1.29s
+17:22:09 [build] Complete!
+
+> lean-sitebuilder@0.1.0 check:build /private/var/folders/00/h_k67s0j5dq0qvg6ylqysk2w0000gn/T/lean-client-verify-q7092nxy
+> node scripts/check-build.mjs
+
+{
+  "runtimeCopies": {
+    "react-dom": 1,
+    "svelte": 1,
+    "react": 1,
+    "@vue/runtime-core": 1,
+    "@vue/runtime-dom": 1
+  },
+  "pages": [
+    {
+      "page": "admin/index.html",
+      "javascriptModules": 15,
+      "gzipJavaScriptBytes": 252484
+    },
+    {
+      "page": "index.html",
+      "javascriptModules": 0,
+      "gzipJavaScriptBytes": 0
+    }
+  ]
+}

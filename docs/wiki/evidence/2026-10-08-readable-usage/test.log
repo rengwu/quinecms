@@ -1,0 +1,22 @@
+
+> lean-sitebuilder@0.1.0 test /Users/rengwu/Desktop/Projects/lean-sitebuilder
+> pnpm prepare:blocks && vitest run --maxWorkers=2
+
+
+> lean-sitebuilder@0.1.0 prepare:blocks /Users/rengwu/Desktop/Projects/lean-sitebuilder
+> node scripts/generate-blocks.mjs
+
+Registered 94 block versions.
+Registered 2 layout versions.
+
+ RUN  v5.0.3 /Users/rengwu/Desktop/Projects/lean-sitebuilder
+
+
+ Test Files  20 passed (20)
+      Tests  169 passed (169)
+   Start at  16:09:46
+   Duration  15.58s (import 39%, tests 33%, environment 22%, transform 6%)
+
+    Isolate  20 workers spawned · ~418ms startup each (spawn + environment, per file)
+             at least ~3.76s faster with isolate: false — reuses workers across files instead of one per file
+

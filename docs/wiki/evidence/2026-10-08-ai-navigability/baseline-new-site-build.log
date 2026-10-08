@@ -1,0 +1,29 @@
+
+> lean-sitebuilder@0.1.0 build /private/var/folders/00/h_k67s0j5dq0qvg6ylqysk2w0000gn/T/lean-agent-baseline-qz24q1k5
+> pnpm prepare:blocks && astro build
+
+
+> lean-sitebuilder@0.1.0 prepare:blocks /private/var/folders/00/h_k67s0j5dq0qvg6ylqysk2w0000gn/T/lean-agent-baseline-qz24q1k5
+> node scripts/generate-blocks.mjs
+
+Registered 94 block versions.
+Registered 2 layout versions.
+15:55:51 [types] Generated 44ms
+15:55:51 [build] output: "static"
+15:55:51 [build] mode: "static"
+15:55:51 [build] directory: /private/var/folders/00/h_k67s0j5dq0qvg6ylqysk2w0000gn/T/lean-agent-baseline-qz24q1k5/dist/
+15:55:51 [build] Collecting build info...
+15:55:51 [build] ✓ Completed in 111ms.
+15:55:51 [build] Building static entrypoints...
+15:55:51 [vite] ✓ built in 138ms
+15:55:52 [vite] ✓ built in 958ms
+15:55:52 [build] Rearranging server assets...
+
+ generating static routes 
+15:55:52   ├─ /admin/index.html (+17ms) 
+15:55:52   ├─ /index.html (+121ms) 
+15:55:52 ✓ Completed in 205ms.
+
+15:55:52 [build] ✓ Completed in 1.37s.
+15:55:52 [build] 2 page(s) built in 1.49s
+15:55:52 [build] Complete!

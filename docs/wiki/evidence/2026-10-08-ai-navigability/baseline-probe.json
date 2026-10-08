@@ -1,0 +1,40 @@
+{
+  "sourceHead": "348f1237f115541694f738bac77137333a4550d8",
+  "source": "git archive of exact commit; only content changed for the new-site probe",
+  "fixture": {
+    "site": {
+      "formatVersion": 1,
+      "id": "site_client",
+      "globals": {},
+      "layout": {
+        "id": "starter",
+        "version": 1,
+        "settings": {
+          "title": "Fresh client site",
+          "theme": "light",
+          "navigation": [],
+          "contentMaxWidth": 1200,
+          "pageGutter": 24
+        }
+      }
+    },
+    "page": {
+      "formatVersion": 1,
+      "id": "page_client",
+      "kind": "static",
+      "path": "/",
+      "title": "Fresh client site",
+      "blocks": []
+    },
+    "collections": [],
+    "entries": [],
+    "objects": [],
+    "media": []
+  },
+  "exitCodes": {
+    "baseline-verify": 0,
+    "baseline-new-site-build": 0,
+    "baseline-new-site-artifacts": 1
+  },
+  "isolation": "Temporary archive removed after commands; existing node_modules reused via symlink; original working tree untouched"
+}

@@ -1,0 +1,23 @@
+
+> lean-sitebuilder@0.1.0 check:build /private/var/folders/00/h_k67s0j5dq0qvg6ylqysk2w0000gn/T/lean-agent-audit-v39crrs3
+> node scripts/check-build.mjs
+
+node:internal/modules/run_main:123
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: Collection listing should have no JS
+
+undefined !== 0
+
+    at file:///private/var/folders/00/h_k67s0j5dq0qvg6ylqysk2w0000gn/T/lean-agent-audit-v39crrs3/scripts/check-build.mjs:113:10 {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: undefined,
+  expected: 0,
+  operator: 'strictEqual',
+  diff: 'simple'
+}
+
+Node.js v22.19.0
+ ELIFECYCLE  Command failed with exit code 1.

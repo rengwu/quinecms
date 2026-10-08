@@ -4,7 +4,9 @@ updated: 2026-10-08
 ---
 # Feature map
 
-The first implementation follows the [agreed design](../discussions/agreed-design.md) and [technical contracts](../discussions/technical-contracts.md). This map describes intended behavior and executable checks; verification results apply only to the recorded build.
+Start with [Building sites with local agents](local-authoring.md) for local authoring and delivery. Capabilities are options to use where they fit the design and client; this map describes their current contracts and checks. Verification results apply only to the recorded build. Decisions and historical technical discussions remain in the wiki.
+
+- [Local authoring and validation](local-authoring.md) — FEAT-local-authoring.
 
 - [Collections, objects and references](content-model.md) — FEAT-content-model.
 - [Site Layout library](site-layouts.md) — FEAT-site-layouts.
@@ -13,7 +15,7 @@ The first implementation follows the [agreed design](../discussions/agreed-desig
 - [Static pages and registered blocks](static-blocks.md) — FEAT-static-blocks.
 - [Generic pages and collection content](generic-pages.md) — FEAT-generic-pages.
 - [Visual editing and recovery](editor.md) — FEAT-editor.
-- [Git draft saves and publishing](publishing.md) — FEAT-publishing.
+- [GitHub/GitLab draft saves and publishing](publishing.md) — FEAT-publishing.
 - [Direct media uploads](media.md) — FEAT-media.
 
 Use [verification setup](../verification/setup.md). The [initial run](../verification/runs/2026-10-05T0819Z-implementation.md) covers automated checks and records browser observations, unavailable browser follow-up, and untested live providers.

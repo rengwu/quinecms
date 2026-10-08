@@ -1,0 +1,78 @@
+
+> lean-sitebuilder@0.1.0 verify /Users/rengwu/Desktop/Projects/lean-sitebuilder
+> pnpm check && pnpm test && pnpm build && pnpm check:build
+
+
+> lean-sitebuilder@0.1.0 check /Users/rengwu/Desktop/Projects/lean-sitebuilder
+> pnpm prepare:blocks && astro check
+
+
+> lean-sitebuilder@0.1.0 prepare:blocks /Users/rengwu/Desktop/Projects/lean-sitebuilder
+> node scripts/generate-blocks.mjs
+
+Registered 94 block versions.
+Registered 2 layout versions.
+16:04:00 [types] Generated 460ms
+16:04:00 [check] Getting diagnostics for Astro files in /Users/rengwu/Desktop/Projects/lean-sitebuilder...
+Result (340 files): 
+- 0 errors
+- 0 warnings
+- 0 hints
+
+
+> lean-sitebuilder@0.1.0 test /Users/rengwu/Desktop/Projects/lean-sitebuilder
+> pnpm prepare:blocks && vitest run
+
+
+> lean-sitebuilder@0.1.0 prepare:blocks /Users/rengwu/Desktop/Projects/lean-sitebuilder
+> node scripts/generate-blocks.mjs
+
+Registered 94 block versions.
+Registered 2 layout versions.
+
+ RUN  v5.0.3 /Users/rengwu/Desktop/Projects/lean-sitebuilder
+
+ ❯ tests/block-library.test.ts (7 tests | 1 failed) 5289ms
+   × renders every variant with defaults, empty optional content and long escaped content without provider or submission effects 5017ms
+ ❯ tests/block-generation.test.ts (1 test | 1 failed) 6349ms
+   × generates only the selected shared footer and leaves unchanged registry files in place on rerun 6347ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/block-generation.test.ts > generates only the selected shared footer and leaves unchanged registry files in place on rerun
+Error: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ tests/block-generation.test.ts:15:1
+     13| import { execFileSync } from 'node:child_process';
+     14|
+     15| it('generates only the selected shared footer and leaves unchanged reg…
+       | ^
+     16|   const root = process.cwd(),
+     17|     dir = await mkdtemp(join(tmpdir(), 'lean-block-generation-'));
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  tests/block-library.test.ts > renders every variant with defaults, empty optional content and long escaped content without provider or submission effects
+Error: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ tests/block-library.test.ts:68:1
+     66|   expect(catalogDefinitions(definitions, 'static', 'footer')).toHaveLe…
+     67| });
+     68| it('renders every variant with defaults, empty optional content and lo…
+       | ^
+     69|   const c = fixture();
+     70|   for (const d of added) {
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  2 failed | 18 passed (20)
+      Tests  2 failed | 167 passed (169)
+   Start at  16:04:59
+   Duration  42.94s (import 41%, tests 30%, environment 20%, transform 8%)
+
+    Isolate  20 workers spawned · ~2.14s startup each (spawn + environment, per file)
+             at least ~2.61s faster with isolate: false — reuses workers across files instead of one per file
+
+ ELIFECYCLE  Test failed. See above for more details.
+ ELIFECYCLE  Command failed with exit code 1.

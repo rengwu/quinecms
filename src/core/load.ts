@@ -2,7 +2,7 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import { parseFiles, validate } from './content';
 import { definitions } from '../generated/definitions';
-export async function loadContent() {
+export async function readContentFiles() {
   const files: Record<string, string> = {};
   async function walk(dir: string) {
     for (const d of await fs.readdir(dir, { withFileTypes: true })) {
@@ -14,7 +14,10 @@ export async function loadContent() {
     }
   }
   await walk('content');
-  const content = parseFiles(files);
+  return files;
+}
+export async function loadContent() {
+  const content = parseFiles(await readContentFiles());
   const issues = validate(content, definitions);
   if (issues.length)
     throw new Error(issues.map((i) => i.path + ': ' + i.message).join('\n'));

@@ -1,0 +1,38 @@
+{
+  "sourceHead": "348f1237f115541694f738bac77137333a4550d8",
+  "fixture": {
+    "site": {
+      "formatVersion": 1,
+      "id": "site_client",
+      "globals": {},
+      "layout": {
+        "id": "starter",
+        "version": 1,
+        "settings": {
+          "title": "Fresh client site",
+          "theme": "light",
+          "navigation": [],
+          "contentMaxWidth": 1200,
+          "pageGutter": 24
+        }
+      }
+    },
+    "page": {
+      "formatVersion": 1,
+      "id": "page_client",
+      "kind": "static",
+      "path": "/",
+      "title": "Fresh client site",
+      "blocks": []
+    },
+    "collections": [],
+    "entries": [],
+    "objects": [],
+    "media": []
+  },
+  "exitCodes": {
+    "new-site-build": 0,
+    "new-site-artifacts": 1
+  },
+  "isolation": "Temporary copy, removed after commands. Original content unchanged."
+}

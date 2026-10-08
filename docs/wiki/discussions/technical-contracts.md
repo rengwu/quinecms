@@ -1,25 +1,15 @@
 ---
 title: Technical contracts
 updated: 2026-10-08
-status: Implemented foundation; live providers unverified
+status: Historical technical discussion; current contracts linked
 ---
 # Technical contracts
 
-Implemented content-model redesign: [collections, objects and relations](content-model-plan.md) consolidates accepted DEC-110–DEC-128 and proposed storage, validation, binding and editor changes. DEC-126 revises owned nesting to three levels; DEC-127 rejects direct and indirect recursive owned definitions while allowing ordinary nested reuse. DEC-128 selects a lean Sanity-style model; the plan proposes one object/array/reference grammar, including arrays of references for multiple selections. Exact serialization remains an engineering choice, now recorded in the [implemented contract](../features/content-model.md) and [verification run](../verification/runs/2026-10-08-content-model.md). DEC-109 removes prototype compatibility as a redesign constraint; the older contracts below remain implementation history where superseded by the feature contract.
+For current local development, start with [Building sites with local agents](../features/local-authoring.md). The current [content model](../features/content-model.md), [generic pages](../features/generic-pages.md), [layout API](../features/site-layouts.md), [block library](../features/block-library.md), [editor](../features/editor.md) and [publishing](../features/publishing.md) pages describe the implemented contracts. Exact records and rendering interfaces are in `src/core/types.ts` and `src/core/layout-contract.ts`.
 
-Current extension: the [implemented Site Layout API](../features/site-layouts.md#authoring-api) supersedes the pre-implementation notes immediately below and the legacy central site-options ownership elsewhere in this document. One selected React wrapper contains all blocks; author settings and pure policy modules are versioned together. The exact record/whitelist/transition contract and [chartr port](../features/chartr.md) are implemented and linked to build-specific evidence.
+The remaining sections preserve the original technical design discussion from 2026-10-05 and its incremental annotations. Examples and statements of “proposed”, “current” or “pending” below belong to that history where later decisions supersede them. In particular, collection/object schemas now support the implemented object/array/reference model; canonical site settings and spacing belong to the active layout; the block/layout library and local validation are implemented. These historical snippets are not the recommended templates for new sites.
 
-DEC-107 independently selects [retained layout versions and explicit upgrades](site-layouts.md#layout-versions), following the block precedent. A site's active layout/version continues resolving its renderer and settings implementation when newer versions are installed. Store only that active selection and its current settings. Exact version-picker/settings-transition mechanics remain engineering work; no automatic settings migration or inactive-layout settings cache is selected by Q76.
-
-Accepted product extension: the [Site Layout redesign](site-layouts.md) will replace central ownership of title/theme/typography/header/footer with a selected author's wrapper and settings. DEC-092–DEC-101 establish active-settings-only persistence, advisory width/gutter (subsequently moved into layout settings with per-layout defaults by DEC-130), separate Site Layout/Settings areas, a live layout preview, direct card application plus separate Preview, and source-installed layouts. Concrete authoring/rendering interfaces remain engineering proposals. The current site record/rendering interfaces below describe the existing system, not an implemented layout plugin contract. Layout variables remain optional for blocks, with no styling-adherence categories or compatibility gating.
-
-DEC-102–DEC-105 add a growing source layout library and a hidden environment whitelist for the client picker. An absent variable offers all installed layouts. An excluded active layout retains its settings and keeps working under the normal rendering/preview/settings/save workflow; whitelist exclusion alone is not a build or publication error. Future picker choices are restricted. Build-time resolution and stable-ID configuration remain proposed mechanics. The installed implementation registry must remain distinguishable from the filtered picker catalog so an excluded active implementation remains resolvable.
-
-Planned extension: the [accepted block-library scope](block-library.md) adds theme/tag catalog metadata, schema lists and bindings, collection card mappings, shared header/footer and external forms. Those contracts are pending implementation; the current code described below has not yet gained them.
-
-The generic-page redesign (DEC-058–DEC-073) is implemented following authorization on 2026-10-06. The current page, entry, collection, binding and rich-text contracts below replace the earlier entry-block model. See [implementation and verification](../verification/runs/2026-10-05T1650Z-generic-pages.md). Live providers remain unverified.
-
-The accepted foundation and contract choices are DEC-026–DEC-050 in the [decision register](../decisions/index.md). The technical interview is complete. Concrete definitions below are engineering specifications derived from those decisions. The [feature map](../features/index.md) links the implemented API, recipes, and build-specific evidence. Supporting library choices and exact adapter integration remain subject to implementation validation.
+Design guidance for client sites is advisory: the builder is a blank slate, and its capabilities are options to use when suitable. That creative freedom is distinct from the concrete formats the current reader/validator accepts.
 
 ## Shared dependencies — Q33
 

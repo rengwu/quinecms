@@ -1,0 +1,39 @@
+{
+  "formatVersion": 1,
+  "id": "collection_journal",
+  "name": "Journal",
+  "path": "/journal",
+  "titleField": "title",
+  "fields": [
+    {
+      "key": "title",
+      "label": "Title",
+      "type": "text",
+      "required": true
+    },
+    {
+      "key": "summary",
+      "label": "Summary",
+      "type": "text",
+      "multiline": true
+    },
+    {
+      "key": "date",
+      "label": "Date",
+      "type": "date"
+    },
+    {
+      "key": "body",
+      "label": "Body",
+      "type": "richtext",
+      "required": true
+    },
+    {
+      "key": "image",
+      "label": "Cover image",
+      "type": "media"
+    }
+  ],
+  "genericPageId": "page_journal_entry",
+  "mode": "many"
+}

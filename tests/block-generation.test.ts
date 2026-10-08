@@ -11,6 +11,7 @@ import {
 import { tmpdir } from 'node:os';
 import { resolve, join } from 'node:path';
 import { execFileSync } from 'node:child_process';
+import { fixtureDirectory } from './support/fixture';
 
 it('generates only the selected shared footer and leaves unchanged registry files in place on rerun', async () => {
   const root = process.cwd(),
@@ -22,7 +23,7 @@ it('generates only the selected shared footer and leaves unchanged registry file
       recursive: true,
     });
     await cp('scripts', join(dir, 'scripts'), { recursive: true });
-    await cp('content', join(dir, 'content'), { recursive: true });
+    await cp(fixtureDirectory, join(dir, 'content'), { recursive: true });
     await cp('public', join(dir, 'public'), { recursive: true });
     for (const f of [
       'package.json',

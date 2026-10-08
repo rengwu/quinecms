@@ -1,0 +1,26 @@
+Local production UI, native Safari, http://127.0.0.1:4337/admin/.
+The in-app browser was unavailable; a separate Safari tab was created beside the
+existing Start Page. The Python static server served the actual dist/ build.
+
+Observed editor hydration and Pages list. Opened Repository connection. GitHub
+was the default; Owner, Repository, Draft branch and Access token were present.
+Selected GitLab using the provider dropdown. GitLab instance URL defaulted to
+https://gitlab.com; Namespace (including subgroups) and the other fields appeared.
+Scrolled the dialog and inspected right-aligned Close then Connect actions.
+
+Clicking Connect with blank fields initially exposed an existing false-unsaved-
+edits warning caused by legacy-to-layout normalization. That comparison was fixed
+and a regression added; the final check is recorded after the rebuilt UI below.
+
+No access token was typed and no remote provider was contacted. Token-clearing,
+credential identity, API writes and concurrency were exercised in automated mocks,
+not inferred from the browser.
+
+Final rebuilt UI: reloaded the same local preview, observed Save draft disabled
+for untouched content, and opened Connection. Blank Connect now reports
+"Enter your repository and access token." instead of the false unsaved-edit
+warning. Selected GitLab again and observed the correctly capitalized label,
+https://gitlab.com default and namespace field. The reload briefly reported a
+Safari state change; a fresh observation confirmed the owned local tab before
+continuing. Closed that specific tab using its close-tab action, preserving the
+original Start Page. Stopped the owned static server after verification.

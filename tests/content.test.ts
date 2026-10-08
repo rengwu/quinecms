@@ -1,6 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { readFileSync, readdirSync } from 'node:fs';
-import { join } from 'node:path';
+import { fixture } from './support/fixture';
 import {
   compatible,
   filesFor,
@@ -15,18 +14,7 @@ import {
 import { markdown } from '../src/core/markdown';
 import { definitions } from '../src/generated/definitions';
 import { siteStyle } from '../src/core/site-style';
-export function fixture() {
-  const files: Record<string, string> = {};
-  function walk(dir: string) {
-    for (const f of readdirSync(dir, { withFileTypes: true })) {
-      const path = join(dir, f.name);
-      if (f.isDirectory()) walk(path);
-      else if (path.endsWith('.json')) files[path] = readFileSync(path, 'utf8');
-    }
-  }
-  walk('content');
-  return parseFiles(files);
-}
+
 describe('content contract', () => {
   it('round trips site width, supports older sites and rejects invalid widths', () => {
     const c = fixture();

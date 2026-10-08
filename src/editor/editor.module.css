@@ -1,6 +1,8 @@
 /* Layout belongs here; Kumo owns controls, dialogs, and their visual states. */
 .workspace {
   isolation: isolate;
+  display: flow-root;
+  min-height: 100vh;
   --navigation-width: 216px;
   --drawer-width: 360px;
   --admin-content-max-width: 867px;
@@ -9,6 +11,13 @@
   --editor-space-3: 12px;
   --editor-space-4: 16px;
   --editor-space-6: 24px;
+}
+.adminCanvas {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background: var(--color-kumo-canvas);
+  pointer-events: none;
 }
 .app {
   font-family: Inter, system-ui, sans-serif;
@@ -22,7 +31,6 @@
   color: var(--text-color-kumo-default);
   font-family: Inter, system-ui, sans-serif;
   font-size: 14px;
-  color-scheme: dark;
   line-height: 1.5;
 }
 .topbar {
@@ -56,9 +64,11 @@
   padding: var(--editor-space-6);
 }
 .drawer h2,
-.adminPanel h2 {
+.adminPanel h2,
+.pageOverview h1 {
   font-weight: 600;
   font-size: 18px;
+  line-height: 1.5;
   letter-spacing: -0.02em;
   margin: 0;
 }
@@ -163,7 +173,6 @@
   padding: 100px 32px 60px;
   color: var(--text-color-kumo-default);
   background: var(--color-kumo-base);
-  color-scheme: dark;
 }
 .adminPanel,
 .pageOverview {
@@ -172,11 +181,6 @@
 }
 .adminPanel {
   line-height: 1.5;
-}
-.adminPanel > .panelBody > h2,
-.adminPanel > .panelBody > .sectionHeader:first-child h2,
-.adminPanel > .panelBody > .panelSection:first-child > .sectionHeader h2 {
-  font-size: 24px;
 }
 .navigation {
   position: fixed;
@@ -233,11 +237,6 @@
 .pageOverview > .sectionHeader {
   margin-top: 0;
   margin-bottom: 0;
-}
-.pageOverview h1 {
-  font-size: 24px;
-  font-weight: 600;
-  margin: 0;
 }
 .pageTable {
   border: 1px solid var(--color-kumo-line);
@@ -335,6 +334,48 @@
   flex-direction: column;
   gap: 2px;
 }
+.usage {
+  display: grid;
+  gap: 12px;
+}
+.usage > h3 {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+}
+.usage > p,
+.usageRow span {
+  margin: 0;
+  color: var(--text-color-kumo-subtle);
+  font-size: 13px;
+  line-height: 1.5;
+}
+.usageRow {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 12px;
+  border: 1px solid var(--color-kumo-line);
+  border-radius: 8px;
+}
+.usageRow > div {
+  flex: 1;
+  min-width: 140px;
+  overflow-wrap: anywhere;
+}
+.usageRow strong,
+.usageRow span {
+  display: block;
+}
+.usageRow strong {
+  margin-bottom: 4px;
+  font-size: 13px;
+}
+.usageRow > button {
+  flex-shrink: 0;
+  margin-left: auto;
+}
 .field {
   margin: 0;
   display: flex;
@@ -417,7 +458,6 @@
     14px/1.5 Inter,
     system-ui,
     sans-serif;
-  color-scheme: dark;
   border-radius: 8px;
   box-shadow: 0 8px 24px #0004;
   will-change: transform;

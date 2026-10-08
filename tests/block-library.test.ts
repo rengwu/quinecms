@@ -1,6 +1,5 @@
 import { expect, it } from 'vitest';
-import { readFileSync, readdirSync } from 'node:fs';
-import { join } from 'node:path';
+import { fixture } from './support/fixture';
 import { createElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { definitions } from '../src/generated/definitions';
@@ -19,18 +18,7 @@ import { catalogDefinitions, filterCatalog } from '../src/editor/catalog';
 import { headerValues } from '../src/core/header';
 import Header from '../src/site/Header';
 import type { Field, Values } from '../src/core/types';
-function fixture() {
-  const files: Record<string, string> = {};
-  function walk(dir: string) {
-    for (const f of readdirSync(dir, { withFileTypes: true })) {
-      const p = join(dir, f.name);
-      if (f.isDirectory()) walk(p);
-      else if (p.endsWith('.json')) files[p] = readFileSync(p, 'utf8');
-    }
-  }
-  walk('content');
-  return parseFiles(files);
-}
+
 const added = definitions.filter((d) => d.theme === 'Tailwind UI');
 const definition = (type: string) => definitions.find((d) => d.type === type)!;
 const list: Field = {

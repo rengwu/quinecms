@@ -5,6 +5,18 @@ status: Accepted
 ---
 # lean-sitebuilder
 
+Latest provider support: [GitHub and GitLab draft saves/publishing](features/publishing.md) (DEC-135), with configurable instances/namespaces, destination-bound session credentials and the existing snapshot validation. GitLab uses internal fast-forward merge requests; [implementation and limits](journal/2026-10-08-gitlab.md).
+
+Latest visual repair: [consistent admin headings](verification/runs/2026-10-08-heading-typography.md). Pages now shares the other section titles' 18px typography instead of its separate 24px rule. The full verification passes, with a Safari visual check of Pages.
+
+Building a client site: start with [the local authoring guide](features/local-authoring.md). Design freely and use pages, blocks, layouts and structured content where suitable. DEC-134 makes this guidance advisory. The refreshed entry points and independent validation/tests support replacing demo content; [implementation and verification](journal/2026-10-08-local-authoring.md).
+
+Latest reference refinement: [readable usage summaries](journal/2026-10-08-readable-usage.md). **Used in N places** names the source and editor location, offers **Open**, and explains deletion blockers beside the action. Removing an inherited Starter navigation link now clears its reference. [Verification and limits](verification/runs/2026-10-08-readable-usage.md).
+
+Original investigation: [local agent authoring](discussions/local-agent-authoring.md). The user scopes AI development to cloned repositories; remote access/MCP are excluded. Its documentation and validation recommendations are now implemented above. [Audit journal and exact-commit evidence](journal/2026-10-08-ai-navigability.md); expanded examples and fresh-agent benchmarks remain future options.
+
+Latest admin preference: [dark/light mode in Settings](journal/2026-10-08-admin-theme.md) (DEC-133). The browser remembers the choice for admin controls and the preview's empty surroundings; website appearance remains independent. [Browser and 167-test verification](verification/runs/2026-10-08-admin-theme.md).
+
 Latest navigation refinement: [expandable Schemas group](journal/2026-10-08-sidebar-groups.md) (DEC-132). Collections and Objects open directly from the sidebar without Back buttons on their lists. [Browser and 161-test verification](verification/runs/2026-10-08-sidebar-groups.md).
 
 Latest heading refinement: [creation screen hierarchy](verification/runs/2026-10-08-creation-heading.md). **New block** and **New footer** now place the selected type beneath the heading as a smaller, muted subtitle. Both browser flows and all 159 tests pass.

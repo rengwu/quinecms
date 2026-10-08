@@ -18,17 +18,24 @@ import CollectionSchema from './CollectionSchema';
 import styles from './editor.module.css';
 import FormScreen from './FormScreen';
 import { ModelContext } from './ModelContext';
+import UsageList from './UsageList';
+import type { UsageTarget } from './usage';
 export default function Schemas({
   area,
+  selectedId: selected,
+  onSelect: select,
   content,
   onChange,
+  onOpenUsage,
 }: {
   area: 'collections' | 'objects';
+  selectedId: string;
+  onSelect(id: string): void;
   content: Content;
   onChange(c: Content): void;
+  onOpenUsage(target: UsageTarget): void;
 }) {
-  const [selected, select] = useState(''),
-    [error, setError] = useState('');
+  const [error, setError] = useState('');
   const [pending, setPending] = useState<Collection | ObjectDefinition | null>(
     null,
   );
@@ -152,6 +159,7 @@ export default function Schemas({
           key={object.id}
           object={object}
           content={content}
+          onOpenUsage={onOpenUsage}
           onBack={cancel}
           onCreate={pending ? commit : undefined}
           onChange={(next) => {
@@ -259,6 +267,7 @@ function ObjectSchema({
   onBack,
   onDelete,
   onCreate,
+  onOpenUsage,
 }: {
   object: ObjectDefinition;
   content: Content;
@@ -266,6 +275,7 @@ function ObjectSchema({
   onBack(): void;
   onDelete(): void;
   onCreate?(): void;
+  onOpenUsage(target: UsageTarget): void;
 }) {
   const [selected, select] = useState<number | null>(null);
   const [pendingField, setPendingField] = useState<Field | null>(null);
@@ -352,21 +362,12 @@ function ObjectSchema({
           onChange={(e) => onChange({ ...object, name: e.target.value })}
         />
       </div>
-      {!!uses.length && (
-        <>
-          <h3>Used by</h3>
-          <p className={styles.muted}>
-            Changes apply to these schemas and their entries.
-          </p>
-          <ul>
-            {uses.map((use, i) => (
-              <li key={i}>
-                {use.label} · {use.path}
-              </li>
-            ))}
-          </ul>
-        </>
-      )}
+      <UsageList
+        content={content}
+        uses={uses}
+        description="Changes to this object apply to these schemas and their entries."
+        onOpen={onOpenUsage}
+      />
       <div className={styles.sectionHeader}>
         <h3>Fields</h3>
         <Button

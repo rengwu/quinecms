@@ -1,6 +1,6 @@
 ---
 title: Static pages and registered blocks
-updated: 2026-10-06
+updated: 2026-10-08
 ---
 # Static pages and registered blocks
 
@@ -12,30 +12,30 @@ The [accepted block contracts](../discussions/technical-contracts.md) require st
 
 ## Entry points and prerequisites
 
-Run the [standard setup](../verification/setup.md). Public fixtures are `/`, `/blocks/`, `/journal/`, and `/journal/a-slower-way-to-build/` and `/journal/keep-the-essentials/`. Developer registrations live in `blocks.config.mjs` and `src/blocks/<name>/vN/definition.json`.
+Run the [standard setup](../verification/setup.md). The optional bundled demo routes are `/`, `/blocks/`, `/journal/`, and `/journal/a-slower-way-to-build/` and `/journal/keep-the-essentials/`. Developer registrations live in `blocks.config.mjs` and `src/blocks/<name>/vN/definition.json`.
 
 ## Expected outcomes
 
-The selected [Site Layout](site-layouts.md) now wraps static and generic-entry routes using the same source as live previews. Starter carries the previous typography/header/footer implementation; those appearance values now live in its settings. Only content width/gutter remain core globals. [chartr](chartr.md) adds an independent layout and nine reusable blocks, with no styling compatibility gate.
+The selected [Site Layout](site-layouts.md) now wraps static and generic-entry routes using the same source as live previews. Starter carries the previous typography/header/footer implementation; those appearance values now live in its settings. Content width/gutter also belong to the active layout settings (DEC-130). [chartr](chartr.md) adds an independent layout and nine reusable blocks, with no styling compatibility gate.
 
 The [block library](block-library.md) adds themed/tagged browsing, shared chrome, repeated content and schema lists. Its record owns the expanded contract and verification recipe.
 
 Astro generates static-page routes and assigned collection-entry routes with imports for only their used blocks. Generic pages themselves have no public route; collection indexes require an explicit static page. See [generic pages](generic-pages.md). React/Svelte/Vue use Astro hydration; vanilla modules expose render/mount with matching activation timing. Preview mounts immediately. Root dependency pins and manifest compatibility checks govern all retained implementations. Framework/runtime modules have one emitted implementation and shared URLs. Public routes never load the editor, GitHub client, or R2 client. Styles are scoped; the shell owns resets.
 
-DEC-075 adds **Settings → Content max-width (px)**, persisted in `site.globals.contentMaxWidth`. Omitted or cleared values use 1200px. Public output and preview inherit `--site-content-max-width`; starter block containers and header/footer follow it, while blocks may retain narrower text measures or opt out. Admin workspace widths are unaffected.
+DEC-130 places **Site Layout → Content spacing** in `site.layout.settings`. Omitted or cleared values use the selected layout defaults: Starter 1200px width/24px gutter; chartr 1512px/40px. Public output and preview inherit `--site-content-max-width`; starter block containers and header/footer follow it, while blocks may retain narrower text measures or opt out. Admin workspace widths are unaffected.
 
 DEC-078 originally added typography; it now lives in Site Layout → Starter settings (separate body/heading font selectors, body size and unitless line height) and Layout → Page gutter. These persist with content, survive tab recovery, and apply equally to public HTML and page previews. Fonts use built-in stacks; defaults are system sans, 16px, 1.6 and 24px gutter. The starter blocks follow these shared styles without affecting admin controls. [Contract](../discussions/technical-contracts.md#block-source-contract-and-styles).
 
 
 ## Verification recipe
 
-1. Run `pnpm verify`. Build inspection checks static output, referenced assets, unique runtime modules, and absence of editor/provider code in public graphs.
+1. Run `pnpm verify`. Build inspection checks referenced assets, shared emitted runtimes, and absence of editor/provider code in the actual site's public graphs. The isolated regression build separately checks the demo's static Journal output; client sites need not retain those pages.
 2. Open `/blocks/`. Activate **Code** on the first Tabs block; the second block should remain on **Content**. Use arrow keys between tabs.
 3. Open `/`. The Svelte **Add one** button increments its counter; the Vue question toggles its answer. The vanilla quote renders without activation.
-4. Open the journal index and entries with JavaScript disabled: their visible content should remain complete. With Starter selected, the artifact check establishes zero JavaScript module references for these fixtures; interactive layouts may add their own runtime; a final browser JavaScript-disabled check is unvalidated.
-5. In Site settings enter 680 for Content max-width. Open Pages → Home and inspect the centered content and full-width Hero background; switch to Journal entry to check generic blocks. Return to Site and reload: the value persists. Clear it to use 1200 again. Invalid nonpositive values must fail Save/Publish validation. Discard browser test edits when finished. The built public HTML must expose the value from `content/site.json` without client JavaScript.
+4. Open the journal index and entries with JavaScript disabled: their visible content should remain complete. With Starter selected, the isolated regression build establishes zero JavaScript module references for these fixtures; interactive layouts may add their own runtime; a final browser JavaScript-disabled check is unvalidated.
+5. In Site Layout → Content spacing enter 680 for Content max-width. Open Pages → Home and inspect the centered content and full-width Hero background; switch to Journal entry to check generic blocks. Return to Site Layout and reload: the value persists. Clear it to use the active layout's default again. Invalid nonpositive values must fail Save/Publish validation. Discard browser test edits when finished. The built public HTML must expose the value from `content/site.json` without client JavaScript.
 
-6. In an isolated admin tab, choose Arial body/Georgia headings, body size 18, line height 1.8 and gutter 40. Navigate to Home and the generic Journal entry preview; inspect font separation and horizontal insets. Reload, return to Site and confirm settings persist. Clear numeric overrides to restore defaults. Close the test tab without provider saves.
+6. In an isolated admin tab, choose Arial body/Georgia headings, body size 18, line height 1.8 and gutter 40. Navigate to Home and the generic Journal entry preview; inspect font separation and horizontal insets. Reload, return to Site Layout and confirm settings persist. Clear numeric overrides to restore defaults. Close the test tab without provider saves.
 
 ## Coverage and limitations
 

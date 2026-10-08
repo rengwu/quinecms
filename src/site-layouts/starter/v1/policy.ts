@@ -1,6 +1,7 @@
-import type { Content, Site, Values } from '../../../core/types';
+import type { Content, Json, Site, Values } from '../../../core/types';
 import type { LayoutPolicy } from '../../../core/layout-contract';
 import { headerFields } from '../../../core/header';
+import { listRows } from '../../../core/lists';
 import { resolveLink, object, blank } from '../../../core/content';
 import {
   validSiteFont,
@@ -20,6 +21,24 @@ export function starterContent(content: Content, settings: Values): Content {
       header: settings.header as Values | undefined,
       footer: settings.footer as unknown as Site['footer'],
     },
+  };
+}
+/** Keep only the inherited internal links still present in the edited header. */
+export function withHeader(
+  content: Content,
+  settings: Values,
+  header: Values,
+): Values {
+  const navigation = starterContent(content, settings).site.navigation ?? [];
+  return {
+    ...settings,
+    header,
+    navigation: listRows(header.items).flatMap((item) => {
+      const link = navigation.find((n) => n.id === item._rowId);
+      return link && item.url === resolveLink(content, link.to)
+        ? [{ ...link, label: String(item.label ?? link.label) }]
+        : [];
+    }) as unknown as Json,
   };
 }
 const policy: LayoutPolicy = {

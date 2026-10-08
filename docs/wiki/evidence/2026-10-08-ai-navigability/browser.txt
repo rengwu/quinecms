@@ -1,0 +1,33 @@
+Bounded native Safari discovery, 2026-10-08
+Manual summary of cua_repl observations; not a full browser coverage report.
+
+An audit-owned production preview ran at http://127.0.0.1:4327/admin/.
+A new Safari tab was opened for this origin.
+
+Observed accessibility tree:
+- Pages table: Home, Block examples, chartr, Journal, Journal entry.
+- Named navigation: Pages, Content, collapsed Schemas, Media, Site Layout, Settings.
+- Clicking Schemas exposed Collections and Objects; Pages remained visible.
+- Objects opened an empty Object definitions list and Add object, without Back.
+- Add object opened New object, Name, Add field, Cancel and Create object.
+- Add field replaced parent controls with New field, Label, Field key, Field type,
+  Required, Edit default value, Cancel and Create field.
+- Cancel field returned to New object. Cancel object returned to the empty list.
+- Pages -> Journal entry exposed Entry heading/media/rich text and reorder help:
+  use Alt plus up/down arrows on the focused block.
+- Entry heading exposed a Version selector, Bind Heading=title,
+  Bind Description=summary, Bind Date=date, grouped fallback controls,
+  Cancel block changes, Remove and Back.
+- The live preview exposed {{title}}, {{summary}}, {{date}}, {{image}}, {{body}}.
+- These editor destinations remained under /admin/.
+
+No fields were changed, no creation was committed, and no provider credentials,
+saves, uploads or publication were used. Opening legacy fixture content can mark
+the in-browser canonicalized snapshot dirty; closing produced a leave-page dialog.
+The native driver subsequently reported concurrent Safari activity and showed
+another local editor at port 4322. No further actions were taken in that session.
+The audit's preview process at port 4327 was stopped separately by its own launcher.
+
+This establishes basic accessibility discovery for these specific controls only.
+It does not establish full keyboard operation, all browser flows, a fresh-agent
+benchmark, or behavior of the concurrent admin-theme/usage changes.

@@ -11,12 +11,15 @@ import { PanelNavigation } from './PanelNavigation';
 import { Button } from '@cloudflare/kumo/components/button';
 import { Input } from '@cloudflare/kumo/components/input';
 import { Select } from '@cloudflare/kumo/components/select';
+import { Switch } from '@cloudflare/kumo/components/switch';
 import { Label } from '@cloudflare/kumo/components/label';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Dialog } from '@cloudflare/kumo/components/dialog';
 import { CaretRightIcon, PlusIcon } from '@phosphor-icons/react';
 import Schemas from './Schemas';
 import { incomingUsage } from '../core/schema';
+import UsageList from './UsageList';
+import type { UsageTarget } from './usage';
 import { entryPath } from '../core/routes';
 import PanelSection from './PanelSection';
 import PageList from './PageList';
@@ -38,8 +41,8 @@ import {
   validate,
 } from '../core/content';
 import { definitions } from '../generated/definitions';
-import { connect, GitHubStore } from '../integrations/github';
-import type { Repository } from '../integrations/github';
+import { connect, repositoryKey } from '../integrations/git';
+import type { Repository, RepositoryStore } from '../integrations/repository';
 import type { StorageConfig } from '../integrations/media';
 import {
   digest,
@@ -53,6 +56,13 @@ import {
 import Fields from './Fields';
 import BlockFields from './BlockFields';
 import styles from './editor.module.css';
+import {
+  AdminThemeContext,
+  adminThemeKey,
+  readAdminMode,
+  useAdminTheme,
+  type AdminMode,
+} from './AdminTheme';
 export interface Config extends Repository {
   passwordHash: string;
   allowedLayoutIds?: string[];
@@ -70,23 +80,40 @@ function stash(key: string, value: unknown) {
 }
 export default function App(props: { initial: Content; config: Config }) {
   const portal = useRef<HTMLDivElement>(null);
+  const [mode, updateMode] = useState(readAdminMode);
+  function setMode(next: AdminMode) {
+    updateMode(next);
+    try {
+      localStorage.setItem(adminThemeKey, next);
+    } catch {
+      // The current session can still change theme when storage is unavailable.
+    }
+  }
   return (
-    <div className={styles.workspace}>
-      {/* Attach the container before Toasty's initial layout effect resolves it. */}
-      <div
-        ref={portal}
-        className={`kumo-ui ${styles.portal}`}
-        data-mode="dark"
-      />
-      <KumoPortalProvider container={portal}>
-        <Toasty>
-          <Session {...props} />
-        </Toasty>
-      </KumoPortalProvider>
-    </div>
+    <AdminThemeContext.Provider value={{ mode, setMode }}>
+      <div className={styles.workspace}>
+        <div
+          className={`kumo-ui ${styles.adminCanvas}`}
+          data-mode={mode}
+          aria-hidden="true"
+        />
+        {/* Attach the container before Toasty's initial layout effect resolves it. */}
+        <div
+          ref={portal}
+          className={`kumo-ui ${styles.portal}`}
+          data-mode={mode}
+        />
+        <KumoPortalProvider container={portal}>
+          <Toasty>
+            <Session {...props} />
+          </Toasty>
+        </KumoPortalProvider>
+      </div>
+    </AdminThemeContext.Provider>
   );
 }
 function Session({ initial, config }: { initial: Content; config: Config }) {
+  const { mode } = useAdminTheme();
   const [unlocked, setUnlocked] = useState(
       () =>
         !config.passwordHash || stored('lean:gate', '') === config.passwordHash,
@@ -95,7 +122,7 @@ function Session({ initial, config }: { initial: Content; config: Config }) {
   const toasts = useKumoToastManager();
   if (!unlocked)
     return (
-      <div className={`kumo-ui ${styles.app}`} data-mode="dark">
+      <div className={`kumo-ui ${styles.app}`} data-mode={mode}>
         <div className={styles.gate}>
           <form
             onSubmit={async (e) => {
@@ -146,6 +173,7 @@ function Session({ initial, config }: { initial: Content; config: Config }) {
         try {
           sessionStorage.removeItem('lean:gate');
           sessionStorage.removeItem('lean:github');
+          sessionStorage.removeItem('lean:git');
           sessionStorage.removeItem('lean:r2');
         } catch {}
         setUnlocked(false);
@@ -162,6 +190,7 @@ function Editor({
   config: Config;
   onLock(): void;
 }) {
+  const { mode, setMode } = useAdminTheme();
   const [recovery] = useState(() => ({ current: readRecovery() }));
   const [content, setContent] = useState<Content>(() =>
     migrateSite(recovery.current?.content ?? initial),
@@ -172,13 +201,21 @@ function Editor({
   const [repo, setRepo] = useState<Repository>(
     () =>
       recovery.current?.repository ?? {
+        provider: config.provider ?? 'github',
+        instance: config.instance ?? 'https://gitlab.com',
         owner: config.owner,
         repo: config.repo,
         branch: config.branch,
       },
   );
   const [draftRepository, setDraftRepository] = useState(repo);
-  const [token, setToken] = useState(() => stored('lean:github', ''));
+  const [token, setToken] = useState(() => {
+    const saved = stored<{ repository: string; token: string } | null>(
+      'lean:git',
+      null,
+    );
+    return saved?.repository === repositoryKey(repo) ? saved.token : '';
+  });
   const [r2, setR2] = useState<StorageConfig>(() =>
     stored('lean:r2', {
       ...config.r2,
@@ -189,7 +226,7 @@ function Editor({
       quality: 0.8,
     }),
   );
-  const [store, setStore] = useState<GitHubStore | null>(null);
+  const [store, setStore] = useState<RepositoryStore | null>(null);
   const [busy, setBusy] = useState(false);
   const toasts = useKumoToastManager();
   function setError(description: string) {
@@ -210,6 +247,7 @@ function Editor({
     [selected, setSelected] = useState(''),
     [blockId, setBlockId] = useState(''),
     [collectionId, setCollectionId] = useState(''),
+    [schemaId, setSchemaId] = useState(''),
     [modal, setModal] = useState(''),
     [confirm, setConfirm] = useState<{
       title: string;
@@ -241,6 +279,9 @@ function Editor({
     );
   const collection = content.collections.find((c) => c.id === collectionId);
   const usageIndex = useMemo(() => incomingUsage(content), [content]);
+  const documentUses = (usageIndex.get(doc?.id ?? '') ?? []).filter(
+    (use) => use.ownerId !== doc?.id,
+  );
   const editingDocument = Boolean(
     doc &&
     ((tab === 'pages' && 'kind' in doc) ||
@@ -255,6 +296,7 @@ function Editor({
     ((tab === 'pages' && editingDocument) || tab === 'layout');
   const EditorSurface = showPreview ? 'aside' : 'main';
   function openArea(area: EditorArea) {
+    setSchemaId('');
     setPendingDocument(null);
     setPendingBlock(null);
     setModal('');
@@ -275,6 +317,15 @@ function Editor({
     setTab(entry ? 'content' : 'pages');
     if (entry) setCollectionId(entry.collectionId);
   }
+  function openUsage(target: UsageTarget) {
+    if (target.area === 'pages' || target.area === 'content') {
+      openDocument(target.id);
+      setBlockId(target.blockId ?? '');
+    } else {
+      openArea(target.area);
+      if (target.area !== 'layout') setSchemaId(target.id);
+    }
+  }
   function entryTitle(entry: Entry) {
     const model = content.collections.find((c) => c.id === entry.collectionId);
     return String(
@@ -286,14 +337,12 @@ function Editor({
 
   const dirty =
     serialize(filesFor(content)) !==
-    serialize(filesFor(base?.content ?? initial));
+    serialize(filesFor(migrateSite(base?.content ?? initial)));
   const activeRepo = store?.repository;
   const credentialsMatch =
     activeRepo &&
-    activeRepo.owner === repo.owner &&
-    activeRepo.repo === repo.repo &&
-    activeRepo.branch === repo.branch &&
-    JSON.stringify(draftRepository) === JSON.stringify(repo);
+    repositoryKey(activeRepo) === repositoryKey(repo) &&
+    repositoryKey(draftRepository) === repositoryKey(repo);
   useEffect(() => {
     try {
       retain({ version: 1, repository: draftRepository, base, content });
@@ -347,6 +396,14 @@ function Editor({
         blocks: page.blocks.map((b) => (b.id === next.id ? next : b)),
       });
   }
+  function changeRepository(next: Partial<Repository>) {
+    setStore(null);
+    setToken('');
+    setRepo({ ...repo, ...next });
+    try {
+      sessionStorage.removeItem('lean:git');
+    } catch {}
+  }
   async function reconnect() {
     await run(async () => {
       if (dirty && !base)
@@ -359,7 +416,7 @@ function Editor({
         base &&
         dirty &&
         (base.sha !== remote.sha ||
-          JSON.stringify(draftRepository) !== JSON.stringify(repo))
+          repositoryKey(draftRepository) !== repositoryKey(repo))
       ) {
         setStore(next);
         throw Error(
@@ -367,7 +424,7 @@ function Editor({
         );
       }
       try {
-        stash('lean:github', token);
+        stash('lean:git', { repository: repositoryKey(repo), token });
       } catch {
         setError('Credentials could not be retained for this tab.');
       }
@@ -396,7 +453,7 @@ function Editor({
       body: 'This replaces local edits. Export a backup first if you want to keep them.',
       action: () => {
         void run(async () => {
-          if (!store) throw Error('Connect to GitHub first.');
+          if (!store) throw Error('Connect to your repository first.');
           const next = await store.load();
           setDraftRepository(store.repository);
           setBase(next);
@@ -554,7 +611,7 @@ function Editor({
   return (
     <ModelContext.Provider value={content}>
       <div className={styles.app}>
-        <header className={`kumo-ui ${styles.topbar}`} data-mode="dark">
+        <header className={`kumo-ui ${styles.topbar}`} data-mode={mode}>
           <Button
             className={styles.navigationToggle}
             aria-label="Open navigation"
@@ -603,7 +660,7 @@ function Editor({
         </header>
         <aside
           className={`kumo-ui ${styles.navigation}`}
-          data-mode="dark"
+          data-mode={mode}
           aria-label="Main navigation"
         >
           <Navigation active={tab} disabled={busy} onSelect={openArea} />
@@ -619,7 +676,7 @@ function Editor({
           <>
             <EditorSurface
               className={`kumo-ui ${showPreview ? styles.drawer : styles.home}`}
-              data-mode="dark"
+              data-mode={mode}
               aria-label={showPreview ? 'Site builder' : 'Admin workspace'}
             >
               <div className={showPreview ? undefined : styles.adminPanel}>
@@ -944,17 +1001,25 @@ function Editor({
                                         />
                                       </>
                                     )}
+                                    <UsageList
+                                      content={content}
+                                      uses={documentUses}
+                                      description={
+                                        'values' in doc &&
+                                        collection?.mode === 'single'
+                                          ? 'Other content links to this entry.'
+                                          : `To delete this ${'kind' in doc ? 'page' : 'entry'}, first remove or change the links below.`
+                                      }
+                                      onOpen={openUsage}
+                                      disabled={busy}
+                                    />
                                     {!(
                                       'values' in doc &&
                                       collection?.mode === 'single'
                                     ) && (
                                       <div className={styles.actionFooter}>
                                         <Button
-                                          disabled={(
-                                            usageIndex.get(doc.id) ?? []
-                                          ).some(
-                                            (use) => use.ownerId !== doc.id,
-                                          )}
+                                          disabled={!!documentUses.length}
                                           variant="secondary-destructive"
                                           onClick={() =>
                                             setConfirm({
@@ -993,24 +1058,6 @@ function Editor({
                                           {'kind' in doc ? 'page' : 'entry'}
                                         </Button>
                                       </div>
-                                    )}
-                                    {!!usageIndex.get(doc.id)?.length && (
-                                      <>
-                                        <h3>Used by</h3>
-                                        <ul>
-                                          {usageIndex
-                                            .get(doc.id)!
-                                            .map((use, i) => (
-                                              <li key={i}>
-                                                {use.label} · {use.path}
-                                              </li>
-                                            ))}
-                                        </ul>
-                                        <p>
-                                          Remove or reassign these uses before
-                                          deleting.
-                                        </p>
-                                      </>
                                     )}
                                   </>
                                 )}
@@ -1122,9 +1169,13 @@ function Editor({
                         )}
                         {(tab === 'collections' || tab === 'objects') && (
                           <Schemas
+                            key={`${tab}:${schemaId}`}
                             area={tab}
+                            selectedId={schemaId}
+                            onSelect={setSchemaId}
                             content={content}
                             onChange={setContent}
+                            onOpenUsage={openUsage}
                           />
                         )}
                         {tab === 'media' && (
@@ -1215,6 +1266,19 @@ function Editor({
                         )}
                         {tab === 'settings' && (
                           <>
+                            <PanelSection title="Appearance">
+                              <Switch
+                                label="Dark mode"
+                                checked={mode === 'dark'}
+                                onCheckedChange={(checked) =>
+                                  setMode(checked ? 'dark' : 'light')
+                                }
+                              />
+                              <p className={styles.muted}>
+                                Changes the admin interface only. Your website
+                                keeps its own appearance.
+                              </p>
+                            </PanelSection>
                             <PanelSection title="Backups">
                               <p className={styles.muted}>
                                 Export or restore site content. Credentials are
@@ -1421,41 +1485,78 @@ function Editor({
                 )}
                 {modal === 'connection' && (
                   <>
+                    <div className={styles.field}>
+                      <Label>Git provider</Label>
+                      <Select
+                        aria-label="Git provider"
+                        value={repo.provider ?? 'github'}
+                        renderValue={(value) =>
+                          value === 'gitlab' ? 'GitLab' : 'GitHub'
+                        }
+                        onValueChange={(value) =>
+                          changeRepository({
+                            provider: value as 'github' | 'gitlab',
+                          })
+                        }
+                      >
+                        <Select.Option value="github">GitHub</Select.Option>
+                        <Select.Option value="gitlab">GitLab</Select.Option>
+                      </Select>
+                    </div>
+                    {repo.provider === 'gitlab' && (
+                      <div className={styles.field}>
+                        <Label>
+                          GitLab instance URL
+                          <Input
+                            aria-label="GitLab instance URL"
+                            value={repo.instance ?? 'https://gitlab.com'}
+                            onChange={(e) =>
+                              changeRepository({ instance: e.target.value })
+                            }
+                          />
+                        </Label>
+                      </div>
+                    )}
                     <p className={styles.muted}>
-                      Use a GitHub token with repository contents read and write
-                      access. Private drafts are fetched directly from GitHub.
+                      {repo.provider === 'gitlab'
+                        ? 'Use a GitLab token with api scope and access to this project. The project needs fast-forward merges with squashing optional or disabled.'
+                        : 'Use a GitHub token with repository contents read and write access.'}{' '}
+                      Drafts are fetched directly from the selected provider.
                     </p>
                     {(['owner', 'repo', 'branch'] as const).map((key) => (
                       <div className={styles.field} key={key}>
                         <Label>
                           {key === 'owner'
-                            ? 'Owner'
+                            ? repo.provider === 'gitlab'
+                              ? 'Namespace (including subgroups)'
+                              : 'Owner'
                             : key === 'repo'
                               ? 'Repository'
                               : 'Draft branch'}
                           <Input
                             aria-label={
                               key === 'owner'
-                                ? 'Owner'
+                                ? repo.provider === 'gitlab'
+                                  ? 'Namespace (including subgroups)'
+                                  : 'Owner'
                                 : key === 'repo'
                                   ? 'Repository'
                                   : 'Draft branch'
                             }
                             autoComplete="off"
                             value={repo[key]}
-                            onChange={(e) => {
-                              setStore(null);
-                              setRepo({ ...repo, [key]: e.target.value });
-                            }}
+                            onChange={(e) =>
+                              changeRepository({ [key]: e.target.value })
+                            }
                           />
                         </Label>
                       </div>
                     ))}
                     <div className={styles.field}>
                       <Label>
-                        GitHub token
+                        Access token
                         <Input
-                          aria-label="GitHub token"
+                          aria-label="Access token"
                           type="password"
                           autoComplete="off"
                           value={token}

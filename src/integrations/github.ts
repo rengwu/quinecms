@@ -4,26 +4,23 @@ import {
   parseFiles,
   recordPath,
   schemaChanges,
-  validate,
 } from '../core/content';
 import type { Content, Definition, Snapshot } from '../core/types';
-export interface Repository {
-  owner: string;
-  repo: string;
-  branch: string;
-}
+import {
+  checkDraft,
+  checkPublication,
+  Conflict,
+  isSource,
+  type Repository,
+  type RepositoryStore,
+} from './repository';
+export { Conflict } from './repository';
+export type { Repository } from './repository';
 export type Request = (
   route: string,
   parameters: Record<string, unknown>,
 ) => Promise<{ data: any }>;
-export class Conflict extends Error {
-  constructor() {
-    super(
-      'Someone saved newer changes. Your edits are still here. Export a backup, then reload the draft before applying them again.',
-    );
-  }
-}
-export class GitHubStore {
+export class GitHubStore implements RepositoryStore {
   constructor(
     private request: Request,
     public repository: Repository,
@@ -101,11 +98,7 @@ export class GitHubStore {
         }),
       );
     const content = parseFiles(files);
-    const issues = validate(content, this.definitions).filter(
-      (i) => i.phase === 'structure',
-    );
-    if (issues.length)
-      throw Error(issues.map((i) => i.path + ': ' + i.message).join('\n'));
+    checkDraft(content, this.definitions);
     return {
       sha,
       treeSha: tree.sha,
@@ -116,24 +109,14 @@ export class GitHubStore {
         tree.tree
           .filter(
             (f: any) =>
-              f.type === 'blob' &&
-              ((f.path.startsWith('src/') &&
-                !f.path.startsWith('src/generated/')) ||
-                f.path.startsWith('scripts/') ||
-                Object.hasOwn(this.expectedSources, f.path)),
+              f.type === 'blob' && isSource(f.path, this.expectedSources),
           )
           .map((f: any) => [f.path, f.sha]),
       ),
     };
   }
   async save(base: Snapshot, content: Content): Promise<Snapshot> {
-    const issues = [
-      ...validate(content, this.definitions).filter(
-        (i) => i.phase === 'structure',
-      ),
-      ...schemaChanges(base.content, content),
-    ];
-    if (issues.length) throw Error(issues.map((i) => i.message).join('\n'));
+    checkDraft(content, this.definitions, base.content);
     if ((await this.ref(this.repository.branch)) !== base.sha)
       throw new Conflict();
     const files = filesFor(content);
@@ -193,20 +176,7 @@ export class GitHubStore {
     return this.read(commit.sha);
   }
   async publish(snapshot: Snapshot) {
-    const sourcePaths = new Set([
-      ...Object.keys(this.expectedSources),
-      ...Object.keys(snapshot.sourceFiles),
-    ]);
-    if (
-      [...sourcePaths].some(
-        (path) => snapshot.sourceFiles[path] !== this.expectedSources[path],
-      )
-    )
-      throw Error(
-        'The draft contains a different editor or block implementation. Rebuild the editor from that source before publishing its content.',
-      );
-    const issues = validate(snapshot.content, this.definitions);
-    if (issues.length) throw Error(issues.map((i) => i.message).join('\n'));
+    checkPublication(snapshot, this.definitions, this.expectedSources);
     const main = await this.ref('main');
     if (main === snapshot.sha) return;
     const mainSnapshot = await this.read(main);

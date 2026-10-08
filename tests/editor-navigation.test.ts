@@ -8,6 +8,8 @@ import { entryPath } from '../src/core/routes';
 import type { Block, Content } from '../src/core/types';
 import { readRecovery } from '../src/editor/recovery';
 import { layoutDefinitions, selectLayout } from '../src/core/layouts';
+import { adminThemeKey } from '../src/editor/AdminTheme';
+import { repositoryKey } from '../src/integrations/git';
 vi.mock('../src/editor/Island', () => ({
   default: ({ block }: { block: Block }) =>
     createElement('div', { 'data-preview-island': block.id }),
@@ -71,6 +73,7 @@ afterEach(async () => {
   if (root) await act(async () => root.unmount());
   host?.remove();
   sessionStorage.clear();
+  localStorage.removeItem(adminThemeKey);
   vi.restoreAllMocks();
 });
 async function mount(initial = content, allowedLayoutIds?: string[]) {
@@ -288,6 +291,86 @@ function expectAdminView() {
   expect(host.querySelector('[data-preview-island]')).toBeNull();
 }
 
+it('persists the admin theme across navigation and reload without changing site content or preview theme', async () => {
+  await mount();
+  const adminSurfaces = () => [...host.querySelectorAll('.kumo-ui')];
+  expect(
+    adminSurfaces().every((el) => el.getAttribute('data-mode') === 'dark'),
+  ).toBe(true);
+  await click('Settings');
+  const snapshot = structuredClone(readRecovery()!.content);
+  const saveWasDisabled = button('Save draft').disabled;
+  const toggle = () =>
+    editorPanel().querySelector<HTMLButtonElement>('[role="switch"]')!;
+  expect(toggle().getAttribute('aria-checked')).toBe('true');
+  await act(async () => toggle().click());
+  expect(toggle().getAttribute('aria-checked')).toBe('false');
+  expect(localStorage.getItem(adminThemeKey)).toBe('light');
+  expect(
+    adminSurfaces().every((el) => el.getAttribute('data-mode') === 'light'),
+  ).toBe(true);
+  expect(readRecovery()!.content).toEqual(snapshot);
+  expect(button('Save draft').disabled).toBe(saveWasDisabled);
+
+  await click('Connection');
+  expect(
+    host
+      .querySelector('[role="dialog"]')!
+      .closest('[data-mode]')
+      ?.getAttribute('data-mode'),
+  ).toBe('light');
+  await click('Close');
+  await click('Pages');
+  expect(
+    host.querySelector('main[aria-label="Pages"]')?.getAttribute('data-mode'),
+  ).toBe('light');
+  await click('Home');
+  const preview = host.querySelector('[aria-label="Live preview"]')!;
+  expect(preview.closest('.kumo-ui, [data-mode]')).toBeNull();
+  expect(
+    preview.querySelector('.starter-layout')?.getAttribute('data-theme'),
+  ).toBe('light');
+  expect(readRecovery()!.content).toEqual(snapshot);
+
+  await act(async () => root.unmount());
+  host.remove();
+  await mount();
+  expect(
+    adminSurfaces().every((el) => el.getAttribute('data-mode') === 'light'),
+  ).toBe(true);
+  await click('Settings');
+  await act(async () => toggle().click());
+  expect(localStorage.getItem(adminThemeKey)).toBe('dark');
+  await click('Lock editor');
+  expect(
+    host
+      .querySelector('form')
+      ?.closest('[data-mode]')
+      ?.getAttribute('data-mode'),
+  ).toBe('dark');
+});
+
+it('falls back from an invalid admin preference and can toggle when persistence is blocked', async () => {
+  localStorage.setItem(adminThemeKey, 'invalid');
+  await mount();
+  await click('Settings');
+  const toggle =
+    editorPanel().querySelector<HTMLButtonElement>('[role="switch"]')!;
+  expect(toggle.getAttribute('aria-checked')).toBe('true');
+  const setItem = Storage.prototype.setItem;
+  vi.spyOn(Storage.prototype, 'setItem').mockImplementation(function (
+    this: Storage,
+    key,
+    value,
+  ) {
+    if (key === adminThemeKey) throw new Error('Storage unavailable');
+    setItem.call(this, key, value);
+  });
+  await act(async () => toggle.click());
+  expect(toggle.getAttribute('aria-checked')).toBe('false');
+  expect(host.querySelector('header')?.getAttribute('data-mode')).toBe('light');
+});
+
 it('preserves site width across navigation and scopes it to the live preview', async () => {
   await mount();
   await click('Settings');
@@ -490,7 +573,18 @@ it('opens entries from public preview links in Content and blocks referenced del
   expectAdminView();
   expect(editorPanel().textContent).toContain('← Back');
   expect(button('Delete entry').disabled).toBe(true);
-  expect(editorPanel().textContent).toContain('Used by');
+  expect(editorPanel().textContent).toContain('Used in 1 place');
+  expect(editorPanel().textContent).toContain(
+    'Header › Navigation › Read entry',
+  );
+  expect(editorPanel().textContent).not.toContain('site.layout.settings');
+  await click('Open', editorPanel());
+  expect(editorPanel().textContent).toContain('Site Layout');
+  await click('Read entry', editorPanel());
+  await click('Remove item');
+  await openEntry();
+  expect(button('Delete entry').disabled).toBe(false);
+  expect(editorPanel().textContent).not.toContain('Used in');
 });
 it('deletes unreferenced entries and then their empty collection', async () => {
   const initial = structuredClone(content);
@@ -513,6 +607,46 @@ it('deletes unreferenced entries and then their empty collection', async () => {
   ).toHaveLength(0);
   await click('Content');
   expect(editorPanel().textContent).toContain('Create a collection in Schemas');
+});
+
+it('opens readable object usages in the owning collection schema and can return to its list', async () => {
+  await mount(modelFixture());
+  await click('Schemas');
+  await click('Objects');
+  await click('SEO · 1 fields');
+  expect(editorPanel().textContent).toContain('Schemas › Collections › SEO');
+  expect(editorPanel().textContent).not.toContain('collection_journal.seo');
+  await click('Open', editorPanel());
+  expect(
+    editorPanel().querySelector<HTMLInputElement>('[aria-label="Name"]')?.value,
+  ).toBe('Journal');
+  expect(editorPanel().textContent).toContain('Fields');
+  await click('← Back');
+  expect(
+    editorPanel().querySelector('[aria-label="Collection schemas"]'),
+  ).not.toBeNull();
+  await click('Objects');
+  await click('SEO · 1 fields');
+  await click('Open', editorPanel());
+  expect(
+    editorPanel().querySelector<HTMLInputElement>('[aria-label="Name"]')?.value,
+  ).toBe('Journal');
+});
+
+it('does not present a self-reference as a deletion blocker', async () => {
+  const initial = structuredClone(content);
+  initial.site.navigation = [];
+  initial.collections[0].fields.push({
+    key: 'self',
+    label: 'Self',
+    type: 'reference',
+    collectionId: initial.collections[0].id,
+  });
+  initial.entries[0].values.self = initial.entries[0].id;
+  await mount(initial);
+  await openEntry();
+  expect(button('Delete entry').disabled).toBe(false);
+  expect(editorPanel().textContent).not.toContain('Used in');
 });
 
 it('expands schema navigation without navigating and opens leaf lists without a Back button', async () => {
@@ -1006,7 +1140,7 @@ it('edits three owned levels and selects and reorders references through dedicat
   await click('Authors');
   await click('GraceData only');
   expect(button('Delete entry').disabled).toBe(true);
-  expect(editorPanel().textContent).toContain('Used by');
+  expect(editorPanel().textContent).toContain('Used in');
 });
 
 it('authors nested array projections in dedicated levels and retains the binding map', async () => {
@@ -1135,6 +1269,60 @@ it('stages collection, object and nested field creation atomically, including si
   expect(readRecovery()!.content).toEqual(committed);
   await click('Cancel');
   expect(readRecovery()!.content).toEqual(committed);
+});
+
+it('selects GitLab and clears credentials when the provider or instance changes', async () => {
+  sessionStorage.setItem(
+    'lean:git',
+    JSON.stringify({
+      repository: repositoryKey(config),
+      token: 'github-test-token',
+    }),
+  );
+  await mount();
+  await click('Connection');
+  const field = (label: string) =>
+    host.querySelector<HTMLInputElement>(`input[aria-label="${label}"]`)!;
+  expect(field('Access token').value).toBe('github-test-token');
+  await act(async () =>
+    host
+      .querySelector<HTMLButtonElement>('[aria-label="Git provider"]')!
+      .click(),
+  );
+  await act(async () =>
+    [...document.querySelectorAll<HTMLElement>('[role="option"]')]
+      .find((o) => o.textContent === 'GitLab')!
+      .click(),
+  );
+  expect(field('GitLab instance URL').value).toBe('https://gitlab.com');
+  expect(field('Namespace (including subgroups)')).not.toBeNull();
+  expect(field('Access token').value).toBe('');
+  expect(sessionStorage.getItem('lean:git')).toBeNull();
+  const change = async (label: string, value: string) =>
+    act(async () => {
+      const element = field(label);
+      Object.getOwnPropertyDescriptor(
+        HTMLInputElement.prototype,
+        'value',
+      )!.set!.call(element, value);
+      element.dispatchEvent(new Event('input', { bubbles: true }));
+    });
+  await change('Access token', 'gitlab-test-token');
+  await change('GitLab instance URL', 'https://gitlab.example.com');
+  expect(field('Access token').value).toBe('');
+  // Partially typed URLs remain editable; validation happens on Connect.
+  await change('GitLab instance URL', 'https:');
+  expect(field('GitLab instance URL').value).toBe('https:');
+});
+
+it('allows a fresh legacy site to reach connection validation without reporting unsaved edits', async () => {
+  await mount();
+  await click('Connection');
+  await click('Connect');
+  expect(host.textContent).toContain('Enter your repository and access token.');
+  expect(host.textContent).not.toContain(
+    'Export or discard local preview edits',
+  );
 });
 
 it('cancels new fields in existing schemas and retains creation forms after rejected depth or cycle changes', async () => {

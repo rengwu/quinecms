@@ -1,7 +1,7 @@
 import { object, validate } from '../core/content';
 import { definitions } from '../generated/definitions';
 import type { Content, Snapshot } from '../core/types';
-import type { Repository } from '../integrations/github';
+import type { Repository } from '../integrations/repository';
 export interface Recovery {
   version: 1;
   repository: Repository;
@@ -29,7 +29,11 @@ export function readRecovery(): Recovery | null {
       !value.repository ||
       !['owner', 'repo', 'branch'].every(
         (k) => typeof value.repository[k] === 'string',
-      )
+      ) ||
+      (value.repository.provider !== undefined &&
+        !['github', 'gitlab'].includes(value.repository.provider)) ||
+      (value.repository.instance !== undefined &&
+        typeof value.repository.instance !== 'string')
     )
       return null;
     if (!editableShape(value.content)) return null;

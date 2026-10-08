@@ -5,6 +5,18 @@ status: Content-model scope implemented; no active interview
 ---
 # Open questions
 
+## GitLab support — engineering default
+
+DEC-135 adds GitLab beside GitHub. The implementation keeps Save/Publish in the editor, using project-configured fast-forward merges to preserve exact snapshots. An optional question about handing publication off for human review was not answered before this default was stated; that alternative remains unselected. Live GitLab permissions/CORS and operations remain unverified. See [publishing](../features/publishing.md).
+
+## Local agent authoring — approved and implemented
+
+DEC-134 prioritizes creative freedom and advisory guidance for local agents in cloned repositories. The user approves the concise entry point, practical guide and dependable local validation. These are implemented in the [authoring guide](../features/local-authoring.md) and [journal](../journal/2026-10-08-local-authoring.md). Remote agent access/MCP remains excluded. No further product question blocks this increment. Expanded example packages and fresh-agent benchmarks remain optional future work; they were not included in the approved steps 1–3.
+
+## Admin appearance — resolved
+
+DEC-133 directly authorizes a Settings dark/light toggle for the admin UI only. No interview is needed. Browser-local persistence and dark as the initial default are engineering choices; see the [implemented contract](../features/editor.md#admin-appearance-dec-133).
+
 ## Sidebar groups — resolved
 
 DEC-132 directly requires expandable non-leaf sidebar groups without routes. Schemas contains Collections and Objects; their list screens have no Back button. The implementation preserves nested editor navigation and uses the same grouping in the compact menu. No interview is needed; see the [journal](../journal/2026-10-08-sidebar-groups.md).

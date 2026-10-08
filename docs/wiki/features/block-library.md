@@ -12,7 +12,7 @@ updated: 2026-10-08
 
 ## Entry points and prerequisites
 
-Pages → open a static or generic page → Add block. Site Layout → Starter → Header and Footer configure the retained shared chrome; other layouts own their own settings. Collection schemas → a field → list defines structured entry data; Content edits its values. These are local editor operations until Save/Publish is used.
+Pages → open a static or generic page → Add block. Site Layout → Starter → Header and Footer configure the retained shared chrome; other layouts own their own settings. Schemas → Collections → a field → Array of objects defines structured entry data; Content edits its values. These are local editor operations until Save/Publish is used.
 
 ## Expected outcomes
 

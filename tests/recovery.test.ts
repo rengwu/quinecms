@@ -2,9 +2,7 @@
 import { modelFixture } from './support/content-model';
 import { it, expect, afterEach } from 'vitest';
 import { readRecovery, retain, recoveryKey } from '../src/editor/recovery';
-import { parseFiles } from '../src/core/content';
-import { readFileSync, readdirSync } from 'node:fs';
-import { join } from 'node:path';
+import { fixture } from './support/fixture';
 afterEach(() => sessionStorage.clear());
 it('rejects invalid and incompatible recovery data without throwing', () => {
   sessionStorage.setItem(recoveryKey, '{broken');
@@ -13,16 +11,7 @@ it('rejects invalid and incompatible recovery data without throwing', () => {
   expect(readRecovery()).toBeNull();
 });
 it('recovers incomplete content with its repository identity', () => {
-  const files: Record<string, string> = {};
-  function walk(dir: string) {
-    for (const f of readdirSync(dir, { withFileTypes: true })) {
-      const path = join(dir, f.name);
-      if (f.isDirectory()) walk(path);
-      else if (path.endsWith('.json')) files[path] = readFileSync(path, 'utf8');
-    }
-  }
-  walk('content');
-  const content = parseFiles(files);
+  const content = fixture();
   content.pages[0].blocks[0].props.title = '';
   content.collections[0].fields[0].key = '';
   const repository = { owner: 'test', repo: 'site', branch: 'draft' };
@@ -31,6 +20,32 @@ it('recovers incomplete content with its repository identity', () => {
   expect(readRecovery()?.repository).toEqual(repository);
   expect(readRecovery()?.content.pages[0].blocks[0].props.title).toBe('');
   expect(sessionStorage.getItem(recoveryKey)).not.toContain('secretAccessKey');
+});
+
+it('retains GitLab instance and namespace without credentials and rejects unknown providers', () => {
+  const repository = {
+    provider: 'gitlab' as const,
+    instance: 'https://gitlab.example.com',
+    owner: 'team/subgroup',
+    repo: 'site',
+    branch: 'draft',
+  };
+  const value = {
+    version: 1 as const,
+    repository,
+    base: null,
+    content: fixture(),
+  };
+  retain(value);
+  expect(readRecovery()?.repository).toEqual(repository);
+  sessionStorage.setItem(
+    recoveryKey,
+    JSON.stringify({
+      ...value,
+      repository: { ...repository, provider: 'unsupported' },
+    }),
+  );
+  expect(readRecovery()).toBeNull();
 });
 
 it('recovers unfinished recursive definitions without expanding them and preserves unreadable drafts', () => {

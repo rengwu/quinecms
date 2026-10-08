@@ -1,18 +1,7 @@
-import { readFileSync, readdirSync } from 'node:fs';
-import { join } from 'node:path';
-import { parseFiles } from '../../src/core/content';
+import { fixture } from './fixture';
 import type { Field } from '../../src/core/types';
 export function modelFixture() {
-  const files: Record<string, string> = {};
-  function walk(dir: string) {
-    for (const f of readdirSync(dir, { withFileTypes: true })) {
-      const path = join(dir, f.name);
-      if (f.isDirectory()) walk(path);
-      else if (path.endsWith('.json')) files[path] = readFileSync(path, 'utf8');
-    }
-  }
-  walk('content');
-  const c = parseFiles(files);
+  const c = fixture();
   c.objects.push({
     formatVersion: 1,
     id: 'object_seo',

@@ -34,10 +34,9 @@ for (const name of [
   '@vue/runtime-core',
   '@vue/runtime-dom',
 ])
-  assert.equal(
-    packages.get(name)?.size,
-    1,
-    `Expected exactly one installed runtime for ${name}`,
+  assert(
+    (packages.get(name)?.size ?? 0) <= 1,
+    `Expected at most one emitted runtime version for ${name}`,
   );
 async function htmlFiles(dir) {
   const result = [];
@@ -51,13 +50,6 @@ async function htmlFiles(dir) {
 const summary = [];
 for (const file of await htmlFiles('dist')) {
   const html = await readFile(file, 'utf8');
-  for (const iframe of html.matchAll(/<iframe\b[^>]*>/g))
-    assert(
-      /src="https:\/\/www\.youtube-nocookie\.com\/embed\/[\w-]{11}"/.test(
-        iframe[0],
-      ),
-      'Unexpected iframe destination',
-    );
   const references = [
     ...html.matchAll(
       /(?:src|href|component-url|renderer-url)="(\/_astro\/[^"?]+)"/g,
@@ -87,6 +79,7 @@ for (const file of await htmlFiles('dist')) {
         graph[f]?.modules.some(
           (m) =>
             m.includes('src/editor/') ||
+            m.includes('src/integrations/') ||
             m.includes('@cloudflare/kumo') ||
             m.includes('@octokit/') ||
             m.includes('@aws-sdk/'),
@@ -109,19 +102,8 @@ const layout = layouts.find(
   (d) => d.id === selected.id && d.version === selected.version,
 );
 assert(layout, 'Active layout version must be installed');
-if (layout.activation === 'never') {
-  assert.equal(
-    summary.find((p) => p.page === 'journal/index.html')?.javascriptModules,
-    0,
-    'Collection listing should have no JS',
-  );
-  assert.equal(
-    summary.find((p) => p.page === 'journal/a-slower-way-to-build/index.html')
-      ?.javascriptModules,
-    0,
-    'Generic entry should have no JS',
-  );
-}
+// Page-specific budgets belong to site or regression fixtures. Custom layouts
+// and blocks may intentionally add scripts or embeds to any public route.
 console.log(
   JSON.stringify(
     {

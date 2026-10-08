@@ -16,7 +16,7 @@ import BlockCatalog from '../../../editor/BlockCatalog';
 import CatalogHeader from '../../../editor/CatalogHeader';
 import BlockCreation from '../../../editor/BlockCreation';
 import styles from '../../../editor/editor.module.css';
-import { starterContent } from './policy';
+import { starterContent, withHeader } from './policy';
 import layoutDefinition from './definition.json';
 
 export default function Settings({
@@ -90,7 +90,7 @@ export default function Settings({
           values={headerValues(view)}
           media={content.media}
           collections={content.collections}
-          onChange={(header) => onChange({ ...settings, header })}
+          onChange={(header) => onChange(withHeader(content, settings, header))}
         />
       </PanelSection>
       <PanelSection

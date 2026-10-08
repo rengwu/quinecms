@@ -1,0 +1,30 @@
+
+> lean-sitebuilder@0.1.0 build /private/var/folders/00/h_k67s0j5dq0qvg6ylqysk2w0000gn/T/lean-agent-audit-v39crrs3
+> pnpm prepare:blocks && astro build
+
+
+> lean-sitebuilder@0.1.0 prepare:blocks /private/var/folders/00/h_k67s0j5dq0qvg6ylqysk2w0000gn/T/lean-agent-audit-v39crrs3
+> node scripts/generate-blocks.mjs
+
+Registered 94 block versions.
+Registered 2 layout versions.
+15:53:45 [vite] Re-optimizing dependencies because vite config has changed
+15:53:45 [types] Generated 180ms
+15:53:45 [build] output: "static"
+15:53:45 [build] mode: "static"
+15:53:45 [build] directory: /private/var/folders/00/h_k67s0j5dq0qvg6ylqysk2w0000gn/T/lean-agent-audit-v39crrs3/dist/
+15:53:45 [build] Collecting build info...
+15:53:45 [build] ✓ Completed in 253ms.
+15:53:45 [build] Building static entrypoints...
+15:53:46 [vite] ✓ built in 147ms
+15:53:47 [vite] ✓ built in 920ms
+15:53:47 [build] Rearranging server assets...
+
+ generating static routes 
+15:53:47   ├─ /admin/index.html (+15ms) 
+15:53:47   ├─ /index.html (+111ms) 
+15:53:47 ✓ Completed in 208ms.
+
+15:53:47 [build] ✓ Completed in 1.33s.
+15:53:47 [build] 2 page(s) built in 1.59s
+15:53:47 [build] Complete!

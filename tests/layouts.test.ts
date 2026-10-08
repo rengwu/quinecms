@@ -1,5 +1,5 @@
 import { expect, it } from 'vitest';
-import { fixture } from './content.test';
+import { fixture } from './support/fixture';
 import {
   activeLayout,
   layoutChoices,

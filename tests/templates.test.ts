@@ -1,6 +1,5 @@
 import { expect, it } from 'vitest';
-import { readFileSync, readdirSync } from 'node:fs';
-import { join } from 'node:path';
+import { fixture } from './support/fixture';
 import {
   parseFiles,
   validate,
@@ -14,18 +13,6 @@ import { publicRoutes } from '../src/core/routes';
 import { definitions } from '../src/generated/definitions';
 import type { Definition } from '../src/core/types';
 
-function fixture() {
-  const files: Record<string, string> = {};
-  function walk(dir: string) {
-    for (const f of readdirSync(dir, { withFileTypes: true })) {
-      const path = join(dir, f.name);
-      if (f.isDirectory()) walk(path);
-      else if (path.endsWith('.json')) files[path] = readFileSync(path, 'utf8');
-    }
-  }
-  walk('content');
-  return parseFiles(files);
-}
 it('generates only explicit static pages and assigned entry routes, never a template or automatic index', () => {
   const c = fixture();
   expect(publicRoutes(c).map((r) => r.path)).toContain(

@@ -1,6 +1,6 @@
 ---
 title: Direct media uploads
-updated: 2026-10-05
+updated: 2026-10-08
 ---
 # Direct media uploads
 
@@ -12,7 +12,23 @@ The [agreed media design](../discussions/agreed-design.md) uses R2 with runtime 
 
 ## Entry points and prerequisites
 
-`/admin/` → Media → Storage settings. A test R2 bucket, public HTTPS media origin, authorized credentials, and CORS for the editor origin are required. The root README contains configuration details. The Media block selects an uploaded record.
+`/admin/` → Media → Storage settings. Supply the R2 account ID, bucket, public HTTPS base URL and S3-compatible credentials authorized for that bucket. The Media block selects an uploaded record. Credentials are runtime tab-session settings, not content records or build secrets.
+
+Configure bucket CORS for the editor's exact origins, for example:
+
+```json
+[
+  {
+    "AllowedOrigins": ["https://your-site.example", "http://127.0.0.1:4321"],
+    "AllowedMethods": ["GET", "HEAD", "PUT", "DELETE"],
+    "AllowedHeaders": ["*"],
+    "ExposeHeaders": ["ETag"],
+    "MaxAgeSeconds": 3600
+  }
+]
+```
+
+Use a separate public media origin. Default upload limit is 30MB, image quality is 0.8, and candidate WebP widths are 480, 960 and 1600px; these are editable. Decodable static images below 40 megapixels receive smaller variants where applicable. Animated/undecodable images keep their original. Supported uploads are JPEG/PNG/WebP/GIF/AVIF, MP4/WebM, MPEG/OGG/WAV audio and PDF; SVG/executable documents are outside this upload path.
 
 ## Expected outcomes
 

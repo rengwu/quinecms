@@ -64,6 +64,9 @@ ${definitions.map(({ definition: d, sources }) => `${JSON.stringify(`${d.id}@${d
 };
 `,
   );
+  console.log(`Registered ${definitions.length} layout versions.`);
+  // Registry-only generation lets the validator inspect unfinished site drafts.
+  if (!site) return;
   const active = site.layout ?? { id: 'starter', version: 1 };
   const selected = definitions.find(
     ({ definition: d }) => d.id === active.id && d.version === active.version,
@@ -93,5 +96,4 @@ const { settings } = activeLayout(content.site);
 <Layout {content} {settings} ${selected.definition.activation === 'never' ? '' : 'client:load'}><slot /></Layout>
 `,
   );
-  console.log(`Registered ${definitions.length} layout versions.`);
 }

@@ -1,0 +1,42 @@
+{
+  "formatVersion": 1,
+  "id": "page_blocks",
+  "path": "/blocks",
+  "title": "Block examples",
+  "blocks": [
+    {
+      "id": "block_tabs_one",
+      "type": "switcher",
+      "version": 1,
+      "props": {
+        "title": "Build once. Keep it yours.",
+        "firstLabel": "Content",
+        "firstBody": "Your pages and entries live as readable JSON in Git.",
+        "secondLabel": "Code",
+        "secondBody": "Each block owns its renderer, fields, styles, and dependencies."
+      }
+    },
+    {
+      "id": "block_tabs_two",
+      "type": "switcher",
+      "version": 1,
+      "props": {
+        "title": "A second independent island.",
+        "firstLabel": "Content",
+        "firstBody": "Your pages and entries live as readable JSON in Git.",
+        "secondLabel": "Code",
+        "secondBody": "Each block owns its renderer, fields, styles, and dependencies."
+      }
+    },
+    {
+      "id": "block_example_quote",
+      "type": "quote",
+      "version": 1,
+      "props": {
+        "quote": "Two interactive React islands, one runtime.",
+        "author": "Block examples"
+      }
+    }
+  ],
+  "kind": "static"
+}

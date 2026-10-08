@@ -5,6 +5,8 @@ status: Accepted
 ---
 # Decisions
 
+Local authoring direction: DEC-134 prioritizes creative freedom and advisory guidance for agents working in cloned repositories. The user approves the short entry point, practical guide and dependable local validation. Remote agent access and MCP remain excluded. The [original investigation](../discussions/local-agent-authoring.md) records the findings; the [current guide](../features/local-authoring.md) describes the delivered workflow.
+
 Current direction: DEC-109 permits a breaking pre-production redesign. Earlier decisions remain historical/product context, rather than compatibility obligations for the replacement model.
 
 Relations and objects: DEC-110–DEC-114 record the first accepted choices. See the [current discussion](../discussions/relations-and-objects.md); remaining details are still open.
@@ -425,3 +427,21 @@ The user separately authorizes implementation of DEC-110–DEC-128, explicitly e
 | ID | Decision | Basis and rationale |
 | --- | --- | --- |
 | DEC-132 | Non-leaf sidebar items expand/collapse their children and have no route. Schemas contains Collections and Objects; their lists have no Back button. | Direct user request and follow-up screenshots. Replaces the intermediate Schemas destination from DEC-125 with an in-place disclosure, retaining its grouping and dedicated nested editors. Individual schema editors still return to their respective list. See the [journal](../journal/2026-10-08-sidebar-groups.md). |
+
+## Admin appearance — direct instruction, 2026-10-08
+
+| ID | Decision | Basis and rationale |
+| --- | --- | --- |
+| DEC-133 | Add a dark/light mode toggle under Settings that affects only the admin portal UI. | Direct user instruction after tracing the empty mobile-preview background to a hard-coded admin body color. Public-site appearance and Site Layout settings remain independent. Browser-local persistence and retaining dark as the initial default are implementation choices. See the [journal](../journal/2026-10-08-admin-theme.md). |
+
+## Creative freedom and local authoring — direct instruction, 2026-10-08
+
+| ID | Decision | Basis and rationale |
+| --- | --- | --- |
+| DEC-134 | Treat the repository as a blank slate for freely designed client sites. Offer capabilities and workflows as recommendations; let local developer agents choose what fits. | The user explicitly prioritizes full creative freedom, easy delivery/deployment and optional use of builder capabilities. They approve steps 1–3 of the investigation's final recommendations: a concise portable AGENTS.md, a practical local authoring guide, and verification independent of demo content. Technical formats remain documented accurately; capability adoption is not a strict rule. Remote access/MCP stays outside scope. See the [implementation journal](../journal/2026-10-08-local-authoring.md). |
+
+## Repository providers — direct request, 2026-10-08
+
+| ID | Decision | Basis and rationale |
+| --- | --- | --- |
+| DEC-135 | Support GitLab alongside GitHub as a configurable repository provider. | The user asks for GitLab compatibility after clarifying repository targeting and deployment-platform independence. The provider choice is accepted; the small shared store interface, HTTPS self-managed option and internal fast-forward merge requests are engineering choices. Publishing from the editor is the stated default, not a separately answered interview decision. See the [implementation journal](../journal/2026-10-08-gitlab.md) and [current contract](../features/publishing.md). |

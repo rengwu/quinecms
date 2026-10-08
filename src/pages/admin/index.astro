@@ -6,13 +6,22 @@ import App from '../../editor/App';
 import '../../styles/public.css';
 const initial = await loadContent();
 const password = import.meta.env.ADMIN_PASSWORD;
+const provider = import.meta.env.PUBLIC_GIT_PROVIDER ?? 'github';
+if (provider !== 'github' && provider !== 'gitlab')
+  throw Error('PUBLIC_GIT_PROVIDER must be github or gitlab.');
 const config = {
+  provider,
+  instance: import.meta.env.PUBLIC_GITLAB_URL ?? 'https://gitlab.com',
   allowedLayoutIds: layoutWhitelist(import.meta.env.SITE_LAYOUT_WHITELIST),
   passwordHash: password
     ? createHash('sha256').update(password).digest('hex')
     : '',
-  owner: import.meta.env.PUBLIC_GITHUB_OWNER ?? '',
-  repo: import.meta.env.PUBLIC_GITHUB_REPO ?? '',
+  owner:
+    import.meta.env.PUBLIC_GIT_NAMESPACE ??
+    (provider === 'github' ? (import.meta.env.PUBLIC_GITHUB_OWNER ?? '') : ''),
+  repo:
+    import.meta.env.PUBLIC_GIT_REPO ??
+    (provider === 'github' ? (import.meta.env.PUBLIC_GITHUB_REPO ?? '') : ''),
   branch: import.meta.env.PUBLIC_DRAFT_BRANCH ?? 'draft',
   r2: {
     accountId: import.meta.env.PUBLIC_R2_ACCOUNT_ID ?? '',
@@ -30,7 +39,7 @@ const config = {
     <meta name="robots" content="noindex,nofollow" />
     <title>Site editor</title>
   </head>
-  <body style="background:#101712">
+  <body>
     <App client:only="react" {initial} {config} />
     <noscript>The site editor needs JavaScript enabled.</noscript>
   </body>

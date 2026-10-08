@@ -1,0 +1,238 @@
+
+> lean-sitebuilder@0.1.0 verify /Users/rengwu/Desktop/Projects/lean-sitebuilder
+> pnpm check && pnpm test && pnpm build && pnpm check:build
+
+
+> lean-sitebuilder@0.1.0 check /Users/rengwu/Desktop/Projects/lean-sitebuilder
+> pnpm prepare:blocks && astro check
+
+
+> lean-sitebuilder@0.1.0 prepare:blocks /Users/rengwu/Desktop/Projects/lean-sitebuilder
+> node scripts/generate-blocks.mjs
+
+Registered 94 block versions.
+Registered 2 layout versions.
+16:07:58 [types] Generated 540ms
+16:07:58 [check] Getting diagnostics for Astro files in /Users/rengwu/Desktop/Projects/lean-sitebuilder...
+Result (340 files): 
+- 0 errors
+- 0 warnings
+- 0 hints
+
+
+> lean-sitebuilder@0.1.0 test /Users/rengwu/Desktop/Projects/lean-sitebuilder
+> pnpm prepare:blocks && vitest run
+
+
+> lean-sitebuilder@0.1.0 prepare:blocks /Users/rengwu/Desktop/Projects/lean-sitebuilder
+> node scripts/generate-blocks.mjs
+
+Registered 94 block versions.
+Registered 2 layout versions.
+
+ RUN  v5.0.3 /Users/rengwu/Desktop/Projects/lean-sitebuilder
+
+ ❯ tests/editor-navigation.test.ts (30 tests | 12 failed) 14328ms
+   × creates generic pages with their own block catalog and field bindings, and keeps static blocks separate 5681ms
+   × assigns only generic pages to schemas and persists an explicit data-only selection 6ms
+   × keeps an excluded active layout editable while restricting future selections and keeping previews nonmutating 4ms
+   × creates reusable object schemas and a single-entry collection, edits owned values and recovers them 4ms
+   × edits three owned levels and selects and reorders references through dedicated editors 6ms
+   × authors nested array projections in dedicated levels and retains the binding map 3ms
+   × keeps new pages and entries outside the draft until Create, and discards cancellation or navigation 1ms
+   × stages collection, object and nested field creation atomically, including single-entry provisioning 2ms
+   × cancels new fields in existing schemas and retains creation forms after rejected depth or cycle changes 3ms
+   × keeps nested list creation local to its parent until both Create actions, and cancels owned objects cleanly 2ms
+   × stages catalog blocks until Create and cancels without inserting into the page or recovery 1ms
+   × stages footer creation and replacement in dedicated forms without changing the live layout before Create 2ms
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 12 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/editor-navigation.test.ts > creates generic pages with their own block catalog and field bindings, and keeps static blocks separate
+Error: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ tests/editor-navigation.test.ts:855:1
+    853| });
+    854|
+    855| it('creates generic pages with their own block catalog and field bindi…
+       | ^
+    856|   await mount();
+    857|   await click('Pages');
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/12]⎯
+
+ FAIL  tests/editor-navigation.test.ts > assigns only generic pages to schemas and persists an explicit data-only selection
+AssertionError: button Schemas: : expected undefined to be defined
+ ❯ button tests/editor-navigation.test.ts:116:5
+    114|       .map((b) => b.textContent)
+    115|       .join(' | ')}`,
+    116|   ).toBeDefined();
+       |     ^
+    117|   return found!;
+    118| }
+ ❯ tests/editor-navigation.test.ts:230:5
+ ❯ Proxy.process.env.NODE_ENV.exports.act node_modules/.pnpm/react@19.3.0/node_modules/react/cjs/react.development.js:890:22
+ ❯ click tests/editor-navigation.test.ts:229:9
+ ❯ tests/editor-navigation.test.ts:903:9
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/12]⎯
+
+ FAIL  tests/editor-navigation.test.ts > keeps an excluded active layout editable while restricting future selections and keeping previews nonmutating
+AssertionError: button Site Layout: : expected undefined to be defined
+ ❯ button tests/editor-navigation.test.ts:116:5
+    114|       .map((b) => b.textContent)
+    115|       .join(' | ')}`,
+    116|   ).toBeDefined();
+       |     ^
+    117|   return found!;
+    118| }
+ ❯ tests/editor-navigation.test.ts:230:5
+ ❯ Proxy.process.env.NODE_ENV.exports.act node_modules/.pnpm/react@19.3.0/node_modules/react/cjs/react.development.js:890:22
+ ❯ click tests/editor-navigation.test.ts:229:9
+ ❯ tests/editor-navigation.test.ts:937:9
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/12]⎯
+
+ FAIL  tests/editor-navigation.test.ts > creates reusable object schemas and a single-entry collection, edits owned values and recovers them
+AssertionError: button Schemas: : expected undefined to be defined
+ ❯ button tests/editor-navigation.test.ts:116:5
+    114|       .map((b) => b.textContent)
+    115|       .join(' | ')}`,
+    116|   ).toBeDefined();
+       |     ^
+    117|   return found!;
+    118| }
+ ❯ tests/editor-navigation.test.ts:230:5
+ ❯ Proxy.process.env.NODE_ENV.exports.act node_modules/.pnpm/react@19.3.0/node_modules/react/cjs/react.development.js:890:22
+ ❯ click tests/editor-navigation.test.ts:229:9
+ ❯ tests/editor-navigation.test.ts:1022:9
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/12]⎯
+
+ FAIL  tests/editor-navigation.test.ts > edits three owned levels and selects and reorders references through dedicated editors
+AssertionError: button Content: : expected undefined to be defined
+ ❯ button tests/editor-navigation.test.ts:116:5
+    114|       .map((b) => b.textContent)
+    115|       .join(' | ')}`,
+    116|   ).toBeDefined();
+       |     ^
+    117|   return found!;
+    118| }
+ ❯ tests/editor-navigation.test.ts:230:5
+ ❯ Proxy.process.env.NODE_ENV.exports.act node_modules/.pnpm/react@19.3.0/node_modules/react/cjs/react.development.js:890:22
+ ❯ click tests/editor-navigation.test.ts:229:9
+ ❯ tests/editor-navigation.test.ts:1098:9
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/12]⎯
+
+ FAIL  tests/editor-navigation.test.ts > authors nested array projections in dedicated levels and retains the binding map
+AssertionError: button Pages: : expected undefined to be defined
+ ❯ button tests/editor-navigation.test.ts:116:5
+    114|       .map((b) => b.textContent)
+    115|       .join(' | ')}`,
+    116|   ).toBeDefined();
+       |     ^
+    117|   return found!;
+    118| }
+ ❯ tests/editor-navigation.test.ts:230:5
+ ❯ Proxy.process.env.NODE_ENV.exports.act node_modules/.pnpm/react@19.3.0/node_modules/react/cjs/react.development.js:890:22
+ ❯ click tests/editor-navigation.test.ts:229:9
+ ❯ tests/editor-navigation.test.ts:1159:9
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/12]⎯
+
+ FAIL  tests/editor-navigation.test.ts > keeps new pages and entries outside the draft until Create, and discards cancellation or navigation
+TypeError: Cannot read properties of null (reading 'content')
+ ❯ tests/editor-navigation.test.ts:1199:32
+    1197| it('keeps new pages and entries outside the draft until Create, and di…
+    1198|   await mount();
+    1199|   const before = readRecovery()!.content;
+       |                                ^
+    1200|   await click('Add page');
+    1201|   await click('Static page', host);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/12]⎯
+
+ FAIL  tests/editor-navigation.test.ts > stages collection, object and nested field creation atomically, including single-entry provisioning
+TypeError: Cannot read properties of null (reading 'content')
+ ❯ tests/editor-navigation.test.ts:1230:32
+    1228| it('stages collection, object and nested field creation atomically, in…
+    1229|   await mount();
+    1230|   const before = readRecovery()!.content;
+       |                                ^
+    1231|   await click('Schemas');
+    1232|   await click('Collections');
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/12]⎯
+
+ FAIL  tests/editor-navigation.test.ts > cancels new fields in existing schemas and retains creation forms after rejected depth or cycle changes
+TypeError: Cannot read properties of null (reading 'content')
+ ❯ tests/editor-navigation.test.ts:1275:32
+    1273| it('cancels new fields in existing schemas and retains creation forms …
+    1274|   await mount(modelFixture());
+    1275|   const before = readRecovery()!.content;
+       |                                ^
+    1276|   await click('Schemas');
+    1277|   await click('Collections');
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[9/12]⎯
+
+ FAIL  tests/editor-navigation.test.ts > keeps nested list creation local to its parent until both Create actions, and cancels owned objects cleanly
+AssertionError: button Content: : expected undefined to be defined
+ ❯ button tests/editor-navigation.test.ts:116:5
+    114|       .map((b) => b.textContent)
+    115|       .join(' | ')}`,
+    116|   ).toBeDefined();
+       |     ^
+    117|   return found!;
+    118| }
+ ❯ tests/editor-navigation.test.ts:230:5
+ ❯ Proxy.process.env.NODE_ENV.exports.act node_modules/.pnpm/react@19.3.0/node_modules/react/cjs/react.development.js:890:22
+ ❯ click tests/editor-navigation.test.ts:229:9
+ ❯ tests/editor-navigation.test.ts:1306:9
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[10/12]⎯
+
+ FAIL  tests/editor-navigation.test.ts > stages catalog blocks until Create and cancels without inserting into the page or recovery
+AssertionError: button Home: : expected undefined to be defined
+ ❯ button tests/editor-navigation.test.ts:116:5
+    114|       .map((b) => b.textContent)
+    115|       .join(' | ')}`,
+    116|   ).toBeDefined();
+       |     ^
+    117|   return found!;
+    118| }
+ ❯ tests/editor-navigation.test.ts:230:5
+ ❯ Proxy.process.env.NODE_ENV.exports.act node_modules/.pnpm/react@19.3.0/node_modules/react/cjs/react.development.js:890:22
+ ❯ click tests/editor-navigation.test.ts:229:9
+ ❯ tests/editor-navigation.test.ts:1337:9
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[11/12]⎯
+
+ FAIL  tests/editor-navigation.test.ts > stages footer creation and replacement in dedicated forms without changing the live layout before Create
+AssertionError: button Site Layout: : expected undefined to be defined
+ ❯ button tests/editor-navigation.test.ts:116:5
+    114|       .map((b) => b.textContent)
+    115|       .join(' | ')}`,
+    116|   ).toBeDefined();
+       |     ^
+    117|   return found!;
+    118| }
+ ❯ tests/editor-navigation.test.ts:230:5
+ ❯ Proxy.process.env.NODE_ENV.exports.act node_modules/.pnpm/react@19.3.0/node_modules/react/cjs/react.development.js:890:22
+ ❯ click tests/editor-navigation.test.ts:229:9
+ ❯ tests/editor-navigation.test.ts:1357:9
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[12/12]⎯
+
+
+ Test Files  1 failed | 19 passed (20)
+      Tests  12 failed | 157 passed (169)
+   Start at  16:08:44
+   Duration  26.98s (import 42%, tests 28%, environment 21%, transform 9%)
+
+    Isolate  20 workers spawned · ~1.53s startup each (spawn + environment, per file)
+             at least ~1.87s faster with isolate: false — reuses workers across files instead of one per file
+
+ ELIFECYCLE  Test failed. See above for more details.
+ ELIFECYCLE  Command failed with exit code 1.

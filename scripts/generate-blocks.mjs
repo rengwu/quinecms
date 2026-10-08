@@ -97,6 +97,12 @@ await writeFile(
 );
 console.log(`Registered ${defs.length} block versions.`);
 
+if (process.argv.includes('--registry-only')) {
+  await generateLayouts(writeFile);
+  // Leave route/source output alone; the next full generation refreshes it.
+  process.exit(0);
+}
+
 const site = JSON.parse(await readFile('content/site.json', 'utf8'));
 await generateLayouts(writeFile, site);
 const footerIndex = site.footer
@@ -128,7 +134,11 @@ const {content}=Astro.props;
 
 const content = { pages: [], collections: [], entries: [] };
 async function walk(dir, kind) {
-  for (const f of await readdir(dir, { withFileTypes: true })) {
+  const entries = await readdir(dir, { withFileTypes: true }).catch((error) => {
+    if (error.code === 'ENOENT') return [];
+    throw error;
+  });
+  for (const f of entries) {
     if (f.isDirectory()) await walk(resolve(dir, f.name), kind);
     else if (f.name.endsWith('.json'))
       content[kind].push(

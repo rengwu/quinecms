@@ -1,26 +1,67 @@
 # lean-sitebuilder
 
-Sidebar navigation (DEC-132, 2026-10-08): non-leaf items expand/collapse their subitems and have no route. Schemas is a disclosure group containing Collections and Objects. Both leaf lists open directly without Back; nested schema editors retain Back to their list. Use the same hierarchy in the compact navigation menu.
+A starting point for freely designed, AI-built websites that clients can maintain
+through a content editor. Work locally in this clone. Let the brief, references
+and your design judgment lead; the bundled pages, layouts and block catalog are
+examples and useful materials, not a prescribed visual style.
 
-Form-action layout (DEC-131, 2026-10-08): align terminal confirmation/cancellation actions to the right edge of their form or dialog sitewide, including nested editors and compact insert forms. Use the shared full-width `dialogActions` row, with Cancel/Close before the confirmation action, and allow wrapping at narrow widths. Do not align the group to the left by letting its container shrink to its contents.
+Consider the builder's pages, editable block fields, collections, objects and
+references wherever they make the site easier to deliver or maintain. There is
+no expectation to use every capability. Custom layouts, blocks, interactions and
+site-specific code are welcome. For content a client is likely to change, editable
+fields are often helpful; choose the amount of structure that suits the project.
 
-Layout spacing (DEC-130, 2026-10-08): Content spacing belongs in Site Layout. Each layout owns default content max-width/page gutter and editable overrides in its settings; switching layouts uses the selected layout’s defaults. This supersedes DEC-097’s shared spacing outside layouts. Starter defaults to 1200px/24px; chartr to 1512px/40px. See `docs/wiki/features/site-layouts.md`.
+## Finding your way
 
-Creation UX (DEC-129, 2026-10-08): sitewide Add actions open uncommitted New-item forms. Only Create adds the item to its parent/site draft; Cancel discards it. Creation screens use Create and Cancel, without Back or Delete/Remove for the item being created. Nested creation commits only into its uncommitted parent until that parent is created. Treat adding an empty record immediately on opening its editor, then requiring Back/Delete to finish or abandon, as a negative UX pattern. Existing-item editing retains its navigation/deletion behavior. This supersedes earlier direct-add catalog instructions.
+- [README](README.md): local setup, content locations and deployment.
+- [Local authoring guide](docs/wiki/features/local-authoring.md): suggested workflows
+  for a new site, an existing site and custom blocks/layouts, with current formats.
+- `content/`: this site's records. `blocks.config.mjs` and `layouts.config.mjs` point
+  to installed definitions and implementations; inspect those relevant to the task.
+- `src/core/types.ts`: exact record/field types. The [feature map](docs/wiki/features/index.md)
+  links current behavior in more detail. `src/generated/` is regenerated build output.
 
-Current direction (2026-10-07, DEC-109): this prototype is not in production or in use. The user permits breaking existing behavior/contracts or completely redesigning the system; compatibility with current content and retained implementations is not a constraint on this redesign. This supersedes preservation requirements below where they would prevent the redesign. The collections/objects/relations product scope is settled through DEC-128, which selects a lean Sanity-style content model: independent entries, owned objects, typed arrays and references. The agreed three owned object/list levels and rejection of direct/indirect recursive definitions remain; ordinary nested reuse is supported. Read `docs/wiki/discussions/content-model-plan.md`, the linked topic pages and latest journals, including `2026-10-07-lean-sanity-model.md`. No grill-form round is active. Accepted product choices and proposed engineering details are separate; implementation of this increment was authorized on 2026-10-08. The user explicitly excludes backward compatibility and migrations. This increment is implemented; read `docs/wiki/features/content-model.md`, `docs/wiki/journal/2026-10-08-content-model-implementation.md` and `docs/wiki/verification/runs/2026-10-08-content-model.md` for current engineering contracts and verification limits.
+For an existing client site, it is useful to check the working tree and the latest
+saved client draft before making changes. Browser edits do not write local files.
+The guide explains the local/Git/browser boundaries and source rebuilds.
 
-The product interview is complete; agreed scope is in `docs/wiki/discussions/agreed-design.md`. The technical interview is also complete; read `docs/wiki/discussions/technical-contracts.md` for interfaces, engineering recommendations, and validation targets. The user authorized implementation on 2026-10-05. Application source, fixtures, and tests are now present; see `docs/wiki/features/index.md` and `docs/wiki/verification/setup.md`. Use jstack from `/Users/rengwu/Desktop/Projects/jstack`.
+## Local checks
 
-On resume, read `docs/wiki/index.md`, the decision register, open questions, and latest journals. Keep accepted decisions distinct from proposals. Update the existing records after substantive discussion; Markdown is authoritative. Rebuild and check with:
+```sh
+pnpm install --frozen-lockfile
+pnpm dev
+pnpm validate:content                 # publication-ready content
+pnpm validate:content --draft         # structurally valid work in progress
+pnpm validate:content --base HEAD     # also compare changes with a Git baseline
+pnpm verify                          # types, regression tests, build, artifacts
+```
+
+Use a relevant browser check for visual work and the client editing experience.
+Describe what was checked and any limits; mocked provider tests do not establish
+live GitHub/GitLab, R2 or hosting behavior. No remote agent service or MCP is needed.
+
+## Working on the builder itself
+
+The [editor contract](docs/wiki/features/editor.md) records its existing navigation,
+creation and form conventions. [Site Layouts](docs/wiki/features/site-layouts.md)
+records layout-owned spacing and extension interfaces. These describe the builder
+UI and data contracts, not a visual style imposed on client websites.
+
+For changes to the builder's product behavior, consult the relevant current
+feature page, [decisions](docs/wiki/decisions/index.md), [open questions](docs/wiki/discussions/open-questions.md)
+and recent [wiki updates](docs/wiki/index.md). Earlier discussions are history where
+superseded. The prototype redesign explicitly excludes compatibility/migrations;
+that does not make unrelated client content disposable.
+
+Keep useful documentation current with substantive changes and distinguish accepted
+choices from proposals. Markdown is authoritative; after wiki edits:
 
 ```sh
 node docs/wiki/_build.mjs
 node docs/wiki/_build.mjs --check
 ```
 
-Use grill-form to present interview rounds. Do not treat unanswered recommendations as decisions. Run `pnpm verify` for implementation changes, preserve retained block versions, and keep live-provider checks distinct from mocked tests.
-
-The user authorized implementation of the agreed generic-page/schema-only-entry redesign on 2026-10-06. Read `docs/wiki/journal/2026-10-05-generic-pages-discussion.md` and its round-two outcome; DEC-058–DEC-073 define its accepted behavior.
-
-The user authorized the Site Layout foundation and chartr recreation on 2026-10-06. Read `docs/wiki/discussions/site-layouts.md` and `docs/wiki/discussions/chartr-recreation.md`; DEC-092–DEC-107 define the accepted scope. DEC-108 requires dedicated navigation levels sitewide: never render nested item editing inline among parent/sibling controls. Preserve retained layout implementations as well as blocks.
+The repo contains its own guide, checks and wiki reader. No machine-specific skill
+installation is needed to build a site. jstack can optionally support the original
+maintainer's planning workflow; use grill-form if conducting an interview in that
+workflow. Ordinary site work need not start a product interview.

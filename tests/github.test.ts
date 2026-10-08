@@ -1,22 +1,12 @@
 import { modelFixture } from './support/content-model';
 import { filesFor } from '../src/core/content';
 import { it, expect, describe } from 'vitest';
-import { readFileSync, readdirSync } from 'node:fs';
-import { join } from 'node:path';
+import { fixtureFiles } from './support/fixture';
 import { definitions } from '../src/generated/definitions';
 import { GitHubStore, Conflict } from '../src/integrations/github';
 import type { Request } from '../src/integrations/github';
 function mock(model = false) {
-  const initial: Record<string, string> = {};
-  function walk(dir: string) {
-    for (const f of readdirSync(dir, { withFileTypes: true })) {
-      const path = join(dir, f.name);
-      if (f.isDirectory()) walk(path);
-      else if (path.endsWith('.json'))
-        initial[path] = readFileSync(path, 'utf8');
-    }
-  }
-  walk('content');
+  const initial = fixtureFiles();
   if (model) Object.assign(initial, filesFor(modelFixture()));
   const commits: Record<string, { tree: string; parents: string[] }> = {
     c0: { tree: 't0', parents: [] },

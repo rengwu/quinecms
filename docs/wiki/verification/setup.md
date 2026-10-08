@@ -1,6 +1,6 @@
 ---
 title: Verification setup
-updated: 2026-10-06
+updated: 2026-10-08
 ---
 # Verification setup
 
@@ -10,6 +10,7 @@ Run from the lean-sitebuilder repository with Node 22.12+ and pinned pnpm 10.34.
 
 ```sh
 pnpm install --frozen-lockfile
+pnpm validate:content
 pnpm verify
 pnpm preview --port 4321
 ```
@@ -17,6 +18,10 @@ pnpm preview --port 4321
 The preview serves the built static `dist/` on `http://127.0.0.1:4321`. Check `/` and `/admin/` return HTTP 200. Use a different explicit port if another process owns 4321; do not stop unrelated processes. `pnpm dev` is the source development alternative. After adding generated imports, routes or registrations, stop the existing instance with `pnpm exec astro dev stop`, then run `pnpm dev`. Generation happens before startup; an already-running daemon may retain unresolved imports. Check both a public route and `/admin/` in the final running instance, not just an isolated production build.
 
 For editor startup changes, exercise `/admin/` in both development and production preview. HTTP 200 and a successful build do not prove that React mounted: verify the Pages table and main sidebar first, then open a page row to check the drawer and live preview, change a block field and cancel it, and check the browser console. The [startup repair](runs/2026-10-05T0910Z-admin-startup.md) caught a development-only missing React preamble that the initial production checks missed.
+
+For unfinished content, `pnpm validate:content --draft` runs structural checks without requiring publishable routes or required values. `--base <git-ref>` also compares schema changes/deletion impact with a local commit; it can be combined with `--draft`. The command refreshes generated registries only and does not write content or remote state.
+
+Regression tests read `tests/fixtures/content/`, independently of the client site's root `content/`. The isolated build test retains the sample Journal zero-JavaScript assertions. `check:build` checks the actual site's assets, emitted-runtime sharing and separation from editor/provider code; it does not require demo routes, every framework, or restrict custom renderer embeds. The fixture includes legacy records intentionally, while new work can follow the canonical examples in the [authoring guide](../features/local-authoring.md).
 
 ## Identity and isolation
 
@@ -29,9 +34,9 @@ Use a fresh browser tab for local fixtures. No password or provider configuratio
 - Vitest unit tests cover JSON validation/versioning, Git transactions through a fake transport, recovery storage, React/Vue lifecycle, activation policy, Markdown import/export, Lexical mounting, and media uploads through mocked SDK/canvas APIs.
 - Production artifact checks inspect real emitted files and their module graph.
 - Native browser automation can drive the actual editor. The initial run lost window access; the startup repair subsequently verified development editing and production mounting/interactions in Safari.
-- Live GitHub/R2/Netlify checks require separately configured disposable resources and credentials. None were available or modified during the initial run.
+- Live GitHub/GitLab/R2/hosting checks require separately configured disposable resources and credentials. GitLab mock tests cover paginated loads, temporary-branch/fast-forward transactions, races and lost responses; the [provider run](runs/2026-10-08-gitlab.md) records current limits. None of these tests establishes live account permissions or CORS.
 
-Public fixtures are Home, Block examples, the nine-block chartr page, an explicit static Journal index, and two entries rendered through the Journal entry generic page. To review the full recreation, select chartr in Site Layout and choose chartr as Preview page; the committed site keeps Starter selected. Generic pages are editable under Pages but have no standalone public route. Main and draft content live in Git once connected; the local demo is read-only at the filesystem boundary.
+The optional bundled public fixtures are Home, Block examples, the nine-block chartr page, an explicit static Journal index, and two entries rendered through the Journal entry generic page. To review the full recreation, select chartr in Site Layout and choose chartr as Preview page; the committed site keeps Starter selected. Generic pages are editable under Pages but have no standalone public route. Main and draft content live in Git once connected; the local demo is read-only at the filesystem boundary.
 
 ## Evidence and cleanup
 

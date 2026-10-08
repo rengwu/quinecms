@@ -3,6 +3,7 @@ import { Table } from '@cloudflare/kumo/components/table';
 import { PlusIcon } from '@phosphor-icons/react';
 import type { Page } from '../core/types';
 import styles from './editor.module.css';
+import { useAdminTheme } from './AdminTheme';
 
 export default function PageList({
   pages,
@@ -15,10 +16,11 @@ export default function PageList({
   onAdd(): void;
   onOpen(id: string): void;
 }) {
+  const { mode } = useAdminTheme();
   return (
     <main
       className={`kumo-ui ${styles.home}`}
-      data-mode="dark"
+      data-mode={mode}
       aria-label="Pages"
     >
       <div className={styles.pageOverview}>

@@ -1,0 +1,128 @@
+
+> lean-sitebuilder@0.1.0 verify /Users/rengwu/Desktop/Projects/lean-sitebuilder
+> pnpm check && pnpm test && pnpm build && pnpm check:build
+
+
+> lean-sitebuilder@0.1.0 check /Users/rengwu/Desktop/Projects/lean-sitebuilder
+> pnpm prepare:blocks && astro check
+
+
+> lean-sitebuilder@0.1.0 prepare:blocks /Users/rengwu/Desktop/Projects/lean-sitebuilder
+> node scripts/generate-blocks.mjs
+
+Registered 94 block versions.
+Registered 2 layout versions.
+15:57:44 [vite] Re-optimizing dependencies because vite config has changed
+15:57:45 [types] Generated 354ms
+15:57:45 [check] Getting diagnostics for Astro files in /Users/rengwu/Desktop/Projects/lean-sitebuilder...
+Result (340 files): 
+- 0 errors
+- 0 warnings
+- 0 hints
+
+
+> lean-sitebuilder@0.1.0 test /Users/rengwu/Desktop/Projects/lean-sitebuilder
+> pnpm prepare:blocks && vitest run
+
+
+> lean-sitebuilder@0.1.0 prepare:blocks /Users/rengwu/Desktop/Projects/lean-sitebuilder
+> node scripts/generate-blocks.mjs
+
+Registered 94 block versions.
+Registered 2 layout versions.
+
+ RUN  v5.0.3 /Users/rengwu/Desktop/Projects/lean-sitebuilder
+
+
+ Test Files  20 passed (20)
+      Tests  167 passed (167)
+   Start at  15:58:05
+   Duration  22.84s (import 42%, tests 28%, environment 23%, transform 7%)
+
+    Isolate  20 workers spawned · ~1.28s startup each (spawn + environment, per file)
+             at least ~1.57s faster with isolate: false — reuses workers across files instead of one per file
+
+
+> lean-sitebuilder@0.1.0 build /Users/rengwu/Desktop/Projects/lean-sitebuilder
+> pnpm prepare:blocks && astro build
+
+
+> lean-sitebuilder@0.1.0 prepare:blocks /Users/rengwu/Desktop/Projects/lean-sitebuilder
+> node scripts/generate-blocks.mjs
+
+Registered 94 block versions.
+Registered 2 layout versions.
+15:58:32 [types] Generated 89ms
+15:58:32 [build] output: "static"
+15:58:32 [build] mode: "static"
+15:58:32 [build] directory: /Users/rengwu/Desktop/Projects/lean-sitebuilder/dist/
+15:58:32 [build] Collecting build info...
+15:58:32 [build] ✓ Completed in 253ms.
+15:58:32 [build] Building static entrypoints...
+15:58:33 [vite] ✓ built in 913ms
+15:58:36 [vite] ✓ built in 2.75s
+15:58:36 [build] Rearranging server assets...
+
+ generating static routes 
+15:58:36   ├─ /admin/index.html (+104ms) 
+15:58:36   ├─ /blocks/index.html (+26ms) 
+15:58:36   ├─ /chartr/index.html (+84ms) 
+15:58:36   ├─ /journal/a-slower-way-to-build/index.html (+21ms) 
+15:58:36   ├─ /journal/keep-the-essentials/index.html (+9ms) 
+15:58:36   ├─ /journal/index.html (+18ms) 
+15:58:36   ├─ /index.html (+56ms) 
+15:58:36 ✓ Completed in 408ms.
+
+15:58:36 [build] ✓ Completed in 4.29s.
+15:58:36 [build] 7 page(s) built in 4.57s
+15:58:36 [build] Complete!
+
+> lean-sitebuilder@0.1.0 check:build /Users/rengwu/Desktop/Projects/lean-sitebuilder
+> node scripts/check-build.mjs
+
+{
+  "runtimeCopies": {
+    "svelte": 1,
+    "react-dom": 1,
+    "react": 1,
+    "@vue/runtime-core": 1,
+    "@vue/runtime-dom": 1
+  },
+  "pages": [
+    {
+      "page": "admin/index.html",
+      "javascriptModules": 15,
+      "gzipJavaScriptBytes": 252965
+    },
+    {
+      "page": "blocks/index.html",
+      "javascriptModules": 7,
+      "gzipJavaScriptBytes": 71008
+    },
+    {
+      "page": "chartr/index.html",
+      "javascriptModules": 15,
+      "gzipJavaScriptBytes": 50683
+    },
+    {
+      "page": "index.html",
+      "javascriptModules": 8,
+      "gzipJavaScriptBytes": 41869
+    },
+    {
+      "page": "journal/a-slower-way-to-build/index.html",
+      "javascriptModules": 0,
+      "gzipJavaScriptBytes": 0
+    },
+    {
+      "page": "journal/index.html",
+      "javascriptModules": 0,
+      "gzipJavaScriptBytes": 0
+    },
+    {
+      "page": "journal/keep-the-essentials/index.html",
+      "javascriptModules": 0,
+      "gzipJavaScriptBytes": 0
+    }
+  ]
+}
