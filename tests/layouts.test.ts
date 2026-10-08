@@ -126,7 +126,7 @@ it('owns spacing per layout, applies its defaults on switching and round-trips o
   expect(selectLayout(restored, chartr)).toBe(restored);
   expect(layoutGlobals(selectLayout(restored, starter).site)).toMatchObject({
     contentMaxWidth: 1200,
-    pageGutter: 24,
+    pageGutter: 0,
   });
   expect(c.site.layout!.settings).toMatchObject({
     contentMaxWidth: 880,

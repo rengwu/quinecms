@@ -32,6 +32,7 @@ import '@cloudflare/kumo/styles/standalone';
 import type { Block, Content, Entry, Page, Snapshot } from '../core/types';
 import {
   contextFor,
+  factoryReset,
   filesFor,
   id,
   newBlock,
@@ -252,6 +253,8 @@ function Editor({
     [confirm, setConfirm] = useState<{
       title: string;
       body: string;
+      actionLabel?: string;
+      destructive?: boolean;
       action: () => void;
     } | null>(null),
     [size, setSize] = useState('desktop');
@@ -629,9 +632,6 @@ function Editor({
               {size === 'desktop' ? 'Mobile' : 'Desktop'}
             </Button>
           )}
-          <Button disabled={busy} onClick={() => setModal('connection')}>
-            Connection
-          </Button>
           <Button disabled={busy || !dirty} onClick={save}>
             Save draft
           </Button>
@@ -1266,6 +1266,17 @@ function Editor({
                         )}
                         {tab === 'settings' && (
                           <>
+                            <PanelSection title="Repository">
+                              <p className={styles.muted}>
+                                Connect to your GitHub or GitLab repository to
+                                save drafts and publish your site.
+                              </p>
+                              <div className={styles.row}>
+                                <Button onClick={() => setModal('connection')}>
+                                  Connection
+                                </Button>
+                              </div>
+                            </PanelSection>
                             <PanelSection title="Appearance">
                               <Switch
                                 label="Dark mode"
@@ -1347,6 +1358,40 @@ function Editor({
                                 <Button onClick={onLock}>Lock editor</Button>
                               </div>
                             </PanelSection>
+                            <PanelSection title="Factory reset">
+                              <p className={styles.muted}>
+                                Clear all pages, content, collection and object
+                                schemas, and media records. Restore the Starter
+                                layout and its default settings.
+                              </p>
+                              <div className={styles.row}>
+                                <Button
+                                  variant="secondary-destructive"
+                                  onClick={() =>
+                                    setConfirm({
+                                      title: 'Factory reset this site?',
+                                      body: 'This clears all pages, content, collection and object schemas, and media records from your local draft, and restores the Starter layout defaults. Uploaded files remain in R2. Export a backup first if you want to keep your work. Save draft to store the reset; create a home page before publishing.',
+                                      actionLabel: 'Reset site',
+                                      destructive: true,
+                                      action: () => {
+                                        void run(async () => {
+                                          setContent(factoryReset(content));
+                                          setSelected('');
+                                          setCollectionId('');
+                                          setLayoutPageId('');
+                                          openArea('settings');
+                                          setMessage(
+                                            'Site reset. Save the draft to keep these changes.',
+                                          );
+                                        });
+                                      },
+                                    })
+                                  }
+                                >
+                                  Factory reset
+                                </Button>
+                              </div>
+                            </PanelSection>
                           </>
                         )}
                       </>
@@ -1426,14 +1471,14 @@ function Editor({
                 <div className={styles.dialogActions}>
                   <Button onClick={() => setConfirm(null)}>Cancel</Button>
                   <Button
-                    variant="primary"
+                    variant={confirm.destructive ? 'destructive' : 'primary'}
                     onClick={() => {
                       const action = confirm.action;
                       setConfirm(null);
                       action();
                     }}
                   >
-                    Continue
+                    {confirm.actionLabel ?? 'Continue'}
                   </Button>
                 </div>
               </>

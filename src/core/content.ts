@@ -4,6 +4,7 @@ import {
   layoutDefinition,
   layoutPolicy,
   layoutGlobals,
+  layoutDefinitions,
 } from './layouts';
 import { entryPath } from './routes';
 export { entryPath } from './routes';
@@ -77,6 +78,31 @@ export function filesFor(c: Content): Record<string, string> {
   for (const r of c.entries)
     files[`content/entries/${r.collectionId}/${r.id}.json`] = serialize(r);
   return files;
+}
+/** A fresh site draft; retain its identity so it can replace the saved snapshot. */
+export function factoryReset(content: Content): Content {
+  const starter = layoutDefinitions.find(
+    (layout) => layout.id === 'starter' && layout.version === 1,
+  );
+  if (!starter)
+    throw Error('Install the Starter v1 layout before resetting the site.');
+  return {
+    site: {
+      formatVersion: 1,
+      id: content.site.id,
+      globals: {},
+      layout: {
+        id: starter.id,
+        version: starter.version,
+        settings: structuredClone(starter.defaults),
+      },
+    },
+    pages: [],
+    collections: [],
+    objects: [],
+    entries: [],
+    media: [],
+  };
 }
 export function parseFiles(files: Record<string, string>): Content {
   const c: Content = {

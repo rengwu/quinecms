@@ -93,7 +93,7 @@ For new records, the canonical layout shape is a useful starting point:
 That selects Starter as an example, not a design requirement. An installed custom
 layout can use its own settings. Public-site content spacing belongs to the active
 layout settings (`contentMaxWidth`, `pageGutter` in the built-in layouts). Starter
-uses 1200px/24px defaults and chartr 1512px/40px. Switching layout/version initializes
+uses 1200px/0px defaults and chartr 1512px/40px. Switching layout/version initializes
 the selected manifest's defaults. Styling tokens are optional inputs for block authors.
 
 A static page might begin as:

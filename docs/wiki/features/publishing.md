@@ -12,7 +12,7 @@ The [save/recovery contract](../discussions/technical-contracts.md) requires one
 
 ## Entry points and prerequisites
 
-`/admin/` → Connection selects the provider, owner/namespace, repository and draft branch. GitLab additionally accepts an HTTPS instance URL, defaulting to `https://gitlab.com`, and nested namespaces such as `team/subgroup`. Use a repository containing this source with a `main` branch. The implementation does not infer a target from the clone's remote or hosting account.
+`/admin/` → Settings → Connection selects the provider, owner/namespace, repository and draft branch. GitLab additionally accepts an HTTPS instance URL, defaulting to `https://gitlab.com`, and nested namespaces such as `team/subgroup`. Use a repository containing this source with a `main` branch. The implementation does not infer a target from the clone's remote or hosting account.
 
 Build defaults use `PUBLIC_GIT_PROVIDER`, `PUBLIC_GIT_NAMESPACE`, `PUBLIC_GIT_REPO`, `PUBLIC_DRAFT_BRANCH` and `PUBLIC_GITLAB_URL`; `.env.example` documents them. GitHub defaults also accept the earlier owner/repository environment names. A retained tab draft restores its own repository identity. Connection fields remain editable.
 

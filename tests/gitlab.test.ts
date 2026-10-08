@@ -1,6 +1,6 @@
 import { createHash } from 'node:crypto';
 import { describe, expect, it, vi } from 'vitest';
-import { filesFor } from '../src/core/content';
+import { factoryReset, filesFor } from '../src/core/content';
 import { definitions } from '../src/generated/definitions';
 import {
   GitLabStore,
@@ -167,6 +167,15 @@ function mock() {
 }
 
 describe('GitLab transactions (mock API)', () => {
+  it('saves a factory reset by removing all old content records from the draft', async () => {
+    const m = mock();
+    const base = await m.store.load();
+    const reset = factoryReset(base.content);
+    const saved = await m.store.save(base, reset);
+    expect(saved.content).toEqual(reset);
+    expect((await m.store.load()).files).toEqual(filesFor(reset));
+    expect(m.refs.main).toBe('c0');
+  });
   it('creates a missing draft from main and loads paginated trees at one commit', async () => {
     const m = mock();
     for (let i = 0; i < 105; i++)

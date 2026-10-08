@@ -5,6 +5,8 @@ status: Accepted
 ---
 # lean-sitebuilder
 
+Latest settings changes: [Factory reset and repository connection](journal/2026-10-08-factory-reset.md) (DEC-136–DEC-137). Factory reset confirms before clearing the local content/schema/media draft and restoring Starter defaults; uploaded R2 files remain. Connection now opens from Settings.
+
 Latest provider support: [GitHub and GitLab draft saves/publishing](features/publishing.md) (DEC-135), with configurable instances/namespaces, destination-bound session credentials and the existing snapshot validation. GitLab uses internal fast-forward merge requests; [implementation and limits](journal/2026-10-08-gitlab.md).
 
 Latest visual repair: [consistent admin headings](verification/runs/2026-10-08-heading-typography.md). Pages now shares the other section titles' 18px typography instead of its separate 24px rule. The full verification passes, with a Safari visual check of Pages.

@@ -34,7 +34,7 @@ Use a separate public media origin. Default upload limit is 30MB, image quality 
 
 The original uploads directly to R2. Decodable static raster images below the pixel limit get configured smaller WebP variants, with no upscaling; animated/unsupported formats retain their original. Non-image media uses native players or links. Metadata enters the draft, while credentials and binaries do not.
 
-Failed batches attempt to delete their own attempted keys. Successful uploads discarded before Save remain in R2 for manual cleanup. Public URLs may be accessible before Publish.
+Failed batches attempt to delete their own attempted keys. Successful uploads discarded before Save remain in R2 for manual cleanup. Public URLs may be accessible before Publish. Settings → Factory reset clears all media-library records from the local draft, while retaining uploaded R2 objects. Save draft persists removal of the records; this action never deletes bucket objects.
 
 ## Verification recipe
 

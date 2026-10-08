@@ -81,9 +81,9 @@ A collection's generic-page assignment enables entry routes; an index is an ordi
 static page. [Content model](docs/wiki/features/content-model.md) ·
 [Generic pages](docs/wiki/features/generic-pages.md).
 
-Site Layout owns width/gutter overrides and their defaults: Starter 1200px/24px,
+Site Layout owns width/gutter overrides and their defaults: Starter 1200px/0px,
 chartr 1512px/40px. Switching layout/version uses the selected definition's defaults.
-Settings contains admin Appearance, Backups and Session. Styling variables are
+Settings contains Repository connection, admin Appearance, Backups, Session and Factory reset. Styling variables are
 available to blocks; custom designs can choose how to use them.
 
 The [authoring guide](docs/wiki/features/local-authoring.md#custom-blocks-and-layouts)
@@ -106,7 +106,7 @@ implementation version; replacing or removing one warrants checking those uses.
    variables remain GitHub fallbacks when the neutral names are unset.
    `ADMIN_PASSWORD` is an optional convenience gate; it is not access control for
    the statically hosted editor, content or assets.
-3. In `/admin/` → Connection, choose the provider and repository, then enter an
+3. In `/admin/` → Settings → Connection, choose the provider and repository, then enter an
    access token: GitHub needs repository Contents read/write; GitLab needs `api`
    scope and project permissions to create branches/commits and merge into the
    draft and main branches. Branch rules need to allow the intended updates.
@@ -138,6 +138,12 @@ survives reload, not a closed session. Git provider/R2 credentials remain in ses
 are cleared by Lock editor and are excluded from backups and Git. Trusted installed
 code shares the editor document. Changing the repository connection clears its token;
 tokens are restored only for the matching provider, instance, repository and branch.
+
+Factory reset clears all pages, entries, collection and object schemas, and media
+records from the local draft, and restores Starter v1 defaults. It requires
+confirmation and leaves uploaded R2 files intact. Save draft persists the reset;
+create a new home page at `/` before publishing. Discard edits restores the last
+loaded/saved snapshot until the reset is saved.
 
 ## Media
 

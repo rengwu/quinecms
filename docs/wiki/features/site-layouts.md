@@ -16,7 +16,7 @@ Open `/admin/` → **Site Layout**. Select a page for the live preview and use t
 
 The visible title and close button share a fixed header row above the scrolling catalog and preview. Hover highlights the whole card background, including the Preview row; the rendered thumbnail retains its own appearance.
 
-**Site Layout → Content spacing** edits content max-width and page gutter. Starter defaults to 1200px/24px; chartr defaults to 1512px/40px. Clearing either override uses the active layout’s default. **Settings** contains Backups and Session. Other standard admin areas retain their existing layout. Generic page previews preserve field placeholders.
+**Site Layout → Content spacing** edits content max-width and page gutter. Starter defaults to 1200px/0px; chartr defaults to 1512px/40px. Clearing either override uses the active layout’s default. **Settings** contains Repository connection, admin Appearance, Backups, Session and Factory reset. Other standard admin areas retain their existing layout. Generic page previews preserve field placeholders.
 
 ## Stored contract and transitions
 
@@ -25,6 +25,12 @@ When editing Starter's inherited header navigation, internal reference records t
 Canonical `site.layout` is `{ id, version, settings }`. `settings` is the author's JSON object. Only the active selection is stored. Selecting a different layout or retained version starts with a fresh copy of that definition's defaults; selecting the exact current version does nothing. Pages, blocks, collections, entries and media remain intact. Spacing follows the selected layout’s fresh defaults, like its other settings. No inactive settings cache, automatic upgrade, or guessed field mapping exists.
 
 Legacy `site.title`, `navigation`, `header`, `footer` and appearance globals convert into Starter v1 settings when loaded into the editor, imported, recovered or discarded back to the source snapshot. The existing legacy Starter reader includes width/gutter in those settings. Canonical spacing is stored as `site.layout.settings.contentMaxWidth` and `pageGutter`; `site.globals` does not override layout output. No migration of previously canonical global spacing is added. Public builds can render unchanged legacy fixtures; a subsequent editor save writes the canonical shape. Missing retained implementations preserve the data but prevent successful rendering/publication until the source is restored.
+
+Factory reset is a separate Settings action: after confirmation it clears the entire local content draft and restores the installed Starter v1 defaults, including when Starter is already active. It retains the site ID and bypasses the picker whitelist. See the [reset contract](editor.md#factory-reset-and-repository-settings).
+
+### Starter factory defaults (DEC-138)
+
+New Starter selections and Factory reset use the user's supplied screenshots: site title **Welcome**, light theme, Arial body and heading fonts, 16px body size, 1.5 line height, 1200px content width and 0px page gutter. Header defaults are **Your Brand**, no logo, Home/Journal/Blocks navigation and **Contact Us** linking to `https://google.com`. The navigation labels use `/`, `/journal` and `/blocks` URLs; these destinations were inferred from the existing site's labels/routes. They do not reference deleted record IDs or create pages. The footer remains unselected because it was not specified. Existing saved settings are not rewritten.
 
 ## Authoring API
 

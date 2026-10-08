@@ -445,3 +445,16 @@ The user separately authorizes implementation of DEC-110–DEC-128, explicitly e
 | ID | Decision | Basis and rationale |
 | --- | --- | --- |
 | DEC-135 | Support GitLab alongside GitHub as a configurable repository provider. | The user asks for GitLab compatibility after clarifying repository targeting and deployment-platform independence. The provider choice is accepted; the small shared store interface, HTTPS self-managed option and internal fast-forward merge requests are engineering choices. Publishing from the editor is the stated default, not a separately answered interview decision. See the [implementation journal](../journal/2026-10-08-gitlab.md) and [current contract](../features/publishing.md). |
+
+## Factory reset and connection location — direct requests, 2026-10-08
+
+| ID | Decision | Basis and rationale |
+| --- | --- | --- |
+| DEC-136 | Add Factory reset to Settings with confirmation; clear pages, content, schemas and media-library records, and reset Site Layout to Starter. | Direct user request. The user explicitly chose to keep uploaded R2 files. Using a local draft followed by existing Save draft/Publish, preserving site identity and connection/session settings, and choosing installed Starter v1 defaults are engineering choices. See the [journal](../journal/2026-10-08-factory-reset.md) and [contract](../features/editor.md#factory-reset-and-repository-settings). |
+| DEC-137 | Move Connection from the header to Settings. | Direct follow-up instruction with a screenshot of the header button. The existing connection dialog and provider behavior remain available from Settings → Repository. |
+
+## Starter factory defaults — screenshot instruction, 2026-10-08
+
+| ID | Decision | Basis and rationale |
+| --- | --- | --- |
+| DEC-138 | Match Starter factory layout settings to the supplied screenshots. | The user specifies Welcome, light theme, Arial body/headings, 16px body size, 1.5 line height, 1200px width, 0px gutter, Your Brand, no logo, Home/Journal/Blocks navigation and Contact Us → `https://google.com`. Navigation paths `/`, `/journal`, `/blocks` are inferred from the existing site; they are URL links so factory reset can still clear all pages. These defaults also apply on a new Starter selection. Existing saved settings remain unchanged. This supersedes the Starter 24px gutter default in DEC-130. |

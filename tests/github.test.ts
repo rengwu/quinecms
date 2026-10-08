@@ -1,5 +1,5 @@
 import { modelFixture } from './support/content-model';
-import { filesFor } from '../src/core/content';
+import { factoryReset, filesFor } from '../src/core/content';
 import { it, expect, describe } from 'vitest';
 import { fixtureFiles } from './support/fixture';
 import { definitions } from '../src/generated/definitions';
@@ -113,6 +113,15 @@ function mock(model = false) {
   };
 }
 describe('Git transactions (mock transport)', () => {
+  it('saves a factory reset by removing all old content records from the draft', async () => {
+    const m = mock(true);
+    const base = await m.store.load();
+    const reset = factoryReset(base.content);
+    const saved = await m.store.save(base, reset);
+    expect(saved.content).toEqual(reset);
+    expect((await m.store.load()).files).toEqual(filesFor(reset));
+    expect(m.refs.main).toBe('c0');
+  });
   it('creates a missing draft from main', async () => {
     const m = mock();
     delete m.refs.draft;

@@ -487,7 +487,7 @@ it('edits site fonts, size, line height and gutter together, recovers them and c
   expect(preview().style.getPropertyValue('--site-body-line-height')).toBe(
     '1.6',
   );
-  expect(preview().style.getPropertyValue('--site-page-gutter')).toBe('24px');
+  expect(preview().style.getPropertyValue('--site-page-gutter')).toBe('0px');
 });
 
 it('keeps field-only entry authoring in Content and restores each parent', async () => {
@@ -1280,6 +1280,7 @@ it('selects GitLab and clears credentials when the provider or instance changes'
     }),
   );
   await mount();
+  await click('Settings');
   await click('Connection');
   const field = (label: string) =>
     host.querySelector<HTMLInputElement>(`input[aria-label="${label}"]`)!;
@@ -1317,12 +1318,113 @@ it('selects GitLab and clears credentials when the provider or instance changes'
 
 it('allows a fresh legacy site to reach connection validation without reporting unsaved edits', async () => {
   await mount();
+  expect(host.querySelector('header')!.textContent).not.toContain('Connection');
+  await click('Settings');
+  expect(editorPanel().textContent).toContain('Connection');
   await click('Connection');
   await click('Connect');
   expect(host.textContent).toContain('Enter your repository and access token.');
   expect(host.textContent).not.toContain(
     'Export or discard local preview edits',
   );
+});
+
+it('confirms factory reset, retains the empty draft across reloads and allows discarding it', async () => {
+  const initial = selectLayout(
+    modelFixture(),
+    layoutDefinitions.find((d) => d.id === 'chartr')!,
+  );
+  initial.media.push({
+    formatVersion: 1,
+    id: 'media_test',
+    name: 'test.pdf',
+    original: {
+      key: 'media_test/original.pdf',
+      url: 'https://media.example.com/test.pdf',
+      mime: 'application/pdf',
+      bytes: 10,
+    },
+    variants: [],
+  });
+  localStorage.setItem(adminThemeKey, 'light');
+  sessionStorage.setItem(
+    'lean:r2',
+    JSON.stringify({ ...config.r2, accessKeyId: 'test-key' }),
+  );
+  const storage = sessionStorage.getItem('lean:r2');
+  await mount(initial, ['chartr']);
+  await click('Settings');
+  const before = readRecovery()!;
+  await click('Factory reset');
+  const dialog = () => host.querySelector('[role="dialog"]')!;
+  expect(dialog().textContent).toContain('Factory reset this site?');
+  expect(dialog().textContent).toContain('Uploaded files remain in R2.');
+  expect(readRecovery()).toEqual(before);
+  await click('Cancel', dialog());
+  expect(readRecovery()).toEqual(before);
+  expect(button('Save draft').disabled).toBe(true);
+  await click('Factory reset');
+  await click('Reset site', dialog());
+  const reset = readRecovery()!;
+  expect(reset).toMatchObject({
+    repository: before.repository,
+    base: before.base,
+    content: {
+      pages: [],
+      entries: [],
+      collections: [],
+      objects: [],
+      media: [],
+      site: {
+        id: initial.site.id,
+        globals: {},
+        layout: { id: 'starter', version: 1 },
+      },
+    },
+  });
+  expect(reset.content.site.layout!.settings).toEqual(
+    layoutDefinitions.find((d) => d.id === 'starter')!.defaults,
+  );
+  expect(button('Save draft').disabled).toBe(false);
+  expect(localStorage.getItem(adminThemeKey)).toBe('light');
+  expect(sessionStorage.getItem('lean:r2')).toBe(storage);
+  await click('Pages');
+  expect(host.textContent).not.toContain(initial.pages[0].title);
+  await click('Site Layout');
+  expect(editorPanel().textContent).toContain('Starter');
+  for (const [label, value] of Object.entries({
+    'Site title': 'Welcome',
+    'Body font size': '16',
+    'Body line height': '1.5',
+    'Content max-width': '1200',
+    'Page gutter': '0',
+    'Brand name': 'Your Brand',
+    'Action label': 'Contact Us',
+    'Action URL': 'https://google.com',
+  })) {
+    expect(
+      editorPanel().querySelector<HTMLInputElement>(`[aria-label="${label}"]`)!
+        .value,
+    ).toBe(value);
+  }
+  expect(
+    editorPanel().querySelector('[aria-label="Body font"]')!.textContent,
+  ).toContain('Arial');
+  expect(
+    editorPanel().querySelector('[aria-label="Heading font"]')!.textContent,
+  ).toContain('Arial');
+  for (const label of ['Home', 'Journal', 'Blocks'])
+    expect(button(label, editorPanel())).toBeDefined();
+  await click('Publish');
+  expect(host.textContent).toContain('Create a home page at /.');
+  await act(async () => root.unmount());
+  host.remove();
+  await mount(initial);
+  expect(readRecovery()!.content).toEqual(reset.content);
+  await click('Settings');
+  await click('Discard edits');
+  await click('Continue', dialog());
+  expect(readRecovery()!.content).toEqual(before.content);
 });
 
 it('cancels new fields in existing schemas and retains creation forms after rejected depth or cycle changes', async () => {
