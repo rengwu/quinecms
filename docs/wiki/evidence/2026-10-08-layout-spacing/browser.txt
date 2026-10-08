@@ -1,0 +1,11 @@
+2026-10-08 — native Safari, existing development server http://127.0.0.1:4322/admin/
+
+Used a fresh tab with the repository's normal content. No Save draft or Publish action.
+Site Layout: Starter Content spacing appeared alongside its other layout settings, with width 1200 and gutter 24.
+Change layout → chartr: Content spacing showed width 1512 and gutter 40. The live Home preview used the chartr wrapper. Screenshot was visually inspected in the computer-use tool; no screenshot file is attached to this record.
+Set Page gutter to 0: the field showed 0 and the live preview updated.
+Clear Page gutter: the field showed its 40 placeholder and the live preview returned to its default spacing.
+Settings: accessibility state showed Backups (Export backup, Import backup) and Session (Discard edits, Lock editor), without Content spacing.
+Closed the disposable test tab; existing development server was not stopped.
+
+Native accessibility indices required refresh immediately before some actions. Those action retries are not treated as product failures. An earlier browser window changed during inspection; the completed check above used a new disposable tab.

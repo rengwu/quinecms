@@ -1,9 +1,19 @@
 ---
 title: Decisions
-updated: 2026-10-06
+updated: 2026-10-08
 status: Accepted
 ---
 # Decisions
+
+Current direction: DEC-109 permits a breaking pre-production redesign. Earlier decisions remain historical/product context, rather than compatibility obligations for the replacement model.
+
+Relations and objects: DEC-110–DEC-114 record the first accepted choices. See the [current discussion](../discussions/relations-and-objects.md); remaining details are still open.
+
+Collections and schemas: DEC-115–DEC-118 select collection-owned schemas, reusable object definitions, single-entry mode, route-specific URL requirements and configurable relation multiplicity. See the [topic](../discussions/collections-and-schemas.md).
+
+DEC-119–DEC-122 settle relations inside shallow groups, editor-controlled reference order, unique targets within each relation value and direct paths for routed single-entry collections.
+
+DEC-123–DEC-125 close the product discussion: reverse lookups serve admin usage/deletion checks only, relation controls select existing entries, and Schemas groups Collections and Objects. The [consolidated plan](../discussions/content-model-plan.md) separates these accepted choices from proposed engineering details.
 
 Accepted on 2026-10-05 from the original request and [round-one answers](../journal/2026-10-04-grill-528c4b19-f488-4209-ab5c-b9c13f420f02.md). See the [interpretation journal](../journal/2026-10-05-round-one-decisions.md) and [remaining questions](../discussions/open-questions.md). These are intended requirements, not implemented features.
 
@@ -262,7 +272,7 @@ Accepted from [Q69–Q73](../journal/2026-10-06-grill-3dfa46b2-2cec-4d74-8d0f-20
 
 | ID | Decision | Basis and rationale |
 | --- | --- | --- |
-| DEC-097 | Keep content max-width and page gutter as shared, optional values outside individual layouts. | Q69. Values survive layout switches; layouts/blocks may consume them without a forced container. Retains DEC-075's advisory width contract and DEC-078's gutter control. |
+| DEC-097 | Original choice: keep content max-width and page gutter outside individual layouts. **Superseded by DEC-130.** | Q69. Values survive layout switches; layouts/blocks may consume them without a forced container. Retains DEC-075's advisory width contract and DEC-078's gutter control. |
 | DEC-098 | Separate Site Layout and Settings destinations in the main sidebar. | Q70. Site Layout contains selection and author settings; Settings contains shared width/gutter, Backups and Session. Revises the Site destination from DEC-074. Affects the [editor](../features/editor.md). |
 | DEC-099 | Show a live selected-page preview alongside Site Layout settings, with desktop/mobile widths. | Q71. Revises DEC-057's preview boundary for Site Layout; other standard admin areas keep their existing behavior. Generic-page field placeholders remain governed by DEC-069. |
 | DEC-100 | A layout card applies the layout and its defaults directly to the local draft; a separate Preview action inspects without applying. | Q72. Extends the block picker's interaction pattern. Save draft/Publish remain the persistence/publication workflow; DEC-095 governs resets and active-settings-only storage. |
@@ -307,3 +317,111 @@ Implementation of DEC-092–DEC-107 was authorized by “lets go” and is recor
 | ID | Decision | Basis and rationale |
 | --- | --- | --- |
 | DEC-108 | Nested editing always opens a dedicated navigation level, replacing the parent controls; never show a Back/detail editor inline among sibling settings. | Direct user correction, with header-navigation and footer-link screenshots, explicitly extended sitewide. Applies to layout settings, block lists, entry lists and schema defaults. Back returns one level; deeper nested lists follow the same rule. |
+
+## Pre-production redesign — 2026-10-07
+
+| ID | Decision | Basis and rationale |
+| --- | --- | --- |
+| DEC-109 | Permit breaking existing contracts, behavior and implementations, including a complete redesign; compatibility with the current prototype is not required. | The user says the builder is not in use or production and explicitly releases the obligation to protect existing promises. This removes preservation of current formats/retained versions as a redesign constraint, including constraints derived from DEC-038/DEC-107. It does not select the replacement model or settle the future product's versioning policy. The immediate requested work is discussion of relations and objects; see the [journal](../journal/2026-10-07-relations-and-objects.md). |
+
+## Relations and objects — round one, 2026-10-07
+
+Accepted from [Q77–Q81](../journal/2026-10-07-grill-60cae8b1-ce10-49a9-b741-7cb19b94ca6e.md). See the [interpretation](../journal/2026-10-07-relations-and-objects-round-one.md). These selections do not authorize implementation.
+
+| ID | Decision | Basis and rationale |
+| --- | --- | --- |
+| DEC-110 | Support both named reusable object definitions and inline field groups. | Q77 selects both. Reuse shares field structure; values belong to each containing entry. The subsequent question about collection schemas requests an explanation, not a changed selection. |
+| DEC-111 | Original choice: keep objects and lists to one level. **Superseded by DEC-126.** | Q78 originally rejects nested objects/lists; DEC-119 clarifies that original boundary. Q93 subsequently selects three owned levels. The earlier answer is preserved as history. |
+| DEC-112 | Each relation field targets one collection. | Q79 chooses the single-collection limit over the researched multi-collection recommendation. This does not decide whether a field selects one or multiple entries from that collection. |
+| DEC-113 | Each list uses one object shape for now. | Q80 declines mixed object variants for this scope. Separate lists can still have different schemas. |
+| DEC-114 | Block deletion of a referenced entry until incoming links are removed or reassigned. | Q81 selects explicit repair before deletion. Automatic clearing, dangling references and cascading deletion are not selected. |
+
+## Collections and schemas — ownership, 2026-10-07
+
+Accepted from [Q82](../journal/2026-10-07-grill-7f4de03d-e6cc-42a8-a3e1-e309d5efb160.md); see the [interpretation](../journal/2026-10-07-collections-and-schemas-round-one.md).
+
+| ID | Decision | Basis and rationale |
+| --- | --- | --- |
+| DEC-115 | Each collection owns its whole entry schema; reuse named object definitions for shared field groups. | Q82 selects collection-owned schemas rather than independent whole schemas shared by several collections. Collection-wide field changes remain local except when they alter a shared object definition. This does not undo template sharing, share entry values or expand a relation field beyond its one target collection. No implementation is authorized by the form submission. |
+
+## Collections and schemas — content models, 2026-10-07
+
+Accepted from [Q83–Q85](../journal/2026-10-07-grill-62a9fc65-afb5-4c46-bb07-9da151affd7f.md); see the [interpretation](../journal/2026-10-07-collections-and-schemas-round-two.md).
+
+| ID | Decision | Basis and rationale |
+| --- | --- | --- |
+| DEC-116 | Support single-entry and ordinary collection modes. A single-entry model opens its content editor directly and prevents additional entries. | Q83 accepts a home for one centrally managed record, such as Company Profile. Its schema belongs to the model. Shared values remain distinct from reusable object definitions. Creation/deletion, mode conversion and routed single-entry URL behavior require further detail. |
+| DEC-117 | Require routing metadata only when a collection generates entry pages; data-only content does not require a URL prefix or entry slug. | Q84 accepts stable IDs and useful display labels without unnecessary URLs. Enabling routes requires valid routing metadata before publication; previously configured URL values may remain stored when routes are disabled. Ordinary routed collection URLs still use prefix plus slug; DEC-122 subsequently selects a direct path for single-entry mode. |
+| DEC-118 | Configure each relation field to select one or multiple entries from its one target collection. | Q85 accepts multiplicity independently of DEC-112's single target-collection limit. Ordering, repeated selection of the same entry, reverse views and relations inside owned groups are not settled by this answer. |
+
+## Collections and schemas — shape and behavior, 2026-10-07
+
+Accepted from [Q86–Q89](../journal/2026-10-07-grill-a0fd15b5-4c31-4b31-800c-1b302fae7558.md); see the [interpretation](../journal/2026-10-07-collections-and-schemas-round-three.md).
+
+| ID | Decision | Basis and rationale |
+| --- | --- | --- |
+| DEC-119 | Allow single/multiple relation fields at the entry's top level and inside objects or structured list rows. **The original prohibition on further owned nesting is superseded by DEC-126.** | Q86 clarifies the original one-level boundary. References identify independent entries; they do not embed those entries' field structures. Relation placement remains accepted; Q93 later permits owned nesting to three levels. |
+| DEC-120 | Editors control the stored order of a multiple-relation selection; rendering receives that order. | Q87 selects explicit ordering for featured content, co-author credits and similar curated lists. Automatically queried results are a different operation. |
+| DEC-121 | A target entry can appear only once in a given multiple-relation field value. | Q88 rejects duplicate targets within one field value. The same entry may appear in other fields, entries or separate association rows, such as credits with different roles. |
+| DEC-122 | A routed single-entry collection uses one explicit public path, without a separate entry slug. | Q89 selects a path such as `/about`. This is an explicit single-entry exception to DEC-064's ordinary prefix-plus-slug rule. A generic page assignment is still required to generate the route; public-path collision validation still applies. |
+
+## Collections and schemas — lean usage and navigation, 2026-10-07
+
+From [Q90–Q92](../journal/2026-10-07-grill-5a1974a4-c958-426a-affb-bcb9cfb7c8d4.md); see the [interpretation](../journal/2026-10-07-collections-and-schemas-round-four.md). Q90–Q91 explicitly delegate the choice to the assistant under the criterion “choose the leanest, simplest option.” They are resolved through that delegation, not treated as unanswered or as acceptance of the earlier recommendations.
+
+| ID | Decision | Basis and rationale |
+| --- | --- | --- |
+| DEC-123 | Keep reverse lookups for admin incoming-usage/deletion checks; exclude derived reverse lists from the template feature set for this scope. | Assistant's choice under the user's Q90 delegation. The deletion index is necessary already; exposing a template query/configuration surface would add work. This replaces the earlier recommendation to include reverse template lists. Forward relations remain usable in rendering. |
+| DEC-124 | Relation controls select existing targets. Create and edit target entries separately through Content. | Assistant's choice under the user's Q91 delegation. Reuses the existing content workflow and avoids an additional linked-entry creation/editing navigation flow. Unsaved work still follows the established shared draft/recovery behavior. |
+| DEC-125 | Use one Schemas area with separate Collections and Objects destinations; Content continues to manage entry values. | Q92 selects this navigation. Replaces the Collection schemas area label/organization; object definitions contain structure, not independent shared values. Dedicated navigation levels remain required by DEC-108. |
+
+## Owned nesting — reconsidered, 2026-10-07
+
+Accepted from [Q93](../journal/2026-10-07-grill-038e8a1b-cfdf-4610-928e-2ab1fcf1d6fd.md); see the [interpretation and follow-up](../journal/2026-10-07-nesting-round-one.md). Implementation remains pending.
+
+| ID | Decision | Basis and rationale |
+| --- | --- | --- |
+| DEC-126 | Allow up to three owned object/list levels, equally for named and inline structures. | Q93 selects the recommended option with no notes. The entry itself is not a level; an owned object or structured list counts as one; a list-row wrapper adds no level; named-definition reuse adds no extra wrapper. This supersedes DEC-111 and the depth restriction in DEC-119. One shape per list, relation rules and dedicated nested navigation remain accepted. DEC-127 subsequently settles recursive reusable definitions; reference traversal is separate from owned depth. |
+
+## Owned nesting — recursive definitions, 2026-10-07
+
+Accepted from [Q94](../journal/2026-10-07-grill-fd7057e2-84aa-4c94-8493-27b2cfa8d3dd.md); see the [interpretation](../journal/2026-10-07-nesting-round-two.md). This completes the nesting reconsideration, without authorizing application implementation.
+
+| ID | Decision | Basis and rationale |
+| --- | --- | --- |
+| DEC-127 | Reject direct and indirect recursive owned object definitions; allow ordinary nested reuse within the three-level limit. | Q94 selects the recommended option with no notes. A definition cannot contain itself through owned objects/lists, including through another definition. The same definition may still be reused in independent places. This avoids depth-dependent field/default behavior while retaining nested composition. It does not settle or prohibit reference cycles among independent entries; reference resolution remains a separate engineering concern. |
+
+## Content-model reference — direct selection, 2026-10-07
+
+| ID | Decision | Basis and rationale |
+| --- | --- | --- |
+| DEC-128 | Model the content system closely on Sanity and keep the adaptation lean. | Direct user instruction after the CMS comparison: “let's model ours closely to sanity's. keep it lean.” Sanity becomes the primary reference for independent entries, owned objects, typed arrays and stable references, within the accepted scope through DEC-127. Collections retain their own schemas; existing Git storage/publication and authoring choices remain. This selects a modeling direction, not a CMS backend, every Sanity feature or an exact serialized format. See the [selection journal](../journal/2026-10-07-lean-sanity-model.md) and [updated plan](../discussions/content-model-plan.md). |
+
+
+## Content-model implementation — 2026-10-08
+
+The user separately authorizes implementation of DEC-110–DEC-128, explicitly excluding compatibility and migrations. The [implementation journal](../journal/2026-10-08-content-model-implementation.md), [feature contract](../features/content-model.md) and [verification run](../verification/runs/2026-10-08-content-model.md) record the delivered model. Exact serialized types and resolver limits are engineering choices, not additional interview decisions.
+
+## Creation forms — direct instruction, 2026-10-08
+
+| ID | Decision | Basis and rationale |
+| --- | --- | --- |
+| DEC-129 | Standardize Add → uncommitted New-item form → Create or Cancel sitewide. | The user explicitly rejects creating records on entry to their editors. New-item forms have Create and Cancel in place of Back and item deletion. Only Create adds the new item; Cancel leaves no new item behind. Apply across page/content/schema creation, blocks and repeated nested content, superseding earlier direct-add catalog behavior. The old add-immediately/edit-or-delete interaction is a negative UX pattern. Existing-item editing remains separate. |
+
+## Layout-owned spacing — direct instruction, 2026-10-08
+
+| ID | Decision | Basis and rationale |
+| --- | --- | --- |
+| DEC-130 | Move Content spacing into Site Layout; each layout supplies its own default content width and page gutter. | Direct user instruction with the current Settings screenshot. Supersedes DEC-097: spacing belongs to the active layout settings and follows its normal switching/defaults behavior. Editors can override the values in Site Layout. Optional block participation remains unchanged. See the [implementation journal](../journal/2026-10-08-layout-spacing.md). |
+
+## Form action alignment — direct instruction, 2026-10-08
+
+| ID | Decision | Basis and rationale |
+| --- | --- | --- |
+| DEC-131 | Align confirmation/cancellation button groups to the right edge of their form or dialog sitewide. | Direct user request after screenshots of creation forms. The examples are explicitly non-exhaustive: apply the standard to all comparable forms, including nested creation, compact insert forms and dialogs. See the [implementation journal](../journal/2026-10-08-form-action-alignment.md). |
+
+## Expandable sidebar groups — direct instruction, 2026-10-08
+
+| ID | Decision | Basis and rationale |
+| --- | --- | --- |
+| DEC-132 | Non-leaf sidebar items expand/collapse their children and have no route. Schemas contains Collections and Objects; their lists have no Back button. | Direct user request and follow-up screenshots. Replaces the intermediate Schemas destination from DEC-125 with an in-place disclosure, retaining its grouping and dedicated nested editors. Individual schema editors still return to their respective list. See the [journal](../journal/2026-10-08-sidebar-groups.md). |

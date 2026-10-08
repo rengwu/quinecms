@@ -1,0 +1,7 @@
+Native Safari, isolated window, http://127.0.0.1:4322/admin/
+1. Initial Pages table; Schemas collapsed with children absent from accessibility tree.
+2. Click Schemas: expanded state and Collections/Objects children appeared; Pages table remained.
+3. Click Collections: Collections list with Add collection, Add single-entry collection and Journal; no Back. Child highlight and indentation visually confirmed.
+4. Click Objects: Objects heading, Add object, Object definitions; no Back.
+5. Click Schemas: children disappeared, Objects workspace remained.
+6. Closed the isolated window; the pre-existing Start Page became active. No content/provider changes.

@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Objects & relations — CMS research</title><style>
+:root{color-scheme:light;--ink:#20312f;--muted:#5a6e68;--line:#d7e1da;--accent:#146756;--paper:#fafbf7}*{box-sizing:border-box}body{margin:0;background:#edf1e9;color:var(--ink);font:16px/1.65 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}main{max-width:1120px;margin:44px auto;padding:0 28px 40px}header{padding:44px 44px 36px;border-radius:22px;background:#163f36;color:#f6f8f1;margin-bottom:24px;position:relative;overflow:hidden}.eyebrow{font-size:12px;font-weight:700;letter-spacing:1.8px;color:#b9d8c2;text-transform:uppercase}h1{font-size:clamp(32px,5vw,52px);line-height:1.1;letter-spacing:-1.8px;max-width:720px;margin:18px 0}header p{color:#d6e4d9;max-width:740px;margin:16px 0 24px}.button{display:inline-flex;background:#e6f1bf;color:#173d32;padding:10px 18px;border-radius:9px;font-weight:700;text-decoration:none}.meta{font-size:13px;color:#d6e4d9;display:block;margin-top:16px}section,details{background:var(--paper);border:1px solid var(--line);border-radius:16px;margin:18px 0;padding:28px 32px}h2{font-size:24px;letter-spacing:-.6px;line-height:1.25;margin:0 0 18px}p{margin:12px 0}a{color:var(--accent);text-underline-offset:3px}a:hover{text-decoration-thickness:2px}strong{font-weight:700}.table-scroll{overflow-x:auto;border:1px solid var(--line);border-radius:10px;margin:20px 0}table{border-collapse:collapse;width:100%;text-align:left;font-size:14px;line-height:1.55}th,td{padding:14px 16px;vertical-align:top;border-bottom:1px solid var(--line)}th{background:#e8eee5;font-size:11px;letter-spacing:.8px;text-transform:uppercase}tr:last-child td{border-bottom:0}td:first-child{min-width:140px}td a{white-space:normal}details{padding:0}summary{cursor:pointer;padding:22px 32px;font-size:18px;font-weight:700;line-height:1.4}summary span{float:right;font-size:12px;color:var(--muted);font-weight:500;padding-top:4px}.detail-body{padding:0 32px 22px;border-top:1px solid var(--line)}pre{padding:22px;background:#edf2e9;border-radius:10px;overflow:auto;font:14px/1.65 ui-monospace,SFMono-Regular,Consolas,monospace}code{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:.9em;overflow-wrap:anywhere}footer{color:var(--muted);font-size:13px;padding:14px 6px}footer p{margin:6px 0}:focus-visible{outline:3px solid #98bd53;outline-offset:4px}@media(max-width:650px){main{margin:14px auto;padding:0 12px 24px}header{padding:26px 23px;border-radius:16px}section{padding:22px 20px}summary{padding:20px}summary span{display:none}.detail-body{padding:0 20px 20px}h2{font-size:22px}table{min-width:620px}h1{letter-spacing:-1px}body{font-size:15px}}@media print{body{background:white}main{margin:0;max-width:none}section,details{break-inside:avoid}header{color:black;background:#e8eee5}header p,.eyebrow,.meta{color:#33443e}.button{display:none}}
+</style></head><body><main><header><div class="eyebrow">Design research · 07 October 2026</div><h1>Objects, relations &<br>a more flexible builder.</h1><p>Research across six CMSes. Your first-round choices are now recorded; the comparison below preserves the original research recommendations.</p><a class="button" href="../docs/wiki/index.html">Read the current discussion ↗</a><span class="meta">First round answered · Research recommendations are historical</span></header><section><h2>Your first-round choices</h2><p>Subsequent outcome: <a href="../docs/wiki/journal/2026-10-07-relations-and-objects-round-one.md">Q77–Q81</a> select named/inline objects, one-level structures, one target collection per relation field, one shape per list, and blocking referenced-entry deletion (DEC-110–DEC-114). The recommendations below preserve the research stage; broader nesting and mixed types were not selected. See the <a href="../docs/wiki/discussions/relations-and-objects.md">current design discussion</a>.</p>
+</section><section id="section-0"><h2>The recommendation</h2><p>Build a small, composable content model: <strong>owned objects, reusable object definitions, typed lists, and references to independent entries</strong>. Add an explicit choice of allowed object variants where a list needs different shapes. The same primitives should work inside entry fields, block props and layout settings.</p>
+<p>The central distinction is ownership:</p>
+<div class="table-scroll"><table>
+<thead>
+<tr>
+<th>Need</th>
+<th>Model</th>
+<th>Effect of editing</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>A location&#39;s address</td>
+<td>Owned object</td>
+<td>Changes that location only.</td>
+</tr>
+<tr>
+<td>The same address fields across collections</td>
+<td>Reusable object definition</td>
+<td>Shares the schema; each address still has independent values.</td>
+</tr>
+<tr>
+<td>One author used by many articles</td>
+<td>Reference to an Author entry</td>
+<td>Every use resolves the shared author on the next relevant publication.</td>
+</tr>
+<tr>
+<td>A body containing quotes, images and callouts</td>
+<td>List with allowed object variants</td>
+<td>Each item declares its shape; the presentation defines how that shape renders.</td>
+</tr>
+</tbody></table></div>
+<p>These are complementary capabilities. A reusable definition does not make its values shared, and a reference does not imply a public URL.</p>
+</section>
+<section id="section-1"><h2>What other CMSes do</h2><div class="table-scroll"><table>
+<thead>
+<tr>
+<th>CMS</th>
+<th>Verified approach</th>
+<th>What we could adopt</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Sanity</strong></td>
+<td>Nested objects, typed arrays and document references. References can allow multiple document types; strong references block target deletion, while weak references permit missing targets.</td>
+<td>Clear ownership, constrained target types, explicit reference integrity. <a href="https://www.sanity.io/docs/studio/object-type">Objects</a>, <a href="https://www.sanity.io/docs/studio/reference-type">references</a>.</td>
+</tr>
+<tr>
+<td><strong>Payload</strong></td>
+<td>Groups hold nested fields; arrays repeat rows; Blocks allow different row schemas. Relationships independently configure one/many values and one/multiple target collections. Join fields expose reverse relationships without storing another copy.</td>
+<td>Composable fields and derived reverse views. <a href="https://payloadcms.com/docs/fields/group">Groups</a>, <a href="https://payloadcms.com/docs/fields/array">arrays</a>, <a href="https://payloadcms.com/docs/fields/blocks">Blocks</a>, <a href="https://payloadcms.com/docs/fields/relationship">relationships</a>, <a href="https://payloadcms.com/docs/fields/join">joins</a>.</td>
+</tr>
+<tr>
+<td><strong>Strapi</strong></td>
+<td>Reusable components can be single, repeated or nested. Dynamic zones let editors arrange different allowed components. Relations connect content types.</td>
+<td>Distinguish a repeated shape from a list of different shapes; both deserve schema support. <a href="https://docs.strapi.io/cms/features/content-type-builder">Content-type Builder</a>.</td>
+</tr>
+<tr>
+<td><strong>Storyblok</strong></td>
+<td>Nestable blocks live inside other blocks; content-type blocks are stories; universal blocks can serve either role. References identify shared stories by UUID, with explicit API resolution.</td>
+<td>Keep embedded composition and shared content distinct, and request linked data deliberately. <a href="https://www.storyblok.com/docs/concepts/blocks">Blocks</a>, <a href="https://www.storyblok.com/docs/concepts/references">references</a>.</td>
+</tr>
+<tr>
+<td><strong>Directus</strong></td>
+<td>Relational modeling uses foreign keys, virtual inverse fields and junction collections. Many-to-any links also identify the target collection.</td>
+<td>Store an association once; derive its reverse. Use an association record when the relationship itself needs independent management. <a href="https://directus.com/docs/guides/data-model/relationships">Relationships</a>.</td>
+</tr>
+<tr>
+<td><strong>Keystatic</strong></td>
+<td>Objects can contain other fields, including arrays of relationships. Relationships use collection-entry slugs; its docs warn that changing a slug breaks existing references.</td>
+<td>A composable model fits file-based content. Use stable entry IDs in our implementation. <a href="https://keystatic.com/docs/fields/object">Objects</a>, <a href="https://keystatic.com/docs/fields/relationship">relationships</a>.</td>
+</tr>
+</tbody></table></div>
+<p>This is a comparison of useful mechanisms, not a claim that every system supports every combination or has the same lifecycle behavior.</p>
+</section>
+<details id="section-2"><summary>What changes in our proposal<span>Read more</span></summary><div class="detail-body"><p><strong>Revise Q79: allow one or several explicitly selected target collections.</strong> Default an ordinary author field to Authors; allow an intentional featured-content field to select Articles and Events. Our earlier single-collection-only recommendation was too restrictive for the stated breadth goal. This is a recommendation, not an accepted answer.</p>
+<p><strong>Add Q80: lists with different object shapes.</strong> Ordinary nesting cannot express an ordered Quote → Image → Callout sequence unless each row can declare its variant. This can remain a schema-defined entry field: the allowed shapes and rendering are controlled. It does not inherently require free-form per-entry page layouts.</p>
+<p><strong>Add Q81: deletion of referenced records.</strong> Recommend blocking deletion while incoming references remain, with a visible usage list and a repair path. Clearing links in the same change or permitting missing targets are different policies to choose explicitly. Optional fields and weak references are separate ideas: optional permits no selection; weak permits a selection whose target is absent.</p>
+<p><strong>Keep Q77–Q78, clarify their boundaries.</strong> Recommend inline and named object definitions, plus nested objects/lists. Recursive type definitions are a separate engineering issue: a recursive schema can have finite values. The earlier wording incorrectly equated recursion with infinite content. Initially excluding recursive definitions is a possible complexity limit, not a necessary consequence of supporting nesting.</p>
+</div></details>
+<details id="section-3"><summary>A model that covers more sites<span>Read more</span></summary><div class="detail-body"><p>These examples are proposals for evaluating the design, not a final serialized format:</p>
+<pre><code class="language-text">Article
+  seo: SEO object
+  author: reference → Authors
+  related: ordered references → Articles | Events
+  body: ordered objects → Quote | Image | Callout
+
+Event
+  venue: reference → Venues
+  sessions: list of Session objects
+    startsAt: date/time
+    speakers: list of references → People
+
+Project
+  credits: list of Credit objects
+    person: reference → People
+    role: text
+
+Person
+  projects: derived reverse view of Project.credits.person
+</code></pre>
+<p>An event owns its session objects in this example. If sessions need independent reuse or management, make Sessions a collection and reference it instead. The relationship&#39;s role belongs on Credit, since one person can have different roles on different projects. A separate Credits collection becomes useful if credits themselves need independent management; a junction collection is not required for every list of references in a JSON store.</p>
+<p>Article.related is an editorial selection with stored order. “Latest related articles in this category” is a query, and “all articles by this author” is a reverse lookup. They can produce similar displays but should remain distinct operations.</p>
+</div></details>
+<details id="section-4"><summary>Architecture implications for our builder<span>Read more</span></summary><div class="detail-body"><p>These are engineering recommendations derived from the comparison and current code, not claims about existing features.</p>
+<div class="table-scroll"><table>
+<thead>
+<tr>
+<th>Area</th>
+<th>Proposed boundary</th>
+<th>What otherwise hinders us</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Field system</td>
+<td>A shared schema traversal handles objects, lists, variants and references wherever fields are used.</td>
+<td>Independent implementations drift between entries, blocks and layouts.</td>
+</tr>
+<tr>
+<td>Storage</td>
+<td>Owned values stay with their owner. References store stable target identity; mixed targets also need an unambiguous type/collection discriminator.</td>
+<td>Copying referenced values creates stale duplicates; slug-based links break on rename.</td>
+</tr>
+<tr>
+<td>Binding</td>
+<td>Typed paths traverse objects and references; lists map item fields; mixed targets require a type-specific branch or explicit common projection.</td>
+<td>Adding editor fields alone leaves templates unable to use them.</td>
+</tr>
+<tr>
+<td>Resolution</td>
+<td>Build an entry index and reverse-reference index once per content snapshot. Resolve requested paths with bounded work and cycle detection.</td>
+<td>Eagerly embedding whole graphs causes cycles, large payloads and repeated work.</td>
+</tr>
+<tr>
+<td>Authoring</td>
+<td>Search/select/create targets; show their collection and incoming uses. Nested editors open dedicated levels.</td>
+<td>Rich data becomes unusable if navigation loses the parent or editors cannot see shared impact.</td>
+</tr>
+<tr>
+<td>Publication</td>
+<td>Validate the complete proposed Git snapshot, including target existence, allowed types and required fields.</td>
+<td>A valid source record can still reference an invalid or missing target in the release.</td>
+</tr>
+<tr>
+<td>Schema changes</td>
+<td>Preview affected values and bindings when changing a shared object definition.</td>
+<td>One reusable schema change can break many collections silently.</td>
+</tr>
+</tbody></table></div>
+<p>The current <code>Field</code> union has neither an object nor an entry-reference type; collection schema validation allows lists only at the top level. <code>resolveBlock</code> reads top-level keys, so a string such as <code>author.name</code> does not currently traverse anything. Source: <code>src/core/types.ts</code>, <code>src/core/content.ts</code> and <code>src/core/bindings.ts</code>. Arbitrary JSON storage capacity is not equivalent to a supported schema, editor and rendering contract.</p>
+<p>List-row identity already exists in <code>src/core/lists.ts</code>. Preserve the useful behavior in a redesign: stable identity across reorder/edit, new identity on duplication. Sanity likewise gives object-array members persistent keys; it also forbids direct arrays-of-arrays, illustrating why we should adopt concepts without copying every vendor constraint. <a href="https://www.sanity.io/docs/studio/array-type">Sanity arrays</a>.</p>
+<p>Multiple allowed relation targets do add real work. Payload documents restrictions on querying fields inside polymorphic targets; for us, a binding to <code>featured.author.name</code> must be rejected or scoped to a matching variant when not every allowed type has that field. <a href="https://payloadcms.com/docs/fields/relationship#querying-and-filtering-polymorphic-relationships">Payload relationship querying</a>.</p>
+<p>Our shared Git publication snapshot differs from systems that publish each document separately. Validate linked data against that snapshot; do not copy another CMS&#39;s separate-document publishing workflow without a product need. A data-only Author can be available to rendering without generating an author page. This content model can be implemented in JSON and a static build; it does not by itself require a live database. Performance limits still need representative fixtures and measurement.</p>
+</div></details>
+<section id="section-5"><h2>Revised discussion round</h2><div class="table-scroll"><table>
+<thead>
+<tr>
+<th>Question</th>
+<th>Recommendation after research</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Q77 — Object definitions</td>
+<td>Both inline groups and named reusable definitions.</td>
+</tr>
+<tr>
+<td>Q78 — Nesting</td>
+<td>Objects and lists can nest; exact depth/recursion mechanics remain engineering proposals.</td>
+</tr>
+<tr>
+<td>Q79 — Allowed relation targets</td>
+<td>One or multiple explicitly allowed collections, with one as the normal default.</td>
+</tr>
+<tr>
+<td>Q80 — Different object shapes in a list</td>
+<td>Opt-in typed variants per list field.</td>
+</tr>
+<tr>
+<td>Q81 — Deleting a referenced entry</td>
+<td>Block until incoming links are removed or reassigned.</td>
+</tr>
+</tbody></table></div>
+<p>All five were subsequently answered; see the outcome at the top of this page. The original Q77–Q79 form is superseded for discussion, with its files preserved. Single/multiple relation controls, ordering/uniqueness, reverse-view editing, metadata on associations, schema-library management and exact resolver contracts remain follow-up topics. No application implementation is authorized by this research request.</p>
+</section><footer><p>Method: official documentation for Sanity, Payload, Strapi, Storyblok, Directus and Keystatic. Sources are linked beside each observation. No comparative installations or editor trials.</p><p>Generated from <a href="../docs/wiki/discussions/cms-objects-relations-research.md">the authoritative Markdown research record</a>. The original unanswered form remains preserved.</p></footer></main></body></html>

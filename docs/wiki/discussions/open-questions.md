@@ -1,9 +1,57 @@
 ---
 title: Open questions
-updated: 2026-10-06
-status: Scoped interviews complete; implementation recorded
+updated: 2026-10-08
+status: Content-model scope implemented; no active interview
 ---
 # Open questions
+
+## Sidebar groups — resolved
+
+DEC-132 directly requires expandable non-leaf sidebar groups without routes. Schemas contains Collections and Objects; their list screens have no Back button. The implementation preserves nested editor navigation and uses the same grouping in the compact menu. No interview is needed; see the [journal](../journal/2026-10-08-sidebar-groups.md).
+
+## Layout spacing — resolved
+
+DEC-130 directly moves Content spacing into Site Layout and allows each layout to supply default width/gutter values. No interview is needed. See the [current contract](../features/site-layouts.md) and [implementation journal](../journal/2026-10-08-layout-spacing.md).
+
+DEC-129 establishes [sitewide creation forms](../features/editor.md#creation-forms-dec-129): Add opens an uncommitted New form, Create commits, and Cancel discards. Eager insertion with Back/Delete is a negative UX pattern. The direct request authorized implementation; no questions remain for this increment. See the [journal](../journal/2026-10-08-creation-forms.md) and [verification](../verification/runs/2026-10-08-creation-forms.md).
+
+## Content-model reference — resolved
+
+DEC-128 records the user's direct choice to model the system closely on Sanity and keep it lean. The [selection journal](../journal/2026-10-07-lean-sanity-model.md) and [plan](content-model-plan.md) apply independent entries, owned objects, typed arrays and references within the settled scope. The shared array grammar is implemented; see the [implemented contract](../features/content-model.md) and [verification run](../verification/runs/2026-10-08-content-model.md). No new product question or active form is introduced.
+
+## Implementation readiness — engineering work
+
+The [review before implementation](../journal/2026-10-07-content-model-preimplementation-review.md) identifies presentation integration, shared-definition impact checks, persistence/recovery and route consistency as engineering priorities. It proposes a small end-to-end fixture before the full editor rollout. These do not reopen DEC-110–DEC-127 or introduce new product questions. The [plan](content-model-plan.md) retains the original engineering work; implementation and verification are recorded above.
+
+## Owned object/list nesting — resolved
+
+Q93 selects up to three owned object/list levels, recorded as DEC-126. Each owned object or structured list counts once; the entry, list-row wrapper and named-definition reuse add no extra level. This replaces DEC-111 and the depth restriction in DEC-119. See the [answer and interpretation](../journal/2026-10-07-nesting-round-one.md).
+
+Q94 selects rejection of direct and indirect recursive owned definitions, recorded as DEC-127. Ordinary nested reuse remains supported, including the same definition in independent branches. See the [answer and final interpretation](../journal/2026-10-07-nesting-round-two.md). This concludes the scoped reconsideration; no further product question blocks this increment. Named/inline support, one shape per list, relation behavior and dedicated nested navigation remain settled. Application implementation was subsequently authorized and completed on 2026-10-08.
+
+## Collections and schemas — product discussion resolved
+
+Q82 selects collection-owned schemas with reusable object definitions (DEC-115). See the [submitted answer](../journal/2026-10-07-grill-7f4de03d-e6cc-42a8-a3e1-e309d5efb160.md) and [interpretation](../journal/2026-10-07-collections-and-schemas-round-one.md). Whole-schema sharing, its override rules and schema switching are outside this selected scope.
+
+Q83–Q85 select single-entry mode, route-specific URL requirements and configurable one/many relations (DEC-116–DEC-118). See the [answers and interpretation](../journal/2026-10-07-collections-and-schemas-round-two.md). Template sharing, schema-only entries and the absence of routes for unassigned collections remain accepted.
+
+Q86–Q89 select relations inside flat groups, editor-controlled order, unique targets within each relation value and direct single-entry paths (DEC-119–DEC-122). See the [answers and interpretation](../journal/2026-10-07-collections-and-schemas-round-three.md).
+
+Q90–Q92 resolve as DEC-123–DEC-125. The user delegates the leanest option for Q90–Q91; the assistant selects reverse lookups for admin checks only and selection-only relation controls. Q92 explicitly selects Schemas with Collections and Objects destinations. See the [final interpretation](../journal/2026-10-07-collections-and-schemas-round-four.md).
+
+That collection/schema round and the later nesting reconsideration have completed their product questions. The [consolidated plan](content-model-plan.md) separates accepted choices from proposed lifecycle, storage, validation, binding and editor mechanics. Reverse template lists, integrated target authoring and shared whole-entry schemas are outside this scope. The interview itself did not authorize implementation; the user separately authorized it on 2026-10-08, and the implementation is now present.
+
+## Relations and objects — resolved through the collection/schema rounds
+
+Q77–Q81 originally resolve as DEC-110–DEC-114: named and inline object definitions, one-level objects/lists, one target collection per relation field, one shape per list for now, and blocking referenced-entry deletion. DEC-126 later replaces the depth choice with three levels. See the [original answers](../journal/2026-10-07-grill-60cae8b1-ce10-49a9-b741-7cb19b94ca6e.md), [interpretation](../journal/2026-10-07-relations-and-objects-round-one.md) and [current topic](relations-and-objects.md). The broader [CMS research](cms-objects-relations-research.md) recommendations were not all selected.
+
+Relation placement/order/uniqueness are settled by DEC-118–DEC-121; DEC-123–DEC-125 resolve reverse data, target authoring and schema navigation. DEC-126 revises owned depth to three levels; DEC-127 rejects recursive owned definitions. See the consolidated plan above. The unused prototype remains open to a breaking redesign (DEC-109).
+
+## Architecture breadth review — proposals open
+
+The [2026-10-07 review](architecture-review.md) responds to the user's concern about supporting different content structures and presentations. It recommends retaining the stack while considering typed relations/objects, shared queries/bindings, page archetypes and slots, consistent route metadata, and stronger evolution/scaling boundaries. No recommendation has been accepted as a new product decision; prior implementation authorizations remain scoped to their recorded work.
+
+Open strategic choices are the intended supported site types and content/team sizes; which bounded schema and composition extensions to adopt; whether to extend placeholder-only previews to actual entries; and when independent releases justify changing the shared draft workflow. The review proposes publication, documentation, and directory fixtures to make those choices concrete. No questionnaire round is started by this analysis, and these questions do not retroactively block the implemented scope below.
 
 Site Layouts and chartr were authorized and implemented after the interview records below. No product question blocks this scope. [Current contracts](../features/site-layouts.md), [implementation journal](../journal/2026-10-06-site-layouts-implementation.md) and [verification](../verification/runs/2026-10-06T1140Z-site-layouts.md) distinguish shipped engineering choices from the original proposals.
 
@@ -48,7 +96,7 @@ No consequential product questions remain from the Site Layout rounds or the ver
 
 Q60–Q68 are resolved as DEC-082–DEC-091. See [round one](../journal/2026-10-06-block-library-round-one.md), [round two](../journal/2026-10-06-block-library-round-two.md) and the [consolidated implementation scope](block-library.md).
 
-The scope includes a themed/tagged searchable catalog with direct add and separate Preview, refitted static and useful generic blocks, editable block/schema lists, generic list bindings, collection-backed Blog cards, external form submission, a shared footer and grouped-navigation header. Block appearance comes from themes and site settings; per-block visual customization was rejected. The six reference sites remain capability/design benchmarks.
+The scope includes a themed/tagged searchable catalog with catalog selection followed by a creation form (DEC-129) and separate Preview, refitted static and useful generic blocks, editable block/schema lists, generic list bindings, collection-backed Blog cards, external form submission, a shared footer and grouped-navigation header. Block appearance comes from themes and site settings; per-block visual customization was rejected. The six reference sites remain capability/design benchmarks.
 
 No consequential product questions remain for this phase. The proposed first selection is three variants per category (45 base variants, including shared Footer choices), plus useful generic counterparts and a shared navigation header. Exact field/metadata interfaces and variant implementation details remain engineering choices. This is accepted scope; application implementation and verification are pending.
 

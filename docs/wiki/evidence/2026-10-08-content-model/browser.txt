@@ -1,0 +1,29 @@
+2026-10-08 — native Safari through CUA, implementing-agent observations
+
+Example production build (localhost:4330), desktop:
+- Schemas opened Collections and Objects as separate destinations.
+- Objects > SEO showed Company profile and Journal uses; Delete unused object was disabled.
+- Content > Company profile opened its single entry directly, with no slug or Add entry control.
+- Content > Journal > Keep the essentials > Specifications > Dimensions > Item 1 > Detail opened three owned levels. Each dedicated level replaced its parent controls.
+- Changed Weight value from 1.2 to 1.3, reloaded (accepted the production leave-page warning), reopened the nested Detail and observed 1.3.
+
+Responsive 390 x 844 in the same test tab:
+- Dedicated Detail controls remained visible with parent controls absent.
+- Author picker searched and selected Grace Hopper instead of Ada Lovelace.
+- Related articles selected a second entry and moved it upward. The observed order became Keep the essentials, then A slower way to build. Selected entries were absent from available candidates.
+
+Static public example:
+- /journal/keep-the-essentials/ showed A lighter way to publish, By Ada Lovelace, Dimensions, Weight 1.2 kg, Width 28 cm and Related reading > A slower way to build.
+- This was built content, independent of the unsaved test-tab changes.
+
+Development:
+- Temporary-copy dev attempt failed module hydration because symlinked dependencies fell outside Vite's allowlist; no allowlist changes were made.
+- Real workspace dev at localhost:4332 hydrated Pages and opened Schemas > Collections / Objects.
+
+Final production normal demo (localhost:4333):
+- Pages mounted; Schemas > Collections opened with Add collection and Add single-entry collection.
+- Visually reviewed primary blue button styling with plus icons and field-count label separation.
+
+Automated-only coverage is described separately in the run report: schema creation, nested binding mapping, structural validation, mocked Git transactions and invalid recovery behavior.
+
+Cleanup: closed task-created Safari tabs only, preserving original Start Page; stopped all owned local servers. No live repository tokens, uploads, provider calls or deployments were used.

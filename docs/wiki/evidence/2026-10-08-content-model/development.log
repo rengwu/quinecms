@@ -1,0 +1,8 @@
+2:45:30 AM [vite-plugin-svelte] no Svelte config found at /Users/rengwu/Desktop/Projects/lean-sitebuilder - using default configuration.
+{"message":"connected.","label":"vite","level":"info"}
+{"message":"Generated 0ms","label":"types","level":"info"}
+{"message":"connected.","label":"vite","level":"info"}
+{"message":"Re-optimizing dependencies because vite config has changed","label":"vite","level":"info"}
+{"message":" astro  v7.3.5 ready in 888 ms\n┃ Local    http://127.0.0.1:4332/","label":"SKIP_FORMAT","level":"info"}
+{"message":"watching for file changes...","label":null,"level":"info"}
+{"message":"[200] /admin/ 32ms","label":null,"level":"info"}

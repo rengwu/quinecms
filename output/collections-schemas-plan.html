@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Collections, objects & relations — the agreed design</title><style>
+:root{color-scheme:light;--ink:#20372f;--muted:#617269;--line:#d7e0d5;--paper:#fafbf7;--green:#164b3c;--lime:#d9e6a8}*{box-sizing:border-box}body{margin:0;background:#edf1e9;color:var(--ink);font:16px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}main{max-width:1100px;margin:40px auto;padding:0 28px 32px}header{background:var(--green);color:#f8faf1;padding:40px 44px;border-radius:20px}header .eyebrow{color:#c4d7bb}.eyebrow{font-size:11px;line-height:1.4;letter-spacing:1.5px;font-weight:750;text-transform:uppercase}h1{font-size:clamp(32px,5vw,52px);line-height:1.08;letter-spacing:-1.8px;margin:16px 0 18px;font-weight:700;max-width:780px}header p{max-width:660px;color:#e0ebdc;margin:0 0 20px}header .status{display:inline-block;border:1px solid #567763;padding:6px 12px;border-radius:20px;font-size:12px;color:#e4eedb}a{color:var(--green);text-underline-offset:3px}h2{font-size:23px;line-height:1.25;letter-spacing:-.5px;margin:0 0 14px}h3{font-size:21px;margin:11px 0 9px;letter-spacing:-.4px}p{margin:10px 0}.cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin:20px 0}.card{border:1px solid var(--line);background:var(--paper);border-radius:15px;padding:25px 24px}.number{display:inline-grid;place-items:center;width:27px;height:27px;background:#e7eddf;border-radius:8px;color:#4d6654;font:600 11px/1 ui-monospace,monospace}.card p{font-size:14px;line-height:1.65;color:var(--muted)}.card .example{border-top:1px solid var(--line);padding-top:13px;margin:15px 0 0;color:#304d40;font-size:12px}.split{display:grid;grid-template-columns:1.05fr 1fr;gap:18px;margin:20px 0}.panel{background:var(--paper);border:1px solid var(--line);border-radius:15px;padding:27px 28px}.panel ul{padding-left:20px;margin:12px 0 0}.panel li{font-size:14px;line-height:1.65;margin:9px 0}.panel p{font-size:14px;color:var(--muted)}.limit{background:#e5ebdd}.label{font-size:10px;letter-spacing:1px;font-weight:750;color:var(--muted);text-transform:uppercase;margin:0 0 10px}.last{margin:25px 0 8px}.last h2{margin-bottom:7px}.last p{font-size:14px;color:var(--muted);max-width:800px}.choices{display:flex;gap:8px;flex-wrap:wrap;margin:13px 0 0}.choices span{display:inline-flex;border:1px solid #cbd8c1;background:#f6f9ee;padding:7px 11px;border-radius:8px;font-size:12px;font-weight:600}.details-header{display:flex;justify-content:space-between;align-items:baseline;gap:16px;margin:34px 2px 16px}.details-header h2{margin:0}.details-header span{font-size:12px;color:var(--muted)}details{background:var(--paper);border:1px solid var(--line);border-radius:12px;margin:9px 0;overflow:hidden}summary{display:flex;align-items:center;justify-content:space-between;gap:15px;cursor:pointer;list-style:none;font-size:15px;font-weight:650;padding:18px 23px}summary::-webkit-details-marker{display:none}.plus{font-size:22px;line-height:1;color:#668365;font-weight:400;flex-shrink:0}details[open] .plus{transform:rotate(45deg)}.detail-body{padding:5px 24px 22px;border-top:1px solid var(--line);font-size:14px}.detail-body p{margin:15px 0}.detail-body a{overflow-wrap:anywhere}pre{background:#eaf0e5;padding:18px;border-radius:9px;overflow:auto;font:12px/1.7 ui-monospace,SFMono-Regular,Consolas,monospace;margin:15px 0}.schema{margin-bottom:0;font-size:12px;line-height:1.8;padding:15px 18px}code{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:.9em;overflow-wrap:anywhere}.table-scroll{overflow:auto;border:1px solid var(--line);border-radius:9px;margin:18px 0}table{width:100%;border-collapse:collapse;text-align:left;font-size:13px;line-height:1.6}td,th{padding:12px 14px;vertical-align:top;border-bottom:1px solid var(--line)}th{font-size:11px;background:#eaf0e4}tr:last-child td{border-bottom:0}td:first-child{width:25%;font-weight:600}footer{display:flex;justify-content:space-between;gap:20px;padding:23px 3px 0;font-size:12px;color:var(--muted)}footer p{margin:0}button{font:inherit}:focus-visible{outline:3px solid #94ac50;outline-offset:4px}@media(max-width:680px){main{margin:12px auto;padding:0 12px 24px}header{padding:29px 25px;border-radius:16px}h1{letter-spacing:-1px}.cards{grid-template-columns:1fr;gap:10px}.card{padding:19px 22px}.card h3{display:inline-block;margin:0 0 0 9px;font-size:19px}.card p{margin:11px 0 0}.card .example{margin-top:12px;padding-top:10px}.split{grid-template-columns:1fr;gap:12px}.panel{padding:23px}.details-header{display:block}.details-header span{display:block;margin-top:6px}summary{font-size:14px;padding:17px 20px}.detail-body{padding:3px 19px 18px}.table-scroll table{min-width:570px}footer{display:block}footer p+p{margin-top:10px}header p{font-size:15px}h2{font-size:21px}}@media(prefers-reduced-motion:no-preference){.plus{transition:transform .15s ease}}@media print{body{background:white}main{margin:0;max-width:none}header{background:#e5ebdd;color:#163f31}header p,header .eyebrow,header .status{color:#163f31}.cards,.panel{break-inside:avoid}details{break-inside:auto}.detail-body{display:block}footer{display:block}}
+@media(max-width:680px){.table-scroll table{min-width:0;display:block}.table-scroll thead{display:none}.table-scroll tbody{display:block}.table-scroll tr{display:block;padding:10px 0;border-bottom:1px solid var(--line)}.table-scroll tr:last-child{border-bottom:0}.table-scroll td{display:block;width:auto;padding:4px 14px;border:0}.table-scroll td:first-child{font-size:14px}.table-scroll table[data-columns="3"] td:not(:first-child)::before{content:attr(data-label);display:block;font-size:10px;letter-spacing:.6px;text-transform:uppercase;font-weight:700;color:var(--muted);margin-top:6px}}
+</style></head><body><main>
+<header><div class="eyebrow">Lean sitebuilder · Content model · 07 October 2026</div><h1>Collections, objects<br>& relations.</h1><p>The agreed design, the tradeoffs we’re choosing, and a concrete plan for building it.</p><span class="status">Design agreed · Implementation not started</span></header>
+<div class="cards" aria-label="Three building blocks">
+<article class="card"><span class="number">01</span><h3>Collections</h3><p>Own their entries and complete schemas. Hold many records, or one record such as Company Profile.</p><p class="example">Articles, People, Projects</p></article>
+<article class="card"><span class="number">02</span><h3>Objects</h3><p>Group fields inline or through a reusable definition. Share the structure; each entry keeps its own values.</p><p class="example">SEO, Address, Contact details</p></article>
+<article class="card"><span class="number">03</span><h3>Relations</h3><p>Connect independent entries. Select one or several from one collection, with editorial ordering.</p><p class="example">Article → Author · Project → People</p></article>
+</div>
+<section class="last"><h2>Your final choices</h2><p>You delegated the leanest approach for usage and linked editing, and selected one Schemas area.</p><div class="choices"><span>Reverse lookup: admin usage only</span><span>Relations: select existing entries</span><span>Schemas → Collections / Objects</span></div></section>
+<div class="split">
+<section class="panel"><div class="label">What this enables</div><h2>Shared content, independent pages.</h2><p>Authors can exist without URLs. Articles can generate pages. A single Company Profile can live at <code>/about</code>.</p><pre class="schema">Article
+  title: text
+  seo: SEO object
+  author: reference → Authors
+  related: ordered references → Articles</pre></section>
+<section class="panel limit"><div class="label">The boundaries we chose</div><h2>Flexible within clear limits.</h2><ul><li>Objects and list rows stay <strong>one level deep</strong>; each list has one shape.</li><li>No mixed-collection relations or automatic reverse template lists.</li><li>Related entries are created and edited separately through Content.</li></ul><p>Deeply nested content, richer page composition and large-site scaling still need later work.</p></section>
+</div>
+<div class="details-header"><h2>The complete brief</h2><span>Expand a section · Engineering details are proposals</span></div>
+<details id="detail-0"><summary><span>The agreed model</span><span class="plus" aria-hidden="true">+</span></summary><div class="detail-body"><div class="table-scroll"><table data-columns="2">
+<thead>
+<tr>
+<th>Concept</th>
+<th>Agreed behavior</th>
+</tr>
+</thead>
+<tbody><tr>
+<td data-label="Concept">Collection</td>
+<td data-label="Agreed behavior">Owns its complete entry schema. Ordinary collections contain many entries; single-entry collections contain one centrally managed record.</td>
+</tr>
+<tr>
+<td data-label="Concept">Object</td>
+<td data-label="Agreed behavior">A named reusable definition or an inline field group. Reusing a definition shares fields, while each containing entry owns its values.</td>
+</tr>
+<tr>
+<td data-label="Concept">Depth</td>
+<td data-label="Agreed behavior">Top-level objects and structured lists contain leaf fields, including relations. They cannot contain further owned objects or lists. Each list has one shape.</td>
+</tr>
+<tr>
+<td data-label="Concept">Relation</td>
+<td data-label="Agreed behavior">Selects one or several entries from one specified collection. Allowed at the entry level and inside an object or list row.</td>
+</tr>
+<tr>
+<td data-label="Concept">Order and reuse</td>
+<td data-label="Agreed behavior">Multiple selections keep editorial order and cannot repeat a target within that field value. The same target may occur in other fields or separate rows.</td>
+</tr>
+<tr>
+<td data-label="Concept">Routes</td>
+<td data-label="Agreed behavior">Data-only content needs no URL. Routed ordinary entries use a collection prefix plus slug; a routed single entry uses one explicit path. Both require a generic page assignment.</td>
+</tr>
+<tr>
+<td data-label="Concept">Deletion and lookup</td>
+<td data-label="Agreed behavior">Block deletion while an entry is referenced. Reverse lookup powers admin usage checks; reverse template lists are outside this increment.</td>
+</tr>
+<tr>
+<td data-label="Concept">Editing</td>
+<td data-label="Agreed behavior">Schemas → Collections / Objects manages structure. Content manages values. Relation controls select existing entries; target creation/editing stays in Content.</td>
+</tr>
+</tbody></table></div>
+<p>The final two simplicity choices were explicitly delegated by the user. They are resolved choices, not unanswered recommendations. See the <a href="../docs/wiki/decisions/index.md">decision register</a> and <a href="../docs/wiki/journal/2026-10-07-collections-and-schemas-round-four.md">final interpretation</a>.</p>
+</div></details>
+<details id="detail-1"><summary><span>A concrete example</span><span class="plus" aria-hidden="true">+</span></summary><div class="detail-body"><pre><code class="language-text">Articles · ordinary collection · /articles/:slug
+  title: text
+  seo: SEO object
+  author: reference → Authors
+  related: ordered references → Articles
+
+Authors · data-only collection
+  name: text
+  biography: rich text
+
+Projects · ordinary collection
+  title: text
+  credits: list of one flat shape
+    person: reference → People
+    role: text
+
+Company Profile · single entry · /about
+  companyName: text
+  seo: SEO object
+
+SEO · reusable object definition
+  title: text
+  description: text
+</code></pre>
+<p>Changing SEO's field definition changes the schema wherever it is used. Editing an article's SEO values affects that article only. Editing an Author changes the shared content resolved by its references when the site is next published. An Author can be useful without having a public page.</p>
+</div></details>
+<details id="detail-2"><summary><span>The limits that still matter</span><span class="plus" aria-hidden="true">+</span></summary><div class="detail-body"><p><strong>This is a broader content model, not a guarantee of every site structure.</strong> The accepted one-level boundary will constrain deeply structured documents, nested menus and complex product specifications. A separate collection is appropriate when that content has independent identity and reuse; splitting everything into collections merely to evade the depth limit would burden editors.</p>
+<p>Mixed Quote → Image → Callout lists, a relation that mixes Articles and Events, and automatic “all articles by this author” template lists remain outside this scope. An ordered relation field is curated content, not a query. Selection-only controls also mean more navigation when creating related content.</p>
+<p>Presentation flexibility remains a separate concern: these changes do not add arbitrary template slots, per-entry page composition, actual-entry generic-page previews or a general query builder. Large content sets still face whole-repository loading, static rebuild costs and a shared publication boundary. Those are later architecture decisions, not problems solved by adding references.</p>
+<p>The <a href="../docs/wiki/discussions/cms-objects-relations-research.md">CMS comparison</a> informed the ownership/reference distinction and stable identity. Its broader recommendations for nesting, mixed variants and reverse lists were not all selected. The <a href="../docs/wiki/discussions/architecture-review.md">architecture review</a> retains the wider proposals.</p>
+</div></details>
+<details id="detail-3"><summary><span>Engineering proposal: records and fields</span><span class="plus" aria-hidden="true">+</span></summary><div class="detail-body"><p>Keep JSON records in Git. Add an explicit collection mode, proposed as <code>many | single</code>. Keep collection-owned <code>fields</code>, <code>titleField</code> and optional <code>genericPageId</code>. Make routing metadata optional for data-only content; interpret a routed collection's path as a prefix in ordinary mode and an exact path in single-entry mode. Entry slugs become optional except for routed ordinary entries. Disabling routes does not erase stored routing metadata.</p>
+<p>Add <code>Content.objects</code> and records at <code>content/objects/&lt;id&gt;.json</code>. Each named object definition owns a name and flat fields. Object and structured-list fields select either an <code>objectId</code> or inline <code>fields</code>, never both. A list repeats that single shape. A named definition cannot include another owned object/list, just as an inline shape cannot.</p>
+<p>Treat a reference as a leaf field whose proposed schema is <code>{ type: 'reference', collectionId, multiple }</code>. Store a single target as an entry ID or null; multiple targets as an ordered array of entry IDs. The field already identifies the target collection, so values need no duplicated collection discriminator. Resolve current target values instead of copying them into the owner.</p>
+<p>Preserve stable <code>_rowId</code> identities for list rows; duplicating a row generates a new row identity. New object/row instances receive independent cloned defaults. Editing a definition's default must not overwrite existing content values.</p>
+<p>Update <code>src/core/types.ts</code>, <code>content.ts</code> and <code>load.ts</code> together with the GitHub file whitelist, serialization, backup/import and recovery formats. In particular, <code>recordPath</code>, <code>filesFor</code>, <code>parseFiles</code> and the recovery shape currently enumerate known record kinds. Merely adding a TypeScript field would lose or reject object definitions elsewhere. An intentional format replacement is allowed; unsupported formats must produce an explicit error rather than silently dropping data.</p>
+</div></details>
+<details id="detail-4"><summary><span>Engineering proposal: one shared schema traversal</span><span class="plus" aria-hidden="true">+</span></summary><div class="detail-body"><p>Create pure helpers that understand collection fields, named/inline object shapes, list rows and reference leaves. Use them for validation, defaults, field selection, schema-change checks and incoming usage. Keep the content-schema depth rule separate from any existing block/layout field capabilities.</p>
+<p>Build lookups for entries and object definitions once per content snapshot. Build incoming usage from schema-declared reference fields and existing explicit internal entry links. Do not interpret arbitrary text strings or external URLs as relations. Usage should identify the owning entry and field, including the containing row when applicable.</p>
+<p>Use the same index to guard entry deletion and show blockers. Collection removal must account for entries, incoming references and fields that declare it as a target. Object-definition removal must account for all schema uses. Reverse usage stays an admin facility; it does not imply a reverse field, second stored relationship or public query API.</p>
+</div></details>
+<details id="detail-5"><summary><span>Engineering proposal: lifecycle and editor</span><span class="plus" aria-hidden="true">+</span></summary><div class="detail-body"><p>Initially choose ordinary/single-entry mode when creating the model; do not add a conversion UI in this increment. For a single-entry model, provision one blank entry with a stable ID and open it directly from Content. Hide extra-entry creation and ordinary entry deletion there; model removal is the explicit removal path, subject to usage and content checks. These lifecycle defaults are engineering proposals rather than separately answered product choices.</p>
+<p>Schemas opens Collections and Objects as separate destinations. Definitions, fields, nested object values and list rows open dedicated navigation levels under DEC-108. Relation controls provide searchable existing-target selection, useful title labels with an ID fallback, removal and ordering. They must work for data-only targets without requiring links or slugs.</p>
+<p>Before changing a shared definition, show the affected schemas and validate all their stored values. Extend the existing safe-schema-change checks to named objects: reject deletion or incompatible key/type changes while affected values are populated, unless an explicit repair is included. Do not invent automatic migrations, inheritance or a second schema-version library. This protects content during editing; it does not reintroduce prototype compatibility as a redesign constraint.</p>
+<p>Primary editor boundaries are <code>App.tsx</code>, <code>CollectionSchema.tsx</code>, <code>SchemaFieldEditor.tsx</code>, <code>Fields.tsx</code>, <code>ListField.tsx</code> and navigation components. Reuse the existing Content workflow for target authoring and the shared draft for unsaved values.</p>
+</div></details>
+<details id="detail-6"><summary><span>Engineering proposal: bindings and publication</span><span class="plus" aria-hidden="true">+</span></summary><div class="detail-body"><p>The current <code>src/core/bindings.ts</code> reads top-level values by key. Extend it with typed forward paths, for example <code>seo.title</code> and <code>author.name</code>, and explicit item projections for lists. A credit card could map <code>person.name</code> and <code>role</code>; a related-article list could map selected targets to title/image fields in stored order. Validate source/target field compatibility before rendering.</p>
+<p>Resolve only the requested fields. Do not recursively hydrate every related entry into a graph. Cyclic references can represent valid content; finite binding paths and a bounded resolver keep them from causing runaway expansion. Exceeding a resolution limit should report the affected binding, not silently truncate content. Exact limits belong with implementation fixtures.</p>
+<p>Share resolution and compatibility logic between applicable editor previews and public rendering. Preserve existing empty-value fallback rules, including valid <code>false</code> and <code>0</code> values. Generic-page editing continues to use its agreed placeholders; this proposal does not introduce a real-entry preview selector.</p>
+<p>Save accepts structurally valid incomplete content. Malformed field/value shapes, unknown object definitions and invalid schema declarations are structural errors. Empty required references may remain in a draft; Publish requires required selections, valid target membership and no dangling references. Editor deletion is still blocked while used. Structurally valid imported dangling references should remain visible for repair, with publication blocked, rather than being silently cleared.</p>
+<p>Validate the complete publication snapshot, including data-only entries. Publish still releases one Git snapshot; there is no per-entry publication state or cascade. Route generation and internal links use the same mode-aware resolver, validate path collisions, and distinguish a valid content reference from a target that has a public URL.</p>
+</div></details>
+<details id="detail-7"><summary><span>Proposed implementation sequence</span><span class="plus" aria-hidden="true">+</span></summary><div class="detail-body"><div class="table-scroll"><table data-columns="3">
+<thead>
+<tr>
+<th>Step</th>
+<th>Deliverable</th>
+<th>Main boundary</th>
+</tr>
+</thead>
+<tbody><tr>
+<td data-label="Step">1. Model and persistence</td>
+<td data-label="Deliverable">Field grammar, object records, collection modes, codecs, shared traversal and safe round-trips.</td>
+<td data-label="Main boundary">Core types/content/load, GitHub store, backup/import and recovery.</td>
+</tr>
+<tr>
+<td data-label="Step">2. Integrity and routes</td>
+<td data-label="Deliverable">Incoming usage, safe schema edits, guarded deletion, draft/publication validation and ordinary/single/data-only routing.</td>
+<td data-label="Main boundary">Core validation, routes and internal links.</td>
+</tr>
+<tr>
+<td data-label="Step">3. Authoring</td>
+<td data-label="Deliverable">Schemas destinations, object definitions and values, single-entry workflow, ordered unique relation controls.</td>
+<td data-label="Main boundary">React editor with dedicated nested navigation.</td>
+</tr>
+<tr>
+<td data-label="Step">4. Presentation</td>
+<td data-label="Deliverable">Typed forward bindings and list item projections, with representative page/block fixtures.</td>
+<td data-label="Main boundary">Binding resolver, collection mappings and render paths.</td>
+</tr>
+<tr>
+<td data-label="Step">5. Verification</td>
+<td data-label="Deliverable">Exercise complete editing/save/publish scenarios and document observed limits.</td>
+<td data-label="Main boundary">Automated suite plus desktop/mobile editor checks.</td>
+</tr>
+</tbody></table></div>
+<p>Each step should land as a coherent change with its relevant tests. Do not postpone persistence until the UI is complete: every newly editable record must survive a save, reload, export and recovery cycle.</p>
+</div></details>
+<details id="detail-8"><summary><span>Validation targets — not yet executed</span><span class="plus" aria-hidden="true">+</span></summary><div class="detail-body"><div class="table-scroll"><table data-columns="2">
+<thead>
+<tr>
+<th>Scenario</th>
+<th>Required evidence</th>
+</tr>
+</thead>
+<tbody><tr>
+<td data-label="Scenario">Shared SEO objects</td>
+<td data-label="Required evidence">Two collections use one definition with independent values; incompatible populated-field changes are blocked across both. Nested owned shapes are rejected.</td>
+</tr>
+<tr>
+<td data-label="Scenario">Project credits</td>
+<td data-label="Required evidence">Flat rows contain person references and roles. Row IDs survive edits/reordering; duplicates get new row IDs. One person can appear in separate rows.</td>
+</tr>
+<tr>
+<td data-label="Scenario">Ordered related articles</td>
+<td data-label="Required evidence">Selection order reaches rendered output; duplicate targets within one selection are rejected. Wrong-collection and missing targets block publication.</td>
+</tr>
+<tr>
+<td data-label="Scenario">Referenced-entry deletion</td>
+<td data-label="Required evidence">Incoming usage finds top-level, object and row references plus supported internal entry links. Deletion remains blocked until owners are repaired.</td>
+</tr>
+<tr>
+<td data-label="Scenario">Collection modes</td>
+<td data-label="Required evidence">Data-only entries need no route metadata. Ordinary pages require prefix/slug; a single page uses an exact path. Collisions fail; single-entry content opens directly and cannot gain a second entry.</td>
+</tr>
+<tr>
+<td data-label="Scenario">Binding consistency</td>
+<td data-label="Required evidence">Forward object/reference paths and row projections agree across rendering paths; target edits resolve current values. Cycles terminate; empty/false/zero behavior remains correct.</td>
+</tr>
+<tr>
+<td data-label="Scenario">Persistence</td>
+<td data-label="Required evidence">Object definitions, modes and all new values survive mocked GitHub save/reload, export/import and tab recovery. Stale-save behavior remains intact.</td>
+</tr>
+<tr>
+<td data-label="Scenario">Editor navigation</td>
+<td data-label="Required evidence">Definition, object and row editing replace their parent controls at a dedicated level on desktop and mobile; returning preserves the shared draft.</td>
+</tr>
+</tbody></table></div>
+<p>Use publication, project/people and company-profile fixtures to exercise these behaviors. Run <code>pnpm verify</code> for application implementation, alongside targeted browser checks. Mocked provider tests do not establish live GitHub, R2 or Netlify behavior; live-provider evidence must remain separately identified.</p>
+<p>This discussion changes documentation only. The earlier passing application baseline does not verify these proposed features. The wiki build/check validates documentation structure and links, not application functionality.</p>
+</div></details>
+<footer><p>16 product choices recorded · DEC-110–DEC-125<br>Markdown is authoritative. No application code changed.</p><p><a href="../docs/wiki/index.html">Project wiki ↗</a> &nbsp; <a href="cms-objects-relations-brief.html">Earlier CMS research ↗</a></p></footer>
+</main></body></html>

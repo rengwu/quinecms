@@ -10,7 +10,7 @@ This consolidates DEC-079–DEC-091 from the [request and inventory](../journal/
 ## Accepted behavior
 
 - Every block belongs to one theme/design family and has multiple tags. A block theme is distinct from the site's existing light/dark mode.
-- Add a block becomes a large searchable dialog: controls above a visual grid, searching/filtering by theme, tags and block name. Its primary card action inserts immediately; Preview is a separate action. Page-kind compatibility and retained-version rules continue to apply.
+- Add a block becomes a large searchable dialog: controls above a visual grid, searching/filtering by theme, tags and block name. DEC-129 supersedes immediate insertion: the primary card action opens an uncommitted New block/footer form with Create and Cancel. Preview remains a separate action. Page-kind compatibility and retained-version rules continue to apply.
 - Reimplement approximately 3–5 distinct variants from each of the legacy library's 15 categories in the current block system. Adapt designs rather than copying Payload schemas/Astro components unchanged. Include useful generic counterparts now.
 - Repeated block content supports adding, removing and reordering rows. Collection schemas gain structured list fields so one entry can hold items such as ingredients, specifications or FAQs. Generic blocks can bind compatible lists as well as the existing field types. Initial list rows use existing supported types; unrestricted recursive schema nesting is outside this increment.
 - Blog layouts use collection entries and configurable display-field mappings. They link through the existing entry-route system.
@@ -54,7 +54,7 @@ The variant names refer to the legacy reference directory. Final implementations
 
 ## Observable completion criteria
 
-- Search and combined theme/tag filters find the expected matching variants; zero results and reset work; keyboard users can browse, preview and add. Preview does not insert; Add inserts exactly once and preserves the established editor hierarchy.
+- Search and combined theme/tag filters find the expected matching variants; zero results and reset work; keyboard users can browse, preview and add. Preview and Add do not insert; Create inserts exactly once, Cancel leaves content unchanged, and dedicated editor levels are preserved.
 - Lists survive reorder/edit/delete, serialization and reload. Schema list editing and bindings preserve correctly typed values; invalid mappings/values fail at the appropriate validation phase. Empty and missing optional content has intentional rendering behavior.
 - Collection-backed cards reflect entry fields and valid routes. Shared header/footer changes appear across static pages, generic entry routes and page previews.
 - Form submission reaches the configured endpoint in a controlled test; no real submission is sent from editor/catalog previews. Missing endpoint and server errors are handled honestly.

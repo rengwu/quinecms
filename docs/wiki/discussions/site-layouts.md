@@ -1,9 +1,11 @@
 ---
 title: Site Layouts
-updated: 2026-10-06
+updated: 2026-10-08
 status: Accepted design; implemented on 2026-10-06
 ---
 # Site Layouts
+
+Update on 2026-10-08: DEC-130 supersedes DEC-097. Content spacing now belongs to the selected layout, with author-defined defaults and editable width/gutter in Site Layout. See the [current contract](../features/site-layouts.md) and [journal](../journal/2026-10-08-layout-spacing.md). Earlier interview choices and proposals below retain their historical context.
 
 The user requests a site-wide layout system to replace most Site Options. This page owns the accepted product design, recorded in DEC-092–DEC-105 and DEC-107 in the [decision register](../decisions/index.md). [Round one](../journal/2026-10-06-site-layouts-round-one.md) settles shared settings, preview, picker behavior and installation; [round two](../journal/2026-10-06-site-layouts-round-two.md) settles whitelist behavior for the growing layout library; [round three](../journal/2026-10-06-site-layouts-round-three.md) settles retained layout versions and explicit upgrades. The scoped interview is complete; engineering recommendations below remain proposals. The user also requests [recreating chartr as a layout and independent blocks](chartr-recreation.md) after this foundation is implemented (DEC-106). Both phases were subsequently authorized and implemented; see the [implementation journal](../journal/2026-10-06-site-layouts-implementation.md), [current authoring contract](../features/site-layouts.md) and [verification](../verification/runs/2026-10-06T1140Z-site-layouts.md). The recommendations and unexecuted targets below preserve the interview-stage proposal, not current implementation status.
 
@@ -16,7 +18,7 @@ The user requests a site-wide layout system to replace most Site Options. This p
 - Retain selectable layout implementation versions and pin each site's active selection to its chosen version. Adding a new implementation version does not upgrade existing sites automatically; upgrades are explicit.
 - Layouts can supply optional typography and other styling variables. A block can use any subset or none. This is a spectrum, not two block types: no styling-adherence categories, labels, badges, filters, compatibility gates or preferential treatment. Existing static/generic page-kind rules describe content binding and are a separate concern.
 
-The main sidebar has separate **Site Layout** and **Settings** destinations. Site Layout contains the active layout, Change layout and the author's settings interface. Settings retains content max-width, page gutter, Backups and Session. The width/gutter values remain shared and advisory, survive layout switches, and do not force a container or styling on any layout or block.
+The main sidebar has separate **Site Layout** and **Settings** destinations. Site Layout contains the active layout, Change layout and the author's settings interface. Settings retains Backups and Session. Under DEC-130, Content spacing is part of Site Layout and switching uses the selected layout’s width/gutter defaults. The optional values do not force a container or styling on any layout or block.
 
 Site Layout settings have a live preview alongside them, with a page selector and desktop/mobile widths. This adds Site Layout to the existing page-editing preview scope; unrelated standard admin views retain their existing behavior. Generic-page block bindings continue to preview with field-name placeholders under DEC-069.
 

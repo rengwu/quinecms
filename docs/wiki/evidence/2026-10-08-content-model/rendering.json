@@ -1,0 +1,15 @@
+{
+  "page": "/journal/keep-the-essentials",
+  "assertions": {
+    "A lighter way to publish": true,
+    "Ada Lovelace": true,
+    "Dimensions": true,
+    "Weight": true,
+    "1.2 kg": true,
+    "Width": true,
+    "28 cm": true,
+    "Related reading": true
+  },
+  "singletonRoute": true,
+  "dataOnlyAuthorsHaveNoRoute": true
+}

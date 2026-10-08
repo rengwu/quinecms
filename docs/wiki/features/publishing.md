@@ -1,6 +1,6 @@
 ---
 title: Git draft saves and publishing
-updated: 2026-10-05
+updated: 2026-10-08
 ---
 # Git draft saves and publishing
 
@@ -15,6 +15,8 @@ The [save/recovery contract](../discussions/technical-contracts.md) requires one
 `/admin/` → Connection; use a repository containing this source, a main branch, a writable draft branch, a per-editor Contents read/write token, and Netlify configured to build main. See the root README and [setup](../verification/setup.md). No live provider account was used in the initial verification.
 
 ## Expected outcomes
+
+Named object definitions and all nested/reference values are part of the same snapshot; [content-model validation](content-model.md) distinguishes structural draft errors from publication requirements.
 
 Connect reads content from a coherent commit and creates a missing draft branch from main. Save validates structural integrity and collection compatibility, writes a tree and one commit, then advances the draft without force. A concurrent writer rejects that update. Uncertain network responses are checked against the intended commit before edits are cleared.
 
@@ -33,5 +35,7 @@ Steps 2–3 are unvalidated live-provider recipes. Do not use a production site 
 Transport mocks establish client transaction logic, not GitHub permissions, branch policies, CORS, or deployment success. The portal does not merge divergent branches, synchronize source automatically, or poll Netlify deployment status.
 
 ## Verification history
+
+- [Object-record and reference save/reload/publication with a mock Git transport](../verification/runs/2026-10-08-content-model.md).
 
 - [Initial implementation run](../verification/runs/2026-10-05T0819Z-implementation.md).

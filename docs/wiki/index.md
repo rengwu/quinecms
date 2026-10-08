@@ -1,13 +1,45 @@
 ---
 title: lean-sitebuilder
-updated: 2026-10-06
+updated: 2026-10-08
 status: Accepted
 ---
 # lean-sitebuilder
 
+Latest navigation refinement: [expandable Schemas group](journal/2026-10-08-sidebar-groups.md) (DEC-132). Collections and Objects open directly from the sidebar without Back buttons on their lists. [Browser and 161-test verification](verification/runs/2026-10-08-sidebar-groups.md).
+
+Latest heading refinement: [creation screen hierarchy](verification/runs/2026-10-08-creation-heading.md). **New block** and **New footer** now place the selected type beneath the heading as a smaller, muted subtitle. Both browser flows and all 159 tests pass.
+
+Latest form standard: [right-aligned confirmation/cancellation actions](features/editor.md#form-action-alignment-dec-131), applied through shared creation, nested-editor and dialog layouts, including compact insert forms. [Journal](journal/2026-10-08-form-action-alignment.md) · [Verification and limits](verification/runs/2026-10-08-form-action-alignment.md).
+
+Latest preview repair: [centered mobile preview](verification/runs/2026-10-08-mobile-preview.md). Mobile mode now centers beside the editing drawer. Browser alignment and all 159 tests pass; the desktop toggle recheck was interrupted.
+
+Latest block-editor refinement: [inline title and version selector](verification/runs/2026-10-08-block-header.md). The label-less selector is capped at 140px; long titles stay on one line and truncate with an ellipsis. Safari checks and all 159 tests pass.
+
+Latest catalog refinement: [card hover and dialog headers](verification/runs/2026-10-08-layout-catalog.md). Layout card hover extends through the Preview row; visible catalog titles align with ×, including the restored **Add block** title. All 159 tests pass; browser checks are partially incomplete.
+
+Latest refinement: [layout-owned content spacing](journal/2026-10-08-layout-spacing.md) (DEC-130). Site Layout now owns editable width/gutter and their defaults: Starter 1200px/24px, chartr 1512px/40px. [Verification](verification/runs/2026-10-08-layout-spacing.md).
+
+Latest UX standard: [explicit creation forms sitewide](features/editor.md#creation-forms-dec-129). Add opens an uncommitted New form with Create and Cancel; nested drafts remain local and cancellation leaves no placeholder behind. DEC-129 records eager insertion as a negative UX pattern. [Journal](journal/2026-10-08-creation-forms.md) · [157-test and desktop/mobile verification](verification/runs/2026-10-08-creation-forms.md).
+
+Latest editor repair: [number-input height](verification/runs/2026-10-08-number-input-height.md). Numeric schema limits now retain the standard control height; browser verification and all 151 tests pass.
+
+Latest implementation: [collections, objects and references](features/content-model.md), authorized on 2026-10-08 with no compatibility or migrations. The editor, persistence, routes and forward bindings now support the lean model. [Implementation journal](journal/2026-10-08-content-model-implementation.md) · [151-test and browser verification](verification/runs/2026-10-08-content-model.md). Live providers remain untested.
+
+Latest accepted direction: [a lean Sanity-style content model](journal/2026-10-07-lean-sanity-model.md). DEC-128 selects Sanity as the primary reference for independent entries, owned objects, typed arrays and references, within the settled scope and Git architecture. The [completed nesting reconsideration](journal/2026-10-07-nesting-round-two.md) permits three owned object/list levels and rejects recursive definitions (DEC-126–DEC-127), replacing DEC-111 and the depth restriction in DEC-119.
+
+Current plan: [collections, objects and relations](discussions/content-model-plan.md), settled through DEC-128. The earlier collection/schema interview selected admin-only reverse lookups, existing-target selection and Schemas → Collections / Objects; Q90–Q91 were delegated to the assistant under a simplicity criterion. [Round-four interpretation](journal/2026-10-07-collections-and-schemas-round-four.md). The original engineering proposals are retained as planning history; the feature contract above records their implemented form.
+
+Latest review: [before implementing the content model](journal/2026-10-07-content-model-preimplementation-review.md). Read-only source inspection highlights presentation bindings, shared-definition impact, persistence/recovery and route consistency. These are engineering priorities within the agreed scope; no further product questionnaire is proposed.
+
+Latest research: [seven CMS approaches to schemas and relations](discussions/cms-objects-relations-research.md), refreshed against official documentation. The assessment favors Sanity's conceptual data model, with Payload and Keystatic as secondary references. [Research journal](journal/2026-10-07-cms-schema-comparison.md). DEC-128 subsequently selects the lean Sanity direction; broader vendor features remain research rather than accepted scope.
+
+Related discussion: [relations and objects](discussions/relations-and-objects.md). Q77–Q81 originally selected named/inline objects, one-level structures, one collection per relation field, one shape per list and blocking referenced-entry deletion. [Answers and interpretation](journal/2026-10-07-relations-and-objects-round-one.md). DEC-126 later replaces the depth choice with three levels; the other choices remain. [CMS research](discussions/cms-objects-relations-research.md) remains evidence, with broader recommendations not all selected. DEC-109 permits breaking or replacing the unused prototype.
+
+Latest discussion: [architecture and product breadth review](discussions/architecture-review.md), comparing the current content/presentation model with other builders and identifying schema, composition, versioning and scale risks. These are proposals, not newly accepted behavior. The [review journal](journal/2026-10-07-architecture-review.md) records a fresh passing `pnpm verify` baseline and its limits.
+
 Latest repair: [chartr content width and spacing](verification/runs/2026-10-06T1426Z-chartr-spacing.md); independent blocks now own centered bounds under either layout, consume shared geometry, and avoid duplicate gutters. Desktop/mobile browser checks and all 132 tests pass.
 
-Implemented: [Site Layout library](features/site-layouts.md) and [chartr layout with nine independent blocks](features/chartr.md). Site Layout owns selection, author settings and a selected-page preview; Settings retains shared width/gutter, Backups and Session. Active layout versions are pinned, switching uses defaults, and the hidden whitelist filters only future choices. The user's latest correction requires dedicated nested editor levels everywhere (DEC-108).
+Implemented: [Site Layout library](features/site-layouts.md) and [chartr layout with nine independent blocks](features/chartr.md). Site Layout owns selection, author settings and a selected-page preview; DEC-130 now includes width/gutter under Site Layout with per-layout defaults; Settings retains Backups and Session. Active layout versions are pinned, switching uses defaults, and the hidden whitelist filters only future choices. The user's latest correction requires dedicated nested editor levels everywhere (DEC-108).
 
 [Implementation journal](journal/2026-10-06-site-layouts-implementation.md) · [Verification report](verification/runs/2026-10-06T1140Z-site-layouts.md). Accepted design and interview history remain in [Site Layouts](discussions/site-layouts.md), [chartr recreation](discussions/chartr-recreation.md) and the [decision register](decisions/index.md).
 

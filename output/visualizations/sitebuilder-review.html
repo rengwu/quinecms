@@ -1,0 +1,192 @@
+<div id="sitebuilder-review-brief">
+  <style>
+    #sitebuilder-review-brief { color: var(--foreground); }
+    #sitebuilder-review-brief .brief-heading { margin: 0 0 8px; }
+    #sitebuilder-review-brief .brief-meta { margin-bottom: 20px; }
+    #sitebuilder-review-brief .brief-panels { margin-top: 20px; }
+    #sitebuilder-review-brief details { padding: 16px 0; border-bottom: 1px solid var(--border); }
+    #sitebuilder-review-brief details:first-child { padding-top: 0; }
+    #sitebuilder-review-brief summary { display: flex; align-items: center; gap: 14px; list-style: none; }
+    #sitebuilder-review-brief summary::-webkit-details-marker { display: none; }
+    #sitebuilder-review-brief .brief-number { color: var(--muted-foreground); min-width: 22px; }
+    #sitebuilder-review-brief .brief-label { flex: 1; min-width: 0; display: grid; gap: 4px; }
+    #sitebuilder-review-brief .brief-label strong { font-weight: 500; }
+    #sitebuilder-review-brief .brief-plus { color: var(--muted-foreground); }
+    #sitebuilder-review-brief details[open] .brief-plus { transform: rotate(45deg); }
+    #sitebuilder-review-brief .brief-detail { margin: 16px 0 0 36px; display: grid; gap: 14px; }
+    #sitebuilder-review-brief .brief-detail dl { display: grid; grid-template-columns: 78px minmax(0,1fr); gap: 8px 14px; margin: 0; }
+    #sitebuilder-review-brief dt { color: var(--muted-foreground); }
+    #sitebuilder-review-brief dd { margin: 0; }
+    #sitebuilder-review-brief .brief-example { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+    #sitebuilder-review-brief .brief-fit { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1.25fr); gap: 10px 24px; padding: 15px 0; border-bottom: 1px solid var(--border); }
+    #sitebuilder-review-brief .brief-fit:first-child { padding-top: 0; }
+    #sitebuilder-review-brief .brief-fit div { min-width: 0; display: grid; gap: 5px; }
+    #sitebuilder-review-brief .brief-proof { margin-top: 20px; display: grid; gap: 8px; }
+    #sitebuilder-review-brief .brief-foot { margin-top: 24px; display: flex; flex-wrap: wrap; gap: 6px 16px; }
+    #sitebuilder-review-brief .brief-learn { display: grid; grid-template-columns: 115px minmax(0,1fr); gap: 12px 22px; }
+    #sitebuilder-review-brief .brief-learn a { color: var(--foreground); text-decoration: underline; text-underline-offset: 3px; }
+    #sitebuilder-review-brief .brief-learn span { min-width: 0; }
+    @media (pointer: coarse) { #sitebuilder-review-brief summary { min-height: 44px; } }
+    @media (max-width: 430px) {
+      #sitebuilder-review-brief .brief-fit { grid-template-columns: 1fr; gap: 8px; }
+      #sitebuilder-review-brief .brief-detail { margin-left: 0; }
+      #sitebuilder-review-brief .brief-detail dl { grid-template-columns: 65px minmax(0,1fr); gap: 8px; }
+      #sitebuilder-review-brief .brief-learn { grid-template-columns: 92px minmax(0,1fr); gap: 14px; }
+    }
+  </style>
+
+  <h2 class="brief-heading">Keep the stack. Strengthen the model.</h2>
+  <div class="brief-meta text-small text-muted">Astro · React · JSON · Git · R2</div>
+
+  <div class="nav nav-pills" role="tablist" aria-label="Explore the site builder review">
+    <button class="nav-link active" type="button" role="tab" id="brief-priorities-tab" aria-controls="brief-priorities" aria-selected="true">Improve first</button>
+    <button class="nav-link" type="button" role="tab" id="brief-fit-tab" aria-controls="brief-fit" aria-selected="false">Site fit</button>
+    <button class="nav-link" type="button" role="tab" id="brief-ideas-tab" aria-controls="brief-ideas" aria-selected="false">Borrow ideas</button>
+  </div>
+
+  <div class="brief-panels">
+    <section role="tabpanel" id="brief-priorities" aria-labelledby="brief-priorities-tab">
+      <details id="brief-content">
+        <summary class="cursor-interaction">
+          <span class="brief-number">01</span>
+          <span class="brief-label"><strong>Connect content</strong><span class="text-small text-muted">The biggest feature gap</span></span>
+          <span class="brief-plus" aria-hidden="true">+</span>
+        </summary>
+        <div class="brief-detail">
+          <dl>
+            <dt>Today</dt><dd>Mostly flat fields and lists. No general entry relationships.</dd>
+            <dt>Risk</dt><dd>Copied authors, categories, locations, and product details.</dd>
+            <dt>Add</dt><dd>References, reusable objects, queries, and typed field bindings.</dd>
+          </dl>
+          <div class="brief-example text-small" aria-label="An article references an author, categories, and related articles"><span>Article</span><span aria-hidden="true">→</span><span>Author · Categories · Related articles</span></div>
+        </div>
+      </details>
+
+      <details id="brief-composition">
+        <summary class="cursor-interaction">
+          <span class="brief-number">02</span>
+          <span class="brief-label"><strong>Compose more page structures</strong><span class="text-small text-muted">Reduce bespoke blocks for every combination</span></span>
+          <span class="brief-plus" aria-hidden="true">+</span>
+        </summary>
+        <div class="brief-detail">
+          <dl>
+            <dt>Today</dt><dd>One site wrapper and a flat list of page blocks.</dd>
+            <dt>Risk</dt><dd>Docs sidebars, article asides, and campaign shells need special code.</dd>
+            <dt>Add</dt><dd>Page templates, named slots, conditions, and reusable sections.</dd>
+            <dt>Keep</dt><dd>Schema-only entries and one active Site Layout.</dd>
+          </dl>
+          <div class="brief-example text-small"><span>Site layout</span><span aria-hidden="true">→</span><span>Page template</span><span aria-hidden="true">→</span><span>Main / Aside</span><span aria-hidden="true">→</span><span>Blocks</span></div>
+        </div>
+      </details>
+
+      <details id="brief-versions">
+        <summary class="cursor-interaction">
+          <span class="brief-number">03</span>
+          <span class="brief-label"><strong>Protect existing client sites</strong><span class="text-small text-muted">The most important maintenance fix</span></span>
+          <span class="brief-plus" aria-hidden="true">+</span>
+        </summary>
+        <div class="brief-detail">
+          <dl>
+            <dt>Today</dt><dd>Versioned blocks import shared, unversioned theme code.</dd>
+            <dt>Risk</dt><dd>A shared renderer or CSS change can alter a pinned v1 design.</dd>
+            <dt>Fix</dt><dd>Version shared themes; honor footer versions; test retained designs.</dd>
+            <dt>Also</dt><dd>Use stable internal links and a safe schema-evolution workflow.</dd>
+          </dl>
+        </div>
+      </details>
+
+      <details id="brief-growth">
+        <summary class="cursor-interaction">
+          <span class="brief-number">04</span>
+          <span class="brief-label"><strong>Prepare for more content and editors</strong><span class="text-small text-muted">Measure before promising scale</span></span>
+          <span class="brief-plus" aria-hidden="true">+</span>
+        </summary>
+        <div class="brief-detail">
+          <dl>
+            <dt>Today</dt><dd>Repeated whole-site reads, serialization, and a shared draft branch.</dd>
+            <dt>Risk</dt><dd>Slower editing; unfinished content can hold up unrelated publishing.</dd>
+            <dt>Add</dt><dd>Content indexes, record-level changes, cached reads, release boundaries when needed.</dd>
+            <dt>Basics</dt><dd>SEO metadata, redirects, responsive images, and actual-entry previews.</dd>
+          </dl>
+        </div>
+      </details>
+      <div class="brief-proof">
+        <span class="text-small text-muted">Next proof of flexibility</span>
+        <span>Build a publication, a docs site, and a directory using the same core.</span>
+      </div>
+    </section>
+
+    <section role="tabpanel" id="brief-fit" aria-labelledby="brief-fit-tab" hidden>
+      <div class="brief-fit"><div><strong>Marketing &amp; portfolios</strong><span class="text-small text-muted">Good fit today</span></div><div>Curated sections, custom visuals, static output.</div></div>
+      <div class="brief-fit"><div><strong>Publications</strong><span class="text-small text-muted">Simple versions fit</span></div><div>Need authors, categories, related content, and release workflows.</div></div>
+      <div class="brief-fit"><div><strong>Documentation</strong><span class="text-small text-muted">Needs structural work</span></div><div>Content hierarchy, sidebars, breadcrumbs, and search.</div></div>
+      <div class="brief-fit"><div><strong>Directories &amp; catalogs</strong><span class="text-small text-muted">Needs data-model work</span></div><div>Relations, flexible queries, filters, and pagination.</div></div>
+      <div class="brief-fit"><div><strong>Commerce &amp; accounts</strong><span class="text-small text-muted">Needs runtime integrations</span></div><div>Transactions, identity, permissions, and live application data.</div></div>
+      <div class="brief-proof text-small text-muted">Assessment of the current model; custom developer code can extend its reach.</div>
+    </section>
+
+    <section role="tabpanel" id="brief-ideas" aria-labelledby="brief-ideas-tab" hidden>
+      <div class="brief-learn">
+        <a href="https://help.webflow.com/hc/en-us/articles/33961195339923-Slots" target="_blank" rel="noopener noreferrer">Webflow ↗</a><span>Slots for composing reusable components.</span>
+        <a href="https://www.framer.com/help/articles/how-to-create-flexible-cms-detail-pages/" target="_blank" rel="noopener noreferrer">Framer ↗</a><span>Conditional sections and template variants.</span>
+        <a href="https://shopify.dev/docs/storefronts/themes/architecture/blocks" target="_blank" rel="noopener noreferrer">Shopify ↗</a><span>Reusable blocks nested within controlled structures.</span>
+        <a href="https://developer.wordpress.org/themes/core-concepts/theme-structure/" target="_blank" rel="noopener noreferrer">WordPress ↗</a><span>Templates, shared parts, and insertable patterns.</span>
+        <a href="https://www.storyblok.com/docs/concepts/content-modeling" target="_blank" rel="noopener noreferrer">Storyblok ↗</a><span>Structured content with nestable components.</span>
+        <a href="https://www.sanity.io/docs/content-lake/schema-and-content-migrations" target="_blank" rel="noopener noreferrer">Sanity ↗</a><span>Safe evolution of populated content schemas.</span>
+        <a href="https://decapcms.org/docs/editorial-workflows/" target="_blank" rel="noopener noreferrer">Decap CMS ↗</a><span>Separate unpublished-entry workflows on Git.</span>
+      </div>
+      <div class="brief-proof text-small text-muted">Patterns to adopt selectively. Recommendations remain proposals.</div>
+    </section>
+  </div>
+
+  <div class="brief-foot text-small text-muted"><span>132 tests passed</span><span>Scale &amp; live providers unverified</span><span>Review · 7 Oct 2026</span></div>
+</div>
+<script>
+(() => {
+  const root = document.getElementById('sitebuilder-review-brief');
+  if (!root) return;
+  const tabs = Array.from(root.querySelectorAll('[role="tab"]'));
+  const panels = Array.from(root.querySelectorAll('[role="tabpanel"]'));
+  const details = Array.from(root.querySelectorAll('details'));
+  let lastState = '';
+  function snapshot() {
+    return {
+      tab: tabs.find(tab => tab.getAttribute('aria-selected') === 'true')?.id || tabs[0].id,
+      expanded: details.filter(detail => detail.open).map(detail => detail.id)
+    };
+  }
+  function restore(saved) {
+    const state = saved?.privateContent;
+    const active = tabs.find(tab => tab.id === state?.tab) || tabs[0];
+    tabs.forEach(tab => {
+      const selected = tab === active;
+      tab.setAttribute('aria-selected', String(selected));
+      tab.classList.toggle('active', selected);
+    });
+    panels.forEach(panel => { panel.hidden = panel.id !== active.getAttribute('aria-controls'); });
+    details.forEach(detail => { detail.open = Array.isArray(state?.expanded) && state.expanded.includes(detail.id); });
+    lastState = JSON.stringify(snapshot());
+  }
+  function save() {
+    const state = snapshot();
+    const key = JSON.stringify(state);
+    if (key === lastState) return;
+    lastState = key;
+    if (window.openai?.setWidgetState) {
+      window.openai.setWidgetState({ modelContent: null, privateContent: state }).catch(() => {});
+    }
+  }
+  restore(window.openai?.widgetState);
+  root.addEventListener('toggle', save, true);
+  root.addEventListener('click', event => {
+    if (event.target.closest('[role="tab"]')) setTimeout(save, 0);
+  });
+  root.addEventListener('keydown', event => {
+    if (event.target.closest('[role="tab"]')) setTimeout(save, 0);
+  });
+  window.addEventListener('openai:set_globals', event => {
+    const globals = event.detail?.globals;
+    if (globals && Object.prototype.hasOwnProperty.call(globals, 'widgetState')) restore(globals.widgetState);
+  });
+})();
+</script>

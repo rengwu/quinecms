@@ -1,11 +1,12 @@
 ---
 title: Feature map
-updated: 2026-10-06
+updated: 2026-10-08
 ---
 # Feature map
 
 The first implementation follows the [agreed design](../discussions/agreed-design.md) and [technical contracts](../discussions/technical-contracts.md). This map describes intended behavior and executable checks; verification results apply only to the recorded build.
 
+- [Collections, objects and references](content-model.md) — FEAT-content-model.
 - [Site Layout library](site-layouts.md) — FEAT-site-layouts.
 - [chartr layout and blocks](chartr.md) — FEAT-chartr.
 - [Searchable block library](block-library.md) — FEAT-block-library.

@@ -1,0 +1,9 @@
+The following is a diff from the previous accessibility tree for Window: "Site editor" with ~ and + representing changed and added elements, respectively. Removed elements are summarized by ID range.
+~							147 heading Detail, Value: 2
+~								148 text Detail
+~							149 text Label
+~							150 text field (settable) Label, Value: Weight
+~							151 text Value
+~							152 text field (settable) Value, Value: 1.3 kg
++							153 button Clear object
+The focused UI element is 147 heading Detail, Value: 2

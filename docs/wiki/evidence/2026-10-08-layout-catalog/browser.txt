@@ -1,0 +1,5 @@
+Native Safari against http://127.0.0.1:4322/admin/.
+Opened Site Layout > Change layout. Observed a visible Site layouts h2 and Close layout library button on the same horizontal row, with explanatory text and search below. The accessibility tree named the dialog Site layouts.
+The selected header scenario passed.
+The catalog closed during subsequent development refresh/browser activity before card hover and preview navigation could be reliably observed. Native input also reported clipboard/user activity conflicts. A Helium fresh-tab fallback was interrupted by a user-changed-application tool error.
+No claim of completed hover, block/footer header, preview, or narrow viewport browser checks. No Save draft or Publish action was performed. Existing servers were preserved. Browser cleanup was not forced after active state changed outside this run; task-created tabs/window may remain.

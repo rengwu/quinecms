@@ -1,0 +1,7 @@
+The following is a diff from the previous accessibility tree for Window: "Site editor" with ~ and + representing changed and added elements, respectively. Removed elements are summarized by ID range.
+Removed element IDs: 24-29
++							64 heading Objects, Value: 2
++								65 text Objects
++							66 button Add object
++							67 container Object definitions
+The focused UI element is 4 HTML content Description: Site editor, URL: 127.0.0.1:4322/admin/

@@ -1,0 +1,72 @@
+Window: "Site editor", App: Safari.
+0 standard window Site editor, ID: SafariWindow?IsSecure=false&UUID=FA4DB016-840A-48FA-9C8E-008E905E132B, Secondary Actions: Raise
+	1 split group
+		2 tab group
+			3 pop up button Description: Viewport Size, Value: Custom size, ID: ViewportPresetButton
+			4 toggle button Description: Rotate Left, Help: Rotate viewport, Value: off
+			5 text field (settable) Description: Width, Value: 390
+			6 text ×
+			7 text field (settable) Description: Height, Value: 844
+			8 text Description: Zoom Level, Value: ( 81% )
+			9 pop up button Description: Pixel Ratio, Value: 2x
+			10 menu button Open with Simulator, ID: OpenWithSimulatorButton
+			11 scroll area
+				12 HTML content Description: Site editor, URL: 127.0.0.1:4322/admin/
+					13 container Notifications
+					14 container
+						15 button Open navigation
+						16 button Connection
+						17 button Save draft
+						18 button Publish
+					19 container Admin workspace
+						20 container
+							21 button ← Back
+							22 heading Journal, Value: 2
+								23 text Journal
+							24 button Add entry
+							25 container Entries
+								26 button Keep the essentials /journal/keep-the-essentials
+								27 button A slower way to build /journal/a-slower-way-to-build
+					28 button Menu
+					29 button Inspect
+					30 button Audit
+					31 button Settings
+	32 image WindowControlShadowView._shadowImageView
+	33 toolbar
+		34 container Secondary Actions: Move previous, Move next, Remove from toolbar
+			35 button Description: show sidebar, Help: Show sidebar, ID: SidebarButton
+			36 menu button Description: Tab Group picker, ID: TabGroupPickerButton?TabGroup=
+		37 container BackForwardSegmentedControl
+			38 button Description: Go back, Help: Show the previous page, ID: BackButton
+			39 button (disabled) Description: Go forward, Help: Show the next page, ID: ForwardButton
+		40 container Secondary Actions: Move previous, Move next, Remove from toolbar
+			41 button Page Menu, ID: AssistantButton
+			42 button (disabled) Add page to Reading List, ID: OneStepBookmarkingButton
+			43 text field (settable) Description: smart search field, Value: 127.0.0.1:4322/admin/, ID: WEB_BROWSER_ADDRESS_AND_SEARCH_FIELD
+			44 button Translation Available, ID: TranslationButton
+			45 button Reload this page, ID: ReloadButton
+		46 button Description: Share, ID: ShareButton, Secondary Actions: Move previous, Move next, Remove from toolbar
+		47 button Description: New Tab, ID: NewTabButton, Secondary Actions: Move previous, Move next, Remove from toolbar
+		48 button Description: Tab Overview, ID: TabOverviewButton, Secondary Actions: Move previous, Remove from toolbar
+	49 tab group Description: Tab bar, 2 tabs, ID: TabBar?isSeparate=false
+		50 tab Start Page, Value: off, Secondary Actions: close tab, ID: TabBarTab?isNarrow=false&isExpanded=false&tabCount=&isPinned=false&isCluster=false&clusterID=&isActive=false
+			51 image Description: favorite, ID: FaviconImageView
+			52 text Value: Start Page, ID: UnifiedTabBarButton._titleTextField
+		53 tab Site editor, Help: To interact with the items in this button, press Control-Option-Shift-Down Arrow., Value: on, Secondary Actions: close tab, ID: TabBarTab?isNarrow=false&isExpanded=false&tabCount=&isPinned=false&isCluster=false&clusterID=&isActive=true
+			54 image FaviconImageView
+			55 text Value: Site editor, ID: UnifiedTabBarButton._titleTextField
+	56 close button
+	57 full screen button Help: this button also has an action to zoom the window, Secondary Actions: zoom the window
+	58 minimize button
+59 menu bar
+	60 Safari
+	61 File
+	62 Edit
+	63 View, ID: SafariViewMenu
+	64 History
+	65 Bookmarks, ID: SafariBookmarksMenu
+	66 Develop
+	67 Window, ID: SafariWindowMenu
+	68 Help, ID: SafariHelpMenu
+
+The focused UI element is 12 HTML content Description: Site editor, URL: 127.0.0.1:4322/admin/
