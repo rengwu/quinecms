@@ -1,9 +1,44 @@
 ---
 title: lean-sitebuilder
-updated: 2026-10-08
+updated: 2026-10-12
 status: Accepted
 ---
 # lean-sitebuilder
+
+Development login is now `admin@example.com` / `asdf1234`, regardless of `.env`
+(DEC-152). One shared login guards one dashboard and its existing content;
+production retains its configured pair. See [admin behavior](features/admin-encryption.md).
+
+Latest editor change: [Git save status and recovery](journal/2026-10-12-git-save-ux.md)
+(DEC-148–DEC-151). A small status sits beside Save; stale saves preserve edits and
+open backup/load-latest actions with confirmation. Browser-to-local-file transfer
+remains deferred. Native browser automation was unavailable for visual verification;
+see the [run and limits](verification/runs/2026-10-12-git-save-ux.md).
+
+Latest editor change: [live preview while creating a block](journal/2026-10-11-block-creation-preview.md)
+(DEC-147). Pending fields render immediately in the page, without entering saved
+content until Create. Cancellation, navigation and creation checks pass with the
+full 195-test suite and representative Safari desktop/mobile verification.
+
+Latest repair: [disabled editor login after checks/builds](journal/2026-10-11-login-repair.md).
+Development caches are now separated by command as well as checkout. Crypto loading
+failures show a retry message; 194 tests and the production artifact checks pass.
+
+Completed trial: [recreating Quine as an isolated example](journal/2026-10-11-quine-rebuild.md)
+(DEC-143–DEC-146). The accepted scope preserves the active demo, independently
+implements components, and evaluates client editing and agent discoverability.
+Run `pnpm example:quine`. The journal records implemented instruction improvements,
+small builder fixes and remaining proposals; [local verification](verification/runs/2026-10-11-quine-rebuild.md)
+covers 193 tests, isolated output and representative Safari/editor scenarios.
+
+Deployment remains [provider neutral](features/admin-encryption.md#build-and-deployment)
+(DEC-142): build locally, in CI or through a static host, then deploy `dist/`.
+Hosting names in historical notes are generalized; affected transcripts and
+evidence manifests identify those editorial changes.
+
+Latest admin security: [encrypted email/password dashboard](features/admin-encryption.md) (DEC-141), with build-time Argon2id and AES-256-GCM encryption. Both build credentials are required; the dashboard is decrypted in the browser after login. [Implementation and checks](journal/2026-10-09-admin-encryption.md).
+
+Latest connection settings: [publish branch, example placeholders and conditional Lock editor](journal/2026-10-08-connection-settings.md) (DEC-139–DEC-140). Both GitHub and GitLab use the selected publication target, defaulting to `main`. The passwordless behavior in that update is superseded by DEC-141.
 
 Latest settings changes: [Factory reset and repository connection](journal/2026-10-08-factory-reset.md) (DEC-136–DEC-137). Factory reset confirms before clearing the local content/schema/media draft and restoring Starter defaults; uploaded R2 files remain. Connection now opens from Settings.
 
@@ -71,7 +106,7 @@ A Git-backed static site builder with the public website, visual admin editor, b
 
 The first round established nontechnical editors, page sections with defined controls, reusable content collections, shared block dependencies, and GitHub-based draft/publish workflows. Save commits to an unpublished branch; Publish merges that branch to main and triggers deployment. The new core and starter blocks are fresh; astro-payload is reference material.
 
-The editor login is a convenience gate. Each editor supplies their own GitHub token; both public and private site repositories are supported. The browser uses a GitHub SDK to save and merge; the user's Netlify integration deploys main. Pages use the block editor; entries contain schema fields and optionally render through a collection-assigned generic page. Every block supports immediate browser preview, and new block types are developer-installed with a rebuild.
+The editor login is a convenience gate. Each editor supplies their own GitHub token; both public and private site repositories are supported. The browser uses a GitHub SDK to save and merge; the user's configured hosting or CI workflow deploys main. Pages use the block editor; entries contain schema fields and optionally render through a collection-assigned generic page. Every block supports immediate browser preview, and new block types are developer-installed with a rebuild.
 
 GitHub tokens persist for the tab session. Collections support developer-defined schemas and portal field editing. Shared drafts use stale-save protection with plain-language recovery. Media lives in Cloudflare R2, with URLs in Git. Blocks own their styling and may follow optional global settings such as dark/light mode.
 

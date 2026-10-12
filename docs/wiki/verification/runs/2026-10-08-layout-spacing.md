@@ -27,4 +27,4 @@ The initial test run found one outdated assertion expecting width in Settings. I
 
 ## Limits and cleanup
 
-Desktop Safari was visually inspected; a separate mobile/cross-browser matrix and active-chartr production fixture were not selected. Production build checks exercise the committed Starter selection; chartr rendering is covered by the mounted editor and development browser. Existing mocked provider tests passed; no live GitHub/R2/Netlify operations were performed. The final disposable browser tab was closed and the pre-existing development server was left running. Wiki build/check validates documentation separately.
+Desktop Safari was visually inspected; a separate mobile/cross-browser matrix and active-chartr production fixture were not selected. Production build checks exercise the committed Starter selection; chartr rendering is covered by the mounted editor and development browser. Existing mocked provider tests passed; no live GitHub/R2/hosting operations were performed. The final disposable browser tab was closed and the pre-existing development server was left running. Wiki build/check validates documentation separately.

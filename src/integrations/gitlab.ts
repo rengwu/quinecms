@@ -9,6 +9,8 @@ import { sourceFiles } from '../generated/sources';
 import {
   checkDraft,
   checkPublication,
+  checkBranches,
+  publishBranch,
   Conflict,
   isSource,
   type Repository,
@@ -87,7 +89,9 @@ export class GitLabStore implements RepositoryStore {
     public repository: Repository,
     private definitions: Definition[],
     private expectedSources = sourceFiles,
-  ) {}
+  ) {
+    checkBranches(repository);
+  }
 
   private async ref(branch: string): Promise<string> {
     return (await this.request('GET', `/repository/branches/${encode(branch)}`))
@@ -100,11 +104,11 @@ export class GitLabStore implements RepositoryStore {
       sha = await this.ref(this.repository.branch);
     } catch (error) {
       if ((error as any).status !== 404) throw error;
-      const main = await this.ref('main');
+      const published = await this.ref(publishBranch(this.repository));
       try {
         await this.request('POST', '/repository/branches', {
           branch: this.repository.branch,
-          ref: main,
+          ref: published,
         });
       } catch {
         // Another editor may have created it, or the successful response was lost.
@@ -207,7 +211,7 @@ export class GitLabStore implements RepositoryStore {
       source_branch: source,
       target_branch: branch,
       title:
-        branch === 'main'
+        branch === publishBranch(this.repository)
           ? 'content: publish site'
           : 'content: save site draft',
       squash: false,
@@ -321,14 +325,15 @@ export class GitLabStore implements RepositoryStore {
 
   async publish(snapshot: Snapshot) {
     checkPublication(snapshot, this.definitions, this.expectedSources);
-    const main = await this.ref('main');
-    if (main === snapshot.sha) return;
-    const previous = await this.read(main);
+    const target = publishBranch(this.repository);
+    const published = await this.ref(target);
+    if (published === snapshot.sha) return;
+    const previous = await this.read(published);
     const issues = schemaChanges(previous.content, snapshot.content);
     if (issues.length) throw Error(issues.map((i) => i.message).join('\n'));
-    if (!(await this.ancestor(main, snapshot.sha)))
+    if (!(await this.ancestor(published, snapshot.sha)))
       throw Error(
-        'The main and draft branches have diverged. Ask your developer to synchronize them, then reload and review the draft.',
+        `The publish branch (${target}) and draft branch have diverged. Ask your developer to synchronize them, then reload and review the draft.`,
       );
     await this.checkProject();
     const source = `lean-publish-${crypto.randomUUID()}`;
@@ -341,6 +346,6 @@ export class GitLabStore implements RepositoryStore {
       if ((await this.ref(source).catch(() => '')) !== snapshot.sha)
         throw error;
     }
-    await this.advance('main', main, snapshot.sha, source);
+    await this.advance(target, published, snapshot.sha, source);
   }
 }

@@ -31,13 +31,13 @@ DEC-058–DEC-073 subsequently revise entries to schema fields only and introduc
 
 ## Repository and deployment
 
-One site repository contains the public site, static admin editor, registered block code, schemas, and content records. Media files live in Cloudflare R2 and are referenced by URL in Git. Both public and private GitHub repositories work. The user's existing Netlify integration builds and deploys main; the builder does not manage hosting infrastructure.
+One site repository contains the public site, static admin editor, registered block code, schemas, and content records. Media files live in Cloudflare R2 and are referenced by URL in Git. Both public and private GitHub repositories work. The user's configured hosting or CI workflow builds and deploys main; the builder does not manage hosting infrastructure.
 
 The application requires no always-running CMS or custom server-side service. The admin login is a convenience gate configured at build time. Repository operations use the editor's own GitHub token, retained for the tab session including reloads. Editors supply R2 credentials at runtime; upload secrets are not embedded in the public build.
 
 ## Editing and publishing
 
-Nontechnical owners edit pages through a drawer alongside a live preview. Content, Collection schemas, Media and Site use standard admin views without live website rendering. Collection entries contain only schema fields; their generic page supplies the layout. Owners add, remove, customize, and reorder registered sections in pages using each block's fields and design controls. Save commits content/schema changes to a shared draft branch through a GitHub SDK client. Publish merges accumulated drafts into main, after which Netlify deploys.
+Nontechnical owners edit pages through a drawer alongside a live preview. Content, Collection schemas, Media and Site use standard admin views without live website rendering. Collection entries contain only schema fields; their generic page supplies the layout. Owners add, remove, customize, and reorder registered sections in pages using each block's fields and design controls. Save commits content/schema changes to a shared draft branch through a GitHub SDK client. Publish merges accumulated drafts into main, after which the configured hosting or CI workflow builds and deploys the static output.
 
 Stale-save protection prevents silent overwrites. Recovery preserves unsaved work and uses plain language. There is no requirement for live collaborative editing or a Git merge-conflict interface.
 

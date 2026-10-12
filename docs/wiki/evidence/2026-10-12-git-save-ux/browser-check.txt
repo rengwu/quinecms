@@ -1,0 +1,17 @@
+2026-10-12 Git save UX verification
+
+Native browser inspection was blocked. Selecting Safari returned:
+Sky Computer Use native pipe startup failed
+Inventory returned apps=[], browsers=[], with the same native startup error.
+Resetting the automation session and retrying inventory returned the same error.
+No browser actions, exports, or real repository operations were completed.
+
+http://127.0.0.1:4322/: HTTP 200
+http://127.0.0.1:4322/admin/: HTTP 200
+http://127.0.0.1:4323/: HTTP 200
+http://127.0.0.1:4323/admin/: HTTP 200
+HTTP readiness is not evidence of successful browser mounting or visual layout.
+
+The owned temporary mocked-provider fixture on port 4324 was stopped without browser use.
+The existing demo on 4322 and Quine example on 4323 remain running.
+Quine received the final App.tsx and editor.module.css; its content was unchanged.

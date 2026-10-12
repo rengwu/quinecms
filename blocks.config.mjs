@@ -1,4 +1,9 @@
 export default [
+  'quine-hero/v1',
+  'quine-statement/v1',
+  'quine-services/v1',
+  'quine-works/v1',
+  'quine-contact/v1',
   'structured-details/v1',
   'chartr-intro/v1',
   'chartr-workspace/v1',

@@ -26,4 +26,4 @@ The baseline failed: the manual React root bypassed Astro's before-hydration ini
 
 ## Limits and follow-up
 
-All selected repair scenarios passed. Live GitHub/R2/Netlify, full layout parity, password/Lock and other previously untested interactions remain outside this run. A missing favicon still produces an unrelated HTTP 404. No provider writes, commits or deployment were performed. The Safari test tab was closed, test content changes were cancelled, and the owned preview was stopped; the user's development server remains running.
+All selected repair scenarios passed. Live GitHub/R2/hosting, full layout parity, password/Lock and other previously untested interactions remain outside this run. A missing favicon still produces an unrelated HTTP 404. No provider writes, commits or deployment were performed. The Safari test tab was closed, test content changes were cancelled, and the owned preview was stopped; the user's development server remains running.

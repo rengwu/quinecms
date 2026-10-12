@@ -6,19 +6,22 @@ import App from '../src/editor/App';
 import { modelFixture } from './support/content-model';
 import { entryPath } from '../src/core/routes';
 import type { Block, Content } from '../src/core/types';
-import { readRecovery } from '../src/editor/recovery';
+import { readRecovery, retain } from '../src/editor/recovery';
 import { layoutDefinitions, selectLayout } from '../src/core/layouts';
 import { adminThemeKey } from '../src/editor/AdminTheme';
 import { repositoryKey } from '../src/integrations/git';
 vi.mock('../src/editor/Island', () => ({
   default: ({ block }: { block: Block }) =>
-    createElement('div', { 'data-preview-island': block.id }),
+    createElement('div', {
+      'data-preview-island': block.id,
+      'data-preview-props': JSON.stringify(block.props),
+    }),
 }));
 const config = {
   owner: '',
   repo: '',
   branch: 'draft',
-  passwordHash: '',
+  encryptedAdmin: false,
   r2: { accountId: '', bucket: '', publicURL: '' },
 };
 const content: Content = {
@@ -341,13 +344,9 @@ it('persists the admin theme across navigation and reload without changing site 
   await click('Settings');
   await act(async () => toggle().click());
   expect(localStorage.getItem(adminThemeKey)).toBe('dark');
-  await click('Lock editor');
   expect(
-    host
-      .querySelector('form')
-      ?.closest('[data-mode]')
-      ?.getAttribute('data-mode'),
-  ).toBe('dark');
+    adminSurfaces().every((el) => el.getAttribute('data-mode') === 'dark'),
+  ).toBe(true);
 });
 
 it('falls back from an invalid admin preference and can toggle when persistence is blocked', async () => {
@@ -1285,6 +1284,12 @@ it('selects GitLab and clears credentials when the provider or instance changes'
   const field = (label: string) =>
     host.querySelector<HTMLInputElement>(`input[aria-label="${label}"]`)!;
   expect(field('Access token').value).toBe('github-test-token');
+  expect(field('Owner').placeholder).toBe('my-username-or-org');
+  expect(field('Repository').placeholder).toBe('my-site');
+  expect(field('Draft branch').placeholder).toBe('draft');
+  expect(field('Publish branch').placeholder).toBe('main');
+  expect(field('Publish branch').value).toBe('main');
+  expect(field('Access token').placeholder).toBe('github_pat_…');
   await act(async () =>
     host
       .querySelector<HTMLButtonElement>('[aria-label="Git provider"]')!
@@ -1297,6 +1302,14 @@ it('selects GitLab and clears credentials when the provider or instance changes'
   );
   expect(field('GitLab instance URL').value).toBe('https://gitlab.com');
   expect(field('Namespace (including subgroups)')).not.toBeNull();
+  expect(field('Namespace (including subgroups)').placeholder).toBe(
+    'my-team/my-subgroup',
+  );
+  expect(field('GitLab instance URL').placeholder).toBe('https://gitlab.com');
+  expect(field('Repository').placeholder).toBe('my-site');
+  expect(field('Draft branch').placeholder).toBe('draft');
+  expect(field('Publish branch').value).toBe('main');
+  expect(field('Access token').placeholder).toBe('glpat-…');
   expect(field('Access token').value).toBe('');
   expect(sessionStorage.getItem('lean:git')).toBeNull();
   const change = async (label: string, value: string) =>
@@ -1314,6 +1327,30 @@ it('selects GitLab and clears credentials when the provider or instance changes'
   // Partially typed URLs remain editable; validation happens on Connect.
   await change('GitLab instance URL', 'https:');
   expect(field('GitLab instance URL').value).toBe('https:');
+  await change('Access token', 'gitlab-test-token');
+  await change('Publish branch', 'release/live');
+  expect(field('Access token').value).toBe('');
+  expect(field('Publish branch').value).toBe('release/live');
+  await click('Close');
+  await click('Connection');
+  expect(field('Publish branch').value).toBe('release/live');
+});
+
+it('restores the publish branch from the retained draft repository', async () => {
+  retain({
+    version: 1,
+    repository: { ...config, publishBranch: 'production' },
+    base: null,
+    content: structuredClone(content),
+  });
+  await mount();
+  await click('Settings');
+  await click('Connection');
+  expect(
+    host.querySelector<HTMLInputElement>('[aria-label="Publish branch"]')!
+      .value,
+  ).toBe('production');
+  expect(readRecovery()!.repository.publishBranch).toBe('production');
 });
 
 it('allows a fresh legacy site to reach connection validation without reporting unsaved edits', async () => {
@@ -1489,24 +1526,68 @@ it('keeps nested list creation local to its parent until both Create actions, an
   expect(readRecovery()!.content).toEqual(before);
 });
 
-it('stages catalog blocks until Create and cancels without inserting into the page or recovery', async () => {
+it('previews pending blocks and their edits without inserting into recovery until Create', async () => {
   await mount();
   await click('Home');
   const before = readRecovery()!.content;
   await click('Add block');
   await click('Quote', host);
   expectCreation('block');
+  const preview = () => host.querySelector('[data-preview-island]')!;
+  expect(preview()).not.toBeNull();
+  expect(preview().parentElement?.dataset.selected).toBe('true');
+  expect(host.textContent).not.toContain('Add a block to start building.');
   await input('Attribution', 'Uncommitted attribution');
   expect(readRecovery()!.content).toEqual(before);
-  expect(host.querySelector('[data-preview-island]')).toBeNull();
+  expect(JSON.parse(preview().getAttribute('data-preview-props')!).author).toBe(
+    'Uncommitted attribution',
+  );
+  expect(button('Save draft').disabled).toBe(true);
   await click('Cancel');
   expect(readRecovery()!.content).toEqual(before);
+  expect(preview()).toBeNull();
   await click('Add block');
   await click('Quote', host);
   await input('Attribution', 'Created attribution');
+  const pending = preview();
   await click('Create block');
   expect(readRecovery()!.content.pages[0].blocks).toHaveLength(1);
-  expect(host.querySelector('[data-preview-island]')).not.toBeNull();
+  expect(readRecovery()!.content.pages[0].blocks[0].props.author).toBe(
+    'Created attribution',
+  );
+  expect(host.querySelectorAll('[data-preview-island]')).toHaveLength(1);
+  expect(preview()).toBe(pending);
+});
+
+it('previews an appended block on an existing page and discards it when navigating away', async () => {
+  const initial = structuredClone(content);
+  initial.pages[0].blocks = [
+    {
+      id: 'existing-quote',
+      type: 'quote',
+      version: 1,
+      props: { author: 'Existing' },
+    },
+  ];
+  await mount(initial);
+  await click('Home');
+  const before = readRecovery()!.content;
+  await click('Add block');
+  await click('Quote', host);
+  await input('Attribution', 'Temporary quote');
+  const rendered = [...host.querySelectorAll('[data-preview-island]')];
+  expect(rendered).toHaveLength(2);
+  expect(rendered[0].getAttribute('data-preview-island')).toBe(
+    'existing-quote',
+  );
+  expect(
+    JSON.parse(rendered[1].getAttribute('data-preview-props')!).author,
+  ).toBe('Temporary quote');
+  expect(readRecovery()!.content).toEqual(before);
+  await click('Pages');
+  await click('Home');
+  expect(host.querySelectorAll('[data-preview-island]')).toHaveLength(1);
+  expect(readRecovery()!.content).toEqual(before);
 });
 
 it('stages footer creation and replacement in dedicated forms without changing the live layout before Create', async () => {

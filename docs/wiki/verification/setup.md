@@ -1,6 +1,6 @@
 ---
 title: Verification setup
-updated: 2026-10-08
+updated: 2026-10-12
 ---
 # Verification setup
 
@@ -10,6 +10,7 @@ Run from the lean-sitebuilder repository with Node 22.12+ and pinned pnpm 10.34.
 
 ```sh
 pnpm install --frozen-lockfile
+# First setup only: copy .env.example to .env and set ADMIN_EMAIL/ADMIN_PASSWORD.
 pnpm validate:content
 pnpm verify
 pnpm preview --port 4321
@@ -25,9 +26,10 @@ Regression tests read `tests/fixtures/content/`, independently of the client sit
 
 ## Identity and isolation
 
-Record `git rev-parse HEAD` and dirty status. Hash application files, tests, content, configuration, and lockfile for a dirty build; the initial report links its manifest. `pnpm build` produces `.astro/client-graph.json`; `pnpm check:build` verifies output references/sharing and reports gzip module sizes. These sizes exclude dynamically loaded editor tools and runtime-fetched content; they are not a full page transfer measurement.
+Record `git rev-parse HEAD` and dirty status. Hash application files, tests, content, configuration, and lockfile for a dirty build; the initial report links its manifest. `pnpm build` produces `.astro/client-graph.json`; `pnpm check:build` verifies output references/sharing and reports gzip module sizes. These sizes exclude the encrypted admin envelope embedded in HTML and runtime-fetched content; they are not a full page transfer measurement.
 
-Use a fresh browser tab for local fixtures. No password or provider configuration is needed for local editing. Session recovery survives reload; Settings → Discard edits resets to the loaded baseline. Browser-only changes do not alter local content files. Do not reuse the user's unrelated tabs or data as fixtures.
+Use a fresh browser tab for local fixtures. Development uses `admin@example.com` / `asdf1234`. Production build/preview requires
+the configured ADMIN_EMAIL and ADMIN_PASSWORD pair. Provider configuration is optional for local editing. Session recovery survives reload; Settings → Discard edits resets to the loaded baseline. Browser-only changes do not alter local content files. Do not reuse the user's unrelated tabs or data as fixtures.
 
 ## Available drivers and fixtures
 
@@ -41,5 +43,12 @@ The optional bundled public fixtures are Home, Block examples, the nine-block ch
 ## Evidence and cleanup
 
 Store outcome logs, source manifests, and observations under `evidence/<run-id>/`, without tokens or private content. Link them from the run. Preserve evidence before cleanup.
+
+On 2026-10-09, historical hosting-specific filenames were removed from published
+source manifests to keep documentation provider neutral (DEC-142). Affected
+manifests retain each omitted file's hash in `redactedFiles` and explain the change
+in `redactionNote`. Other file hashes are unchanged. Where present, the original
+aggregate hash is retained as historical evidence; it cannot be recomputed from
+the redacted manifest alone because the original filename was part of its input.
 
 Astro 7 starts this preview in the background. Check `pnpm exec astro preview status`, then stop the owned instance with `pnpm exec astro preview stop`; verify status reports no running preview. Do not rely on closing its launcher terminal. Close/reset test tabs when the browser tool is available; if it is not, record remaining browser-only fixture edits instead of manipulating another session. Remove any exported test backups only when their identity is known. There are no polling collectors or background provider workers.

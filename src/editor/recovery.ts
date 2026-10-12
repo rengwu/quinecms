@@ -33,7 +33,9 @@ export function readRecovery(): Recovery | null {
       (value.repository.provider !== undefined &&
         !['github', 'gitlab'].includes(value.repository.provider)) ||
       (value.repository.instance !== undefined &&
-        typeof value.repository.instance !== 'string')
+        typeof value.repository.instance !== 'string') ||
+      (value.repository.publishBranch !== undefined &&
+        typeof value.repository.publishBranch !== 'string')
     )
       return null;
     if (!editableShape(value.content)) return null;
@@ -72,16 +74,6 @@ export function download(value: unknown, name: string) {
   a.click();
   setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
-export async function digest(value: string) {
-  return Array.from(
-    new Uint8Array(
-      await crypto.subtle.digest('SHA-256', new TextEncoder().encode(value)),
-    ),
-  )
-    .map((n) => n.toString(16).padStart(2, '0'))
-    .join('');
-}
-
 // Recovery may contain unfinished schema edits that Save rightly rejects.
 // Check renderable shape here, not publication/structural validity of those edits.
 function editableShape(c: unknown): c is Content {

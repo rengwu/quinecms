@@ -1,12 +1,13 @@
 ---
 title: Feature map
-updated: 2026-10-08
+updated: 2026-10-11
 ---
 # Feature map
 
 Start with [Building sites with local agents](local-authoring.md) for local authoring and delivery. Capabilities are options to use where they fit the design and client; this map describes their current contracts and checks. Verification results apply only to the recorded build. Decisions and historical technical discussions remain in the wiki.
 
 - [Local authoring and validation](local-authoring.md) — FEAT-local-authoring.
+- [Quine recreation trial](../journal/2026-10-11-quine-rebuild.md) — complete isolated example, client editing map and discoverability findings.
 
 - [Collections, objects and references](content-model.md) — FEAT-content-model.
 - [Site Layout library](site-layouts.md) — FEAT-site-layouts.
@@ -15,6 +16,7 @@ Start with [Building sites with local agents](local-authoring.md) for local auth
 - [Static pages and registered blocks](static-blocks.md) — FEAT-static-blocks.
 - [Generic pages and collection content](generic-pages.md) — FEAT-generic-pages.
 - [Visual editing and recovery](editor.md) — FEAT-editor.
+- [Encrypted static admin](admin-encryption.md) — FEAT-admin-encryption.
 - [GitHub/GitLab draft saves and publishing](publishing.md) — FEAT-publishing.
 - [Direct media uploads](media.md) — FEAT-media.
 

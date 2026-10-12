@@ -44,4 +44,4 @@ identifies the dirty source tree, exact minimal fixture, logs and limits.
 This increment adds no remote agent service, MCP layer or general mutation API.
 Additional reusable example packages and fresh-agent benchmarks remain optional
 future work. Local tests do not measure an agent's discovery success or establish
-live GitHub/R2/Netlify behavior. No deployment or provider write occurred.
+live GitHub/R2/hosting behavior. No deployment or provider write occurred.

@@ -51,6 +51,24 @@
   font-size: 18px;
   margin-right: auto;
 }
+.saveControls {
+  display: flex;
+  align-items: center;
+  gap: var(--editor-space-3);
+}
+.saveStatus {
+  color: var(--text-color-kumo-subtle);
+  font-size: 12px;
+  white-space: nowrap;
+}
+.saveStatus .saveStatusAction {
+  padding: 0;
+  height: auto;
+  min-height: 0;
+  font-size: inherit;
+  line-height: inherit;
+  text-decoration: underline;
+}
 .drawer {
   position: fixed;
   z-index: 1;
@@ -506,6 +524,7 @@
 }
 .previewBlock {
   position: relative;
+  scroll-margin-top: 76px;
 }
 .previewBlock[data-selected='true'] {
   outline: 2px solid #91b673;
@@ -691,9 +710,18 @@
   }
   .topbar {
     gap: 6px;
+    padding: 6px 8px;
   }
   .brand {
     font-size: 15px;
+  }
+  .saveControls {
+    flex-direction: column-reverse;
+    gap: 0;
+  }
+  .saveStatus {
+    font-size: 10px;
+    line-height: 14px;
   }
   .preview[data-size='mobile'] {
     max-width: none;

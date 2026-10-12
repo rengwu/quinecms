@@ -1,10 +1,53 @@
 ---
 title: Visual editing and recovery
-updated: 2026-10-08
+updated: 2026-10-12
 ---
 # Visual editing and recovery
 
 **ID:** FEAT-editor
+
+## Git save status and recovery
+
+DEC-148–DEC-151 add a small status beside **Save draft**, with repository details
+in Settings. This supersedes DEC-050's removal of save-status text only. Silent tab
+recovery, submission-time validation and provider guards remain. Browser-to-local-file
+transfer is deferred. [Implementation](../journal/2026-10-12-git-save-ux.md).
+
+The status shows **Local preview**, **Unsaved changes**, **Saving…**, **Saved to draft**,
+**Not saved**, or **Newer draft available**. Saved means content matches the last
+loaded/saved repository snapshot, including a recovered snapshot. It does not promise
+that the remote is still current. There is no polling; providers check the branch
+before creating a save commit and retain their existing concurrent-update protections.
+Settings shows the content's repository and draft/publish branches; partially edited
+connection settings do not relabel the pending content's destination.
+
+A stale save opens **A newer version is available**, preserving browser edits and
+offering **Export backup** and **Load latest version**. The same recovery opens when
+reconnecting an outdated recovered draft to the same repository. A different repository
+is handled separately, without replacing pending edits or calling it a newer version.
+Save and Publish are disabled while a stale base is known. Closing the dialog preserves
+edits; the status is a button that reopens recovery.
+
+Loading asks for confirmation before replacing browser content. Cancellation and load
+failure preserve content and its original baseline. A successful load resets the status
+and closes obsolete document/creation selections. Export is optional; requesting a
+browser download does not prove a file reached disk. Reapply wanted changes manually;
+whole-backup import replaces content and is not a merge. Network, permission and
+validation errors remain ordinary errors, with **Not saved** for pending content and
+Save available to retry.
+
+Verification: `pnpm exec vitest run tests/editor-save.test.ts tests/editor-submission.test.ts tests/github.test.ts tests/gitlab.test.ts`
+covers normal saves, stale rejection, provider races, export payloads, cancelled/failed/
+successful loads, recovered edits and destination changes. The component tests render
+real Kumo controls with mocked provider boundaries and preview islands.
+
+Browser recipe: in an isolated disposable editor, connect a test repository, edit a
+page, save, advance the remote separately, edit again and try saving. Inspect the status
+and recovery controls at desktop and narrow widths. Close/reopen recovery, export a
+backup, cancel loading, then confirm loading; verify only the successful load replaces
+content. No real provider resources were available for this run. Native browser control
+also failed to start; browser visuals and completed downloads remain unverified. See the
+[verification run](../verification/runs/2026-10-12-git-save-ux.md).
 
 ## Intent and basis
 
@@ -26,7 +69,7 @@ Pages and the other admin section headings share 18px, weight 600, line-height 1
 
 ## Entry points and prerequisites
 
-Open `/admin/` using [setup](../verification/setup.md). Without a configured password, the Pages table opens directly. Repository credentials are needed only for remote loading/saving. The main sidebar provides Pages, Content, Schemas, Media, Site Layout and Settings. Schemas separates Collections and Objects; the [content-model contract](content-model.md) describes shared definitions, nested values, references and single entries. Area switching preserves local content; existing-item editors use ← Back to return to their parent screen; creation forms use Cancel and Create instead.
+Open `/admin/` using [setup](../verification/setup.md). Development uses `admin@example.com` / `asdf1234`; production uses the configured email and password to decrypt the dashboard. See [encrypted admin](admin-encryption.md). Repository credentials are needed only for remote loading/saving. The main sidebar provides Pages, Content, Schemas, Media, Site Layout and Settings. Schemas separates Collections and Objects; the [content-model contract](content-model.md) describes shared definitions, nested values, references and single entries. Area switching preserves local content; existing-item editors use ← Back to return to their parent screen; creation forms use Cancel and Create instead.
 
 ## Expected outcomes
 
@@ -42,7 +85,7 @@ Create/edit/delete pages and entries; reorder blocks by dragging their rows (Alt
 
 Schema rich-text fields and Text blocks provide visual headings, paragraphs, bold/italic, links, and lists with Markdown storage. Uploaded-image references and YouTube embeds round-trip in the visual editor. Unsupported Markdown remains available as source text. Custom React widgets and shared pure validators support compound block fields. Content browses collections → entry lists → schema-defined entry values only. Schemas browses Collections / Objects → definitions → individual fields, with label/key/type/required/options/default controls. Schema editing protects populated keys/types/options. Entries remain in Content and never appear in the Pages table. Add entry is confined to entry lists; Add collection belongs to the schema list. All Add actions (page, block, entry, collection, field and link) use the same blue Kumo primary variant, base size and plus icon. Add block remains aligned right beside Blocks, outside the draggable list. Main navigation preserves all local content edits. Site Layout delegates title, appearance and navigation to the active author settings; Settings owns Repository connection, admin Appearance, Backups, Session and Factory reset; content spacing belongs to Site Layout.
 
-Local content and its base/repository identity survive reloads silently in tab storage. Unreadable recovery data is preserved for download and requires explicit discard before it can be overwritten. This includes unfinished schema edits that cannot yet be saved. Export/import backups contain content, not credentials or binary uploads. Storage failure is visible. Lock clears Git provider/R2 credentials and returns to the gate. Connection selects GitHub or GitLab, including an HTTPS GitLab instance and nested namespace when needed. Changing the destination clears the access token; retained Git credentials are bound to provider, instance, repository and draft branch. See [publishing](publishing.md).
+Local content and its base/repository identity survive reloads silently in tab storage. Unreadable recovery data is preserved for download and requires explicit discard before it can be overwritten. This includes unfinished schema edits that cannot yet be saved. Export/import backups contain content, not credentials or binary uploads. Storage failure is visible. Lock clears Git provider/R2 credentials and returns to the gate. Connection selects GitHub or GitLab, including an HTTPS GitLab instance and nested namespace when needed. Changing the destination clears the access token; retained Git credentials are bound to provider, instance, repository, draft branch and publish branch. See [publishing](publishing.md).
 
 Local development skips the unsaved-edit reload confirmation at the user's request; production retains it. Tab recovery continues in both. Site Layout owns content max-width/page gutter and their per-layout defaults (DEC-130); Starter also owns the typography controls. Settings contains Repository connection, admin Appearance, Backups, Session and Factory reset. Website tokens stay scoped away from admin controls. See the [Site Layout contract](site-layouts.md).
 
@@ -52,13 +95,15 @@ The block editor places its version selector beside the block title in one non-w
 
 ## Factory reset and repository settings
 
+**Lock editor** in Settings → Session clears Git/R2 credentials and legacy gate flags, preserves the tab draft, unmounts the editor and reloads the encrypted login page. Email and password are required again. Reloading also requires fresh login; the application never persists the decryption key or login credentials. See [encrypted admin](admin-encryption.md) for the storage and offline-guessing limits.
+
 The Factory reset button uses the same left-aligned action row as the other Settings controls, directly below its description. The confirmation dialog retains right-aligned Cancel/Reset site actions; the settings button only opens that dialog and is not a terminal form action.
 
 **Settings → Factory reset** opens a confirmation dialog with Cancel and a destructive **Reset site** action. Cancel/dismiss changes nothing. Confirming clears every static/generic page and its blocks, every collection and object schema, every entry and every media-library record. It replaces all site settings (including navigation, header, footer and globals) with the installed Starter v1 defaults, even when Starter was already active or excluded from the layout picker. The site ID remains stable; no placeholder home page or demo records are created.
 
 The reset is an unsaved local draft and survives tab reload through normal recovery. **Save draft** persists it to the connected draft branch; it does not publish automatically. An empty snapshot can be saved, but publication still requires a static home page at `/`. **Discard edits** restores the last loaded/saved snapshot until the reset is saved. Export a backup first to retain unsaved work. Repository identity, saved baseline, credentials and admin appearance remain intact. Uploaded R2 objects remain in storage; only their library records are cleared, as explicitly requested.
 
-**Connection** lives in Settings under Repository, rather than in the header. It opens the existing provider/repository dialog and shares the editor's busy-state lock. The header retains Save draft and Publish. [Implementation and verification](../journal/2026-10-08-factory-reset.md).
+**Connection** lives in Settings under Repository, rather than in the header. It opens the existing provider/repository dialog and shares the editor's busy-state lock. Both GitHub and GitLab forms include example placeholders and a Publish branch field defaulting to `main`. Changing the publish branch clears the connection and token; publication confirms the chosen branch. The header retains Save draft and Publish. [Implementation and verification](../journal/2026-10-08-factory-reset.md).
 
 ## Form action alignment (DEC-131)
 
@@ -75,6 +120,14 @@ The preference is local to this browser and origin (`lean:admin-theme` in local 
 Add opens a dedicated **New …** form. Entering or typing in that form does not add anything to site content, recovery, exports or saves. Its terminal actions are **Cancel** and **Create …**, with no Back or Delete/Remove action for the pending item. Cancel, leaving the screen or reloading discards unfinished creation. Existing items keep their normal Back and deletion controls.
 
 Block and footer creation headings separate the action from the selected type: **New block** or **New footer** is the heading, with the definition label (for example, chartr · Workspace) directly underneath in smaller, muted text. The subtitle may wrap, and the grouped heading is separated from the first field by the standard form gap.
+
+While a page's **New block** form is open, the right-hand preview appends and
+highlights that pending block in the current layout. Field edits update it live,
+including media and generic binding placeholders. The preview scrolls to the new
+block once its renderer has mounted. It is a temporary rendering snapshot: Save
+draft, recovery and exports still exclude it until **Create block**. Create keeps
+the same instance; Cancel or leaving the form removes the temporary preview.
+See [DEC-147 and verification](../journal/2026-10-11-block-creation-preview.md).
 
 This applies to static/generic pages, entries, many/single-entry collections, reusable object definitions, nested schema fields, owned object values, list rows, page blocks and footers. Shared list fields carry the same interaction into navigation links/dropdowns, footer columns/links and repeated block content. Page-kind or catalog selection may precede the form; choosing a candidate still does not insert it. Pages first collect their title/path, then Create page opens the existing page editor for block authoring.
 

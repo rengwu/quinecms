@@ -8,7 +8,7 @@ import {
   gitlabRequest,
   type Request,
 } from '../src/integrations/gitlab';
-import { Conflict } from '../src/integrations/repository';
+import { Conflict, type Repository } from '../src/integrations/repository';
 import { repositoryKey, connect } from '../src/integrations/git';
 import { fixtureFiles } from './support/fixture';
 import { modelFixture } from './support/content-model';
@@ -20,7 +20,7 @@ const repository = {
   repo: 'site',
   branch: 'draft',
 };
-function mock() {
+function mock(options: Partial<Repository> = {}) {
   const initial = { ...fixtureFiles(), ...filesFor(modelFixture()) };
   const commits: Record<
     string,
@@ -144,7 +144,12 @@ function mock() {
     throw Error(`${method} ${path}`);
   };
   return {
-    store: new GitLabStore(request, repository, definitions, {}),
+    store: new GitLabStore(
+      request,
+      { ...repository, ...options },
+      definitions,
+      {},
+    ),
     request,
     refs,
     commits,
@@ -167,6 +172,33 @@ function mock() {
 }
 
 describe('GitLab transactions (mock API)', () => {
+  it('creates drafts from and publishes exact snapshots to a custom publish branch', async () => {
+    const target = 'release/live';
+    const m = mock({ publishBranch: target });
+    m.commits.published = { files: m.commits.c0.files, parent_ids: ['c0'] };
+    m.refs[target] = 'published';
+    delete m.refs.draft;
+    const base = await m.store.load();
+    expect(base.sha).toBe('published');
+    const next = structuredClone(base.content);
+    next.site.title = 'Ready';
+    const saved = await m.store.save(base, next);
+    next.site.title = 'Newer draft';
+    const later = await m.store.save(saved, next);
+    m.loseMerge();
+    await m.store.publish(saved);
+    expect(m.refs[target]).toBe(saved.sha);
+    expect(m.refs.draft).toBe(later.sha);
+    expect(m.refs.main).toBe('c0');
+    expect(Object.values(m.mrs).at(-1)).toMatchObject({
+      target_branch: target,
+      title: 'content: publish site',
+    });
+    m.race();
+    await expect(m.store.publish(later)).rejects.toBeInstanceOf(Conflict);
+    expect(m.refs[target]).toBe('other');
+    expect(m.refs.draft).toBe(later.sha);
+  });
   it('saves a factory reset by removing all old content records from the draft', async () => {
     const m = mock();
     const base = await m.store.load();

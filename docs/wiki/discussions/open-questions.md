@@ -1,9 +1,38 @@
 ---
 title: Open questions
-updated: 2026-10-08
-status: Content-model scope implemented; no active interview
+updated: 2026-10-12
+status: Git save UX implemented; no active interview
 ---
 # Open questions
+
+## Development login — resolved
+
+DEC-152 directly requests one fixed dev login (`admin@example.com` / `asdf1234`)
+for the existing shared dashboard and content. It replaces environment credentials
+in dev; production retains one configured pair. No account system or separate data
+is added. See the [admin contract](../features/admin-encryption.md).
+
+## Content ownership and handoff — selected increment settled
+
+DEC-148–DEC-151 settle the first increment: a small save-status message, destination
+details in Settings and clearer recovery from a stale Git save. The client and
+agent are assumed to take turns; existing remote checks remain, without CRDTs or
+automatic merging. The UI is implemented; browser visual checks are blocked by
+unavailable native automation. [Implementation and checks](../journal/2026-10-12-git-save-ux.md).
+
+Q5 explicitly defers browser-to-local-file transfer. Direct local saves and an
+export-plus-command path remain possible future choices, not blockers for this
+increment. Other retrospective items remain outside scope. The [topic](content-handoff.md)
+preserves the CRDT assessment and earlier unanswered handoff question.
+
+## Quine recreation trial — delivered, follow-up proposals
+
+DEC-143–DEC-146 settle the [Quine trial](../journal/2026-10-11-quine-rebuild.md).
+The isolated example is implemented and locally verified; the active demo remains
+intact. The journal separates delivered fixes from proposals: optional in-editor
+editing guidance, content-neutral list wording, validated backup-to-files tooling,
+local-asset metadata helpers and a fresh-agent benchmark. None is implicitly
+approved as a larger CMS project.
 
 ## GitLab support — engineering default
 
@@ -151,9 +180,13 @@ For Git transactions, the proposed engineering path creates a tree and commit ba
 
 Research: Astro supports static prerendering and multiple UI framework integrations, but `.astro` templates have no browser component runtime. A live unsaved editor requires browser-renderable implementations. See [static rendering](https://docs.astro.build/en/guides/on-demand-rendering/) and [framework components](https://docs.astro.build/en/guides/framework-components/). JSON Schema supplies a portable validation vocabulary; editor controls/layout still need UI metadata. See [JSON Schema](https://json-schema.org/overview/what-is-jsonschema). An iframe creates a separate browsing context; using it isolates document styling but does not share live framework instances with the parent. See [iframe](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/iframe). The shared-document preview boundary was selected in Q31.
 
+## Encrypted admin — direct instruction, 2026-10-09
+
+DEC-141 supersedes the convenience gate in DEC-009 and passwordless behavior in DEC-139. The user selected Argon2id + AES-256-GCM build-time encryption and email/password input. No authentication provider or runtime backend is added. Parameters and explicit limits are documented in [encrypted admin](../features/admin-encryption.md).
+
 ## Resolved in round two
 
-Q8–Q14 are resolved by DEC-009 through DEC-015 in the [decision register](../decisions/index.md): convenience login, both repository visibilities, individual tokens, Netlify-managed deployment, shared page/post block editing, browser previews, and developer-installed blocks.
+Q8–Q14 are resolved by DEC-009 through DEC-015 in the [decision register](../decisions/index.md): convenience login, both repository visibilities, individual tokens, externally managed deployment, shared page/post block editing, browser previews, and developer-installed blocks.
 
 ## Resolved in round three
 

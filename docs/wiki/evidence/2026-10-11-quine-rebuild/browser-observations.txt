@@ -1,0 +1,60 @@
+Quine recreation — implementing-agent observations, 2026-10-11 local date
+
+Reference: https://quinesystems.com/ and sibling astro-payload/sites/quine/astro.
+Browser: native Safari through cua_repl. Tool screenshots/accessibility snapshots
+were inspected in the session; no filesystem screenshot artifacts are claimed.
+
+Development staging: lean-example-quine-9oaDWp, actual URL 127.0.0.1:4323.
+The requested port 4322 was occupied by the existing demo; that server was retained.
+An initial HTTP 200/static image hid a failed hydration renderer. Explicit linked
+dependency access fixed the inert gallery. Separate per-checkout Vite caches fixed
+a stale hash-wasm request that had disabled the login control during parallel builds.
+
+Public desktop:
+- Hero typography, logo, section arrangement, local images and dark dot textures inspected.
+- Works anchor followed; Flash Coach click changed the project image and Visit URL.
+- Down arrow selected TDCX, reflected in selected tab, image description and Visit URL.
+- Final production repeat: Flash Coach -> Down -> selected TDCX, image TDCX website,
+  link Visit TDCX Website at tdcx.com/.
+
+Narrow public views:
+- 390 x 844: mobile wordmark wraps in two lines, gallery image stacks above rows.
+- 320 x 844: contact email fits; contact texture/wordmark present; no visible horizontal overflow.
+- Responsive mode exited afterward. No OS reduced-motion change made.
+
+Development editor /admin/:
+- Fixture login quine@example.test / quine-preview successfully unlocked the dashboard.
+- Pages -> Home listed Introduction, What we do, Working with us, Works and Contact.
+- Introduction heading changed to "A memorable first impression, maintained by you."
+  Preview updated, including the editor's mobile-width mode. Cancel restored original
+  heading; Save draft disabled.
+- Works -> Projects -> Flanksource title changed to "Flanksource — edited in the CMS".
+  Preview tab and Visit label updated immediately.
+- Project image selector chose Quine · Contact texture; preview image changed and
+  alternative text fell back to the current project title after the override cleared.
+- Cancel block changes restored Flanksource title/image; Save draft disabled.
+- Add item opened New item with title/year/image/URL and Create/Cancel. Cancel left
+  exactly the original three rows.
+- Dragged Flanksource from first to last. CMS announced "Block moved to position 3 of 3";
+  preview order became Flash Coach, TDCX, Flanksource. Cancel restored the original
+  list and Save draft disabled. No test content was saved or published.
+- Settings -> Export backup reached Safari's download-permission prompt. Cancelled;
+  no completed browser download/import is claimed.
+
+Production:
+- Static dist first served on 4324 from lean-example-quine-PPQclh. Public gallery worked.
+- /admin/ fixture credentials unlocked Pages with one Home page.
+- Served final lean-example-quine-5oj7Zu dist at the same port after the tiny texture
+  fallback-opacity repair. Reloaded homepage and repeated pointer/keyboard gallery test.
+
+Automated/source checks:
+- pnpm verify: exit 0, 193 tests in 28 files, zero errors/warnings, build/artifacts passed.
+- pnpm example:quine build: exit 0, publication validation, two routes and artifacts passed.
+- backup.json compared with canonical example source; five media records and all
+  public/quine assets compared byte-for-byte with built output.
+- git diff -- content empty; no root content swap.
+- node docs/wiki/_build.mjs and --check run after final documentation edits.
+- git diff --check run after final edits.
+
+Limits: representative Safari checks, approximate halftone, no live Git/R2/hosting
+operations, no fresh-agent or pixel-diff benchmark. Existing unrelated changes retained.

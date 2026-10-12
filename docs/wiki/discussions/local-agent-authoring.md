@@ -154,6 +154,6 @@ Measure success and repair effort instead of claiming that any document guarante
 
 The browser check used a fresh local Safari session: Pages, Schemas expansion, Objects, nested New object/New field forms, cancellation back to an empty object list, and generic block bindings/fallback fields were accessible. Keyboard reorder instructions were exposed. This is evidence of usable UI semantics for those flows, not complete browser-agent coverage.
 
-No fresh independent agent benchmark was run. No live GitHub, R2 or Netlify operation was performed. Media upload currently uses browser image-processing APIs, so local headless upload parity is not established by this audit and is not required for the proposed documentation-first milestone.
+No fresh independent agent benchmark was run. No live GitHub, R2 or hosting-provider operation was performed. Media upload currently uses browser image-processing APIs, so local headless upload parity is not established by this audit and is not required for the proposed documentation-first milestone.
 
 Concurrent admin-theme and usage-display work appeared during the investigation. Exact baseline verification and the new-site failure were therefore repeated in a temporary archive of the recorded commit. The findings do not certify the later working tree. The audit changes planning records and evidence only; it leaves implementation recommendations proposed.

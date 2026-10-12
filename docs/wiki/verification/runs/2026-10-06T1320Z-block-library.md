@@ -32,6 +32,6 @@ Development instance: pre-existing `127.0.0.1:4321`; isolated test window and `/
 
 ## Limits and follow-up
 
-Repeat only the final production-browser smoke check when UI access is available. Browser sampling is not a full visual/device matrix for all 72 layouts. Physical mobile devices, third-party form service behavior, live GitHub/R2 saves and Netlify deployment were not selected; none were changed. Forms rely on their configured endpoint's response page.
+Repeat only the final production-browser smoke check when UI access is available. Browser sampling is not a full visual/device matrix for all 72 layouts. Physical mobile devices, third-party form service behavior, live GitHub/R2 saves and hosting deployment were not selected; none were changed. Forms rely on their configured endpoint's response page.
 
 The temporary page, endpoint, production-preview process and scratch logs were cleaned up; evidence remains. The original development server was preserved. UI access loss prevented confirmation of test-window closure, so no unrelated browser sessions were touched. Verification was performed by the implementing agent; no independent review is claimed.

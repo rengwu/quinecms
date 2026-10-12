@@ -20,6 +20,9 @@ fields are often helpful; choose the amount of structure that suits the project.
   to installed definitions and implementations; inspect those relevant to the task.
 - `src/core/types.ts`: exact record/field types. The [feature map](docs/wiki/features/index.md)
   links current behavior in more detail. `src/generated/` is regenerated build output.
+- Recreating an existing site: the [recreation workflow](docs/wiki/features/local-authoring.md#recreating-an-existing-site)
+  maps reference sections to editable content. The [isolated Quine example](examples/quine/README.md)
+  demonstrates a custom layout, blocks, local media and a client editing map.
 
 For an existing client site, it is useful to check the working tree and the latest
 saved client draft before making changes. Browser edits do not write local files.

@@ -16,7 +16,7 @@ Pages → open a static or generic page → Add block. Site Layout → Starter �
 
 ## Expected outcomes
 
-- A large Kumo dialog searches names, themes and tags. Theme and multiple tag filters combine; Reset restores all compatible choices. Clicking a card opens an uncommitted New block (or New footer) form; only Create inserts it. Cancel discards the candidate. This follows the sitewide [creation contract](editor.md#creation-forms-dec-129). Preview is separate and supports desktop/mobile widths. Thumbnails render the actual defaults and mount only near the visible grid.
+- A large Kumo dialog searches names, themes and tags. Theme and multiple tag filters combine; Reset restores all compatible choices. Clicking a card opens an uncommitted New block (or New footer) form; only Create inserts it. Cancel discards the candidate. This follows the sitewide [creation contract](editor.md#creation-forms-dec-129). A separate catalog preview supports desktop/mobile widths. During page-block creation, the right-hand page preview also renders the candidate and its current field values (DEC-147). Thumbnails render the actual defaults and mount only near the visible grid.
 - The catalog has a visible **Add block** title aligned with the accessible × in a fixed header row; the footer picker uses **Choose a footer**. This restores the visible title following direct screenshot feedback on 2026-10-08, superseding the title removal on 2026-10-06. There is no bottom Close action. Filters, tags, count and cards share one vertical scroll area below the header. Tags stay on one horizontally scrollable line with the scrollbar hidden; small left/right buttons at its ends scroll by up to 240px, disable at the corresponding edge and honor reduced motion. Reset filters stays visible, sizes to its text and disables when no filter is set. Cards cap at 270px wide. Preview uses the same scroll area and starts at the top when opened or exited.
 - There are 45 Tailwind UI base variants: three each for Hero, Header introductions, Content, CTA, Bento, Features, FAQ, Stats, Team, Testimonials, Logos, Blog, Contact, Newsletter and Footer. Another 27 generic variants cover Hero, Header, Content, Bento, Features, FAQ, Stats, Team and Testimonials. Older versions remain installed. Starter is the fallback theme for older definitions.
 - Only compatible page kinds and latest nondeprecated versions appear in the picker. The three Starter footer variants are selected in its layout settings rather than inserted as page blocks. Existing records keep their stored version.
@@ -39,7 +39,7 @@ Pages → open a static or generic page → Add block. Site Layout → Starter �
 
 ## Coverage and limitations
 
-All 72 new variants have automated rendering coverage. Browser checks sampled catalog, repeatable editing, shared chrome and public layouts; they are not a complete visual audit of every variant on every device. The theme is an adapted starting library, not finished brand-specific designs. External form service behavior, live GitHub/R2/Netlify operations and physical mobile devices are outside the local checks.
+All 72 new variants have automated rendering coverage. Browser checks sampled catalog, repeatable editing, shared chrome and public layouts; they are not a complete visual audit of every variant on every device. The theme is an adapted starting library, not finished brand-specific designs. External form service behavior, live GitHub/R2/hosting operations and physical mobile devices are outside the local checks.
 
 ## Verification history
 

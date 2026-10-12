@@ -9,6 +9,8 @@ import type { Content, Definition, Snapshot } from '../core/types';
 import {
   checkDraft,
   checkPublication,
+  checkBranches,
+  publishBranch,
   Conflict,
   isSource,
   type Repository,
@@ -26,7 +28,9 @@ export class GitHubStore implements RepositoryStore {
     public repository: Repository,
     private definitions: Definition[],
     private expectedSources: Record<string, string> = sourceFiles,
-  ) {}
+  ) {
+    checkBranches(repository);
+  }
   private async api(route: string, p: Record<string, unknown> = {}) {
     return (
       await this.request(route, {
@@ -49,11 +53,11 @@ export class GitHubStore implements RepositoryStore {
       sha = await this.ref(this.repository.branch);
     } catch (e) {
       if ((e as any).status !== 404) throw e;
-      const main = await this.ref('main');
+      const published = await this.ref(publishBranch(this.repository));
       try {
         await this.api('POST /repos/{owner}/{repo}/git/refs', {
           ref: `refs/heads/${this.repository.branch}`,
-          sha: main,
+          sha: published,
         });
       } catch (e) {
         if ((e as any).status !== 422) throw e;
@@ -177,28 +181,29 @@ export class GitHubStore implements RepositoryStore {
   }
   async publish(snapshot: Snapshot) {
     checkPublication(snapshot, this.definitions, this.expectedSources);
-    const main = await this.ref('main');
-    if (main === snapshot.sha) return;
-    const mainSnapshot = await this.read(main);
-    const schemaIssues = schemaChanges(mainSnapshot.content, snapshot.content);
+    const target = publishBranch(this.repository);
+    const published = await this.ref(target);
+    if (published === snapshot.sha) return;
+    const previous = await this.read(published);
+    const schemaIssues = schemaChanges(previous.content, snapshot.content);
     if (schemaIssues.length)
       throw Error(schemaIssues.map((i) => i.message).join('\n'));
     const comparison = await this.api(
       'GET /repos/{owner}/{repo}/compare/{basehead}',
-      { basehead: `${main}...${snapshot.sha}` },
+      { basehead: `${published}...${snapshot.sha}` },
     );
     if (comparison.status !== 'ahead')
       throw Error(
-        'The main and draft branches have diverged. Ask your developer to synchronize them, then reload and review the draft.',
+        `The publish branch (${target}) and draft branch have diverged. Ask your developer to synchronize them, then reload and review the draft.`,
       );
     try {
       await this.api('PATCH /repos/{owner}/{repo}/git/refs/{ref}', {
-        ref: 'heads/main',
+        ref: `heads/${target}`,
         sha: snapshot.sha,
         force: false,
       });
     } catch (error) {
-      if ((await this.ref('main')) !== snapshot.sha)
+      if ((await this.ref(target)) !== snapshot.sha)
         throw Error(
           'Publish could not be confirmed. Reload before trying again. Your draft is saved.',
         );
@@ -217,7 +222,7 @@ export async function connect(
     !repository.branch.trim()
   )
     throw Error('Enter your repository and GitHub token.');
-  if (repository.branch === 'main') throw Error('Use a separate draft branch.');
+  checkBranches(repository);
   const { Octokit } = await import('@octokit/rest');
   const client = new Octokit({ auth: token, request: { timeout: 30000 } });
   return new GitHubStore(

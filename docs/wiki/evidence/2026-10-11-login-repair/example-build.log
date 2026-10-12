@@ -1,0 +1,54 @@
+
+> lean-sitebuilder@0.1.0 build /private/var/folders/00/h_k67s0j5dq0qvg6ylqysk2w0000gn/T/lean-example-quine-HGZtLk
+> pnpm prepare:blocks && astro build
+
+
+> lean-sitebuilder@0.1.0 prepare:blocks /private/var/folders/00/h_k67s0j5dq0qvg6ylqysk2w0000gn/T/lean-example-quine-HGZtLk
+> node scripts/generate-blocks.mjs
+
+Registered 99 block versions.
+Registered 3 layout versions.
+09:47:48 [types] Generated 142ms
+09:47:48 [build] output: "static"
+09:47:48 [build] mode: "static"
+09:47:48 [build] directory: /private/var/folders/00/h_k67s0j5dq0qvg6ylqysk2w0000gn/T/lean-example-quine-HGZtLk/dist/
+09:47:48 [build] Collecting build info...
+09:47:48 [build] ✓ Completed in 201ms.
+09:47:48 [build] Building static entrypoints...
+09:47:48 [vite] ✓ built in 138ms
+09:47:48 [vite] ✓ built in 113ms
+09:47:48 [build] Rearranging server assets...
+
+ generating static routes 
+09:47:48   ├─ /admin/index.html (+971ms) 
+09:47:49   ├─ /index.html (+21ms) 
+09:47:49 ✓ Completed in 1.07s.
+
+09:47:49 [build] ✓ Completed in 1.37s.
+09:47:49 [build] 2 page(s) built in 1.57s
+09:47:49 [build] Complete!
+
+> lean-sitebuilder@0.1.0 check:build /private/var/folders/00/h_k67s0j5dq0qvg6ylqysk2w0000gn/T/lean-example-quine-HGZtLk
+> node scripts/check-build.mjs
+
+{
+  "runtimeCopies": {
+    "@vue/runtime-core": 1,
+    "@vue/runtime-dom": 1,
+    "react-dom": 1,
+    "svelte": 1,
+    "react": 1
+  },
+  "pages": [
+    {
+      "page": "admin/index.html",
+      "javascriptModules": 1,
+      "gzipJavaScriptBytes": 1665
+    },
+    {
+      "page": "index.html",
+      "javascriptModules": 9,
+      "gzipJavaScriptBytes": 87605
+    }
+  ]
+}

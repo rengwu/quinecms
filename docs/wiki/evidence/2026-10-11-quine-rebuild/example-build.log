@@ -1,0 +1,68 @@
+
+> lean-sitebuilder@0.1.0 example:quine /Users/rengwu/Desktop/Projects/lean-sitebuilder
+> node scripts/example-site.mjs quine build
+
+Isolated example: /var/folders/00/h_k67s0j5dq0qvg6ylqysk2w0000gn/T/lean-example-quine-5oj7Zu
+Local editor: quine@example.test / quine-preview (demo credentials; do not deploy).
+
+> lean-sitebuilder@0.1.0 validate:content /private/var/folders/00/h_k67s0j5dq0qvg6ylqysk2w0000gn/T/lean-example-quine-5oj7Zu
+> node scripts/generate-blocks.mjs --registry-only && tsx scripts/validate-content.ts
+
+Registered 99 block versions.
+Registered 3 layout versions.
+Content is valid for publication.
+
+> lean-sitebuilder@0.1.0 build /private/var/folders/00/h_k67s0j5dq0qvg6ylqysk2w0000gn/T/lean-example-quine-5oj7Zu
+> pnpm prepare:blocks && astro build
+
+
+> lean-sitebuilder@0.1.0 prepare:blocks /private/var/folders/00/h_k67s0j5dq0qvg6ylqysk2w0000gn/T/lean-example-quine-5oj7Zu
+> node scripts/generate-blocks.mjs
+
+Registered 99 block versions.
+Registered 3 layout versions.
+02:16:26 [types] Generated 181ms
+02:16:26 [build] output: "static"
+02:16:26 [build] mode: "static"
+02:16:26 [build] directory: /private/var/folders/00/h_k67s0j5dq0qvg6ylqysk2w0000gn/T/lean-example-quine-5oj7Zu/dist/
+02:16:26 [build] Collecting build info...
+02:16:26 [build] ✓ Completed in 243ms.
+02:16:26 [build] Building static entrypoints...
+02:16:27 [vite] ✓ built in 145ms
+02:16:27 [vite] ✓ built in 120ms
+02:16:27 [build] Rearranging server assets...
+
+ generating static routes 
+02:16:27   ├─ /admin/index.html (+1.12s) 
+02:16:28   ├─ /index.html (+23ms) 
+02:16:28 ✓ Completed in 1.22s.
+
+02:16:28 [build] ✓ Completed in 1.55s.
+02:16:28 [build] 2 page(s) built in 1.79s
+02:16:28 [build] Complete!
+
+> lean-sitebuilder@0.1.0 check:build /private/var/folders/00/h_k67s0j5dq0qvg6ylqysk2w0000gn/T/lean-example-quine-5oj7Zu
+> node scripts/check-build.mjs
+
+{
+  "runtimeCopies": {
+    "@vue/runtime-core": 1,
+    "@vue/runtime-dom": 1,
+    "react-dom": 1,
+    "svelte": 1,
+    "react": 1
+  },
+  "pages": [
+    {
+      "page": "admin/index.html",
+      "javascriptModules": 1,
+      "gzipJavaScriptBytes": 13264
+    },
+    {
+      "page": "index.html",
+      "javascriptModules": 9,
+      "gzipJavaScriptBytes": 87605
+    }
+  ]
+}
+Built example: /var/folders/00/h_k67s0j5dq0qvg6ylqysk2w0000gn/T/lean-example-quine-5oj7Zu/dist

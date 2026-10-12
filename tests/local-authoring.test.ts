@@ -6,6 +6,8 @@ import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { fixtureDirectory } from './support/fixture';
 import { projectFixture } from './support/project';
+import { gunzipSync } from 'node:zlib';
+import { decryptAdmin } from '../src/admin/crypto';
 
 const exec = promisify(execFile);
 const command = (cwd: string, args: string[]) =>
@@ -83,6 +85,33 @@ it('checks a fresh site independently of demo routes and keeps static-demo cover
     const build = async () => {
       await command(directory, ['scripts/generate-blocks.mjs']);
       await command(directory, ['node_modules/astro/bin/astro.mjs', 'build']);
+      const html = await readFile(
+        join(directory, 'dist/admin/index.html'),
+        'utf8',
+      );
+      const envelope = JSON.parse(
+        html.match(
+          /<script\b[^>]*id="admin-payload"[^>]*>([\s\S]*?)<\/script>/,
+        )![1],
+      );
+      expect(html).not.toContain('fixture@example.com');
+      expect(html).not.toContain('fixture-password');
+      await expect(
+        decryptAdmin(envelope, 'admin@example.com', 'asdf1234').then(
+          () => 'unlocked',
+        ),
+      ).rejects.toThrow();
+      const decrypted = await decryptAdmin(
+        envelope,
+        'fixture@example.com',
+        'fixture-password',
+      );
+      const admin = JSON.parse(gunzipSync(decrypted).toString());
+      expect(admin.props.config.encryptedAdmin).toBe(true);
+      expect(admin.props.config).not.toHaveProperty('passwordHash');
+      expect(admin.code).toContain('Lock editor');
+      expect(admin.code).toContain('lean-sitebuilder:recovery:v2');
+      expect(admin.css.length).toBeGreaterThan(0);
       const result = await command(directory, ['scripts/check-build.mjs']);
       return JSON.parse(result.stdout);
     };
@@ -154,4 +183,77 @@ it('checks a fresh site independently of demo routes and keeps static-demo cover
   } finally {
     await rm(directory, { recursive: true, force: true });
   }
-}, 60000);
+}, 90000);
+
+it('fails the static build without both admin credentials', async () => {
+  const directory = await projectFixture();
+  try {
+    await writeFile(join(directory, '.env'), 'ADMIN_EMAIL=\nADMIN_PASSWORD=\n');
+    await command(directory, ['scripts/generate-blocks.mjs']);
+    await expect(
+      command(directory, ['node_modules/astro/bin/astro.mjs', 'build']),
+    ).rejects.toMatchObject({
+      code: 1,
+      stderr: expect.stringContaining('ADMIN_EMAIL and ADMIN_PASSWORD'),
+    });
+  } finally {
+    await rm(directory, { recursive: true, force: true });
+  }
+}, 30000);
+
+it.each([
+  ['absent', 'ADMIN_EMAIL=\nADMIN_PASSWORD=\n'],
+  [
+    'different',
+    'ADMIN_EMAIL=fixture@example.com\nADMIN_PASSWORD=fixture-password\n',
+  ],
+])(
+  'uses the single fixed dev login with %s configured credentials',
+  async (_, env) => {
+    const directory = await projectFixture();
+    try {
+      await writeFile(join(directory, '.env'), env);
+      await command(directory, ['scripts/generate-blocks.mjs']);
+      await writeFile(
+        join(directory, 'check-dev.mjs'),
+        `
+      import { dev } from 'astro';
+      import { writeFile } from 'node:fs/promises';
+        // Astro skips its HTTP middleware when it inherits Vitest's marker.
+        delete process.env.VITEST;
+        const server = await dev({ root: process.cwd(), server: { host: '127.0.0.1', port: 0 }, logLevel: 'error' });
+      try {
+        const response = await fetch('http://127.0.0.1:' + server.address.port + '/admin/');
+        if (!response.ok) throw Error('Admin returned HTTP ' + response.status);
+        await writeFile('dev-admin.html', await response.text());
+      } finally {
+        await server.stop();
+      }
+    `,
+      );
+      await command(directory, ['check-dev.mjs']);
+      const html = await readFile(join(directory, 'dev-admin.html'), 'utf8');
+      const envelope = JSON.parse(
+        html.match(
+          /<script\b[^>]*id="admin-payload"[^>]*>([\s\S]*?)<\/script>/,
+        )![1],
+      );
+      const decrypted = await decryptAdmin(
+        envelope,
+        'admin@example.com',
+        'asdf1234',
+      );
+      const admin = JSON.parse(gunzipSync(decrypted).toString());
+      expect(admin.props.config.encryptedAdmin).toBe(true);
+      expect(admin.props.initial.pages.length).toBeGreaterThan(0);
+      await expect(
+        decryptAdmin(envelope, 'fixture@example.com', 'fixture-password').then(
+          () => 'unlocked',
+        ),
+      ).rejects.toThrow();
+    } finally {
+      await rm(directory, { recursive: true, force: true });
+    }
+  },
+  60000,
+);

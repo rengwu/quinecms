@@ -44,9 +44,9 @@ import {
 import { definitions } from '../generated/definitions';
 import { connect, repositoryKey } from '../integrations/git';
 import type { Repository, RepositoryStore } from '../integrations/repository';
+import { Conflict, publishBranch } from '../integrations/repository';
 import type { StorageConfig } from '../integrations/media';
 import {
-  digest,
   download,
   readRecovery,
   retain,
@@ -65,7 +65,7 @@ import {
   type AdminMode,
 } from './AdminTheme';
 export interface Config extends Repository {
-  passwordHash: string;
+  encryptedAdmin?: boolean;
   allowedLayoutIds?: string[];
   r2: Pick<StorageConfig, 'accountId' | 'bucket' | 'publicURL'>;
 }
@@ -79,7 +79,11 @@ function stored<T>(key: string, fallback: T): T {
 function stash(key: string, value: unknown) {
   sessionStorage.setItem(key, JSON.stringify(value));
 }
-export default function App(props: { initial: Content; config: Config }) {
+export default function App(props: {
+  initial: Content;
+  config: Config;
+  onLock?: () => void;
+}) {
   const portal = useRef<HTMLDivElement>(null);
   const [mode, updateMode] = useState(readAdminMode);
   function setMode(next: AdminMode) {
@@ -106,80 +110,26 @@ export default function App(props: { initial: Content; config: Config }) {
         />
         <KumoPortalProvider container={portal}>
           <Toasty>
-            <Session {...props} />
+            <Editor
+              {...props}
+              onLock={() => {
+                for (const key of [
+                  'lean:gate',
+                  'lean:github',
+                  'lean:git',
+                  'lean:r2',
+                ]) {
+                  try {
+                    sessionStorage.removeItem(key);
+                  } catch {}
+                }
+                props.onLock?.();
+              }}
+            />
           </Toasty>
         </KumoPortalProvider>
       </div>
     </AdminThemeContext.Provider>
-  );
-}
-function Session({ initial, config }: { initial: Content; config: Config }) {
-  const { mode } = useAdminTheme();
-  const [unlocked, setUnlocked] = useState(
-      () =>
-        !config.passwordHash || stored('lean:gate', '') === config.passwordHash,
-    ),
-    [password, setPassword] = useState('');
-  const toasts = useKumoToastManager();
-  if (!unlocked)
-    return (
-      <div className={`kumo-ui ${styles.app}`} data-mode={mode}>
-        <div className={styles.gate}>
-          <form
-            onSubmit={async (e) => {
-              e.preventDefault();
-              if (
-                !config.passwordHash ||
-                (await digest(password)) === config.passwordHash
-              ) {
-                try {
-                  stash('lean:gate', config.passwordHash);
-                } catch {}
-                setUnlocked(true);
-              } else
-                toasts.add({
-                  title: 'That password does not match.',
-                  variant: 'error',
-                });
-            }}
-          >
-            <h1>Site editor</h1>
-            {config.passwordHash && (
-              <>
-                <Label htmlFor="password">Password</Label>
-                <Input
-                  aria-label="Password"
-                  id="password"
-                  type="password"
-                  value={password}
-                  autoComplete="current-password"
-                  onChange={(e) => setPassword(e.target.value)}
-                />
-              </>
-            )}
-            <div className={styles.dialogActions}>
-              <Button type="submit" variant="primary">
-                Continue
-              </Button>
-            </div>
-          </form>
-        </div>
-      </div>
-    );
-  return (
-    <Editor
-      initial={initial}
-      config={config}
-      onLock={() => {
-        try {
-          sessionStorage.removeItem('lean:gate');
-          sessionStorage.removeItem('lean:github');
-          sessionStorage.removeItem('lean:git');
-          sessionStorage.removeItem('lean:r2');
-        } catch {}
-        setUnlocked(false);
-      }}
-    />
   );
 }
 function Editor({
@@ -207,6 +157,7 @@ function Editor({
         owner: config.owner,
         repo: config.repo,
         branch: config.branch,
+        publishBranch: publishBranch(config),
       },
   );
   const [draftRepository, setDraftRepository] = useState(repo);
@@ -229,6 +180,9 @@ function Editor({
   );
   const [store, setStore] = useState<RepositoryStore | null>(null);
   const [busy, setBusy] = useState(false);
+  const [saveState, setSaveState] = useState<
+    'idle' | 'saving' | 'failed' | 'stale'
+  >('idle');
   const toasts = useKumoToastManager();
   function setError(description: string) {
     toasts.add({
@@ -297,6 +251,23 @@ function Editor({
   const showPreview =
     !pendingDocument &&
     ((tab === 'pages' && editingDocument) || tab === 'layout');
+  // Creation stays outside content/recovery until Create, but renders through
+  // the same page and context as a committed block.
+  const previewContent = useMemo(
+    () =>
+      pendingBlock && page
+        ? {
+            ...content,
+            pages: content.pages.map((p) =>
+              p.id === page.id
+                ? { ...p, blocks: [...p.blocks, pendingBlock] }
+                : p,
+            ),
+          }
+        : content,
+    [content, page, pendingBlock],
+  );
+  const previewPage = previewContent.pages.find((p) => p.id === page?.id);
   const EditorSurface = showPreview ? 'aside' : 'main';
   function openArea(area: EditorArea) {
     setSchemaId('');
@@ -422,6 +393,11 @@ function Editor({
           repositoryKey(draftRepository) !== repositoryKey(repo))
       ) {
         setStore(next);
+        if (repositoryKey(draftRepository) === repositoryKey(repo)) {
+          setSaveState('stale');
+          setModal('stale');
+          return;
+        }
         throw Error(
           'The remote draft differs from your recovered work. Your edits are preserved. Export a backup, then reload the draft to reconcile them.',
         );
@@ -433,6 +409,7 @@ function Editor({
       }
       setStore(next);
       setDraftRepository(repo);
+      setSaveState('idle');
       if (!dirty) {
         setBase(remote);
         setContent(migrateSite(remote.content));
@@ -452,8 +429,10 @@ function Editor({
   }
   function reloadDraft() {
     setConfirm({
-      title: 'Reload the remote draft?',
-      body: 'This replaces local edits. Export a backup first if you want to keep them.',
+      title: 'Load the latest version?',
+      body: 'This replaces your browser edits with the latest saved draft. Export a backup first if you want to keep them. You will need to reapply your changes manually.',
+      actionLabel: 'Load latest version',
+      destructive: true,
       action: () => {
         void run(async () => {
           if (!store) throw Error('Connect to your repository first.');
@@ -461,7 +440,12 @@ function Editor({
           setDraftRepository(store.repository);
           setBase(next);
           setContent(migrateSite(next.content));
+          setSaveState('idle');
+          setSelected('');
+          setCollectionId('');
           setBlockId('');
+          setPendingBlock(null);
+          setPendingDocument(null);
           setMessage('Loaded the latest draft.');
           setModal('');
         });
@@ -511,14 +495,33 @@ function Editor({
     return false;
   }
   async function save() {
-    if (!validFor('save')) return;
+    if (saveState === 'stale') {
+      setModal('stale');
+      return;
+    }
+    if (!validFor('save')) {
+      setSaveState('failed');
+      return;
+    }
     await run(async () => {
-      if (!store || !credentialsMatch || !base)
-        throw Error('Connect to the repository first.');
-      const next = await store.save(base, content);
-      setBase(next);
-      setContent(migrateSite(next.content));
-      setMessage('All changes saved to the draft branch.');
+      setSaveState('saving');
+      try {
+        if (!store || !credentialsMatch || !base)
+          throw Error('Connect to the repository first.');
+        const next = await store.save(base, content);
+        setBase(next);
+        setContent(migrateSite(next.content));
+        setSaveState('idle');
+        setMessage('All changes saved to the draft branch.');
+      } catch (error) {
+        if (error instanceof Conflict) {
+          setSaveState('stale');
+          setModal('stale');
+        } else {
+          setSaveState('failed');
+          throw error;
+        }
+      }
     });
   }
   async function publish() {
@@ -529,7 +532,7 @@ function Editor({
       if (dirty) throw Error('Save your changes before publishing.');
       await store.publish(base);
       setMessage(
-        'Published to Git. Deployment is pending on your hosting provider.',
+        `Published to ${publishBranch(store.repository)}. Deployment is pending on your hosting provider.`,
       );
     });
   }
@@ -632,12 +635,41 @@ function Editor({
               {size === 'desktop' ? 'Mobile' : 'Desktop'}
             </Button>
           )}
-          <Button disabled={busy || !dirty} onClick={save}>
-            Save draft
-          </Button>
+          <div className={styles.saveControls}>
+            <span role="status" className={styles.saveStatus}>
+              {saveState === 'stale' ? (
+                <Button
+                  variant="ghost"
+                  className={styles.saveStatusAction}
+                  disabled={busy}
+                  onClick={() => setModal('stale')}
+                >
+                  Newer draft available
+                </Button>
+              ) : saveState === 'saving' ? (
+                'Saving…'
+              ) : dirty ? (
+                saveState === 'failed' ? (
+                  'Not saved'
+                ) : (
+                  'Unsaved changes'
+                )
+              ) : base ? (
+                'Saved to draft'
+              ) : (
+                'Local preview'
+              )}
+            </span>
+            <Button
+              disabled={busy || !dirty || saveState === 'stale'}
+              onClick={save}
+            >
+              Save draft
+            </Button>
+          </div>
           <Button
             variant="primary"
-            disabled={busy}
+            disabled={busy || saveState === 'stale'}
             onClick={() => {
               if (!validFor('publish')) return;
               if (!store || !credentialsMatch || !base) {
@@ -650,7 +682,7 @@ function Editor({
               }
               setConfirm({
                 title: 'Publish this draft?',
-                body: 'This updates main with the saved draft. Your hosting provider will rebuild the website.',
+                body: `This updates ${publishBranch(repo)} with the saved draft. Your hosting provider will rebuild the website.`,
                 action: () => void publish(),
               });
             }}
@@ -1267,9 +1299,25 @@ function Editor({
                         {tab === 'settings' && (
                           <>
                             <PanelSection title="Repository">
+                              {draftRepository.owner &&
+                                draftRepository.repo && (
+                                  <p className={styles.muted}>
+                                    {draftRepository.provider === 'gitlab'
+                                      ? `GitLab (${draftRepository.instance || 'https://gitlab.com'})`
+                                      : 'GitHub'}{' '}
+                                    · {draftRepository.owner}/
+                                    {draftRepository.repo}
+                                    <br />
+                                    Draft: {draftRepository.branch} · Publish:{' '}
+                                    {publishBranch(draftRepository)}
+                                  </p>
+                                )}
                               <p className={styles.muted}>
                                 Connect to your GitHub or GitLab repository to
-                                save drafts and publish your site.
+                                save drafts and publish your site. Browser edits
+                                do not update local project files. Saved status
+                                reflects the last loaded or saved draft; newer
+                                changes are checked when you save.
                               </p>
                               <div className={styles.row}>
                                 <Button onClick={() => setModal('connection')}>
@@ -1355,7 +1403,9 @@ function Editor({
                                 >
                                   Discard edits
                                 </Button>
-                                <Button onClick={onLock}>Lock editor</Button>
+                                {config.encryptedAdmin && (
+                                  <Button onClick={onLock}>Lock editor</Button>
+                                )}
                               </div>
                             </PanelSection>
                             <PanelSection title="Factory reset">
@@ -1407,7 +1457,7 @@ function Editor({
                 aria-label="Live preview"
               >
                 <LayoutSurface
-                  content={content}
+                  content={previewContent}
                   onNavigate={(url, documentId) => {
                     if (documentId) openDocument(documentId);
                     else {
@@ -1419,12 +1469,13 @@ function Editor({
                   }}
                 >
                   <PageBlocks
-                    content={content}
-                    page={page}
-                    selectedId={blockId}
+                    content={previewContent}
+                    page={previewPage}
+                    selectedId={pendingBlock?.id ?? blockId}
+                    revealId={pendingBlock?.id}
                     className={styles.previewBlock}
                   />
-                  {!page?.blocks.length && (
+                  {!previewPage?.blocks.length && (
                     <div className={styles.empty}>
                       Add a block to start building.
                     </div>
@@ -1460,6 +1511,7 @@ function Editor({
                     page: 'Add page',
                     blocks: 'Add block',
                     connection: 'Repository connection',
+                    stale: 'A newer version is available',
                     storage: 'R2 storage',
                   }[modal] ??
                   ''}
@@ -1484,6 +1536,37 @@ function Editor({
               </>
             ) : (
               <>
+                {modal === 'stale' && (
+                  <>
+                    <Dialog.Description>
+                      Your changes weren’t saved. They’re still here—keep a
+                      backup before loading the latest version. Then reapply the
+                      changes you want to keep. Importing a backup replaces
+                      content; it does not merge your changes.
+                    </Dialog.Description>
+                    <div className={styles.dialogActions}>
+                      <Dialog.Close render={<Button disabled={busy} />}>
+                        Close
+                      </Dialog.Close>
+                      <Button disabled={busy} onClick={backup}>
+                        Export backup
+                      </Button>
+                      {store ? (
+                        <Button
+                          variant="primary"
+                          disabled={busy}
+                          onClick={reloadDraft}
+                        >
+                          Load latest version
+                        </Button>
+                      ) : (
+                        <Button onClick={() => setModal('connection')}>
+                          Reconnect
+                        </Button>
+                      )}
+                    </div>
+                  </>
+                )}
                 {modal === 'navigation' && (
                   <>
                     <Navigation
@@ -1554,6 +1637,7 @@ function Editor({
                           GitLab instance URL
                           <Input
                             aria-label="GitLab instance URL"
+                            placeholder="https://gitlab.com"
                             value={repo.instance ?? 'https://gitlab.com'}
                             onChange={(e) =>
                               changeRepository({ instance: e.target.value })
@@ -1568,28 +1652,48 @@ function Editor({
                         : 'Use a GitHub token with repository contents read and write access.'}{' '}
                       Drafts are fetched directly from the selected provider.
                     </p>
-                    {(['owner', 'repo', 'branch'] as const).map((key) => (
+                    {(
+                      [
+                        {
+                          key: 'owner',
+                          label:
+                            repo.provider === 'gitlab'
+                              ? 'Namespace (including subgroups)'
+                              : 'Owner',
+                          placeholder:
+                            repo.provider === 'gitlab'
+                              ? 'my-team/my-subgroup'
+                              : 'my-username-or-org',
+                        },
+                        {
+                          key: 'repo',
+                          label: 'Repository',
+                          placeholder: 'my-site',
+                        },
+                        {
+                          key: 'branch',
+                          label: 'Draft branch',
+                          placeholder: 'draft',
+                        },
+                        {
+                          key: 'publishBranch',
+                          label: 'Publish branch',
+                          placeholder: 'main',
+                        },
+                      ] as const
+                    ).map(({ key, label, placeholder }) => (
                       <div className={styles.field} key={key}>
                         <Label>
-                          {key === 'owner'
-                            ? repo.provider === 'gitlab'
-                              ? 'Namespace (including subgroups)'
-                              : 'Owner'
-                            : key === 'repo'
-                              ? 'Repository'
-                              : 'Draft branch'}
+                          {label}
                           <Input
-                            aria-label={
-                              key === 'owner'
-                                ? repo.provider === 'gitlab'
-                                  ? 'Namespace (including subgroups)'
-                                  : 'Owner'
-                                : key === 'repo'
-                                  ? 'Repository'
-                                  : 'Draft branch'
-                            }
+                            aria-label={label}
+                            placeholder={placeholder}
                             autoComplete="off"
-                            value={repo[key]}
+                            value={
+                              key === 'publishBranch'
+                                ? publishBranch(repo)
+                                : repo[key]
+                            }
                             onChange={(e) =>
                               changeRepository({ [key]: e.target.value })
                             }
@@ -1602,6 +1706,11 @@ function Editor({
                         Access token
                         <Input
                           aria-label="Access token"
+                          placeholder={
+                            repo.provider === 'gitlab'
+                              ? 'glpat-…'
+                              : 'github_pat_…'
+                          }
                           type="password"
                           autoComplete="off"
                           value={token}
@@ -1613,13 +1722,13 @@ function Editor({
                       </Label>
                     </div>
                     <p className={styles.muted}>
-                      Credentials remain in this browser tab until you lock the
-                      editor or close the tab. The site password is a
-                      convenience gate; repository permissions control writing.
+                      {config.encryptedAdmin
+                        ? 'Credentials remain in this browser tab until you lock the editor or close the tab. Repository permissions control saving and publishing.'
+                        : 'Credentials remain in this browser tab until you close the tab. Repository permissions control writing.'}
                     </p>
                     <div className={styles.row}>
                       <Button disabled={busy || !store} onClick={reloadDraft}>
-                        Reload draft
+                        Load latest version
                       </Button>
                       <Button onClick={backup}>Export backup</Button>
                     </div>

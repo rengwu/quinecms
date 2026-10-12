@@ -1,0 +1,14 @@
+{
+  "formatVersion": 1,
+  "id": "media_quine_contact",
+  "name": "Quine \u00b7 Contact texture",
+  "original": {
+    "key": "quine/v1/contact.jpg",
+    "url": "/quine/v1/contact.jpg",
+    "mime": "image/jpeg",
+    "bytes": 744099,
+    "width": 3089,
+    "height": 2048
+  },
+  "variants": []
+}

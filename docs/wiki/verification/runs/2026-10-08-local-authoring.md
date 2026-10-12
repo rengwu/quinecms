@@ -60,6 +60,6 @@ drafts nor reconciles unsaved browser edits. Core validation does not guarantee
 visual quality or client usability.
 
 No fresh agent was measured against these new instructions. No remote agent
-access, account permissions, live GitHub/R2/Netlify transaction or deployment was
+access, account permissions, live GitHub/R2/hosting transaction or deployment was
 tested. Existing provider tests remain mocked. Documentation integrity checks
 establish valid local wiki references, not product behavior.

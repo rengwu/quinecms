@@ -180,6 +180,6 @@ Each step should land as a coherent change with its relevant tests. Do not postp
 | Persistence | Object definitions, modes and all new values survive mocked GitHub save/reload, export/import and tab recovery. Stale-save behavior remains intact. |
 | Editor navigation | Definition, object and row editing replace their parent controls at every allowed depth on desktop and mobile; returning preserves the shared draft. |
 
-Use publication, project/people and company-profile fixtures to exercise these behaviors. Run `pnpm verify` for application implementation, alongside targeted browser checks. Mocked provider tests do not establish live GitHub, R2 or Netlify behavior; live-provider evidence must remain separately identified.
+Use publication, project/people and company-profile fixtures to exercise these behaviors. Run `pnpm verify` for application implementation, alongside targeted browser checks. Mocked provider tests do not establish live GitHub, R2 or hosting-provider behavior; live-provider evidence must remain separately identified.
 
 The [2026-10-08 implementation run](../verification/runs/2026-10-08-content-model.md) records executed checks against the new model. Earlier passing baselines do not verify these features. Wiki build/check validates documentation structure and links, separately from application verification.

@@ -1,6 +1,6 @@
 ---
 title: Direct media uploads
-updated: 2026-10-08
+updated: 2026-10-11
 ---
 # Direct media uploads
 
@@ -31,6 +31,24 @@ Configure bucket CORS for the editor's exact origins, for example:
 Use a separate public media origin. Default upload limit is 30MB, image quality is 0.8, and candidate WebP widths are 480, 960 and 1600px; these are editable. Decodable static images below 40 megapixels receive smaller variants where applicable. Animated/undecodable images keep their original. Supported uploads are JPEG/PNG/WebP/GIF/AVIF, MP4/WebM, MPEG/OGG/WAV audio and PDF; SVG/executable documents are outside this upload path.
 
 ## Expected outcomes
+
+### Locally-authored media
+
+Local developers may copy original assets into `public/` and create ordinary
+`content/media/<id>.json` records whose file URLs start with `/`, for example
+`/quine/v1/flanksource.png`. Keep `key`, `mime`, `bytes`, optional dimensions and
+the `variants` array. Media fields refer to `{ mediaId, alt }`; the Media library,
+selectors, rich-text rendering and block context use the same records as uploads.
+
+Accepted file URLs are HTTPS URLs or safe root-relative paths. Plain relative
+paths, protocol-relative URLs, HTTP media URLs and executable/data schemes are
+rejected. The metadata validator does not inspect the filesystem; authors must
+verify that each public file exists and loads from the built output.
+
+This supports reference-site recreation without an initial R2 upload. It does
+not add a browser file-import pipeline or storage synchronization. Later uploads
+still go to R2. Removing/resetting records does not delete copied local files or
+uploaded objects. See the [Quine trial](../journal/2026-10-11-quine-rebuild.md).
 
 The original uploads directly to R2. Decodable static raster images below the pixel limit get configured smaller WebP variants, with no upscaling; animated/unsupported formats retain their original. Non-image media uses native players or links. Metadata enters the draft, while credentials and binaries do not.
 

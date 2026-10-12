@@ -1,0 +1,31 @@
+{
+  "formatVersion": 1,
+  "id": "site_quine",
+  "globals": {},
+  "layout": {
+    "id": "quine",
+    "version": 1,
+    "settings": {
+      "title": "Quine Systems",
+      "description": "A digital design studio creating memorable brand experiences, engineered for maximum impact.",
+      "brand": "Quine Systems",
+      "homeURL": "/",
+      "navigation": [
+        {
+          "_rowId": "nav-services",
+          "label": "Services",
+          "url": "#services"
+        },
+        {
+          "_rowId": "nav-works",
+          "label": "Works",
+          "url": "#works"
+        }
+      ],
+      "actionLabel": "Get in touch",
+      "actionURL": "#contact",
+      "contentMaxWidth": 1440,
+      "pageGutter": 32
+    }
+  }
+}

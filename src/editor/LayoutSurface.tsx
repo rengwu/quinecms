@@ -2,6 +2,8 @@ import {
   Component,
   Suspense,
   lazy,
+  useEffect,
+  useRef,
   type ComponentType,
   type ReactNode,
 } from 'react';
@@ -72,19 +74,36 @@ export function PageBlocks({
   content,
   page,
   selectedId,
+  revealId,
   className,
 }: {
   content: Content;
   page?: Page;
   selectedId?: string;
+  revealId?: string;
   className?: string;
 }) {
+  const revealed = useRef<HTMLElement>(null);
+  useEffect(() => {
+    const element = revealed.current;
+    if (!revealId || !element) return;
+    // Islands mount asynchronously. Reveal once they have a visible height,
+    // then leave scrolling alone while the author edits fields.
+    const observer = new ResizeObserver(() => {
+      if (!element.getBoundingClientRect().height) return;
+      element.scrollIntoView({ block: 'start', behavior: 'instant' });
+      observer.disconnect();
+    });
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, [revealId]);
   return (
     <>
       {page?.blocks.map((b) => (
         <section
           className={className}
           key={b.id}
+          ref={b.id === revealId ? revealed : undefined}
           data-selected={selectedId === b.id}
         >
           <Island

@@ -29,6 +29,6 @@ The user refined the navigation during implementation: the final build opens a s
 
 ## Limits and follow-up
 
-Overall Untested reflects the incomplete schema-screen browser inspection, not an observed application failure. Production output was built and artifact-checked without a separate production browser run. Live GitHub/R2/Netlify operations and unrelated editor flows were outside scope.
+Overall Untested reflects the incomplete schema-screen browser inspection, not an observed application failure. Production output was built and artifact-checked without a separate production browser run. Live GitHub/R2/hosting operations and unrelated editor flows were outside scope.
 
 No server was started or stopped. The owned browser tab became actively used; its content was preserved and the tab was left open, including the local verification title edit. No repository content files or remote providers were changed by UI testing. A follow-up browser inspection should use a fresh isolated window when it can be operated without interfering with the user.

@@ -1,6 +1,6 @@
 ---
 title: Decisions
-updated: 2026-10-08
+updated: 2026-10-12
 status: Accepted
 ---
 # Decisions
@@ -37,9 +37,9 @@ Accepted from [round-two answers](../journal/2026-10-05-grill-1a1e4868-048d-45f3
 | ID | Decision | Basis and rationale |
 | --- | --- | --- |
 | DEC-009 | The environment-configured login is a convenience gate; GitHub authorization protects repository access. | Q8 explicitly accepts the static gate's limits. It must not be described as protection for private resources. |
-| DEC-010 | Support both private and public site repositories. | Q9. Private draft reads require GitHub authorization; public repository drafts are public. Netlify hosting does not change repository visibility. |
+| DEC-010 | Support both private and public site repositories. | Q9. Private draft reads require GitHub authorization; public repository drafts are public. The hosting provider does not change repository visibility. |
 | DEC-011 | Each editor supplies their own GitHub token. | Q10. DEC-016 sets token retention; no tokens belong in the deployed bundle or planning records. |
-| DEC-012 | Use a browser GitHub SDK client for repository changes. Publish merges to main; the user's existing Netlify Git integration owns deployment. | Q11 custom answer. No builder-managed deployment service or Netlify API integration is requested. Schema authoring is subsequently defined in DEC-017 and DEC-022. |
+| DEC-012 | Use a browser GitHub SDK client for repository changes. Publish merges to main; the user's configured hosting or CI workflow owns deployment. | Q11 custom answer. No builder-managed deployment service or hosting API integration is requested. Schema authoring is subsequently defined in DEC-017 and DEC-022. |
 | DEC-013 | Posts and collection entries use the same block editor as pages, alongside structured metadata. | Q12. |
 | DEC-014 | Every block must support immediate browser preview of unsaved changes. | Q13. Shared rendering logic is preferred where feasible; preview/published parity must be verified during implementation. |
 | DEC-015 | Developers install and register new block types in source, followed by a rebuild. | Q14. Adding instances of existing blocks remains an editor action. No portal block marketplace is required. |
@@ -119,7 +119,7 @@ Accepted directly from the user's implementation feedback.
 | --- | --- | --- |
 | DEC-048 | Use Cloudflare Kumo for all admin UI controls, dialogs, and notifications. | Replaces DEC-042. Keep its styling scoped to admin surfaces so preview blocks retain their designs. |
 | DEC-049 | Keep the live preview interactive at all times and sort block rows by dragging. | Remove Interact/Edit blocks toggle and visible up/down buttons. Keyboard sorting remains available for accessibility. |
-| DEC-050 | Recover silently and show validation errors in toasts on submission. | Remove saved/local/unsaved status text, recovery banners, and the proactive publication issue list. Save/Publish validation rules remain unchanged. |
+| DEC-050 | Recover silently and show validation errors in toasts on submission. | Remove saved/local/unsaved status text, recovery banners, and the proactive publication issue list. Save/Publish validation rules remain unchanged. DEC-148 later supersedes the save-status-text removal only; that change is implemented in the [save UX update](../journal/2026-10-12-git-save-ux.md). |
 | DEC-051 | Opening a block replaces parent-level sidebar navigation with the block editor. | Direct UI feedback: hide tabs, page/entry selector and Add page; All blocks returns to the parent view. |
 
 ## Admin hierarchy choices — 2026-10-05
@@ -458,3 +458,56 @@ The user separately authorizes implementation of DEC-110–DEC-128, explicitly e
 | ID | Decision | Basis and rationale |
 | --- | --- | --- |
 | DEC-138 | Match Starter factory layout settings to the supplied screenshots. | The user specifies Welcome, light theme, Arial body/headings, 16px body size, 1.5 line height, 1200px width, 0px gutter, Your Brand, no logo, Home/Journal/Blocks navigation and Contact Us → `https://google.com`. Navigation paths `/`, `/journal`, `/blocks` are inferred from the existing site; they are URL links so factory reset can still clear all pages. These defaults also apply on a new Starter selection. Existing saved settings remain unchanged. This supersedes the Starter 24px gutter default in DEC-130. |
+
+## Connection settings and conditional locking — direct requests, 2026-10-08
+
+| ID | Decision | Basis and rationale |
+| --- | --- | --- |
+| DEC-139 | Hide Lock editor when no editor password is configured. | The user reports the passwordless Continue screen and explicitly chooses hiding the button. Configured-password sites retain Lock editor and return to an empty password prompt. |
+| DEC-140 | Add example placeholders and a Publish branch field, default `main`, to both GitHub and GitLab connection forms. | Direct user request, explicitly extended to GitLab. Publication and missing-draft creation use the selected target. Requiring distinct draft/publish branches, including both in credential identity, and exposing `PUBLIC_PUBLISH_BRANCH` are implementation choices within the existing save/publish contract. See the [current contract](../features/publishing.md#connection-fields-and-publication-target). |
+
+
+## Encrypted admin — direct instruction, 2026-10-09
+
+| ID | Decision | Basis and rationale |
+| --- | --- | --- |
+| DEC-141 | Encrypt the static dashboard at build time with Argon2id-derived AES-256-GCM, using environment-set email and password together. | The user explicitly selected these algorithms and email/password login after reviewing static hosting and build-time deployment. Supersedes DEC-009's convenience gate and DEC-139's passwordless startup. Both credentials are required. The separate in-memory editor build, fixed parameters, normalized email, no persisted decryption key and per-reload login are implementation choices; runtime sharing is now scoped separately to the public and encrypted bundle graphs. See [contract and limits](../features/admin-encryption.md). |
+
+## Provider-neutral deployment — direct instruction, 2026-10-09
+
+| ID | Decision | Basis and rationale |
+| --- | --- | --- |
+| DEC-142 | Keep deployment and hosting provider agnostic, including documentation. | Direct user request. Local, CI and host-managed builds use the same commands and static `dist/` output. Build secrets belong to the selected build environment; the builder does not require a particular host, CI service or hosting API. Historical hosting references are generalized, with explicit annotations where transcript wording or evidence filenames were redacted. See the [deployment contract](../features/admin-encryption.md#build-and-deployment). |
+
+## Quine recreation trial — interview, 2026-10-11
+
+| ID | Decision | Basis and rationale |
+| --- | --- | --- |
+| DEC-143 | Recreate Quine closely with small usability fixes, reusing assets but independently implementing all components. | Q1 delegates live/source differences to the agent; Q2 selects close fidelity; Q3 explicitly excludes component-code reuse. See the [scope journal](../journal/2026-10-11-quine-rebuild.md) and its linked transcript. |
+| DEC-144 | Keep the active demo and build Quine as an isolated example. | Q4 selects isolation instead of replacing root content. Existing unrelated work must remain intact. |
+| DEC-145 | Make editorial content and section ordering editable; store portfolio projects as a repeatable Works-block list. | Q5–Q6 select client editing without extra design controls or independent project entries. Do not add collections just to exercise capabilities. |
+| DEC-146 | Improve proven instruction gaps and small rebuild blockers; discuss larger CMS changes before implementing them. | Q7 authorizes bounded improvements and an evidence-based discoverability assessment during this trial. |
+
+## Block creation preview — direct instruction, 2026-10-11
+
+| ID | Decision | Basis and rationale |
+| --- | --- | --- |
+| DEC-147 | Render a new page block in the right-hand preview while its creation form is open. | Direct user request after a screenshot showed fields without their pending block. Field edits update a temporary page snapshot; Create commits, while Cancel/navigation discard it. This extends the preview while preserving DEC-129's uncommitted creation contract. See [implementation and checks](../journal/2026-10-11-block-creation-preview.md). |
+
+## Content ownership and handoff — interview, 2026-10-12
+
+| ID | Decision | Basis and rationale |
+| --- | --- | --- |
+| DEC-148 | Show a small save-status message beside Save, with details in Settings. | Q2 accepts the first option. Supersedes only DEC-050's removal of save-status text; recovery and validation behavior remain. Implemented [editor behavior](../features/editor.md#git-save-status-and-recovery). See [answers](../journal/2026-10-12-grill-a336122c-df5b-4206-8de4-fd16bd6925d4.md) and [interpretation](../journal/2026-10-12-content-handoff-round-one.md). |
+| DEC-149 | Design the content handoff for the simplest workflow, assuming the client and agent take turns editing. | Q3's notes explicitly say to assume they should not work together. This is not a lock requirement or permission to overwrite stale work. Existing save protection remains; first save path and CRDT assessment are tracked in the [discussion](../discussions/content-handoff.md). No implementation is authorized by these answers alone. |
+| DEC-150 | Reject a browser save when its base Git commit is not the latest draft-branch commit. | Direct clarification: keep it simple under rule-lean; do not allow commits from outdated browser Git state. Reaffirms the existing [publishing contract](../features/publishing.md): compare against the remote before commit creation, preserve pending edits on rejection, and protect the shared branch against concurrent updates. Retain this approach without adding a CRDT or automatic merge for this scope. See the [follow-up record](../journal/2026-10-12-content-handoff-round-one.md#direct-follow-up). |
+| DEC-151 | Limit this increment to the existing Git save status and recovery experience. | Q5 selects the smaller scope. Browser-to-local-file transfer, a backup-application command and direct local saves are deferred, so the earlier unanswered Q4 does not block this increment. See [submitted answer](../journal/2026-10-12-grill-0dbc5917-8823-4085-a157-62aebd8efba5.md), [completed scope](../journal/2026-10-12-content-handoff-scope.md) and implemented [editor behavior](../features/editor.md#git-save-status-and-recovery). |
+
+Implementation of DEC-148–DEC-151 was explicitly authorized with work-until-grill
+and is recorded in the [save UX journal](../journal/2026-10-12-git-save-ux.md).
+
+## Development login
+
+| ID | Decision | Basis |
+| --- | --- | --- |
+| DEC-152 | Development always uses `admin@example.com` / `asdf1234` as the single shared login. Production retains its configured credential pair. | Direct user request and clarification: one account guards one dashboard and one set of content. The dev pair replaces environment credentials in dev; it is not a second account or a separate data store. See [admin contract](../features/admin-encryption.md). |

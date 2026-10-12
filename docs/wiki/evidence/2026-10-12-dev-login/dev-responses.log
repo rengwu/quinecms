@@ -1,0 +1,2 @@
+Port 4322: HTTP 200; fixed dev credentials decrypt the actual editor payload.
+Port 4323: HTTP 200; fixed dev credentials decrypt the actual editor payload.

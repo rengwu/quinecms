@@ -152,7 +152,7 @@ The shared draft branch is deliberately atomic. It also means an incomplete unre
 
 Keep the simple workflow for small sites. Before supporting a team, consider explicit release groups or per-entry workflows, dependency checks for included schemas/references/media, an actual-content deployment preview, and a clear deploy outcome. Selecting only some files without following dependencies is not a safe publish feature.
 
-The current UI correctly says that Git publication leaves deployment pending. The review found no live GitHub/R2/Netlify evidence; tests use mocked transports. Direct GitHub tokens and runtime R2 credentials also impose onboarding and permission-management work on nontechnical owners. An optional hosted authorization/upload integration could address that later, but would revise the intentionally serverless operating model and should follow a demonstrated client need.
+The current UI correctly says that Git publication leaves deployment pending. The review found no live GitHub/R2/hosting evidence; tests use mocked transports. Direct GitHub tokens and runtime R2 credentials also impose onboarding and permission-management work on nontechnical owners. An optional hosted authorization/upload integration could address that later, but would revise the intentionally serverless operating model and should follow a demonstrated client need.
 
 ### Routine website capabilities are still thin
 

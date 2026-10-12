@@ -15,7 +15,7 @@ The Git adapter reads an immutable commit's tree, saves one content commit, uses
 
 Browser testing exposed an Astro/Vite interaction: CSS extracted for SSR was removed from the client output while lazy preview imports retained its URL. The build integration now retains the referenced assets; admin bootstraps a regular React root, and public routes are generated with only their used block imports. Subsequent intermediate-browser checks showed all four rendering styles working. Artifact checks confirm one copy of each framework runtime and no editor/provider modules in public route graphs.
 
-The [verification run](../verification/runs/2026-10-05T0819Z-implementation.md) contains the final source fingerprint, automated results, actual browser observations, and limits. Live GitHub writes, R2 CORS/uploads, and Netlify deployment were not exercised. The native browser tool later returned `cgWindowNotFound`, leaving final browser follow-up and test-tab cleanup unverified. No deployment, push, or implementation commit was performed.
+The [verification run](../verification/runs/2026-10-05T0819Z-implementation.md) contains the final source fingerprint, automated results, actual browser observations, and limits. Live GitHub writes, R2 CORS/uploads, and hosting deployment were not exercised. The native browser tool later returned `cgWindowNotFound`, leaving final browser follow-up and test-tab cleanup unverified. No deployment, push, or implementation commit was performed.
 
 Use the [feature map](../features/index.md), [setup](../verification/setup.md), and root README for the next work. The original interview records remain authoritative for product choices.
 

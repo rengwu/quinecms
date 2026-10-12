@@ -1,0 +1,241 @@
+{
+  "format": "lean-sitebuilder-backup",
+  "version": 1,
+  "content": {
+    "site": {
+      "formatVersion": 1,
+      "id": "site_quine",
+      "globals": {},
+      "layout": {
+        "id": "quine",
+        "version": 1,
+        "settings": {
+          "title": "Quine Systems",
+          "description": "A digital design studio creating memorable brand experiences, engineered for maximum impact.",
+          "brand": "Quine Systems",
+          "homeURL": "/",
+          "navigation": [
+            {
+              "_rowId": "nav-services",
+              "label": "Services",
+              "url": "#services"
+            },
+            {
+              "_rowId": "nav-works",
+              "label": "Works",
+              "url": "#works"
+            }
+          ],
+          "actionLabel": "Get in touch",
+          "actionURL": "#contact",
+          "contentMaxWidth": 1440,
+          "pageGutter": 32
+        }
+      }
+    },
+    "pages": [
+      {
+        "formatVersion": 1,
+        "id": "page_quine",
+        "kind": "static",
+        "path": "/",
+        "title": "Home",
+        "blocks": [
+          {
+            "id": "block_quine_hero",
+            "type": "quine-hero",
+            "version": 1,
+            "props": {
+              "brand": "Quine Systems",
+              "eyebrow": "a digital design studio",
+              "heading": "Creating memorable brand experiences, engineered for maximum impact.",
+              "body": "We help founders and businesses make big moves by crafting delightful websites with design that works.",
+              "primaryLabel": "Get in touch",
+              "primaryURL": "#contact",
+              "secondaryLabel": "Learn how",
+              "secondaryURL": "#services"
+            }
+          },
+          {
+            "id": "block_quine_statement",
+            "type": "quine-statement",
+            "version": 1,
+            "props": {
+              "anchor": "services",
+              "eyebrow": "what we do",
+              "heading": "We create bespoke websites and digital experiences to help brands and founders establish trust, build traction, and disrupt categories.",
+              "image": {
+                "mediaId": "media_quine_services",
+                "alt": ""
+              }
+            }
+          },
+          {
+            "id": "block_quine_services",
+            "type": "quine-services",
+            "version": 1,
+            "props": {
+              "heading": "Working with us",
+              "items": [
+                {
+                  "title": "How it helps you",
+                  "description": "We help you create a memorable first impression for the right audience that reflects the quality of your offering and the ambitions of your company.",
+                  "_rowId": "service-1"
+                },
+                {
+                  "title": "Who are we for",
+                  "description": "We deliver the most value when helping new and existing ventures to (re)shape their brand and digital presence. Typically across tech, lifestyle and finance.",
+                  "_rowId": "service-2"
+                },
+                {
+                  "title": "When to engage us",
+                  "description": "You’re ready to invest in safeguarding your business from being indistinct, ineffective and falling short of customer expectations, both online and offline.",
+                  "_rowId": "service-3"
+                },
+                {
+                  "title": "What it costs",
+                  "description": "We avoid the traditional agency model of hourly billing. Instead, we offer transparent, flat-rate pricing packages to suit a range of budgets and business sizes.",
+                  "_rowId": "service-4"
+                }
+              ]
+            }
+          },
+          {
+            "id": "block_quine_works",
+            "type": "quine-works",
+            "version": 1,
+            "props": {
+              "anchor": "works",
+              "eyebrow": "collection of past projects",
+              "heading": "Works",
+              "visitLabel": "Visit",
+              "projects": [
+                {
+                  "_rowId": "project-flanksource",
+                  "title": "Flanksource Website",
+                  "year": "2022",
+                  "url": "https://flanksource.com/",
+                  "image": {
+                    "mediaId": "media_quine_flanksource",
+                    "alt": "Flanksource Mission Control website"
+                  }
+                },
+                {
+                  "_rowId": "project-flash",
+                  "title": "Flash Coach Landing",
+                  "year": "2021",
+                  "url": "https://flashcoach.tdcx.com/",
+                  "image": {
+                    "mediaId": "media_quine_flash",
+                    "alt": "Flash Coach landing page"
+                  }
+                },
+                {
+                  "_rowId": "project-tdcx",
+                  "title": "TDCX Website",
+                  "year": "2020",
+                  "url": "https://tdcx.com/",
+                  "image": {
+                    "mediaId": "media_quine_tdcx",
+                    "alt": "TDCX website"
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "id": "block_quine_contact",
+            "type": "quine-contact",
+            "version": 1,
+            "props": {
+              "anchor": "contact",
+              "heading": "Contact us",
+              "linkLabel": "hello@quinesystems.com",
+              "linkURL": "mailto:hello@quinesystems.com",
+              "brand": "Quine Systems",
+              "image": {
+                "mediaId": "media_quine_contact",
+                "alt": ""
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "collections": [],
+    "objects": [],
+    "entries": [],
+    "media": [
+      {
+        "formatVersion": 1,
+        "id": "media_quine_contact",
+        "name": "Quine · Contact texture",
+        "original": {
+          "key": "quine/v1/contact.jpg",
+          "url": "/quine/v1/contact.jpg",
+          "mime": "image/jpeg",
+          "bytes": 744099,
+          "width": 3089,
+          "height": 2048
+        },
+        "variants": []
+      },
+      {
+        "formatVersion": 1,
+        "id": "media_quine_flanksource",
+        "name": "Flanksource website",
+        "original": {
+          "key": "quine/v1/flanksource.png",
+          "url": "/quine/v1/flanksource.png",
+          "mime": "image/png",
+          "bytes": 201612,
+          "width": 1267,
+          "height": 1265
+        },
+        "variants": []
+      },
+      {
+        "formatVersion": 1,
+        "id": "media_quine_flash",
+        "name": "Flash Coach landing page",
+        "original": {
+          "key": "quine/v1/flash-coach.png",
+          "url": "/quine/v1/flash-coach.png",
+          "mime": "image/png",
+          "bytes": 434690,
+          "width": 1267,
+          "height": 1265
+        },
+        "variants": []
+      },
+      {
+        "formatVersion": 1,
+        "id": "media_quine_services",
+        "name": "Quine · Services texture",
+        "original": {
+          "key": "quine/v1/services.jpg",
+          "url": "/quine/v1/services.jpg",
+          "mime": "image/jpeg",
+          "bytes": 93494,
+          "width": 1920,
+          "height": 1280
+        },
+        "variants": []
+      },
+      {
+        "formatVersion": 1,
+        "id": "media_quine_tdcx",
+        "name": "TDCX website",
+        "original": {
+          "key": "quine/v1/tdcx.png",
+          "url": "/quine/v1/tdcx.png",
+          "mime": "image/png",
+          "bytes": 655142,
+          "width": 1269,
+          "height": 1272
+        },
+        "variants": []
+      }
+    ]
+  }
+}

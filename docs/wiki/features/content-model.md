@@ -81,7 +81,7 @@ Run `pnpm verify`. `tests/content-model.test.ts` covers records, depth/cycles, d
 
 For browser checks, build the example in an isolated copy, open Schemas → Objects → SEO, inspect both collection uses, then edit Journal → an entry → Specifications → Dimensions → Item 1 → Detail. Reload and reopen the edited value. At mobile width, search a single reference and reorder related entries. Inspect the built entry for the SEO heading, referenced author and specification rows. Single-entry Content should open directly with no slug or Add entry control.
 
-The [implementation run](../verification/runs/2026-10-08-content-model.md) records local and mocked results, desktop/mobile browser evidence and production output. Live GitHub/R2/Netlify behavior, physical devices and a complete browser matrix remain untested. No site was published.
+The [implementation run](../verification/runs/2026-10-08-content-model.md) records local and mocked results, desktop/mobile browser evidence and production output. Live GitHub/R2/hosting behavior, physical devices and a complete browser matrix remain untested. No site was published.
 
 The [number-input repair](../verification/runs/2026-10-08-number-input-height.md) verifies that numeric schema limits retain standard control height inside horizontal rows.
 

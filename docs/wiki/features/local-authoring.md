@@ -1,6 +1,6 @@
 ---
 title: Building sites with local agents
-updated: 2026-10-08
+updated: 2026-10-11
 ---
 # Building sites with local agents
 
@@ -119,6 +119,59 @@ in README. After adding registrations or routes, stop the owned development inst
 with `pnpm exec astro dev stop`, then run `pnpm dev` again. The demo site uses an older
 site shape understood by the existing reader; use the canonical shape above for new work.
 
+## Recreating an existing site
+
+Inspect the reference at wide/narrow widths and exercise its interactions. When
+source is available, inventory routes, copy, assets, fonts and behavior. Confirm
+only unresolved choices: fidelity, source reuse, likely client edits and whether
+the active site should be replaced or preserved. A reproduction is not automatically
+a redesign, a CMS schema port or permission to remove unrelated content.
+
+Compare the rebuilt page and reference at the same viewport after fonts and entry
+animations finish. Check distinctive typography closely: splitting text for an
+animation can change word spaces, kerning and flex sizing even with the correct
+font and size. Repeat the comparison in the editor preview.
+
+Map visible sections and client tasks to builder capabilities before coding:
+
+| Reference need | Builder location | Client location |
+| --- | --- | --- |
+| Shared shell, typography, navigation | Registered Site Layout | Site Layout |
+| Section copy/images/actions | Registered block fields | Pages → page → block |
+| A short list owned by one section | Block `list` fields with `_rowId` rows | The block's named list |
+| Independent reusable content | Collection and entries, when useful | Content and Schemas |
+| Existing image files | `public/` plus media records | Media and field selectors |
+| New interaction | Block renderer and activation | Preview and public site |
+
+The [Quine trial](../journal/2026-10-11-quine-rebuild.md) is a runnable example:
+`pnpm example:quine` stages it separately and preserves the root demo. It uses
+ordinary content records and installed implementations, not a special rendering
+path. See `examples/quine/README.md` in the repository for the editing map and
+local credentials. Source assets and fonts are local; effects are independently
+implemented. A project gallery is a block-owned list because its owner selected
+that model. Do not introduce collections merely to exercise more CMS features.
+
+Several details are easy to miss during implementation:
+
+- A media field value is an object containing `mediaId` and optional `alt`.
+  Block lists use `list`/`fields`; collection arrays use `array`/`of`.
+- Keep layout geometry defaults, its policy output and renderer consistent.
+  Author-specific settings need not expose every source-maintained value.
+- Scope typography/resets to the website. Container queries let the same
+  responsive renderer react to the editor's narrow preview, independently of
+  the desktop browser window. The layout Head does not mount in that preview,
+  so assets needed there also need a renderer-loaded path.
+- Read the actual dev-server URL and verify the page identity. A requested port
+  may belong to another running site. Click an interactive control and inspect
+  `pnpm exec astro dev logs`; an HTTP 200 and correct static screenshot do not
+  establish successful hydration. Vite caches are separate per checkout and
+  Astro command, so checks/builds do not overwrite the active dev cache. Isolated
+  checkouts explicitly allow their linked dependency directory.
+- Test at least one realistic content edit and a repeatable-list edit, then
+  confirm preview, cancellation/restoration and export. Browser edits do not
+  write the source checkout. Record where content is maintained and how to keep
+  it, alongside any fidelity compromises and untested integrations.
+
 ## Adjusting an existing site
 
 Start with `git status`, the current site records, the relevant definitions and the
@@ -191,8 +244,14 @@ shows placeholders; a built entry route shows the actual resolved content.
 Rich text stores Markdown. Uploaded image embeds use `![alt](media:media_id)` and
 YouTube embeds use `![title](youtube:VIDEO_ID)`. The managed rich-text renderer has a
 limited safe vocabulary; a custom block's code can implement other visual/media behavior.
-Media props refer to records in `content/media/`; actual binaries are uploaded to R2
-through Media. Static assets needed by source implementations can live in `public/`.
+Media props store `{ "mediaId": "media_example", "alt": "Description" }`, rather
+than a URL or bare ID. Records live in `content/media/`. Client uploads go to R2
+through Media; copied assets can live in `public/` with root-relative record URLs.
+For example `public/photos/team.jpg` uses `/photos/team.jpg`. Supply the normal
+`original` metadata (`key`, `url`, `mime`, `bytes`, optional dimensions) and
+`variants: []` when no variants exist. Existing selectors and renderers work with
+both sources. Local validation checks metadata, not file existence; verify local
+asset URLs in the built site. [Media contract](media.md#locally-authored-media).
 
 ## Custom blocks and layouts
 

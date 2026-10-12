@@ -29,6 +29,7 @@ it('retains GitLab instance and namespace without credentials and rejects unknow
     owner: 'team/subgroup',
     repo: 'site',
     branch: 'draft',
+    publishBranch: 'release/live',
   };
   const value = {
     version: 1 as const,
@@ -45,6 +46,19 @@ it('retains GitLab instance and namespace without credentials and rejects unknow
       repository: { ...repository, provider: 'unsupported' },
     }),
   );
+  expect(readRecovery()).toBeNull();
+});
+
+it('rejects a malformed publish branch in retained repository settings', () => {
+  retain({
+    version: 1,
+    repository: { owner: 'team', repo: 'site', branch: 'draft' },
+    base: null,
+    content: fixture(),
+  });
+  const recovered = JSON.parse(sessionStorage.getItem(recoveryKey)!);
+  recovered.repository.publishBranch = 42;
+  sessionStorage.setItem(recoveryKey, JSON.stringify(recovered));
   expect(readRecovery()).toBeNull();
 });
 

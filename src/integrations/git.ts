@@ -1,5 +1,6 @@
 import type { Definition } from '../core/types';
 import type { Repository, RepositoryStore } from './repository';
+import { checkBranches, publishBranch } from './repository';
 
 export function repositoryKey(repo: Repository) {
   return JSON.stringify([
@@ -10,6 +11,7 @@ export function repositoryKey(repo: Repository) {
     repo.owner,
     repo.repo,
     repo.branch,
+    publishBranch(repo),
   ]);
 }
 
@@ -25,7 +27,7 @@ export async function connect(
     !repository.branch.trim()
   )
     throw Error('Enter your repository and access token.');
-  if (repository.branch === 'main') throw Error('Use a separate draft branch.');
+  checkBranches(repository);
   if (repository.provider === 'gitlab') {
     const { GitLabStore, gitlabRequest } = await import('./gitlab');
     return new GitLabStore(

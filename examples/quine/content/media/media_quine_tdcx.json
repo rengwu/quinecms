@@ -1,0 +1,14 @@
+{
+  "formatVersion": 1,
+  "id": "media_quine_tdcx",
+  "name": "TDCX website",
+  "original": {
+    "key": "quine/v1/tdcx.png",
+    "url": "/quine/v1/tdcx.png",
+    "mime": "image/png",
+    "bytes": 655142,
+    "width": 1269,
+    "height": 1272
+  },
+  "variants": []
+}

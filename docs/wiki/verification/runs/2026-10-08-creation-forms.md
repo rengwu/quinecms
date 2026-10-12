@@ -27,6 +27,6 @@ Dirty tree based on `30c447e3d28c6e52eb2a24d323c1086bee9001b7`. The [source mani
 
 ## Limits and cleanup
 
-Browser coverage samples desktop schema forms and mobile entries. The broader creation matrix is covered by mounted component tests, not a browser replay of every variant. No physical-device/cross-browser matrix or live GitHub, R2 or Netlify operations were performed. Existing provider mocks are not live-provider certification. The implementing agent ran these checks.
+Browser coverage samples desktop schema forms and mobile entries. The broader creation matrix is covered by mounted component tests, not a browser replay of every variant. No physical-device/cross-browser matrix or live GitHub, R2 or hosting-provider operations were performed. Existing provider mocks are not live-provider certification. The implementing agent ran these checks.
 
 Browser test content stayed in the disposable tab's local draft; no Save draft, Publish or upload was used. Closed the owned test tab while preserving the original Start Page and user's running development server. No browser test content was written into repository fixtures.

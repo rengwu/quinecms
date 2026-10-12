@@ -7,6 +7,18 @@ export interface Repository {
   owner: string;
   repo: string;
   branch: string;
+  publishBranch?: string;
+}
+
+export const publishBranch = (repository: Repository) =>
+  repository.publishBranch ?? 'main';
+
+export function checkBranches(repository: Repository) {
+  const target = publishBranch(repository);
+  if (!repository.branch.trim() || !target.trim())
+    throw Error('Enter both a draft branch and a publish branch.');
+  if (repository.branch.trim() === target.trim())
+    throw Error('Use a separate draft branch.');
 }
 
 export interface RepositoryStore {

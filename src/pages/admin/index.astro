@@ -1,11 +1,19 @@
 ---
-import { createHash } from 'node:crypto';
+import { gzipSync } from 'node:zlib';
 import { loadContent } from '../../core/load';
 import { layoutWhitelist } from '../../core/layouts';
-import App from '../../editor/App';
-import '../../styles/public.css';
+import { adminBundle } from '../../../scripts/admin-build';
+import { credentials, encryptAdmin } from '../../admin/crypto';
+// One shared credential pair. Dev uses fixed credentials regardless of .env;
+// static builds still require the configured production pair.
+const email = import.meta.env.LEAN_DEV_SERVER
+  ? 'admin@example.com'
+  : (import.meta.env.ADMIN_EMAIL ?? '');
+const password = import.meta.env.LEAN_DEV_SERVER
+  ? 'asdf1234'
+  : (import.meta.env.ADMIN_PASSWORD ?? '');
+credentials(email, password);
 const initial = await loadContent();
-const password = import.meta.env.ADMIN_PASSWORD;
 const provider = import.meta.env.PUBLIC_GIT_PROVIDER ?? 'github';
 if (provider !== 'github' && provider !== 'gitlab')
   throw Error('PUBLIC_GIT_PROVIDER must be github or gitlab.');
@@ -13,9 +21,7 @@ const config = {
   provider,
   instance: import.meta.env.PUBLIC_GITLAB_URL ?? 'https://gitlab.com',
   allowedLayoutIds: layoutWhitelist(import.meta.env.SITE_LAYOUT_WHITELIST),
-  passwordHash: password
-    ? createHash('sha256').update(password).digest('hex')
-    : '',
+  encryptedAdmin: true,
   owner:
     import.meta.env.PUBLIC_GIT_NAMESPACE ??
     (provider === 'github' ? (import.meta.env.PUBLIC_GITHUB_OWNER ?? '') : ''),
@@ -23,12 +29,18 @@ const config = {
     import.meta.env.PUBLIC_GIT_REPO ??
     (provider === 'github' ? (import.meta.env.PUBLIC_GITHUB_REPO ?? '') : ''),
   branch: import.meta.env.PUBLIC_DRAFT_BRANCH ?? 'draft',
+  publishBranch: import.meta.env.PUBLIC_PUBLISH_BRANCH ?? 'main',
   r2: {
     accountId: import.meta.env.PUBLIC_R2_ACCOUNT_ID ?? '',
     bucket: import.meta.env.PUBLIC_R2_BUCKET ?? '',
     publicURL: import.meta.env.PUBLIC_R2_PUBLIC_URL ?? '',
   },
 };
+const bundle = await adminBundle(import.meta.env.LEAN_DEV_SERVER);
+const payload = gzipSync(
+  JSON.stringify({ ...bundle, props: { initial, config } }),
+);
+const envelope = await encryptAdmin(payload, email, password);
 ---
 
 <!doctype html>
@@ -40,7 +52,138 @@ const config = {
     <title>Site editor</title>
   </head>
   <body>
-    <App client:only="react" {initial} {config} />
+    <main id="login-screen" data-mode="dark">
+      <form id="admin-login" method="post">
+        <h1>Site editor</h1>
+        <div class="field">
+          <label for="email">Email</label>
+          <input
+            id="email"
+            name="email"
+            type="email"
+            autocomplete="username"
+            autocapitalize="none"
+            spellcheck="false"
+            required
+          />
+        </div>
+        <div class="field">
+          <label for="password">Password</label>
+          <input
+            id="password"
+            name="password"
+            type="password"
+            autocomplete="current-password"
+            required
+          />
+        </div>
+        <p id="login-error" role="alert" aria-live="polite"></p>
+        <div class="actions">
+          <button type="submit" disabled>
+            Unlock editor
+          </button>
+        </div>
+      </form>
+    </main>
+    <div id="editor-root" hidden></div>
+    <script
+      id="admin-payload"
+      type="application/json"
+      set:html={JSON.stringify(envelope)}
+    />
+    <script>
+      import '../../admin/login';
+    </script>
     <noscript>The site editor needs JavaScript enabled.</noscript>
   </body>
 </html>
+
+<style>
+  :global(body) {
+    margin: 0;
+  }
+  #login-screen {
+    --canvas: #111113;
+    --text: #eeeeef;
+    --field: #202023;
+    --border: #414146;
+    --error: #fca5a5;
+    min-height: 100dvh;
+    display: grid;
+    place-items: center;
+    padding: 24px;
+    box-sizing: border-box;
+    background: var(--canvas);
+    color: var(--text);
+    font:
+      14px/1.5 Arial,
+      sans-serif;
+    color-scheme: dark;
+  }
+  #login-screen[data-mode='light'] {
+    --canvas: #fafafa;
+    --text: #18181b;
+    --field: #fff;
+    --border: #d4d4d8;
+    --error: #b91c1c;
+    color-scheme: light;
+  }
+  #login-screen[hidden] {
+    display: none;
+  }
+  form {
+    width: min(100%, 350px);
+  }
+  h1 {
+    font-size: 24px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    margin: 0 0 24px;
+  }
+  .field {
+    display: grid;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+  input {
+    width: 100%;
+    min-height: 40px;
+    box-sizing: border-box;
+    padding: 8px 12px;
+    color: var(--text);
+    background: var(--field);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font: inherit;
+  }
+  input:focus-visible,
+  button:focus-visible {
+    outline: 2px solid #60a5fa;
+    outline-offset: 3px;
+  }
+  .actions {
+    display: flex;
+    justify-content: flex-end;
+  }
+  button {
+    min-height: 40px;
+    border: 1px solid #2563eb;
+    border-radius: 8px;
+    background: #2563eb;
+    color: #fff;
+    padding: 8px 14px;
+    font: inherit;
+    cursor: pointer;
+  }
+  button:disabled {
+    opacity: 0.7;
+    cursor: wait;
+  }
+  #login-error {
+    color: var(--error);
+    margin: 0 0 16px;
+  }
+  #login-error:empty {
+    display: none;
+  }
+</style>

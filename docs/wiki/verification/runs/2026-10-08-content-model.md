@@ -9,7 +9,7 @@ result: Passed
 
 [FEAT-content-model](../../features/content-model.md), with affected [editor](../../features/editor.md), [generic pages](../../features/generic-pages.md) and [Git publishing](../../features/publishing.md). The user authorized implementing DEC-110–DEC-128 without compatibility or migrations. Selected checks cover the new model, persistence, schema impact, references, routes, presentation, recovery and dedicated desktop/mobile editing levels.
 
-Aggregate: **Passed** for these local and mocked checks. Live GitHub, R2 and Netlify, physical devices, broad performance benchmarks and a complete browser matrix are excluded, not implied to pass. Nothing was deployed.
+Aggregate: **Passed** for these local and mocked checks. Live GitHub, R2 and hosting-provider operations, physical devices, broad performance benchmarks and a complete browser matrix are excluded, not implied to pass. Nothing was deployed.
 
 ## Build and environment
 

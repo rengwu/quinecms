@@ -15,7 +15,6 @@
     "content/pages/page_blocks.json": "92b3d0a63203027ad498aa915f6e2420c3ff2f1d17cf4390d398f43a8141adb4",
     "content/pages/page_home.json": "c567dac5db03f3b75eda4d3f8b4f450a454591005f521dcb19ce7eaa467bd1bf",
     "content/site.json": "3e62c1110b6395c457dd331093f2a3360a9fb51b5a404ec56f29c50a94908a28",
-    "netlify.toml": "2a79f2469a7f812a9a0629ddcf3e6b640c14a337527a065215c11776a9446f4f",
     "package.json": "5e9e4e5d9697e96a331e16b74e9866c91bae6feceb9ec2cc34c593873bd864dd",
     "pnpm-lock.yaml": "7d193c35611ae49270f7fd6fed8c43502ad213988aa360779881d4a0db70c1e5",
     "scripts/build-assets.mjs": "4dc922be0f426655f57e69b06af041a9e983e3561c7afaedbe599560448d8a44",
@@ -85,5 +84,12 @@
     "tests/rich-text.test.ts": "416b53adda8f29c4e3244d58cbe5df63e37f3886031a9ce047a8df21a78a014e",
     "tsconfig.json": "80250122699dd752ab525837dc9321bd5aa265869961cc3306a895aec52092d2",
     "vitest.config.ts": "09634e9a83870dcd814145d3635b30ee076a500315582bbf8e351ebaf9f7b128"
-  }
+  },
+  "redactedFiles": [
+    {
+      "description": "Historical hosting configuration; provider-specific filename omitted.",
+      "sha256": "2a79f2469a7f812a9a0629ddcf3e6b640c14a337527a065215c11776a9446f4f"
+    }
+  ],
+  "redactionNote": "2026-10-09: Hosting-specific filenames omitted at the user’s request. All original content hashes and the original aggregateSha256 are retained. The aggregate includes the omitted filenames and cannot be recomputed from this redacted manifest alone."
 }

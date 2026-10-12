@@ -7,8 +7,8 @@ Use the builder's content capabilities where they help the site and its owner.
 
 Astro produces a static website and React editor at `/admin/`. Source and content
 live in one repository. The connected editor saves to a GitHub or GitLab draft branch;
-publishing advances the saved snapshot to `main`. Your deployment workflow can then
-build and host the static output. There is no application server in production.
+publishing advances the saved snapshot to your publish branch (`main` by default).
+Your deployment workflow can then build and host the static output. There is no application server in production.
 
 Start with [AGENTS.md](AGENTS.md) and the [local authoring guide](docs/wiki/features/local-authoring.md).
 The guide covers choosing content structures, building a new site, changing an
@@ -17,14 +17,24 @@ the documented record formats describe the current implementation.
 
 ## Run locally
 
+To inspect a complete recreation without replacing the active demo, run
+`pnpm example:quine`. See the [Quine example](examples/quine/README.md) for its
+local login, client editing map and isolated build command.
+
 Node 22.12+ and pnpm 10.34.1:
 
 ```sh
 pnpm install --frozen-lockfile
+cp .env.example .env              # optional for dev; configure credentials before building
 pnpm dev
 ```
 
-Open `http://127.0.0.1:4321/admin/`. Without provider credentials, you can edit the
+Open `/admin/` on the URL printed by the dev server (normally
+`http://127.0.0.1:4321/admin/`) and use `admin@example.com` / `asdf1234`.
+Development always uses this single shared login, regardless of `.env`.
+Production builds and `pnpm preview` use the configured `ADMIN_EMAIL` /
+`ADMIN_PASSWORD` pair instead. Both modes guard one dashboard and one set of content.
+Without provider credentials, you can edit the
 browser preview and export a content backup. Browser edits do not write local
 project files. Local agents normally edit source and JSON directly, then use the
 browser to inspect the result and the client's controls.
@@ -51,7 +61,8 @@ may call for corresponding changes to their regression tests.
 Astro launches background instances. Stop the owned instance with
 `pnpm exec astro dev stop` or `pnpm exec astro preview stop`. After adding blocks,
 layouts or routes, restart development with `pnpm dev` so generation runs again.
-Starting a second launcher does not replace an existing instance. Public output
+Starting a second launcher does not replace an existing instance. Refresh `/admin/`
+after editor source changes; its separate encrypted bundle is rebuilt on a full page request. Public output
 and the editor both deserve a quick check after source changes.
 
 ## Find the site's content
@@ -94,27 +105,35 @@ implementation version; replacing or removing one warrants checking those uses.
 
 ## Deliver and deploy
 
-1. Put the site repository on GitHub or GitLab with a `main` branch. Configure your hosting
-   or CI workflow to build `main` with `pnpm build` and serve the generated `dist/`
-   directory on your chosen static host. Limit public deployments to `main` if
-   drafts should remain unpublished.
+1. Put the site repository on GitHub or GitLab with a publish branch (`main` by
+   default). Configure your hosting or CI workflow to build that branch with
+   `pnpm build` and serve the generated `dist/` directory on your chosen static
+   host. Limit public deployments to the publish branch to keep drafts unpublished.
 2. Configure the build values described in `.env.example`: `PUBLIC_GIT_PROVIDER`
    (`github` or `gitlab`), `PUBLIC_GIT_NAMESPACE`, `PUBLIC_GIT_REPO` and
-   `PUBLIC_DRAFT_BRANCH`. For GitLab, the namespace includes any subgroups;
+   `PUBLIC_DRAFT_BRANCH` / `PUBLIC_PUBLISH_BRANCH` (defaults: `draft` / `main`).
+   For GitLab, the namespace includes any subgroups;
    `PUBLIC_GITLAB_URL` defaults to `https://gitlab.com` and can point at an HTTPS
    self-managed instance. The older `PUBLIC_GITHUB_OWNER`/`PUBLIC_GITHUB_REPO`
    variables remain GitHub fallbacks when the neutral names are unset.
-   `ADMIN_PASSWORD` is an optional convenience gate; it is not access control for
-   the statically hosted editor, content or assets.
+   Set `ADMIN_EMAIL` and `ADMIN_PASSWORD` as build secrets. Both are required. The
+   build derives a key from the normalized email and exact password using Argon2id
+   and encrypts the standalone dashboard and initial data with AES-256-GCM.
+   Missing credentials or encryption failure stops the build. The deployed login
+   page contains ciphertext, never the configured credentials or key. See the
+   [encrypted admin contract](docs/wiki/features/admin-encryption.md) for browser
+   requirements, provider-neutral deployment setup and limits.
 3. In `/admin/` → Settings → Connection, choose the provider and repository, then enter an
    access token: GitHub needs repository Contents read/write; GitLab needs `api`
    scope and project permissions to create branches/commits and merge into the
-   draft and main branches. Branch rules need to allow the intended updates.
-   Connect loads the draft, creating a missing draft branch from main.
+   draft and publish branches. Branch rules need to allow the intended updates.
+   Connect loads the draft, creating a missing draft branch from the publish branch.
+   Both provider forms show example placeholders. Publish branch defaults to `main`
+   and must differ from Draft branch. Changing it requires reconnecting.
 4. Save draft writes all pending records in one commit. Structurally valid incomplete
    content can be saved. Publish requires a saved, fully valid snapshot and advances
-   main without force. The editor reports deployment pending; deployment success
-   is tracked separately by your hosting or CI workflow.
+   the publish branch without force. The editor reports deployment pending;
+   deployment success is tracked separately by your hosting or CI workflow.
 
 GitLab uses temporary branches and SHA-pinned merge requests internally for both
 Save and Publish. Configure the project for **Fast-forward merge**, with squashing
@@ -129,15 +148,19 @@ instances must allow browser API requests from the editor's origin. See the
 Local code changes and client content changes can be on different branches. Before
 updating an existing site, review the saved draft and reconcile source/content in
 normal Git work. Rebuild/deploy the editor for changed source contracts and synchronize
-main and draft; the portal rejects source mismatches and divergent publication history.
+the publish and draft branches; the portal rejects source mismatches and divergent
+publication history.
 See the [existing-site workflow](docs/wiki/features/local-authoring.md#adjusting-an-existing-site).
 
 Stale saves preserve local work. Export a backup, reload the remote draft and reconcile
 edits. Backup import replaces the local content snapshot; it is not a merge. Tab recovery
 survives reload, not a closed session. Git provider/R2 credentials remain in session storage,
-are cleared by Lock editor and are excluded from backups and Git. Trusted installed
-code shares the editor document. Changing the repository connection clears its token;
-tokens are restored only for the matching provider, instance, repository and branch.
+are excluded from backups and Git. Lock editor clears credentials and reloads the
+encrypted login page. Each reload requires email/password again; the retained
+draft is restored after unlocking. Browser draft/token storage is not encrypted
+by this feature. Trusted installed code shares the editor document. Changing the repository connection clears its token;
+tokens are restored only for the matching provider, instance, repository, draft
+branch and publish branch.
 
 Factory reset clears all pages, entries, collection and object schemas, and media
 records from the local draft, and restores Starter v1 defaults. It requires

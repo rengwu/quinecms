@@ -2,11 +2,44 @@ import { readFile, readdir, stat } from 'node:fs/promises';
 import assert from 'node:assert/strict';
 import { gzipSync } from 'node:zlib';
 import installedLayouts from '../layouts.config.mjs';
+const adminHtml = await readFile('dist/admin/index.html', 'utf8');
+const payload = adminHtml.match(
+  /<script\b[^>]*id="admin-payload"[^>]*>([\s\S]*?)<\/script>/,
+);
+assert(payload, 'Admin must contain an encrypted payload');
+assert(
+  /<button\b(?=[^>]*type="submit")(?=[^>]*disabled)[^>]*>/.test(adminHtml),
+  'Login must remain disabled until the local decryption handler is ready',
+);
+const envelope = JSON.parse(payload[1]);
+assert.equal(envelope.parameters.kdf, 'argon2id');
+assert.equal(envelope.parameters.cipher, 'AES-256-GCM');
+assert.equal(Buffer.from(envelope.salt, 'base64').length, 32);
+assert.equal(Buffer.from(envelope.iv, 'base64').length, 12);
+assert(Buffer.from(envelope.ciphertext, 'base64').length > 16);
+assert(
+  !adminHtml.includes('passwordHash'),
+  'Legacy password verifier must not be deployed',
+);
+assert(
+  !adminHtml.includes('<astro-island'),
+  'Admin props must not be published as an Astro island',
+);
+assert(
+  !(await readdir('dist')).includes('.prerender'),
+  'Build-only prerender files must not be deployed',
+);
 const graph = JSON.parse(await readFile('.astro/client-graph.json', 'utf8'));
 const assets = new Set(await readdir('dist/_astro'));
 const packages = new Map(),
   moduleOwners = new Map();
 for (const [file, chunk] of Object.entries(graph)) {
+  assert(
+    !chunk.modules.some(
+      (id) => id.includes('src/editor/') || id.includes('src/integrations/'),
+    ),
+    `Plaintext editor module in public output: ${file}`,
+  );
   assert(assets.has(file.replace('_astro/', '')), `Missing ${file}`);
   const code = await readFile('dist/' + file, 'utf8');
   for (const [, css] of code.matchAll(/["'](_astro\/[^"']+\.css)["']/g))

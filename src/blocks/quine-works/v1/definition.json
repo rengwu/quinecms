@@ -1,0 +1,71 @@
+{
+  "type": "quine-works",
+  "version": 1,
+  "label": "Quine · Works",
+  "description": "Selectable project gallery. Projects live in this block’s repeatable list.",
+  "theme": "Quine",
+  "tags": ["portfolio", "gallery", "list"],
+  "framework": "react",
+  "activation": "visible",
+  "component": "View.tsx",
+  "fields": [
+    {
+      "key": "anchor",
+      "label": "Section anchor",
+      "type": "text"
+    },
+    {
+      "key": "eyebrow",
+      "label": "Caption",
+      "type": "text"
+    },
+    {
+      "key": "heading",
+      "label": "Heading",
+      "type": "text"
+    },
+    {
+      "key": "visitLabel",
+      "label": "Visit link label",
+      "type": "text"
+    },
+    {
+      "key": "projects",
+      "label": "Projects",
+      "type": "list",
+      "fields": [
+        {
+          "key": "title",
+          "label": "Project title",
+          "type": "text"
+        },
+        {
+          "key": "year",
+          "label": "Year",
+          "type": "text"
+        },
+        {
+          "key": "image",
+          "label": "Project image",
+          "type": "media"
+        },
+        {
+          "key": "url",
+          "label": "Project URL",
+          "type": "url"
+        }
+      ]
+    }
+  ],
+  "defaults": {
+    "anchor": "works",
+    "eyebrow": "collection of past projects",
+    "heading": "Works",
+    "visitLabel": "Visit",
+    "projects": []
+  },
+  "dependencies": {
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  }
+}

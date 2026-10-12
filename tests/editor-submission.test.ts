@@ -12,7 +12,7 @@ const config = {
   owner: '',
   repo: '',
   branch: 'draft',
-  passwordHash: '',
+  encryptedAdmin: false,
   r2: { accountId: '', bucket: '', publicURL: '' },
 };
 const content: Content = {
@@ -78,7 +78,10 @@ it('recovers silently and puts submission errors inside the styled portal', asyn
   recovered.pages[0].title = '';
   await mount(recovered);
   expect(host.textContent).not.toMatch(
-    /Recovered|Unsaved changes|Cannot publish|Page title is required/,
+    /Recovered|Cannot publish|Page title is required/,
+  );
+  expect(host.querySelector('[role="status"]')?.textContent).toBe(
+    'Unsaved changes',
   );
   await click('Publish');
   const title = [...document.querySelectorAll('h2')].find(

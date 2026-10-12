@@ -35,7 +35,7 @@ The [block library](block-library.md) adds themed/tagged browsing, shared chrome
 
 ## Coverage and limitations
 
-Local build, mounted UI tests and native browser flows are covered by the run below. R2 upload credentials, external video playback, live GitHub saves/publishing and Netlify deployment are outside this local verification. No general migration of third-party content is implemented.
+Local build, mounted UI tests and native browser flows are covered by the run below. R2 upload credentials, external video playback, live GitHub saves/publishing and hosting deployment are outside this local verification. No general migration of third-party content is implemented.
 
 ## Verification history
 

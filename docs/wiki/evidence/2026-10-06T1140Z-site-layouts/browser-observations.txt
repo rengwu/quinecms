@@ -27,4 +27,4 @@ Boundaries:
 - Visual review is sampled and source-backed, not a pixel-diff or physical-device matrix.
 - Reduced motion, multiple instance isolation and lifecycle cleanup are additionally tested with controlled jsdom observers/frame scheduling. This is not a browser memory/profile assertion.
 - Package destination URLs were inspected; no binary was installed.
-- Live GitHub writes, R2 uploads/CORS and Netlify deployment were not exercised.
+- Live GitHub writes, R2 uploads/CORS and hosting deployment were not exercised.

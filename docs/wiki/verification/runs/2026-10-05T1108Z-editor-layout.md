@@ -26,6 +26,6 @@ Dirty implementation on `f6993528410bebeae1dafd70d52f57c1cc3e34d4`; [source mani
 
 ## Limits and cleanup
 
-Passed applies to the listed checks. The browser run used development output at desktop width; production output was built and artifact-checked without a separate production-browser run. Storage and confirmation dialogs share the checked layout but were not separately inspected in this run. Live GitHub/R2/Netlify operations, password entry and a full responsive/accessibility audit were outside scope.
+Passed applies to the listed checks. The browser run used development output at desktop width; production output was built and artifact-checked without a separate production-browser run. Storage and confirmation dialogs share the checked layout but were not separately inspected in this run. Live GitHub/R2/hosting operations, password entry and a full responsive/accessibility audit were outside scope.
 
 The temporary Design edit was cancelled. Save draft was disabled before closing the owned test window. The pre-existing user window and development server were preserved; no content files or remote providers were modified by browser testing. The schema-field visual observation closes the prior run's outstanding visual check without rewriting that historical report.

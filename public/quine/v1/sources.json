@@ -1,0 +1,16 @@
+{
+  "localSource": "astro-payload/sites/quine/astro",
+  "downloaded": {
+    "fonts/alegreya.ttf": "https://fonts.gstatic.com/s/alegreya/v41/4UacrEBBsBhlBjvfkQjt71kZfyBzPgNG9hUI_A.ttf",
+    "fonts/chivo-mono.ttf": "https://fonts.gstatic.com/s/chivomono/v11/mFThWbgRxKvF_Z5eQMO9qRMrJJrnKNtC3D7hr6fV.ttf",
+    "fonts/dm-sans.ttf": "https://fonts.gstatic.com/s/dmsans/v17/rP2tp2ywxg089UriI5-g4vlH9VoD8CmcqZG40F9JadbnoEwAopxhTg.ttf",
+    "fonts/quintessential.ttf": "https://fonts.gstatic.com/s/quintessential/v24/fdNn9sOGq31Yjnh3qWU14DdtjY5w.ttf",
+    "fonts/ALEGREYA-LICENSE.txt": "https://raw.githubusercontent.com/google/fonts/main/ofl/alegreya/OFL.txt",
+    "fonts/CHIVO-MONO-LICENSE.txt": "https://raw.githubusercontent.com/google/fonts/main/ofl/chivomono/OFL.txt",
+    "fonts/DM-SANS-LICENSE.txt": "https://raw.githubusercontent.com/google/fonts/main/ofl/dmsans/OFL.txt",
+    "fonts/QUINTESSENTIAL-LICENSE.txt": "https://raw.githubusercontent.com/google/fonts/main/ofl/quintessential/OFL.txt",
+    "flanksource.png": "https://i.imgur.com/ERW4Iox.png",
+    "flash-coach.png": "https://i.imgur.com/xWWtd1y.png",
+    "tdcx.png": "https://i.imgur.com/eSmz1Ga.png"
+  }
+}

@@ -806,7 +806,8 @@ export function validate(content: Content, definitions: Definition[]): Issue[] {
     for (const f of [m.original, ...m.variants])
       if (
         !object(f) ||
-        !/^https:\/\//.test(f.url) ||
+        !safeURL(f.url) ||
+        !/^(https:\/\/|\/(?!\/))/.test(f.url) ||
         typeof f.key !== 'string' ||
         typeof f.mime !== 'string' ||
         !Number.isFinite(f.bytes) ||

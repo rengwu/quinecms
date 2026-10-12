@@ -22,7 +22,7 @@ Temporary public fixture /block-library-verification:
 
 Automated tests separately cover schema list validation/bindings, catalog combined filters/reset, add-vs-preview behavior, repeatable-field add/delete/keyboard reorder, legacy preview navigation, all 72 new renderers with default/empty/long text, generator footer selection and idempotent writes.
 
-No live GitHub, R2 or Netlify changes were made. External form-service-specific responses and a complete visual audit of all 72 layouts are outside this run.
+No live GitHub, R2 or hosting-provider changes were made. External form-service-specific responses and a complete visual audit of all 72 layouts are outside this run.
 
 Final production smoke / cleanup:
 - pnpm verify passed: 89 tests in 16 files, zero Astro errors/warnings/hints, six static routes, successful runtime-sharing/public-asset checks.

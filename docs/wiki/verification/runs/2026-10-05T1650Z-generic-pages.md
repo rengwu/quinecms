@@ -30,7 +30,7 @@ Evidence: [verification log](../../evidence/2026-10-05T1650Z-generic-pages/verif
 
 ## Limits and follow-up
 
-Live GitHub writes, R2 upload/CORS, Netlify deployment and actual external YouTube playback were not selected and remain unverified. Image editing used existing media metadata in a mounted UI test; uploads still use the existing Media workflow. No generic third-party content migration is provided. Existing demo entries were intentionally replaced; old recovery storage is preserved separately.
+Live GitHub writes, R2 upload/CORS, hosting deployment and actual external YouTube playback were not selected and remain unverified. Image editing used existing media metadata in a mounted UI test; uploads still use the existing Media workflow. No generic third-party content migration is provided. Existing demo entries were intentionally replaced; old recovery storage is preserved separately.
 
 An initial build failed because an empty generic media component returned null; it now emits an invisible empty node so Astro can identify its renderer. The final verification log contains the successful rerun. The initial blank data-only selector was fixed and rechecked in development and unit tests. Earlier browser checks predate these small fixes; final compilation/tests/build include them.
 
