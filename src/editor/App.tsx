@@ -12,6 +12,7 @@ import StorageSettings from './StorageSettings';
 import MediaUpload, { MediaUploadContext } from './MediaUpload';
 import {
   migrateSite,
+  layoutDefinitions,
   activeLayout,
   layoutKey,
   siteLayouts,
@@ -59,6 +60,11 @@ import {
   validate,
 } from '../core/content';
 import { definitions } from '../generated/definitions';
+import { initialLayout } from '../generated/site-config';
+const resetLayoutLabel =
+  layoutDefinitions.find(
+    (d) => d.id === initialLayout.id && d.version === initialLayout.version,
+  )?.label ?? initialLayout.id;
 import { connect, repositoryKey } from '../integrations/git';
 import type { Repository, RepositoryStore } from '../integrations/repository';
 import { Conflict, publishBranch } from '../integrations/repository';
@@ -1452,8 +1458,9 @@ function Editor({
                             <PanelSection title="Factory reset">
                               <p className={styles.muted}>
                                 Clear all pages, content, collection and object
-                                schemas, and media records. Restore the Starter
-                                layout and its default settings.
+                                schemas, and media records. Restore{' '}
+                                {resetLayoutLabel} layout and its default
+                                settings.
                               </p>
                               <div className={styles.row}>
                                 <Button
@@ -1461,7 +1468,7 @@ function Editor({
                                   onClick={() =>
                                     setConfirm({
                                       title: 'Factory reset this site?',
-                                      body: 'This clears all pages, content, collection and object schemas, and media records from your local draft, and restores the Starter layout defaults. Uploaded files remain in R2. Export a backup first if you want to keep your work. Save draft to store the reset; create a home page before publishing.',
+                                      body: `This clears all pages, content, collection and object schemas, and media records from your local draft, and restores the ${resetLayoutLabel} layout defaults. Uploaded files remain in R2. Export a backup first if you want to keep your work. Save draft to store the reset; create a home page before publishing.`,
                                       actionLabel: 'Reset site',
                                       destructive: true,
                                       action: () => {

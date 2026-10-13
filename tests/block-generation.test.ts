@@ -198,6 +198,25 @@ it('installs a declared library unchanged, registers custom fields, and rejects 
   expect(await readFile(join(workspace, 'public/logo.svg'), 'utf8')).toBe(
     '<svg/>',
   );
+  await edit(join(dir, 'extensions/local/quinecms.library.json'), (m) => {
+    m.blocks = ['src/blocks/counter'];
+    m.layouts = [];
+  });
+  await edit(
+    join(dir, 'extensions/local/src/blocks/counter/definition.json'),
+    (d) => (d.type = 'original-counter'),
+  );
+  await edit(
+    join(dir, 'quinecms.config.json'),
+    (c) => (c.extensions = 'extensions/local'),
+  );
+  await generate(dir);
+  const combined = await readFile(
+    join(workspace, 'src/generated/definitions.ts'),
+    'utf8',
+  );
+  expect(combined).toContain('original-counter');
+  expect(combined).toContain('vanilla-fixture');
   await mkdir(join(dir, 'public'));
   await writeFile(join(dir, 'public/logo.svg'), '<svg/>');
   await expect(prepareSite(dir)).rejects.toThrow('Site asset conflicts');

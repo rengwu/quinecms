@@ -89,7 +89,7 @@ export interface Site extends Envelope {
   layouts?: SiteLayout[];
   /** Previous single-layout format; also used in an ephemeral render context. */
   layout?: LayoutSelection;
-  /** Legacy Site Options, read losslessly into the starter layout. */
+  /** Retained legacy fields; not an implicit layout selection. */
   title?: string;
   navigation?: { id: string; label: string; to: Link }[];
   header?: Values;
