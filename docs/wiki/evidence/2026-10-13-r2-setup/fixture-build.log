@@ -1,0 +1,31 @@
+
+> lean-sitebuilder@0.1.0 build /private/var/folders/00/h_k67s0j5dq0qvg6ylqysk2w0000gn/T/lean-example-intr-ApPEeX
+> pnpm prepare:blocks && astro build
+
+
+> lean-sitebuilder@0.1.0 prepare:blocks /private/var/folders/00/h_k67s0j5dq0qvg6ylqysk2w0000gn/T/lean-example-intr-ApPEeX
+> node scripts/generate-blocks.mjs
+
+Registered 110 block versions.
+Registered 4 layout versions.
+11:28:06 [types] Generated 46ms
+11:28:06 [build] output: "static"
+11:28:06 [build] mode: "static"
+11:28:06 [build] directory: /private/var/folders/00/h_k67s0j5dq0qvg6ylqysk2w0000gn/T/lean-example-intr-ApPEeX/dist/
+11:28:06 [build] Collecting build info...
+11:28:06 [build] ✓ Completed in 109ms.
+11:28:06 [build] Building static entrypoints...
+11:28:06 [vite] ✓ built in 243ms
+11:28:06 [vite] ✓ built in 182ms
+11:28:06 [build] Rearranging server assets...
+
+ generating static routes 
+11:28:06   ├─ /admin/index.html (+1.42s) 
+11:28:08   ├─ /projects/maison-doree/index.html (+32ms) 
+11:28:08   ├─ /projects/index.html (+18ms) 
+11:28:08   ├─ /index.html (+15ms) 
+11:28:08 ✓ Completed in 1.56s.
+
+11:28:08 [build] ✓ Completed in 2.05s.
+11:28:08 [build] 4 page(s) built in 2.18s
+11:28:08 [build] Complete!

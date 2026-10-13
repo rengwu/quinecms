@@ -83,6 +83,20 @@ it('rejects executable document types before network calls', async () => {
   ).rejects.toThrow('Choose');
   expect(state.commands).toHaveLength(0);
 });
+it('rejects invalid storage settings before decoding or uploading', async () => {
+  await expect(
+    upload(
+      file(),
+      {
+        ...config,
+        publicURL: 'https://' + config.accountId + '.r2.cloudflarestorage.com',
+      },
+      () => {},
+    ),
+  ).rejects.toThrow('Public Development URL');
+  expect(createImageBitmap).not.toHaveBeenCalled();
+  expect(state.commands).toHaveLength(0);
+});
 it('keeps the original when image decoding fails', async () => {
   vi.stubGlobal(
     'createImageBitmap',

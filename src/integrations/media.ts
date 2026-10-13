@@ -10,27 +10,76 @@ export interface StorageConfig {
   variantWidths: number[];
   quality: number;
 }
-export async function upload(
-  file: File,
-  config: StorageConfig,
-  onProgress: (message: string) => void,
-): Promise<Media> {
+
+export function parseR2Account(value: string): {
+  accountId: string;
+  bucket?: string;
+} {
+  value = value.trim();
+  if (/^[a-f0-9]{32}$/i.test(value)) return { accountId: value };
+  try {
+    const url = new URL(value);
+    const match = url.hostname.match(
+      /^([a-f0-9]{32})\.r2\.cloudflarestorage\.com$/i,
+    );
+    const path = url.pathname.match(/^\/([^/]+)?\/?$/);
+    if (
+      match &&
+      path &&
+      url.protocol === 'https:' &&
+      !url.port &&
+      !url.username &&
+      !url.password &&
+      !url.search &&
+      !url.hash
+    )
+      return { accountId: match[1], ...(path[1] ? { bucket: path[1] } : {}) };
+  } catch {}
+  throw Error(
+    'Enter your 32-character account ID or the standard R2 S3 API URL from bucket Settings.',
+  );
+}
+
+/** Shared by setup and uploads; saving validates values, not the live connection. */
+export function validateStorageConfig(input: StorageConfig): StorageConfig {
+  const account = parseR2Account(input.accountId);
+  const config = {
+    ...input,
+    accountId: account.accountId,
+    bucket: (account.bucket ?? input.bucket).trim(),
+    publicURL: input.publicURL.trim().replace(/\/+$/, ''),
+    accessKeyId: input.accessKeyId.trim(),
+    secretAccessKey: input.secretAccessKey.trim(),
+  };
+  if (!config.bucket) throw Error('Enter your R2 bucket name.');
+  let publicURL: URL;
+  try {
+    publicURL = new URL(config.publicURL);
+  } catch {
+    throw Error(
+      'Enter an HTTPS public media URL, such as https://pub-example.r2.dev.',
+    );
+  }
   if (
-    !/^[a-f0-9]{32}$/i.test(config.accountId) ||
-    !config.bucket ||
-    !config.accessKeyId ||
-    !config.secretAccessKey
+    publicURL.protocol !== 'https:' ||
+    publicURL.username ||
+    publicURL.password ||
+    publicURL.search ||
+    publicURL.hash
   )
-    throw Error('Enter your R2 account, bucket, and credentials.');
-  const publicURL = new URL(config.publicURL);
-  if (publicURL.protocol !== 'https:' || publicURL.search || publicURL.hash)
-    throw Error('Use an HTTPS public R2 origin without a query or fragment.');
-  if (
-    !Number.isFinite(config.maxMB) ||
-    config.maxMB <= 0 ||
-    file.size > config.maxMB * 1024 * 1024
-  )
-    throw Error(`Choose a file smaller than ${config.maxMB} MB.`);
+    throw Error(
+      'Use an HTTPS public media URL without credentials, a query or a fragment.',
+    );
+  if (publicURL.hostname.endsWith('.r2.cloudflarestorage.com'))
+    throw Error(
+      'Use your bucket’s Public Development URL or custom domain here. The S3 API URL is only for uploads.',
+    );
+  if (!config.accessKeyId || !config.secretAccessKey)
+    throw Error(
+      'Enter the Access Key ID and Secret Access Key from an R2 API token with Object Read & Write permission.',
+    );
+  if (!Number.isFinite(config.maxMB) || config.maxMB <= 0)
+    throw Error('Use an upload limit greater than 0 MB in Advanced.');
   if (
     !config.variantWidths.every(
       (w) => Number.isInteger(w) && w >= 64 && w <= 4096,
@@ -38,8 +87,83 @@ export async function upload(
     !(config.quality >= 0.1 && config.quality <= 1)
   )
     throw Error(
-      'Use image widths between 64 and 4096 and quality between 0.1 and 1.',
+      'In Advanced, use image widths between 64 and 4096 and quality between 0.1 and 1.',
     );
+  return config;
+}
+
+function r2ClientOptions(config: StorageConfig) {
+  return {
+    region: 'auto',
+    endpoint: `https://${config.accountId}.r2.cloudflarestorage.com`,
+    credentials: {
+      accessKeyId: config.accessKeyId,
+      secretAccessKey: config.secretAccessKey,
+    },
+    requestChecksumCalculation: 'WHEN_REQUIRED' as const,
+  };
+}
+
+export async function testStorageConnection(
+  config: StorageConfig,
+): Promise<void> {
+  config = validateStorageConfig(config);
+  const { S3Client, PutObjectCommand, DeleteObjectCommand } =
+    await import('@aws-sdk/client-s3');
+  const client = new S3Client({ ...r2ClientOptions(config), maxAttempts: 1 });
+  const key = `connection-test/${crypto.randomUUID()}.txt`;
+  const body = `lean-sitebuilder connection test: ${crypto.randomUUID()}`;
+  let uploaded = false;
+  let problem = '';
+  try {
+    await client.send(
+      new PutObjectCommand({
+        Bucket: config.bucket,
+        Key: key,
+        Body: new TextEncoder().encode(body),
+        ContentType: 'text/plain',
+        CacheControl: 'no-store',
+      }),
+      { abortSignal: AbortSignal.timeout(15_000) },
+    );
+    uploaded = true;
+    const response = await fetch(`${config.publicURL}/${key}`, {
+      credentials: 'omit',
+      cache: 'no-store',
+      signal: AbortSignal.timeout(15_000),
+    });
+    if (!response.ok || (await response.text()) !== body)
+      throw Error('Public read failed.');
+  } catch {
+    problem = uploaded
+      ? 'Upload worked, but the public media URL could not read the test file. Check the URL, public access and CORS policy.'
+      : 'Could not upload the test file. Check the account, bucket, credentials and CORS policy.';
+  } finally {
+    // A failed PUT may have reached R2 before its response was lost.
+    try {
+      await client.send(
+        new DeleteObjectCommand({ Bucket: config.bucket, Key: key }),
+        {
+          abortSignal: AbortSignal.timeout(15_000),
+        },
+      );
+    } catch {
+      problem += `${problem ? ' ' : ''}Could not confirm cleanup of ${key}. Check DELETE permission and CORS; remove this test file from the bucket if it remains.`;
+    } finally {
+      client.destroy();
+    }
+  }
+  if (problem) throw Error(problem);
+}
+
+export async function upload(
+  file: File,
+  config: StorageConfig,
+  onProgress: (message: string) => void,
+): Promise<Media> {
+  config = validateStorageConfig(config);
+  if (file.size > config.maxMB * 1024 * 1024)
+    throw Error(`Choose a file smaller than ${config.maxMB} MB.`);
   // Executable document types are not media; SVG is excluded from the initial upload path.
   if (
     !/^(image\/(jpeg|png|webp|gif|avif)|video\/(mp4|webm)|audio\/(mpeg|ogg|wav)|application\/pdf)$/.test(
@@ -51,15 +175,7 @@ export async function upload(
     );
   const { S3Client, PutObjectCommand, DeleteObjectCommand } =
     await import('@aws-sdk/client-s3');
-  const client = new S3Client({
-    region: 'auto',
-    endpoint: `https://${config.accountId}.r2.cloudflarestorage.com`,
-    credentials: {
-      accessKeyId: config.accessKeyId,
-      secretAccessKey: config.secretAccessKey,
-    },
-    requestChecksumCalculation: 'WHEN_REQUIRED',
-  });
+  const client = new S3Client(r2ClientOptions(config));
   const mediaId = id('media');
   const prefix = mediaId + '/';
   const uploaded: string[] = [];

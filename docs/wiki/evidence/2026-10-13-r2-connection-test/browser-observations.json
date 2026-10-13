@@ -1,0 +1,44 @@
+{
+  "observedAt": "2026-10-13T04:22:19.939Z",
+  "url": "http://127.0.0.1:4324/admin/",
+  "viewports": [
+    [
+      1440,
+      1000
+    ],
+    [
+      390,
+      844
+    ]
+  ],
+  "scope": "Fresh disposable tab; no user bucket credentials used",
+  "validation": {
+    "trigger": "DevTools DOM button.click() after browser-driver actions dispatched no events",
+    "error": "Enter your 32-character account ID or the standard R2 S3 API URL from bucket Settings.",
+    "r2Requests": []
+  },
+  "mobile": {
+    "buttons": [
+      {
+        "label": "Test connection",
+        "rect": "{\"bottom\":681.5390625,\"height\":36,\"left\":40,\"right\":320,\"top\":645.5390625,\"width\":280,\"x\":40,\"y\":645.5390625}"
+      },
+      {
+        "label": "Cancel",
+        "rect": "{\"bottom\":725.5390625,\"height\":36,\"left\":132.953125,\"right\":201.34375,\"top\":689.5390625,\"width\":68.390625,\"x\":132.953125,\"y\":689.5390625}"
+      },
+      {
+        "label": "Save settings",
+        "rect": "{\"bottom\":725.5390625,\"height\":36,\"left\":209.34375,\"right\":320,\"top\":689.5390625,\"width\":110.65625,\"x\":209.34375,\"y\":689.5390625}"
+      }
+    ],
+    "dialogOverflow": false,
+    "error": "Enter your 32-character account ID or the standard R2 S3 API URL from bucket Settings.",
+    "pageOverflow": false
+  },
+  "console": [],
+  "limits": [
+    "No live R2 requests",
+    "No native click-path claim for this browser driver"
+  ]
+}

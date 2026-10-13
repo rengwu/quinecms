@@ -1,0 +1,58 @@
+{
+  "observedAt": "2026-10-13T03:30:27.435Z",
+  "origin": "http://127.0.0.1:4325",
+  "fixture": "isolated Intr production build; dummy credentials only",
+  "viewports": [
+    [
+      1440,
+      1000
+    ],
+    [
+      390,
+      844
+    ]
+  ],
+  "observations": {
+    "pastedAccountAndBucket": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa / fixture-media",
+    "invalidPublicEndpoint": "Save blocked with Public Development URL guidance; lean:r2 absent",
+    "cors": [
+      {
+        "AllowedOrigins": [
+          "http://127.0.0.1:4325"
+        ],
+        "AllowedMethods": [
+          "GET",
+          "HEAD",
+          "PUT",
+          "DELETE"
+        ],
+        "AllowedHeaders": [
+          "*"
+        ],
+        "ExposeHeaders": [
+          "ETag"
+        ],
+        "MaxAgeSeconds": 3600
+      }
+    ],
+    "savedNotification": "Storage settings saved for this tab. Connection not yet tested.",
+    "cancelAndReload": "fixture-media and normalized public URL retained; widths 480, 1200 retained",
+    "escapeDiscard": {
+      "advancedOpen": false,
+      "bucket": "fixture-media",
+      "namedInputs": true,
+      "publicURL": "https://pub-fixture.r2.dev",
+      "widths": "480, 1200"
+    },
+    "mobile": {
+      "horizontalOverflow": false,
+      "saveButtonReachable": true,
+      "saveSucceeded": true
+    },
+    "finalConsole": []
+  },
+  "limits": [
+    "No real R2 connection or upload",
+    "No real mobile device or cross-browser pass"
+  ]
+}

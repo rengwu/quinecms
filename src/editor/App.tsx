@@ -6,6 +6,7 @@ import DocumentCreation from './DocumentCreation';
 import BlockCreation from './BlockCreation';
 import LayoutSurface, { PageBlocks } from './LayoutSurface';
 import LayoutSettings from './LayoutSettings';
+import StorageSettings from './StorageSettings';
 import { migrateSite, activeLayout, layoutKey } from '../core/layouts';
 import { PanelNavigation } from './PanelNavigation';
 import { Button } from '@cloudflare/kumo/components/button';
@@ -1745,118 +1746,22 @@ function Editor({
                   </>
                 )}
                 {modal === 'storage' && (
-                  <>
-                    {(
-                      [
-                        'accountId',
-                        'bucket',
-                        'publicURL',
-                        'accessKeyId',
-                        'secretAccessKey',
-                      ] as const
-                    ).map((key) => (
-                      <div className={styles.field} key={key}>
-                        <Label>
-                          {
-                            {
-                              accountId: 'Account ID',
-                              bucket: 'Bucket',
-                              publicURL: 'Public URL',
-                              accessKeyId: 'Access key ID',
-                              secretAccessKey: 'Secret access key',
-                            }[key]
-                          }
-                          <Input
-                            aria-label={
-                              {
-                                accountId: 'Account ID',
-                                bucket: 'Bucket',
-                                publicURL: 'Public URL',
-                                accessKeyId: 'Access key ID',
-                                secretAccessKey: 'Secret access key',
-                              }[key]
-                            }
-                            type={
-                              key === 'secretAccessKey' ? 'password' : 'text'
-                            }
-                            autoComplete="off"
-                            value={r2[key]}
-                            onChange={(e) =>
-                              setR2({ ...r2, [key]: e.target.value })
-                            }
-                          />
-                        </Label>
-                      </div>
-                    ))}
-                    <div className={styles.field}>
-                      <Label>
-                        Upload limit (MB)
-                        <Input
-                          aria-label="Upload limit (MB)"
-                          type="number"
-                          min="1"
-                          value={r2.maxMB}
-                          onChange={(e) =>
-                            setR2({ ...r2, maxMB: Number(e.target.value) })
-                          }
-                        />
-                      </Label>
-                    </div>
-                    <div className={styles.field}>
-                      <Label>
-                        Image widths
-                        <Input
-                          aria-label="Image widths"
-                          value={r2.variantWidths.join(', ')}
-                          onChange={(e) =>
-                            setR2({
-                              ...r2,
-                              variantWidths: e.target.value
-                                .split(',')
-                                .map(Number),
-                            })
-                          }
-                        />
-                      </Label>
-                    </div>
-                    <div className={styles.field}>
-                      <Label>
-                        Image quality
-                        <Input
-                          aria-label="Image quality"
-                          type="number"
-                          min="0.1"
-                          max="1"
-                          step="0.05"
-                          value={r2.quality}
-                          onChange={(e) =>
-                            setR2({ ...r2, quality: Number(e.target.value) })
-                          }
-                        />
-                      </Label>
-                    </div>
-                    <div className={styles.dialogActions}>
-                      <Dialog.Close render={<Button />}>Close</Dialog.Close>
-                      <Button
-                        variant="primary"
-                        onClick={() => {
-                          try {
-                            stash('lean:r2', r2);
-                            setModal('');
-                            setMessage(
-                              'Storage settings retained for this tab.',
-                            );
-                          } catch {
-                            setError(
-                              'Could not retain credentials. Settings remain usable until reload.',
-                            );
-                          }
-                        }}
-                      >
-                        Use settings
-                      </Button>
-                    </div>
-                  </>
+                  <StorageSettings
+                    config={r2}
+                    onCancel={() => setModal('')}
+                    onSave={(next) => {
+                      try {
+                        stash('lean:r2', next);
+                      } catch {
+                        throw Error(
+                          'Could not save settings for this tab. Allow browser session storage and try again.',
+                        );
+                      }
+                      setR2(next);
+                      setModal('');
+                      setMessage('Storage settings saved for this tab.');
+                    }}
+                  />
                 )}
               </>
             )}
