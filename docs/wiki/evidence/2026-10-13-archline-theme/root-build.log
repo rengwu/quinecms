@@ -1,0 +1,84 @@
+
+> lean-sitebuilder@0.1.0 build /Users/rengwu/Desktop/Projects/lean-sitebuilder
+> pnpm prepare:blocks && astro build
+
+
+> lean-sitebuilder@0.1.0 prepare:blocks /Users/rengwu/Desktop/Projects/lean-sitebuilder
+> node scripts/generate-blocks.mjs
+
+Registered 128 block versions.
+Registered 5 layout versions.
+14:41:51 [types] Generated 43ms
+14:41:51 [build] output: "static"
+14:41:51 [build] mode: "static"
+14:41:51 [build] directory: /Users/rengwu/Desktop/Projects/lean-sitebuilder/dist/
+14:41:51 [build] Collecting build info...
+14:41:51 [build] ✓ Completed in 114ms.
+14:41:51 [build] Building static entrypoints...
+14:41:52 [vite] ✓ built in 392ms
+14:41:52 [vite] ✓ built in 191ms
+14:41:52 [build] Rearranging server assets...
+
+ generating static routes
+14:41:52   ├─ /admin/index.html (+1.30s)
+14:41:53   ├─ /blocks/index.html (+18ms)
+14:41:53   ├─ /chartr/index.html (+8ms)
+14:41:53   ├─ /journal/a-slower-way-to-build/index.html (+10ms)
+14:41:53   ├─ /journal/keep-the-essentials/index.html (+6ms)
+14:41:53   ├─ /journal/index.html (+6ms)
+14:41:53   ├─ /index.html (+11ms)
+14:41:53 ✓ Completed in 1.41s.
+
+14:41:53 [build] ✓ Completed in 2.08s.
+14:41:53 [build] 7 page(s) built in 2.22s
+14:41:53 [build] Complete!
+
+> lean-sitebuilder@0.1.0 check:build /Users/rengwu/Desktop/Projects/lean-sitebuilder
+> node scripts/check-build.mjs
+
+{
+  "runtimeCopies": {
+    "svelte": 1,
+    "react": 1,
+    "@vue/runtime-dom": 1,
+    "react-dom": 1,
+    "@vue/runtime-core": 1
+  },
+  "pages": [
+    {
+      "page": "admin/index.html",
+      "javascriptModules": 1,
+      "gzipJavaScriptBytes": 1665
+    },
+    {
+      "page": "blocks/index.html",
+      "javascriptModules": 3,
+      "gzipJavaScriptBytes": 69538
+    },
+    {
+      "page": "chartr/index.html",
+      "javascriptModules": 5,
+      "gzipJavaScriptBytes": 37580
+    },
+    {
+      "page": "index.html",
+      "javascriptModules": 6,
+      "gzipJavaScriptBytes": 40936
+    },
+    {
+      "page": "journal/a-slower-way-to-build/index.html",
+      "javascriptModules": 0,
+      "gzipJavaScriptBytes": 0
+    },
+    {
+      "page": "journal/index.html",
+      "javascriptModules": 0,
+      "gzipJavaScriptBytes": 0
+    },
+    {
+      "page": "journal/keep-the-essentials/index.html",
+      "javascriptModules": 0,
+      "gzipJavaScriptBytes": 0
+    }
+  ]
+}

@@ -1,6 +1,6 @@
 ---
 title: Site Layout library
-updated: 2026-10-08
+updated: 2026-10-13
 ---
 # Site Layout library
 
@@ -8,7 +8,7 @@ updated: 2026-10-08
 
 ## Intent and basis
 
-DEC-092–DEC-105 and DEC-107 select one versioned site wrapper, unrestricted author-owned settings, active-settings-only persistence, optional styling variables and a developer-controlled picker whitelist. DEC-108 requires dedicated nested editing levels. DEC-130 moves content spacing into the layout with author-defined defaults, superseding DEC-097. See the [accepted design](../discussions/site-layouts.md) and [implementation journal](../journal/2026-10-06-site-layouts-implementation.md).
+DEC-092–DEC-105 and DEC-107 select one versioned site wrapper, unrestricted author-owned settings, active-settings-only persistence, optional styling variables and a repository-based layout library. DEC-163 supersedes the picker whitelist: all installed layouts are always available in the same dashboard. DEC-108 requires dedicated nested editing levels. DEC-130 moves content spacing into the layout with author-defined defaults, superseding DEC-097. See the [accepted design](../discussions/site-layouts.md) and [implementation journal](../journal/2026-10-06-site-layouts-implementation.md).
 
 ## Entry points
 
@@ -26,7 +26,7 @@ Canonical `site.layout` is `{ id, version, settings }`. `settings` is the author
 
 Legacy `site.title`, `navigation`, `header`, `footer` and appearance globals convert into Starter v1 settings when loaded into the editor, imported, recovered or discarded back to the source snapshot. The existing legacy Starter reader includes width/gutter in those settings. Canonical spacing is stored as `site.layout.settings.contentMaxWidth` and `pageGutter`; `site.globals` does not override layout output. No migration of previously canonical global spacing is added. Public builds can render unchanged legacy fixtures; a subsequent editor save writes the canonical shape. Missing retained implementations preserve the data but prevent successful rendering/publication until the source is restored.
 
-Factory reset is a separate Settings action: after confirmation it clears the entire local content draft and restores the installed Starter v1 defaults, including when Starter is already active. It retains the site ID and bypasses the picker whitelist. See the [reset contract](editor.md#factory-reset-and-repository-settings).
+Factory reset is a separate Settings action: after confirmation it clears the entire local content draft and restores the installed Starter v1 defaults, including when Starter is already active. It retains the site ID. See the [reset contract](editor.md#factory-reset-and-repository-settings).
 
 ### Starter factory defaults (DEC-138)
 
@@ -42,11 +42,22 @@ The manifest declares stable `id`, integer `version`, `label`, `description`, `d
 
 The pure policy can derive `title`, optional block-context `globals`, and validation through `fields`, `blocks` and `add`. Built-in layout manifests declare spacing in `defaults`; their settings controls use those defaults as placeholders, and their policies resolve blank/invalid overrides with `contentSpacing`. Both wrappers and block context consume `layoutGlobals`, keeping public rendering and preview consistent. Width must be finite and positive; gutter must be finite and nonnegative. Invalid explicit overrides fail structural validation. Keep browser/editor dependencies out of this module because public content validation also loads it. Styling tokens are optional: no categories, badges, filtering, warnings or compatibility gates depend on a block's styling choices. Static/generic field-binding rules remain separate.
 
-## Hidden whitelist
+## One dashboard for all themes (DEC-163)
 
-`SITE_LAYOUT_WHITELIST=starter,chartr` is a build-time comma-separated list of stable layout IDs. Unset offers all installed layouts. Whitespace and duplicates are normalized. An explicitly empty list or unknown ID produces a configuration error; these are implementation choices, not extra product decisions.
+Run `pnpm dev` and open `/admin/` on the printed main URL. The layout catalog
+always reads every installed definition in `layouts.config.mjs`: currently
+Starter, chartr, Quine, Intr Studio and Archline. The former
+`SITE_LAYOUT_WHITELIST` setting is no longer read. There is no theme-specific
+launch configuration or catalog restriction.
 
-The installed resolver is independent from the filtered picker catalog. An excluded active layout still renders, previews, edits, validates and participates in normal saves/publishing. It remains absent from future choices, including search and candidate previews. After switching away it cannot be reselected until allowed again. This is selection configuration, not an access-control boundary.
+The block catalog independently offers all installed themes through **All themes**
+and its optional theme/search filters. Its static/generic page and footer
+compatibility rules remain. Choosing a layout does not restrict the block catalog.
+
+Example directories retain sample records and importable backups; their optional
+developer runners also expose the full catalog. They are not required to select
+or use a theme. The main dashboard edits the current site's content; changing
+its layout preserves content and applies fresh layout defaults, as above.
 
 ## Verification recipe
 
@@ -54,7 +65,7 @@ The installed resolver is independent from the filtered picker catalog. An exclu
 2. Check Pages and Site Layout previews with static and generic pages. Visit Settings, Content, schemas and Media to confirm their normal admin layout.
 3. Open header/footer list items and a nested dropdown item. Each replaces all parent controls; Back returns exactly one level. Use the same behavior for block lists, entry lists and schema default rows.
 4. Recover a tab and export/import a backup. Confirm active ID/version/settings round-trip and old Site Options convert without losing values.
-5. Set the whitelist to Starter while chartr is active; rebuild. Confirm chartr output/settings remain available and only Starter is offered. Switching away must not make chartr selectable again.
+5. Open Change layout and verify all installed themes appear. Switch layouts and reopen the catalog: all remain available. Open a page’s Add block catalog and confirm blocks from other themes remain selectable.
 6. Install a newer retained version beside an older selected one. Confirm public rendering and both settings/preview loaders stay pinned until explicit selection. Run `pnpm verify`.
 
 ## Verification history

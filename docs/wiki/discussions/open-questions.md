@@ -5,6 +5,22 @@ status: Intr recreation delivered; follow-up proposals recorded
 ---
 # Open questions
 
+## Upload from media fields — scope settled, implementation pending
+
+DEC-160–DEC-162 select Upload plus a small thumbnail beside the existing selector,
+the existing storage dialog opened in place, and retaining uploads in Media when
+block changes are cancelled. The [planned behavior](../features/media.md#planned-upload-from-media-fields)
+reuses the existing upload path. No further product question blocks this small
+increment; this interview has not started implementation.
+
+## Archline theme — delivered
+
+DEC-156–DEC-159 are implemented as an installed layout, 18 editable blocks and an
+isolated eight-route example. No unresolved scope question remains. See the
+[scope and delivery](../journal/2026-10-13-archline-theme-scope.md) and
+[local verification](../verification/runs/2026-10-13-archline-theme.md).
+
+
 ## Intr Studio recreation — delivered, follow-up proposals
 
 DEC-153–DEC-155 select a homepage, project listing, and one sample detail page in
@@ -120,9 +136,11 @@ Site Layouts and chartr were authorized and implemented after the interview reco
 
 DEC-106 requests recreating [chartr.dev](https://chartr.dev/) as a layout and independent blocks after the Site Layout foundation. The [scope](chartr-recreation.md) proposes the shared shell and nine content blocks, with source references and unexecuted verification targets. No new product interview is needed for this sequencing request. Exact fields, lifecycle adaptation and reusable component boundaries are engineering work. Live release/download text differs from the local source and must be reconciled against the live target during implementation.
 
-## Site Layout library and whitelist — resolved
+## Site Layout library and whitelist — superseded by DEC-163
 
-The user adds a growing repository-based layout library and hidden environment-configured client whitelist (DEC-102–DEC-103). See [Site Layouts](site-layouts.md) and the [library discussion journal](../journal/2026-10-06-site-layouts-library-discussion.md). This follows, and does not undo, the accepted first-round choices below.
+DEC-163 removes the whitelist and makes every installed theme available in the main dashboard. The following records the earlier, superseded choices.
+
+The user originally added a growing repository-based layout library and hidden environment-configured client whitelist (DEC-102–DEC-103). See [Site Layouts](site-layouts.md) and the [library discussion journal](../journal/2026-10-06-site-layouts-library-discussion.md). This follows, and does not undo, the accepted first-round choices below.
 
 Q74–Q75 are resolved as DEC-104–DEC-105 by the [submitted answers](../journal/2026-10-06-grill-955ea450-7b57-4225-91b5-95d6a5b3986c.md); see the [round-two interpretation](../journal/2026-10-06-site-layouts-round-two.md).
 

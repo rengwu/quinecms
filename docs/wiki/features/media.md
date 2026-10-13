@@ -10,6 +10,27 @@ updated: 2026-10-13
 
 The [agreed media design](../discussions/agreed-design.md) uses R2 with runtime credentials, original files, modest browser-generated variants, and IDs in content. It does not add an upload server or media transcoding service.
 
+## Planned upload from media fields
+
+Accepted in DEC-160–DEC-162; not implemented or verified yet. See the
+[interview answers](../journal/2026-10-13-grill-3216fc08-5d84-4f48-92f3-20bf92b7afd7.md).
+
+- Keep the existing shared media dropdown and alternative-text field. Add an
+  Upload button and a small thumbnail for selected images.
+- Reuse the existing R2 uploader. On success, add the file to the draft Media
+  library and select it for the field; update the page preview. Show simple
+  upload status/errors beside the field and keep the previous selection on failure.
+- If storage is not configured, open the existing storage settings dialog without
+  leaving the block or losing edits. After saving settings, click Upload again.
+- Cancelling block changes restores the previous selection; a successful upload
+  stays in Media for reuse. The existing draft Save/Publish flow still applies.
+
+The lean implementation should extend the shared media field wherever it is
+already used, including nested forms. A visual library picker, drag-and-drop,
+upload queues and automatic deletion are outside this increment. Image thumbnails
+can reuse the existing media URLs; other supported files retain their names.
+No new storage service or content format is needed.
+
 ## Entry points and prerequisites
 
 `/admin/` → Media → Storage settings. The Media block selects an uploaded record. Credentials are runtime tab-session settings, not content records or build secrets.

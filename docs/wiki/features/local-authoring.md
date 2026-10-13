@@ -143,6 +143,11 @@ Map visible sections and client tasks to builder capabilities before coding:
 | Existing image files | `public/` plus media records | Media and field selectors |
 | New interaction | Block renderer and activation | Preview and public site |
 
+All installed themes and blocks are available together in the main dashboard:
+run `pnpm dev`, use Site Layout → Change layout and Pages → Add block → All themes.
+The following example runners only isolate sample records for developer checks;
+they do not unlock additional themes or blocks.
+
 The [Quine trial](../journal/2026-10-11-quine-rebuild.md) is a runnable example:
 `pnpm example:quine` stages it separately and preserves the root demo. It uses
 ordinary content records and installed implementations, not a special rendering

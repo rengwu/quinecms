@@ -1,0 +1,96 @@
+
+> lean-sitebuilder@0.1.0 build /private/var/folders/00/h_k67s0j5dq0qvg6ylqysk2w0000gn/T/lean-example-archline-ebc711
+> pnpm prepare:blocks && astro build
+
+
+> lean-sitebuilder@0.1.0 prepare:blocks /private/var/folders/00/h_k67s0j5dq0qvg6ylqysk2w0000gn/T/lean-example-archline-ebc711
+> node scripts/generate-blocks.mjs
+
+Registered 128 block versions.
+Registered 5 layout versions.
+14:41:51 [types] Generated 46ms
+14:41:51 [build] output: "static"
+14:41:51 [build] mode: "static"
+14:41:51 [build] directory: /private/var/folders/00/h_k67s0j5dq0qvg6ylqysk2w0000gn/T/lean-example-archline-ebc711/dist/
+14:41:51 [build] Collecting build info...
+14:41:51 [build] ✓ Completed in 120ms.
+14:41:51 [build] Building static entrypoints...
+14:41:52 [vite] ✓ built in 260ms
+14:41:52 [vite] ✓ built in 210ms
+14:41:52 [build] Rearranging server assets...
+
+ generating static routes
+14:41:52   ├─ /admin/index.html (+1.41s)
+14:41:53   ├─ /projects/armonia-pavilion/index.html (+32ms)
+14:41:53   ├─ /projects/atelier-19-residence/index.html (+15ms)
+14:41:53   ├─ /projects/luma-garden-loft/index.html (+11ms)
+14:41:54   ├─ /projects/sereno-villas/index.html (+12ms)
+14:41:54   ├─ /projects/terra-nova-residence/index.html (+11ms)
+14:41:54   ├─ /projects/the-verra-house/index.html (+9ms)
+14:41:54   ├─ /projects/index.html (+11ms)
+14:41:54   ├─ /index.html (+15ms)
+14:41:54 ✓ Completed in 1.62s.
+
+14:41:54 [build] ✓ Completed in 2.16s.
+14:41:54 [build] 9 page(s) built in 2.32s
+14:41:54 [build] Complete!
+
+> lean-sitebuilder@0.1.0 check:build /private/var/folders/00/h_k67s0j5dq0qvg6ylqysk2w0000gn/T/lean-example-archline-ebc711
+> node scripts/check-build.mjs
+
+{
+  "runtimeCopies": {
+    "@vue/runtime-core": 1,
+    "@vue/runtime-dom": 1,
+    "react-dom": 1,
+    "svelte": 1,
+    "react": 1
+  },
+  "pages": [
+    {
+      "page": "admin/index.html",
+      "javascriptModules": 1,
+      "gzipJavaScriptBytes": 1665
+    },
+    {
+      "page": "index.html",
+      "javascriptModules": 5,
+      "gzipJavaScriptBytes": 86290
+    },
+    {
+      "page": "projects/armonia-pavilion/index.html",
+      "javascriptModules": 4,
+      "gzipJavaScriptBytes": 86209
+    },
+    {
+      "page": "projects/atelier-19-residence/index.html",
+      "javascriptModules": 4,
+      "gzipJavaScriptBytes": 86209
+    },
+    {
+      "page": "projects/index.html",
+      "javascriptModules": 4,
+      "gzipJavaScriptBytes": 86209
+    },
+    {
+      "page": "projects/luma-garden-loft/index.html",
+      "javascriptModules": 4,
+      "gzipJavaScriptBytes": 86209
+    },
+    {
+      "page": "projects/sereno-villas/index.html",
+      "javascriptModules": 4,
+      "gzipJavaScriptBytes": 86209
+    },
+    {
+      "page": "projects/terra-nova-residence/index.html",
+      "javascriptModules": 4,
+      "gzipJavaScriptBytes": 86209
+    },
+    {
+      "page": "projects/the-verra-house/index.html",
+      "javascriptModules": 4,
+      "gzipJavaScriptBytes": 86209
+    }
+  ]
+}

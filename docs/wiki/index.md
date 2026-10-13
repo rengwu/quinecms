@@ -5,6 +5,24 @@ status: Accepted
 ---
 # lean-sitebuilder
 
+All themes now share the [main dashboard](features/site-layouts.md#one-dashboard-for-all-themes-dec-163)
+(DEC-163). Run `pnpm dev`; choose any installed theme in Site Layout and any block
+theme through Add block → All themes. The former layout whitelist is removed.
+Reference example runners remain optional sample-content tools.
+[Verification](verification/runs/2026-10-13-unified-dashboard.md) covers all 231
+tests, the production build and both catalogs in the main browser dashboard.
+
+Planned editor improvement: [upload directly from media fields](features/media.md#planned-upload-from-media-fields)
+(DEC-160–DEC-162). Keep the dropdown, add Upload and a small thumbnail, open existing
+storage settings in place, and retain uploaded files when block edits are cancelled.
+Scope is settled; implementation is pending.
+
+Completed [Archline theme](journal/2026-10-13-archline-theme-scope.md): 18 editable
+blocks, an isolated homepage and project index, and six projects using a shared
+detail template. Run `pnpm example:archline`; root content remains intact.
+[Verification](verification/runs/2026-10-13-archline-theme.md) covers 231 tests,
+production builds and representative Chrome desktop/mobile/editor checks.
+
 Latest setup improvement: [simplified R2 storage](features/media.md#connect-a-bucket).
 Paste the S3 API URL, follow the public URL/credential guidance, and copy CORS for
 the current editor. Advanced upload options are collapsed; Save validates settings
@@ -111,7 +129,7 @@ Latest discussion: [architecture and product breadth review](discussions/archite
 
 Latest repair: [chartr content width and spacing](verification/runs/2026-10-06T1426Z-chartr-spacing.md); independent blocks now own centered bounds under either layout, consume shared geometry, and avoid duplicate gutters. Desktop/mobile browser checks and all 132 tests pass.
 
-Implemented: [Site Layout library](features/site-layouts.md) and [chartr layout with nine independent blocks](features/chartr.md). Site Layout owns selection, author settings and a selected-page preview; DEC-130 now includes width/gutter under Site Layout with per-layout defaults; Settings retains Backups and Session. Active layout versions are pinned, switching uses defaults, and the hidden whitelist filters only future choices. The user's latest correction requires dedicated nested editor levels everywhere (DEC-108).
+Implemented: [Site Layout library](features/site-layouts.md) and [chartr layout with nine independent blocks](features/chartr.md). Site Layout owns selection, author settings and a selected-page preview; DEC-130 now includes width/gutter under Site Layout with per-layout defaults; Settings retains Backups and Session. Active layout versions are pinned and switching uses defaults. DEC-163 now exposes every installed layout in one dashboard. The user's latest correction requires dedicated nested editor levels everywhere (DEC-108).
 
 [Implementation journal](journal/2026-10-06-site-layouts-implementation.md) · [Verification report](verification/runs/2026-10-06T1140Z-site-layouts.md). Accepted design and interview history remain in [Site Layouts](discussions/site-layouts.md), [chartr recreation](discussions/chartr-recreation.md) and the [decision register](decisions/index.md).
 

@@ -519,3 +519,29 @@ and is recorded in the [save UX journal](../journal/2026-10-12-git-save-ux.md).
 | DEC-153 | Recreate the homepage, project listing, and one sample project detail page as a simple static site, prioritizing content layout. | Q1 selects this smaller scope rather than all five detail pages. The direct brief allows cutting intro animation, video, and other effects. See the [scope record and transcript](../journal/2026-10-13-intr-rebuild-scope.md). |
 | DEC-154 | Keep Intr as a separate example alongside Quine, preserving the main demo. | Q2 explicitly selects the isolated example. |
 | DEC-155 | Reuse Intr's reference branding, copy, and images while correcting obvious placeholders. | Q3 selects reference content rather than a new studio identity. This defines the trial's content basis, not an implementation or verification result. |
+
+## Archline theme — interview, 2026-10-13
+
+| ID | Decision | Basis and rationale |
+| --- | --- | --- |
+| DEC-156 | Install Archline as a reusable layout and blocks with an isolated example and backup; retain the active demo. | Q1 in the [scope record](../journal/2026-10-13-archline-theme-scope.md). |
+| DEC-157 | Include the full homepage, project index and reusable project detail template. | Q2 selects this scope over homepage-only or a full multi-page recreation. |
+| DEC-158 | Aim for close desktop/mobile visual fidelity with reference demo branding and local imagery. | Q3–Q4 accept the design and content basis; record asset provenance. |
+| DEC-159 | Include useful controls and subtle motion with reduced-motion support and ordinary scrolling. | Q5 accepts the menu, FAQ, carousel and hover/reveal approach, excluding elaborate distortion effects. |
+
+## Upload from media fields — interview, 2026-10-13
+
+| ID | Decision | Basis and rationale |
+| --- | --- | --- |
+| DEC-160 | Keep the media dropdown and add Upload plus a small thumbnail to the shared media field. Reuse the existing uploader and select the uploaded file on success. | Q1 explicitly selects the thumbnail as well as Upload. Simple field status/errors and preserving the previous selection on failure are part of the presented flow. See the [submitted answers](../journal/2026-10-13-grill-3216fc08-5d84-4f48-92f3-20bf92b7afd7.md) and [planned behavior](../features/media.md#planned-upload-from-media-fields). |
+| DEC-161 | Open the existing storage settings dialog from the field when upload storage is not configured. | Q2 selects staying in the block. Preserve field edits; after saving settings, the user clicks Upload again. |
+| DEC-162 | Keep a successfully uploaded file in the Media library when block changes are cancelled. | Q3 selects reuse: Cancel restores the block's previous selection, without deleting the uploaded file or its draft media record. Existing Save/Publish behavior remains. |
+
+These decisions define the next increment; implementation has not started in this
+interview.
+
+## One main dashboard — direct instruction, 2026-10-13
+
+| ID | Decision | Basis and rationale |
+| --- | --- | --- |
+| DEC-163 | Make all installed themes and blocks available in one main dashboard, with `pnpm dev` as the normal workflow. Remove theme-specific layout restrictions. | The user explicitly corrected the isolated-mode workflow: “all themes and blocks available to one dashboard.” This supersedes DEC-103–DEC-105's hidden whitelist. Example content/backups remain optional developer fixtures; they are not separate capabilities or required modes. Existing site content, page-kind rules and active-layout settings semantics remain intact. See [current contract](../features/site-layouts.md#one-dashboard-for-all-themes-dec-163). |
