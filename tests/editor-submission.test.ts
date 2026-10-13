@@ -38,6 +38,16 @@ const content: Content = {
   collections: [],
   media: [],
 };
+content.site.layout ??= {
+  id: 'starter',
+  version: 1,
+  settings: {
+    ...content.site.globals,
+    title: content.site.title ?? 'Test',
+    navigation: content.site.navigation ?? [],
+  },
+};
+
 let root: Root;
 let host: HTMLDivElement;
 afterEach(async () => {

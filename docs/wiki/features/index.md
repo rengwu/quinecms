@@ -6,12 +6,13 @@ updated: 2026-10-11
 
 Start with [Building sites with local agents](local-authoring.md) for local authoring and delivery. Capabilities are options to use where they fit the design and client; this map describes their current contracts and checks. Verification results apply only to the recorded build. Decisions and historical technical discussions remain in the wiki.
 
+- [Separate engine, libraries and sites](site-engine.md) — FEAT-site-engine.
 - [Local authoring and validation](local-authoring.md) — FEAT-local-authoring.
 - [Quine recreation trial](../journal/2026-10-11-quine-rebuild.md) — complete isolated example, client editing map and discoverability findings.
 
 - [Collections, objects and references](content-model.md) — FEAT-content-model.
 - [Site Layout library](site-layouts.md) — FEAT-site-layouts.
-- [chartr layout and blocks](chartr.md) — FEAT-chartr.
+- [Historical chartr layout and blocks](chartr.md) — FEAT-chartr.
 - [Searchable block library](block-library.md) — FEAT-block-library.
 - [Static pages and registered blocks](static-blocks.md) — FEAT-static-blocks.
 - [Generic pages and collection content](generic-pages.md) — FEAT-generic-pages.

@@ -1,9 +1,15 @@
 ---
 title: Decisions
-updated: 2026-10-13
+updated: 2026-10-14
 status: Accepted
 ---
 # Decisions
+
+Engine separation: DEC-172–DEC-183 settle the pilot's product behavior, including
+manual pinned engine/library upgrades, extensions-only customization, upstream-only
+library changes and the Archline/Intr library. Archline is the public pilot.
+The [engineering plan](../discussions/site-engine-separation.md#proposed-engineering-plan)
+is proposed and untested; implementation has not been authorized.
 
 Multiple site layouts: DEC-165–DEC-171 record the user's requirements and completed
 grill answers. The [scoped design](../discussions/multiple-site-layouts.md) is
@@ -584,3 +590,43 @@ interview alone.
 | DEC-171 | Require complete layout settings for publication only when pages use that layout. Unused active or inactive layouts may remain unfinished; all records still undergo basic structural checks and preserve the activation/reference invariants. | [Q5](../journal/2026-10-13-grill-5b84ef63-3687-481f-9b0a-04a86e991a33.md) selects this so work on an unused layout does not block existing pages. Generic pages count as usage even without entries. Implementation was subsequently authorized with work-until-grill. |
 
 DEC-165–DEC-171 are implemented in the [current Site Layouts contract](../features/site-layouts.md). The [verification run](../verification/runs/2026-10-13-multiple-site-layouts.md) records local checks and limits; the interview itself did not authorize implementation.
+
+## Engine and site separation — direct discussion, 2026-10-14
+
+The user discarded the pending form and supplied these choices in conversation.
+The [discussion](../discussions/site-engine-separation.md) records the still-open
+extension/library proposals separately. These are planned requirements, not
+implementation or verification results.
+
+| ID | Decision | Basis and rationale |
+| --- | --- | --- |
+| DEC-172 | QuineCMS should supply the core engine and admin portal capabilities, with no bundled site blocks, layouts or presentation styles. | Direct user direction to separate the engine from site presentation. DEC-175–DEC-176 subsequently settle the extension boundary and shared-library consumption; exact public authoring interfaces remain engineering work. |
+| DEC-173 | Sites consume a pinned engine version and upgrade manually. Site maintainers handle migrations when an upgrade changes contracts or fails verification. | The user explicitly accepts breaking upgrades and maintainer-owned migration, optionally assisted by AI. This does not select library upgrade policy or permit an outdated editor to overwrite content under a changed contract. |
+| DEC-174 | Start with one independent public pilot site. | Direct answer to the first-implementation scope question. DEC-178 subsequently selects Archline. This does not authorize converting all examples or starting implementation; acceptance checks remain to be specified. |
+
+## Engine separation — first submitted round, 2026-10-14
+
+The [Q6–Q9 transcript](../journal/2026-10-13-grill-3f45ceb2-5c2b-407b-bbba-4d71a6e78f03.md)
+uses its collector UTC date; this entry uses the local discussion date. These are
+planned requirements, with implementation still deferred.
+
+| ID | Decision | Basis and rationale |
+| --- | --- | --- |
+| DEC-175 | Support site customization through extensions only. Required core capabilities must be added in the core repository. | Q6 selects this boundary and explicitly reiterates that missing core capabilities belong in the core repository. Site-specific replacement of engine files is outside the supported model. |
+| DEC-176 | Consume reusable library implementations as dependencies, rather than copying them into every site's repository. | Q7 selects direct consumption, with installed definitions exposed through the catalogs and subscriptions configured outside the portal. DEC-179–DEC-181 subsequently settle pins, committed configuration and upstream-only library code changes. |
+| DEC-177 | Block draft saves and publication when the editor does not match the draft's engine or editable block/layout code. Preserve unsaved work for recovery until a matching editor is available. | Q8 selects both gates instead of the current publication-only source check. Exact identity comparison and upgrade workflow remain engineering work; manual migration stays the maintainer's responsibility. |
+| DEC-178 | Use the existing Archline example as the independent public pilot, without engine source in the site repository. | Q9 selects Archline, refining DEC-174. This does not authorize creating/publishing repositories or beginning implementation during the interview. |
+
+## Engine separation — library round, 2026-10-14
+
+The [Q10–Q14 answers](../journal/2026-10-13-grill-47541500-3fe6-4bc4-9cec-83fad35ad61c.md)
+complete the pilot's scoped product interview. Packaging and API details remain
+engineering work; none of these decisions records implementation or verification.
+
+| ID | Decision | Basis and rationale |
+| --- | --- | --- |
+| DEC-179 | Pin each library independently and upgrade it manually, with verification and maintainer-owned migration when needed. | Q10 selects deliberate library upgrades, preventing content-only publication from obtaining changed presentation code. |
+| DEC-180 | Declare library sources and revisions in committed project configuration. Environment configuration supplies credentials/deployment values without overriding library selections. | Q11 selects committed configuration over environment-only values or environment overrides. Subscription management remains outside the portal. |
+| DEC-181 | Keep consumed library code unchanged; request deeper implementation changes upstream. | Q12 selects this instead of the proposed local-copy workflow or site-local patches. Exposed settings/interfaces remain customizable; independently authored site extensions remain supported under DEC-175. |
+| DEC-182 | Factory reset uses a developer-configured initial layout and that installed design's defaults. | Q13 selects predictable project configuration instead of asking the admin to choose a design on each reset. The engine supplies no bundled Starter fallback. |
+| DEC-183 | Include Archline and Intr in the first shared library. | Q14 selects those two designs instead of the complete existing catalog or Archline alone. Archline remains the only public pilot. This does not authorize discarding other example/site content. |

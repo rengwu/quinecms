@@ -9,6 +9,7 @@ import { sourceFiles } from '../generated/sources';
 import {
   checkDraft,
   checkPublication,
+  checkSources,
   checkBranches,
   publishBranch,
   Conflict,
@@ -275,6 +276,7 @@ export class GitLabStore implements RepositoryStore {
   }
 
   async save(base: Snapshot, content: Content): Promise<Snapshot> {
+    checkSources(base, this.expectedSources);
     checkDraft(content, this.definitions, base.content);
     if ((await this.ref(this.repository.branch)) !== base.sha)
       throw new Conflict();

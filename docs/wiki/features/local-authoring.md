@@ -1,6 +1,6 @@
 ---
 title: Building sites with local agents
-updated: 2026-10-13
+updated: 2026-10-14
 ---
 # Building sites with local agents
 
@@ -8,10 +8,11 @@ updated: 2026-10-13
 
 ## Start with the design
 
-This repository is a blank slate for a client's website. Let the brief, references
-and your judgment shape its visual design, interactions and information structure.
-The shipped pages, themes, blocks and layouts are materials to inspect, reuse,
-reshape or replace. They are not a required aesthetic or a checklist of features.
+Work in the site repository, which owns its content, configuration, assets and original
+extensions. QuineCMS supplies the engine/admin as a pinned dependency. Optional
+libraries supply designs; the engine imposes no site aesthetic. See the
+[installation and extension contract](site-engine.md). Let the brief, references
+and your judgment shape the visual design, interactions and information structure.
 
 The builder can make a useful bridge between an expressive custom site and easy
 client maintenance. Consider editable fields for content the client is likely to
@@ -29,10 +30,10 @@ what the current software can read and render, rather than prescribing a design.
 | --- | --- |
 | `content/site.json` and `content/pages/` | This site's layout selection, pages and block instances. |
 | `content/collections/`, `content/objects/`, `content/entries/` | Its schemas and structured content, if used. |
-| `blocks.config.mjs`, `layouts.config.mjs` | Which implementations are installed. Follow their directories to `definition.json` and source. |
-| `src/core/types.ts` | Exact record and field shapes. |
+| `quinecms.config.json`, `package.json`, `pnpm-lock.yaml` | Installed libraries, exact engine/library revisions and initial layout. |
+| `extensions/local/quinecms.library.json` | Optional original site blocks/layouts and helpers. |
+| Engine export `quinecms/core/types` | Exact record and field shapes. |
 | `src/core/content.ts`, `schema.ts`, `bindings.ts`, `lists.ts`, `routes.ts` | Validation, change checks, references, defaults and routes. |
-| `examples/content-model.json` | An optional richer composition with objects, references, arrays, generic pages and a single-entry collection. |
 | [Feature map](index.md) | Current capability details and UI entry points. |
 
 Local agents normally edit source/JSON in the clone. The browser is useful for
@@ -68,12 +69,13 @@ provide other behavior using its available content context.
 
 ## Starting a new site
 
-A practical sequence is to run the demo, inspect useful definitions, then sketch
-the site's routes, visual components and likely client edits. Reuse or author
-layouts and blocks as the design suggests. Replace sample records with the site's
-own records, checking links and references together. Unused content directories
-can be absent. The regression suite has its own sample content, so the client site
-has no obligation to keep Home/Journal/chartr demo records or their routes.
+Start from the [Archline pilot](https://github.com/rengwu/quinecms-site-archline)
+or create a site with pinned dependencies and the configuration described in the
+[engine contract](site-engine.md). Install dependencies, inspect selected definitions,
+and sketch routes, visual components and likely client edits. Configure library
+designs through their exposed fields or author independent original extensions.
+Unused content directories may be absent. Keep any existing client content intact
+unless replacement is part of the brief.
 
 For new records, the canonical layout shape is a useful starting point:
 
@@ -87,7 +89,7 @@ For new records, the canonical layout shape is a useful starting point:
     "name": "Main layout",
     "active": true,
     "design": {
-      "id": "starter",
+      "id": "company",
       "version": 1,
       "settings": { "title": "Client site", "navigation": [] }
     }
@@ -95,14 +97,12 @@ For new records, the canonical layout shape is a useful starting point:
 }
 ```
 
-That selects Starter as an example, not a design requirement. An installed custom
-design can use its own settings, and multiple named configurations can use the
-same design independently. Every page, including a generic page, assigns an active
-configuration by `layoutId`; entries inherit their generic page’s assignment. At
-least one layout must be active, and used layouts cannot be disabled or deleted.
-Public-site content spacing belongs to the assigned layout settings (`contentMaxWidth`, `pageGutter` in the built-in layouts). Starter
-uses 1200px/0px defaults and chartr 1512px/40px. Switching layout/version initializes
-the selected manifest's defaults. Styling tokens are optional inputs for block authors.
+That assumes an original installed `company@1` design with those settings. Use
+the selected definition's actual defaults. Multiple named configurations can use
+the same design independently. Every page assigns an active configuration by
+`layoutId`; entries inherit their generic page's assignment. At least one layout
+must remain active, and used layouts cannot be disabled or deleted. Content spacing
+and styling belong to each design's settings and policy.
 
 A static page might begin as:
 
@@ -123,10 +123,9 @@ a static home page at `/`. Add block instances with their installed `type`, `ver
 unique `id` and `props`. A useful starting value is the definition's defaults;
 `newBlock()` in `src/core/content.ts` also clones defaults and row identities.
 
-`pnpm dev` generates source imports and opens the development workflow described
-in README. After adding registrations or routes, stop the owned development instance
-with `pnpm exec astro dev stop`, then run `pnpm dev` again. The demo site uses an older
-site shape understood by the existing reader; use the canonical shape above for new work.
+`pnpm dev` assembles the site and watches local content, original extensions, assets
+and configuration. Restart after dependency or environment changes. Do not edit
+`.quinecms/workspace/`: it is disposable generated output.
 
 ## Recreating an existing site
 
@@ -154,24 +153,11 @@ Map visible sections and client tasks to builder capabilities before coding:
 
 All installed themes and blocks are available together in the main dashboard:
 run `pnpm dev`, use Site Layouts → Add layout and Pages → Add block → All themes.
-The following example runners only isolate sample records for developer checks;
-they do not unlock additional themes or blocks.
-
-The [Quine trial](../journal/2026-10-11-quine-rebuild.md) is a runnable example:
-`pnpm example:quine` stages it separately and preserves the root demo. It uses
-ordinary content records and installed implementations, not a special rendering
-path. See `examples/quine/README.md` in the repository for the editing map and
-local credentials. Source assets and fonts are local; effects are independently
-implemented. A project gallery is a block-owned list because its owner selected
-that model. Do not introduce collections merely to exercise more CMS features.
-
-The [Intr trial](../journal/2026-10-13-intr-rebuild-scope.md), run with
-`pnpm example:intr`, adds a contrasting model: a data-only Projects collection
-shared by ordered homepage/listing cards, plus one static sample detail page.
-See `examples/intr/README.md` for the client editing map. Assign a generic page
-when every entry should produce a route; shared card data alone does not need one.
-An optional URL field lets the few completed detail pages link without creating
-dead links for the other cards. Static detail copy remains separately owned.
+The initial library includes Archline and Intr. The Archline pilot uses a Projects
+collection with generated detail routes. Library test fixtures preserve Intr's
+alternative model: ordered shared project cards and one explicitly authored detail
+page. Historical Quine/chartr examples remain at engine commit `bfbb522`; they are
+not installed designs in the new engine.
 
 For custom static collection blocks, `contextFor` exposes the conventional
 `titleField`, `summaryField`, `imageField`, `dateField` and `urlField` mappings from
@@ -202,7 +188,7 @@ Several details are easy to miss during implementation:
   before choosing React hydration for a small menu behavior.
 - Read the actual dev-server URL and verify the page identity. A requested port
   may belong to another running site. Click an interactive control and inspect
-  `pnpm exec astro dev logs`; an HTTP 200 and correct static screenshot do not
+  the development terminal; an HTTP 200 and correct static screenshot do not
   establish successful hydration. Vite caches are separate per checkout and
   Astro command, so checks/builds do not overwrite the active dev cache. Isolated
   checkouts explicitly allow their linked dependency directory.
@@ -294,8 +280,8 @@ asset URLs in the built site. [Media contract](media.md#locally-authored-media).
 
 ## Custom blocks and layouts
 
-A block version has a `definition.json` and renderer in `src/blocks/<name>/vN/`.
-Register the directory in `blocks.config.mjs`. Definitions describe `type`, `version`,
+A block version has a `definition.json` and renderer under an extension's `src/blocks/<name>/vN/`.
+Register it in `quinecms.library.json` as described in the [extension contract](site-engine.md#extension-manifest). Definitions describe `type`, `version`,
 `label`, `framework`, `activation`, `component`, `fields`, `defaults` and dependency
 ranges. Optional metadata includes `kind`, theme/tags/description and footer placement.
 The manifest is a good place to make a custom block discoverable in the catalog.
@@ -313,7 +299,7 @@ selected values. It is not an unrestricted data-query service. See `src/core/typ
 and the relevant renderer for the available context. New behavior can be authored
 in source where useful.
 
-A layout lives in `src/site-layouts/<name>/vN/` and is registered in `layouts.config.mjs`.
+A layout lives under an extension's `src/` and is registered in its manifest's `layouts` array.
 Its manifest names a React wrapper, React settings component, pure policy, defaults
 and fields, with an optional server-rendered Head component. Activation is `never`
 or `load`. The wrapper receives settings, content, block children and preview context;
@@ -321,12 +307,10 @@ placing those children makes the page's block composition visible. Its settings 
 receives `settings`, `content` and `onChange`. The policy can derive title/globals and
 validate values. The [layout contract](site-layouts.md#authoring-api) describes details.
 
-Custom settings are permitted: `fields: []` is valid. Starter demonstrates this;
-its settings/policy, `src/core/header.ts` and the renderer describe navigation,
-header/footer and typography values. Hero v2 demonstrates a custom widget with a
-pure validator in `src/core/custom-fields.ts`: its presentation value contains a
-six-digit hex `accent` and numeric `inset` from 24 to 160. Briefly documenting custom
-value shapes near new extensions can save the next agent from inferring them.
+Custom settings are permitted: `fields: []` is valid. Custom React field widgets
+and pure validators register through the extension manifest. Use the public
+`quinecms/core/*` and `quinecms/editor/*` exports. Document custom value shapes near
+original extensions; modify subscribed library implementations upstream.
 
 CSS Modules/framework-scoped CSS help keep an expressive design independent from
 the editor. The layout owns the website surface; shared `--site-*` variables are
@@ -346,7 +330,7 @@ commitment, and deliberate redesign is possible within the task's scope.
 pnpm validate:content                 # structural and publication issues
 pnpm validate:content --draft         # structural issues only
 pnpm validate:content --base HEAD     # also compare schema/deletion impact
-pnpm verify                          # types, regression tests, build, artifacts
+pnpm verify                          # site checks, build and artifacts (pilot script)
 pnpm preview                         # inspect the built result
 ```
 

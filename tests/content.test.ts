@@ -18,34 +18,38 @@ import { siteStyle } from '../src/core/site-style';
 describe('content contract', () => {
   it('round trips site width, supports older sites and rejects invalid widths', () => {
     const c = fixture();
-    c.site.globals.contentMaxWidth = 880;
-    expect(parseFiles(filesFor(c)).site.globals.contentMaxWidth).toBe(880);
-    expect(siteStyle(c.site.globals)).toMatchObject({
+    c.site.layout!.settings.contentMaxWidth = 880;
+    expect(parseFiles(filesFor(c)).site.layout!.settings.contentMaxWidth).toBe(
+      880,
+    );
+    expect(siteStyle(c.site.layout!.settings)).toMatchObject({
       '--site-content-max-width': '880px',
     });
     for (const invalid of [0, -20, '900px', Infinity]) {
-      c.site.globals.contentMaxWidth = invalid;
+      c.site.layout!.settings.contentMaxWidth = invalid;
       expect(validate(c, definitions)).toContainEqual(
         expect.objectContaining({
-          path: 'site.globals.contentMaxWidth',
+          path: 'site.layout.settings.contentMaxWidth',
           phase: 'structure',
         }),
       );
-      expect(siteStyle(c.site.globals)['--site-content-max-width']).toBe(
-        '1200px',
-      );
+      expect(
+        siteStyle(c.site.layout!.settings)['--site-content-max-width'],
+      ).toBe('1200px');
     }
-    c.site.globals.contentMaxWidth = null;
+    c.site.layout!.settings.contentMaxWidth = null;
     expect(validate(c, definitions)).toEqual([]);
-    delete c.site.globals.contentMaxWidth;
+    delete c.site.layout!.settings.contentMaxWidth;
     expect(validate(c, definitions)).toEqual([]);
-    expect(siteStyle(c.site.globals)['--site-content-max-width']).toBe(
+    expect(siteStyle(c.site.layout!.settings)['--site-content-max-width']).toBe(
       '1200px',
     );
   });
   it('round trips site typography and gutter, with safe defaults for older or invalid records', () => {
     const c = fixture();
-    c.site.globals = {
+    c.site.layout!.settings = {
+      title: 'Site',
+      navigation: [],
       bodyFont: 'arial',
       headingFont: 'georgia',
       bodyFontSize: 18.5,
@@ -53,8 +57,10 @@ describe('content contract', () => {
       pageGutter: 0,
     };
     expect(validate(c, definitions)).toEqual([]);
-    expect(parseFiles(filesFor(c)).site.globals).toEqual(c.site.globals);
-    expect(siteStyle(c.site.globals)).toMatchObject({
+    expect(parseFiles(filesFor(c)).site.layout!.settings).toEqual(
+      c.site.layout!.settings,
+    );
+    expect(siteStyle(c.site.layout!.settings)).toMatchObject({
       '--site-body-font': 'Arial, Helvetica, sans-serif',
       '--site-heading-font': 'Georgia, serif',
       '--site-body-font-size': '18.5px',
@@ -76,18 +82,18 @@ describe('content contract', () => {
     };
     for (const [key, values] of Object.entries(invalid)) {
       for (const value of values) {
-        c.site.globals = { [key]: value } as typeof c.site.globals;
+        c.site.layout!.settings = { [key]: value } as Record<string, any>;
         expect(validate(c, definitions)).toContainEqual(
           expect.objectContaining({
-            path: `site.globals.${key}`,
+            path: `site.layout.settings.${key}`,
             phase: 'structure',
           }),
         );
-        expect(siteStyle(c.site.globals)).toEqual(defaults);
+        expect(siteStyle(c.site.layout!.settings)).toEqual(defaults);
       }
-      c.site.globals = { [key]: null };
+      c.site.layout!.settings = { title: 'Site', navigation: [], [key]: null };
       expect(validate(c, definitions)).toEqual([]);
-      expect(siteStyle(c.site.globals)).toEqual(defaults);
+      expect(siteStyle(c.site.layout!.settings)).toEqual(defaults);
     }
   });
   it('round trips ID-based files deterministically', () => {

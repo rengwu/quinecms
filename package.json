@@ -1,6 +1,6 @@
 {
   "name": "quinecms",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "type": "module",
   "packageManager": "pnpm@10.34.1",
@@ -8,20 +8,11 @@
     "node": ">=22.12.0"
   },
   "scripts": {
-    "example:intr": "node scripts/example-site.mjs intr",
-    "example:quine": "node scripts/example-site.mjs quine",
-    "prepare:blocks": "node scripts/generate-blocks.mjs",
-    "validate:content": "node scripts/generate-blocks.mjs --registry-only && tsx scripts/validate-content.ts",
-    "dev": "pnpm prepare:blocks && astro dev --host 127.0.0.1",
-    "build": "pnpm prepare:blocks && astro build",
-    "preview": "astro preview --host 127.0.0.1",
-    "check": "pnpm prepare:blocks && astro check",
-    "test": "pnpm prepare:blocks && vitest run",
+    "test": "vitest run",
+    "check": "vitest run tests/local-authoring.test.ts tests/block-generation.test.ts",
     "wiki:check": "node docs/wiki/_build.mjs --check",
-    "check:build": "node scripts/check-build.mjs",
-    "format": "prettier --write src scripts tests *.mjs *.ts *.json content",
-    "verify": "pnpm check && pnpm test && pnpm build && pnpm check:build",
-    "example:archline": "node scripts/example-site.mjs archline"
+    "format": "prettier --write src scripts bin tests *.mjs *.ts *.json",
+    "verify": "pnpm test && pnpm wiki:check"
   },
   "dependencies": {
     "@astrojs/react": "7.0.0",
@@ -45,9 +36,7 @@
     "react-dom": "19.3.0",
     "semver": "7.8.5",
     "svelte": "5.57.1",
-    "vue": "3.5.43"
-  },
-  "devDependencies": {
+    "vue": "3.5.43",
     "@astrojs/check": "0.9.10",
     "@sveltejs/vite-plugin-svelte": "7.3.1",
     "@types/node": "22.20.5",
@@ -55,13 +44,47 @@
     "@types/react-dom": "19.3.0",
     "@types/semver": "7.8.0",
     "@vitejs/plugin-vue": "6.0.9",
-    "jsdom": "30.1.2",
     "postcss": "8.5.29",
-    "prettier": "3.9.9",
-    "prettier-plugin-astro": "1.1.0",
     "tsx": "4.23.15",
     "typescript": "6.0.3",
-    "vite": "8.3.2",
+    "vite": "8.3.2"
+  },
+  "devDependencies": {
+    "jsdom": "30.1.2",
+    "prettier": "3.9.9",
+    "prettier-plugin-astro": "1.1.0",
     "vitest": "5.0.3"
+  },
+  "bin": {
+    "quinecms": "bin/quinecms.mjs"
+  },
+  "files": [
+    "bin",
+    "scripts",
+    "src/admin",
+    "src/core",
+    "src/editor",
+    "src/integrations",
+    "src/layouts",
+    "src/pages",
+    "astro.config.mjs",
+    "src/env.d.ts"
+  ],
+  "exports": {
+    "./package.json": "./package.json",
+    "./core/types": "./src/core/types.ts",
+    "./core/layout-contract": "./src/core/layout-contract.ts",
+    "./core/content": "./src/core/content.ts",
+    "./core/lists": "./src/core/lists.ts",
+    "./core/bindings": "./src/core/bindings.ts",
+    "./core/site-style": "./src/core/site-style.ts",
+    "./core/layouts": "./src/core/layouts.ts",
+    "./core/markdown": "./src/core/markdown.ts",
+    "./editor/Fields": "./src/editor/Fields.tsx",
+    "./editor/PanelSection": "./src/editor/PanelSection.tsx",
+    "./editor/widgets": "./src/editor/widgets.ts",
+    "./editor/SiteDesign": "./src/editor/SiteDesign.tsx",
+    "./core/routes": "./src/core/routes.ts",
+    "./editor/PanelNavigation": "./src/editor/PanelNavigation.tsx"
   }
 }

@@ -6,7 +6,7 @@ export async function generateLayouts(writeFile, site, registry = installed) {
   const definitions = [];
   const keys = new Set();
   for (const directory of registry) {
-    const base = resolve('src/site-layouts', directory);
+    const base = resolve(directory);
     const d = JSON.parse(
       await readFile(resolve(base, 'definition.json'), 'utf8'),
     );

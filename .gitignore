@@ -7,3 +7,5 @@ src/generated/
 .env.*
 !.env.example
 coverage/
+.quinecms/
+*.tgz

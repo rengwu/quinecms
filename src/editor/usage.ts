@@ -6,7 +6,6 @@ import {
   contentForLayout,
 } from '../core/layouts';
 import { definitions } from '../generated/definitions';
-import { headerFields } from '../core/header';
 
 export type UsageTarget =
   | { area: 'layout'; id?: string }
@@ -95,15 +94,6 @@ export function describeUsage(
       layoutDefinition(contentForLayout(content, layout).site)?.fields ?? [];
     let value: unknown = layout.settings;
     const prefix: string[] = [];
-    if (layout.id === 'starter') {
-      if (path.startsWith('navigation')) prefix.push('Header');
-      if (path.startsWith('header.')) {
-        prefix.push('Header');
-        path = path.slice('header.'.length);
-        value = layout.settings.header;
-        fields = headerFields;
-      }
-    }
     return {
       title: saved?.name ?? 'Site Layout',
       location: [...prefix, ...location(path, fields, value, content)].join(

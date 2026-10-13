@@ -1,27 +1,9 @@
-import type {
-  Content,
-  LayoutSelection,
-  Page,
-  Site,
-  SiteLayout,
-  Values,
-} from './types';
+import type { Content, LayoutSelection, Page, Site, SiteLayout } from './types';
 
 /** The previous single-layout formats are read without dropping their settings. */
 export function legacyLayout(site: Site): LayoutSelection {
-  return (
-    site.layout ?? {
-      id: 'starter',
-      version: 1,
-      settings: {
-        ...site.globals,
-        title: site.title ?? '',
-        navigation: site.navigation ?? [],
-        ...(site.header ? { header: site.header } : {}),
-        ...(site.footer ? { footer: site.footer as unknown as Values } : {}),
-      },
-    }
-  );
+  if (!site.layout) throw Error('Choose a site layout in content/site.json.');
+  return site.layout;
 }
 
 export function siteLayouts(site: Site): SiteLayout[] {

@@ -4,19 +4,20 @@ updated: 2026-10-13
 ---
 # Verification setup
 
-Run from the QuineCMS repository with Node 22.12+ and pinned pnpm 10.34.1. The initial run used macOS, Node 22.19.0, and Helium via the native computer-use tool.
+Run engine tests in the QuineCMS repository and site commands in the independent site repository, with Node 22.12+ and pinned pnpm 10.34.1. The initial run used macOS, Node 22.19.0, and Helium via the native computer-use tool.
 
 ## Commands and readiness
 
 ```sh
 pnpm install --frozen-lockfile
 # First setup only: copy .env.example to .env and set ADMIN_EMAIL/ADMIN_PASSWORD.
+pnpm verify                  # engine: regression suite; site: validation/check/build/artifacts
+# In a site repository:
 pnpm validate:content
-pnpm verify
 pnpm preview --port 4321
 ```
 
-The preview serves the built static `dist/` on `http://127.0.0.1:4321`. Check `/` and `/admin/` return HTTP 200. Use a different explicit port if another process owns 4321; do not stop unrelated processes. `pnpm dev` is the source development alternative. After adding generated imports, routes or registrations, stop the existing instance with `pnpm exec astro dev stop`, then run `pnpm dev`. Generation happens before startup; an already-running daemon may retain unresolved imports. Check both a public route and `/admin/` in the final running instance, not just an isolated production build.
+The preview serves the built static `dist/` on `http://127.0.0.1:4321`. Check `/` and `/admin/` return HTTP 200. Use a different explicit port if another process owns 4321; do not stop unrelated processes. `pnpm dev` is the source development alternative. The CLI watches local site inputs and regenerates its disposable workspace. Restart after installing dependencies or changing environment values. Check both a public route and `/admin/` in the final running instance, not just an isolated production build.
 
 For editor startup changes, exercise `/admin/` in both development and production preview. HTTP 200 and a successful build do not prove that React mounted: verify the Pages table and main sidebar first, then open a page row to check the drawer and live preview, change a block field and cancel it, and check the browser console. The [startup repair](runs/2026-10-05T0910Z-admin-startup.md) caught a development-only missing React preamble that the initial production checks missed.
 
@@ -26,7 +27,7 @@ Regression tests read `tests/fixtures/content/`, independently of the client sit
 
 ## Identity and isolation
 
-Record `git rev-parse HEAD` and dirty status. Hash application files, tests, content, configuration, and lockfile for a dirty build; the initial report links its manifest. `pnpm build` produces `.astro/client-graph.json`; `pnpm check:build` verifies output references/sharing and reports gzip module sizes. These sizes exclude the encrypted admin envelope embedded in HTML and runtime-fetched content; they are not a full page transfer measurement.
+Record `git rev-parse HEAD` and dirty status. Hash application files, tests, content, configuration, and lockfile for a dirty build; the initial report links its manifest. `pnpm build` produces `.quinecms/workspace/.astro/client-graph.json`; `pnpm check:build` verifies output references/sharing and reports gzip module sizes. These sizes exclude the encrypted admin envelope embedded in HTML and runtime-fetched content; they are not a full page transfer measurement.
 
 Use a fresh browser tab for local fixtures. Development uses `admin@example.com` / `asdf1234`. Production build/preview requires
 the configured ADMIN_EMAIL and ADMIN_PASSWORD pair. Provider configuration is optional for local editing. Session recovery survives reload; Settings → Discard edits resets to the loaded baseline. Browser-only changes do not alter local content files. Do not reuse the user's unrelated tabs or data as fixtures.

@@ -6,7 +6,6 @@ import {
   readdir,
 } from 'node:fs/promises';
 import { resolve, relative } from 'node:path';
-import { createHash } from 'node:crypto';
 import semver from 'semver';
 import blocks from '../blocks.config.mjs';
 import { publicRoutes } from '../src/core/routes.ts';
@@ -19,11 +18,15 @@ async function writeFile(path, text) {
   if ((await readFile(path, 'utf8').catch(() => null)) !== text)
     await rawWriteFile(path, text);
 }
-const pkg = JSON.parse(await readFile('package.json', 'utf8'));
+const dependencies = JSON.parse(
+  await readFile('resolved-dependencies.json', 'utf8'),
+);
+for (const name of ['site-config.ts', 'custom-fields.ts', 'custom-widgets.ts'])
+  written.add(resolve('src/generated', name));
 const defs = [];
 const keys = new Set();
 for (const path of blocks) {
-  const base = resolve('src/blocks', path);
+  const base = resolve(path);
   const d = JSON.parse(
     await readFile(resolve(base, 'definition.json'), 'utf8'),
   );
@@ -48,9 +51,9 @@ for (const path of blocks) {
   if (keys.has(key)) throw Error(`Duplicate ${key}`);
   keys.add(key);
   for (const [name, range] of Object.entries(d.dependencies)) {
-    if (!semver.satisfies(pkg.dependencies[name] ?? '', range))
+    if (!semver.satisfies(dependencies[name] ?? '', range))
       throw Error(
-        `${key} requires ${name} ${range}; root has ${pkg.dependencies[name] ?? 'nothing'}`,
+        `${key} requires ${name} ${range}; root has ${dependencies[name] ?? 'nothing'}`,
       );
   }
   const required = {
@@ -106,33 +109,6 @@ if (process.argv.includes('--registry-only')) {
 
 const site = JSON.parse(await readFile('content/site.json', 'utf8'));
 const installedLayouts = await generateLayouts(writeFile, site);
-const footerIndex = site.footer
-  ? defs.findIndex(
-      (d) =>
-        d.type === site.footer.type &&
-        d.version === site.footer.version &&
-        d.placement === 'footer',
-    )
-  : -1;
-if (site.footer && footerIndex === -1)
-  throw Error('Missing installed site footer');
-await writeFile(
-  'src/generated/Footer.astro',
-  footerIndex === -1
-    ? `---
-const {content}=Astro.props;
----
-<footer class="site-footer">{content.site.title}</footer>
-`
-    : `---
-import Block from './Block${footerIndex}.astro';
-import {contextFor} from '../core/content';
-const {content}=Astro.props;
----
-<Block props={content.site.footer.props} context={contextFor(content,content.site.footer.id)}/>
-`,
-);
-
 const content = { site, pages: [], collections: [], entries: [] };
 async function walk(dir, kind) {
   const entries = await readdir(dir, { withFileTypes: true }).catch((error) => {
@@ -223,36 +199,7 @@ await writeFile(
   `export default ${JSON.stringify(routes, null, 2)};\n`,
 );
 
-const sources = {};
-async function sourceFile(path) {
-  const bytes = await readFile(path);
-  sources[path] = createHash('sha1')
-    .update(`blob ${bytes.length}\0`)
-    .update(bytes)
-    .digest('hex');
-}
-async function sourceDir(dir) {
-  for (const f of await readdir(dir, { withFileTypes: true })) {
-    const path = dir + '/' + f.name;
-    if (path === 'src/generated') continue;
-    if (f.isSymbolicLink())
-      throw Error('Source symlinks are not supported: ' + path);
-    if (f.isDirectory()) await sourceDir(path);
-    else await sourceFile(path);
-  }
-}
-await sourceDir('src');
-await sourceDir('scripts');
-await sourceDir('public');
-for (const path of [
-  'package.json',
-  'pnpm-lock.yaml',
-  'astro.config.mjs',
-  'blocks.config.mjs',
-  'layouts.config.mjs',
-  'tsconfig.json',
-])
-  await sourceFile(path);
+const sources = JSON.parse(await readFile('build-inputs.json', 'utf8'));
 await writeFile(
   'src/generated/sources.ts',
   `export const sourceFiles: Record<string,string> = ${JSON.stringify(sources, null, 2)};\n`,

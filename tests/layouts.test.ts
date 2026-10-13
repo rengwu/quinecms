@@ -13,55 +13,6 @@ import { definitions } from '../src/generated/definitions';
 import { contextFor } from '../src/core/content';
 import { siteStyle } from '../src/core/site-style';
 
-it('converts old Site Options losslessly and round-trips only the active settings', () => {
-  const old = fixture();
-  old.site.globals = {
-    theme: 'dark',
-    bodyFont: 'georgia',
-    contentMaxWidth: 960,
-    pageGutter: 0,
-  };
-  old.site.header = { brand: 'Legacy brand', items: [] };
-  const before = structuredClone(old);
-  const converted = migrateSite(old);
-  expect(old).toEqual(before);
-  expect(converted.site).toEqual({
-    formatVersion: 1,
-    id: old.site.id,
-    globals: {},
-    layouts: [
-      {
-        id: `layout_${old.site.id}`,
-        name: 'Main layout',
-        active: true,
-        design: {
-          id: 'starter',
-          version: 1,
-          settings: {
-            contentMaxWidth: 960,
-            pageGutter: 0,
-            title: old.site.title,
-            navigation: old.site.navigation,
-            theme: 'dark',
-            bodyFont: 'georgia',
-            header: old.site.header,
-            ...(old.site.footer ? { footer: old.site.footer } : {}),
-          },
-        },
-      },
-    ],
-  });
-  expect(
-    converted.pages.every(
-      (page) => page.layoutId === converted.site.layouts![0].id,
-    ),
-  ).toBe(true);
-  expect(layoutTitle(converted.site)).toBe(old.site.title);
-  expect(layoutGlobals(converted.site)).toMatchObject(before.site.globals);
-  expect(parseFiles(filesFor(converted))).toEqual(converted);
-  expect(validate(converted, definitions)).toEqual([]);
-});
-
 it('switches with fresh defaults, preserves every content record, and pins retained versions', () => {
   const c = migrateSite(fixture());
   c.site.layouts![0].design.settings.title = 'Personalized';

@@ -1,6 +1,6 @@
 ---
 title: Site Layouts
-updated: 2026-10-13
+updated: 2026-10-14
 ---
 # Site Layouts
 
@@ -20,11 +20,9 @@ Turning a layout off or deleting it requires zero assigned pages. At least one a
 
 The visible title and close button share a fixed header row above the scrolling catalog and preview. Hover highlights the whole card background, including the Preview row; the rendered thumbnail retains its own appearance.
 
-**Site Layouts → a layout → Content spacing** edits content max-width and page gutter. Starter defaults to 1200px/0px; chartr defaults to 1512px/40px. Clearing either override uses the active layout’s default. **Settings** contains Repository connection, admin Appearance, Backups, Session and Factory reset. Other standard admin areas retain their existing layout. Generic page previews preserve field placeholders.
+**Site Layouts → a layout → Content spacing** edits content max-width and page gutter. Each installed design supplies its own defaults. Clearing either override uses the active layout’s default. **Settings** contains Repository connection, admin Appearance, Backups, Session and Factory reset. Other standard admin areas retain their existing layout. Generic page previews preserve field placeholders.
 
 ## Stored contract and transitions
-
-When editing Starter's inherited header navigation, internal reference records track only the inherited links still present with the same destination. Removing or retargeting a navigation item clears its old deletion blocker; unchanged links remain protected and follow their edited labels/order. This repairs hidden stale references while retaining the existing URL-based header controls. See the [reference-summary run](../verification/runs/2026-10-08-readable-usage.md).
 
 Canonical `site.layouts` is an array of `{ id, name, active, design: { id, version, settings } }` in `content/site.json`. The outer ID identifies a saved configuration; the design ID/version identifies installed code. Settings belong to each configuration, including inactive ones. Pages persist `layoutId`. A new page selects the sole active layout automatically; with several active layouts, the user must choose before Create. There is no default setting or ongoing inheritance. Reassigning a page preserves its blocks.
 
@@ -32,19 +30,18 @@ Generic pages own the layout for all their collection entries, with no per-entry
 
 Changing a design or retained version resets only that configuration to fresh defaults after confirmation. All pages assigned to it receive the change. Other layouts, page blocks, collections, entries and media remain intact. Selecting the exact current design/version does nothing; there is no automatic upgrade or guessed field mapping.
 
-Legacy `site.layout` or the earlier Site Options fields are read into one active **Main layout**, with explicit assignments for existing pages. Saved settings and content are preserved. Public builds can read unchanged legacy records; subsequent editor saves use the new shape. `site.globals` does not override layout output. Missing retained implementations block structural validation, even for unused configurations.
+Explicit legacy `site.layout` records are read into one active **Main layout**, with explicit assignments for existing pages. Saved settings and content are preserved. Public builds can read unchanged legacy records; subsequent editor saves use the new shape. `site.globals` does not override layout output. Missing retained implementations block structural validation, even for unused configurations.
 
 All configurations must be structurally valid, all page assignments must target active layouts, and at least one layout must be active. Only layouts referenced by pages require complete required settings to publish. Unused active or inactive layouts may remain incomplete. The same checks apply to import, Git drafts, publication and local builds.
 
-Factory reset clears the local content draft and creates one active Main layout using Starter v1 defaults. It retains the site ID. See the [reset contract](editor.md#factory-reset-and-repository-settings).
+Factory reset clears the local content draft and creates one active Main layout using the configured initial design's defaults (`quinecms.config.json`). It retains the site ID. See the [reset contract](editor.md#factory-reset-and-repository-settings).
 
-### Starter factory defaults (DEC-138)
-
-New Starter selections and Factory reset use the user's supplied screenshots: site title **Welcome**, light theme, Arial body and heading fonts, 16px body size, 1.5 line height, 1200px content width and 0px page gutter. Header defaults are **Your Brand**, no logo, Home/Journal/Blocks navigation and **Contact Us** linking to `https://google.com`. The navigation labels use `/`, `/journal` and `/blocks` URLs; these destinations were inferred from the existing site's labels/routes. They do not reference deleted record IDs or create pages. The footer remains unselected because it was not specified. Existing saved settings are not rewritten.
+There is no implicit built-in design. Missing initial-layout configuration or an
+uninstalled selection fails clearly. DEC-182 supersedes Starter's factory defaults.
 
 ## Authoring API
 
-Install `src/site-layouts/<id>/vN/definition.json`, a React wrapper, React settings component and pure policy module; register the directory in `layouts.config.mjs`, then rebuild. Retain previous version directories, settings components and dependencies. Both installed versions remain resolvable; the editor offers an explicit version selector when alternatives exist.
+Install a layout definition, React wrapper, React settings component and pure policy module through a library or original site extension; register it in `quinecms.library.json`, then rebuild. See the [extension contract](site-engine.md). Retain previous version directories, settings components and dependencies. Both installed versions remain resolvable; the editor offers an explicit version selector when alternatives exist.
 
 The manifest declares stable `id`, integer `version`, `label`, `description`, `defaults`, `fields`, `component`, `settingsComponent`, `policy`, optional `headComponent`, and `activation` (`never` or `load`). An empty `fields` list is valid for custom settings. `LayoutProps` supplies `settings`, public `content`, block `children`, optional `preview` and `onNavigate`. The only required visual responsibility is to contain the block children. Public rendering and editor preview share the wrapper source. An optional server-rendered Head component supplies metadata/assets; it is not mounted inside the preview document.
 
@@ -54,35 +51,29 @@ Generated public routes import their assigned design wrapper and optional Head d
 
 `LayoutSettingsProps` supplies `settings`, `content` and `onChange(settings)`. Authors may build arbitrary React settings UI or reuse `Fields` and `PanelSection`; no universal header/footer/theme schema is imposed. Repeated fields use the editor-wide `PanelNavigation` boundary. Custom drill-down controls must use `PanelLevel` so parent and sibling controls disappear until Back.
 
-The pure policy can derive `title`, optional block-context `globals`, and validation through `fields`, `blocks` and `add`. Built-in layout manifests declare spacing in `defaults`; their settings controls use those defaults as placeholders, and their policies resolve blank/invalid overrides with `contentSpacing`. Both wrappers and block context consume `layoutGlobals`, keeping public rendering and preview consistent. Width must be finite and positive; gutter must be finite and nonnegative. Invalid explicit overrides fail structural validation. Keep browser/editor dependencies out of this module because public content validation also loads it. Styling tokens are optional: no categories, badges, filtering, warnings or compatibility gates depend on a block's styling choices. Static/generic field-binding rules remain separate.
+The pure policy can derive `title`, optional block-context `globals`, and validation through `fields`, `blocks` and `add`. Library layout manifests declare spacing in `defaults`; their settings controls use those defaults as placeholders, and their policies resolve blank/invalid overrides with `contentSpacing`. Both wrappers and block context consume `layoutGlobals`, keeping public rendering and preview consistent. Width must be finite and positive; gutter must be finite and nonnegative. Invalid explicit overrides fail structural validation. Keep browser/editor dependencies out of this module because public content validation also loads it. Styling tokens are optional: no categories, badges, filtering, warnings or compatibility gates depend on a block's styling choices. Static/generic field-binding rules remain separate.
 
 ## One dashboard for all themes (DEC-163)
 
-Run `pnpm dev` and open `/admin/` on the printed main URL. The layout catalog
-always reads every installed definition in `layouts.config.mjs`: currently
-Starter, chartr, Quine, Intr Studio and Archline. The former
-`SITE_LAYOUT_WHITELIST` setting is no longer read. There is no theme-specific
-launch configuration or catalog restriction.
+Run `pnpm dev` in the site repository and open `/admin/`. All definitions from
+configured libraries and original extensions are available together. The initial
+shared library contains Archline and Intr. Subscription configuration is outside
+the portal; there is no theme-specific launch command.
 
 The block catalog independently offers all installed themes through **All themes**
 and its optional theme/search filters. Its static/generic page and footer
 compatibility rules remain. Choosing a layout does not restrict the block catalog.
 
-Example directories retain sample records and importable backups; their optional
-developer runners also expose the full catalog. They are not required to select
-or use a theme. The main dashboard edits the current site's content; changing
-a saved layout’s design preserves page content and applies fresh defaults to that configuration, as above.
-
 ## Verification recipe
 
-1. Customize Starter width/gutter, preview chartr and close it. Confirm the candidate uses 1512px/40px and the draft is unchanged. Confirm changing the design to chartr, then Starter: each uses its defaults while content remains intact. Verify custom width, zero gutter, cleared overrides and recovery.
+1. Customize Archline width/gutter, preview Intr and close it. Confirm the candidate uses its own defaults and the draft is unchanged. Confirm changing the design to Intr, then Archline: each uses its defaults while content remains intact. Verify custom width, zero gutter, cleared overrides and recovery.
 2. Check Pages and Site Layouts previews with static and generic pages. Visit Settings, Content, schemas and Media to confirm their normal admin layout.
 3. Open header/footer list items and a nested dropdown item. Each replaces all parent controls; Back returns exactly one level. Use the same behavior for block lists, entry lists and schema default rows.
 4. Recover a tab and export/import a backup. Confirm every layout ID/name/active state/design/settings and page assignment round-trips; legacy settings remain intact.
 5. Open Add layout or Change design and verify all installed themes appear. Switch layouts and reopen the catalog: all remain available. Open a page’s Add block catalog and confirm blocks from other themes remain selectable.
 6. Install a newer retained version beside an older selected one. Confirm public rendering and both settings/preview loaders stay pinned until explicit selection. Run `pnpm verify`.
 
-7. Create two instances of Starter, edit their settings independently and reassign a page. Check counts, page preview and usage links. Cancel creation/design resets/deletion and confirm no unintended change.
+7. Create two instances of Archline, edit their settings independently and reassign a page. Check counts, page preview and usage links. Cancel creation/design resets/deletion and confirm no unintended change.
 8. Verify used layouts cannot be disabled/deleted, generic pages count without entries, the last active layout is protected, and unused incomplete layouts do not block publication. Build pages using different designs and check their wrappers, titles, spacing and assets.
 
 ## Verification history

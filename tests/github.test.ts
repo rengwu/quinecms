@@ -228,7 +228,7 @@ describe('Git transactions (mock transport)', () => {
     const m = mock(),
       base = await m.store.load();
     base.sourceFiles = { 'src/unknown.ts': 'new' };
-    await expect(m.store.publish(base)).rejects.toThrow('different editor');
+    await expect(m.store.publish(base)).rejects.toThrow('matching editor');
     expect(m.refs.main).toBe('c0');
   });
   it('refuses divergent main', async () => {
@@ -266,3 +266,30 @@ it('saves, reloads and publishes object definitions and nested relations through
   await m.store.publish(saved);
   expect((await m.store.read(m.refs.main)).content).toEqual(next);
 });
+
+it.each([
+  'package.json',
+  'pnpm-lock.yaml',
+  'quinecms.config.json',
+  'extensions/local/src/View.tsx',
+  'public/logo.svg',
+])(
+  'blocks save and publish with mismatched %s without writing or changing local edits',
+  async (path) => {
+    const m = mock(),
+      base = await m.store.load();
+    base.sourceFiles = { [path]: 'different' };
+    const edited = structuredClone(base.content);
+    edited.pages[0].title = 'Keep this unsaved edit';
+    const before = structuredClone(edited);
+    const count = m.calls.length;
+    await expect(m.store.save(base, edited)).rejects.toThrow('matching editor');
+    await expect(m.store.publish(base)).rejects.toThrow('matching editor');
+    expect(m.calls.slice(count).some((c) => !c.route.startsWith('GET'))).toBe(
+      false,
+    );
+    expect(m.refs.draft).toBe('c0');
+    expect(m.refs.main).toBe('c0');
+    expect(edited).toEqual(before);
+  },
+);

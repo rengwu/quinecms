@@ -1,3 +1,4 @@
+import { initialLayout } from '../generated/site-config';
 import { normalizeLists } from './lists';
 import {
   layoutDefinition,
@@ -84,20 +85,24 @@ export function filesFor(c: Content): Record<string, string> {
 }
 /** A fresh site draft; retain its identity so it can replace the saved snapshot. */
 export function factoryReset(content: Content): Content {
-  const starter = layoutDefinitions.find(
-    (layout) => layout.id === 'starter' && layout.version === 1,
+  const starting = layoutDefinitions.find(
+    (layout) =>
+      layout.id === initialLayout.id &&
+      layout.version === initialLayout.version,
   );
-  if (!starter)
-    throw Error('Install the Starter v1 layout before resetting the site.');
+  if (!starting)
+    throw Error(
+      'Install the configured initial layout before resetting the site.',
+    );
   return migrateSite({
     site: {
       formatVersion: 1,
       id: content.site.id,
       globals: {},
       layout: {
-        id: starter.id,
-        version: starter.version,
-        settings: structuredClone(starter.defaults),
+        id: starting.id,
+        version: starting.version,
+        settings: structuredClone(starting.defaults),
       },
     },
     pages: [],

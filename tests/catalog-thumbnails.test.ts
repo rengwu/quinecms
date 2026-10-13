@@ -42,6 +42,15 @@ const content: Content = {
     },
   ],
 };
+content.site.layout ??= {
+  id: 'starter',
+  version: 1,
+  settings: {
+    ...content.site.globals,
+    title: content.site.title ?? 'Test',
+    navigation: content.site.navigation ?? [],
+  },
+};
 
 class Visibility {
   static instances: Visibility[] = [];
@@ -212,6 +221,16 @@ it('refreshes retained samples when site content changes without remounting the 
     ...content,
     site: { ...content.site, globals: { theme: 'dark', bodyFont: 'georgia' } },
   };
+  updated.site.layout = {
+    id: 'starter',
+    version: 1,
+    settings: {
+      ...updated.site.globals,
+      title: updated.site.title ?? 'Test',
+      navigation: updated.site.navigation ?? [],
+    },
+  };
+
   await act(async () =>
     root!.render(
       createElement(BlockCatalog, {

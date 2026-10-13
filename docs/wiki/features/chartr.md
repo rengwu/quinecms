@@ -6,6 +6,12 @@ updated: 2026-10-08
 
 **ID:** FEAT-chartr
 
+**Transition note (2026-10-14):** The original bundled design catalog described below
+is preserved at engine commit `bfbb522`. The current engine ships no designs;
+[configured extensions](site-engine.md) supply the catalog. The initial shared
+library contains Archline and Intr. Historical test counts and recipes below apply
+to their recorded revisions, not the new pilot.
+
 ## Intent and entry points
 
 DEC-106 requests a recreation of [chartr.dev](https://chartr.dev/) after the [Site Layout foundation](site-layouts.md). The adjacent `chartr-site-v2` source remains unchanged. See the [scope](../discussions/chartr-recreation.md) and [implementation journal](../journal/2026-10-06-site-layouts-implementation.md).

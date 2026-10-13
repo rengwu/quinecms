@@ -1,5 +1,6 @@
 import type { ComponentType } from 'react';
 import type { Field, Json, Media } from '../core/types';
+import { customWidgets } from '../generated/custom-widgets';
 export interface WidgetProps {
   value: Json | undefined;
   onChange(value: Json): void;
@@ -8,12 +9,11 @@ export interface WidgetProps {
   readOnly: boolean;
   media?: Media[];
 }
-// Extend this developer-owned registry with custom React controls. Values still
-// conform to the field's type and are validated on both save and build.
+// Extensions register controls through their manifests, without editing the core.
 export const widgets: Record<
   string,
   () => Promise<{ default: ComponentType<WidgetProps> }>
 > = {
-  'hero-presentation': () => import('../blocks/hero/v2/Presentation'),
+  ...customWidgets,
   markdown: () => import('./RichText'),
 };

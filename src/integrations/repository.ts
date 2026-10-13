@@ -49,9 +49,8 @@ export function checkDraft(
     throw Error(issues.map((i) => `${i.path}: ${i.message}`).join('\n'));
 }
 
-export function checkPublication(
+export function checkSources(
   snapshot: Snapshot,
-  definitions: Definition[],
   expectedSources: Record<string, string>,
 ) {
   const paths = new Set([
@@ -60,8 +59,16 @@ export function checkPublication(
   ]);
   if ([...paths].some((p) => snapshot.sourceFiles[p] !== expectedSources[p]))
     throw Error(
-      'The draft contains a different editor or block implementation. Rebuild the editor from that source before publishing its content.',
+      'The draft uses different engine, library or site code. Your edits are preserved. Open a matching editor before saving or publishing.',
     );
+}
+
+export function checkPublication(
+  snapshot: Snapshot,
+  definitions: Definition[],
+  expectedSources: Record<string, string>,
+) {
+  checkSources(snapshot, expectedSources);
   const issues = validate(snapshot.content, definitions);
   if (issues.length) throw Error(issues.map((i) => i.message).join('\n'));
 }
@@ -69,4 +76,12 @@ export function checkPublication(
 export const isSource = (path: string, expected: Record<string, string>) =>
   (path.startsWith('src/') && !path.startsWith('src/generated/')) ||
   path.startsWith('scripts/') ||
+  path.startsWith('extensions/') ||
+  path.startsWith('public/') ||
+  [
+    'package.json',
+    'pnpm-lock.yaml',
+    'pnpm-workspace.yaml',
+    'quinecms.config.json',
+  ].includes(path) ||
   Object.hasOwn(expected, path);

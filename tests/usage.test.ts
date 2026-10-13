@@ -2,11 +2,8 @@ import { expect, it } from 'vitest';
 import { describeUsage } from '../src/editor/usage';
 import { incomingUsage, definitionUses } from '../src/core/schema';
 import { migrateSite } from '../src/core/layouts';
-import { headerValues } from '../src/core/header';
-import {
-  starterContent,
-  withHeader,
-} from '../src/site-layouts/starter/v1/policy';
+import { headerValues } from './fixtures/registry/header';
+import { starterContent, withHeader } from './fixtures/registry/policy';
 import { modelFixture } from './support/content-model';
 
 it('names the navigation item and editor instead of exposing IDs and storage paths', () => {
@@ -14,7 +11,7 @@ it('names the navigation item and editor instead of exposing IDs and storage pat
   const use = incomingUsage(content).get('page_home')![0];
   expect(describeUsage(content, use)).toEqual({
     title: 'Main layout',
-    location: 'Header › Navigation › Home',
+    location: 'Navigation › Home',
     target: { area: 'layout', id: `layout_${content.site.id}` },
   });
 });

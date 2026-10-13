@@ -71,6 +71,16 @@ const content: Content = {
   ],
   media: [],
 };
+content.site.layout ??= {
+  id: 'starter',
+  version: 1,
+  settings: {
+    ...content.site.globals,
+    title: content.site.title ?? 'Test',
+    navigation: content.site.navigation ?? [],
+  },
+};
+
 let root: Root, host: HTMLDivElement;
 afterEach(async () => {
   if (root) await act(async () => root.unmount());
@@ -156,31 +166,9 @@ it('opens layout navigation and footer items in dedicated levels, hiding all par
   expectAdminView();
 });
 
-it('focuses chartr mobile navigation and returns focus on Escape', async () => {
-  const chartr = layoutDefinitions.find((d) => d.id === 'chartr')!;
-  await mount(selectLayout(structuredClone(content), chartr));
-  await click('Site Layouts');
-  await click('Main layout');
-  const toggle = host.querySelector<HTMLButtonElement>('[data-menu-toggle]')!;
-  await act(async () => toggle.click());
-  expect(toggle.getAttribute('aria-expanded')).toBe('true');
-  const firstLink = host.querySelector('nav.mobile-menu a')!;
-  expect(document.activeElement).toBe(firstLink);
-  await act(async () =>
-    firstLink.dispatchEvent(
-      new KeyboardEvent('keydown', {
-        key: 'Escape',
-        bubbles: true,
-      }),
-    ),
-  );
-  expect(toggle.getAttribute('aria-expanded')).toBe('false');
-  expect(document.activeElement).toBe(toggle);
-});
-
 it('gives nested navigation items their own levels, returning one parent at a time', async () => {
   const initial = structuredClone(content);
-  initial.site.header = {
+  initial.site.layout!.settings.header = {
     brand: 'Site',
     items: [
       {
@@ -584,9 +572,7 @@ it('opens entries from public preview links in Content and blocks referenced del
   expect(editorPanel().textContent).toContain('← Back');
   expect(button('Delete entry').disabled).toBe(true);
   expect(editorPanel().textContent).toContain('Used in 1 place');
-  expect(editorPanel().textContent).toContain(
-    'Header › Navigation › Read entry',
-  );
+  expect(editorPanel().textContent).toContain('Navigation › Read entry');
   expect(editorPanel().textContent).not.toContain('site.layout.settings');
   await click('Open', editorPanel());
   expect(editorPanel().textContent).toContain('Main layout');
@@ -598,7 +584,7 @@ it('opens entries from public preview links in Content and blocks referenced del
 });
 it('deletes unreferenced entries and then their empty collection', async () => {
   const initial = structuredClone(content);
-  initial.site.navigation = [];
+  initial.site.layout!.settings.navigation = [];
   await mount(initial);
   await openEntry();
   await click('Delete entry');
@@ -645,7 +631,7 @@ it('opens readable object usages in the owning collection schema and can return 
 
 it('does not present a self-reference as a deletion blocker', async () => {
   const initial = structuredClone(content);
-  initial.site.navigation = [];
+  initial.site.layout!.settings.navigation = [];
   initial.collections[0].fields.push({
     key: 'self',
     label: 'Self',

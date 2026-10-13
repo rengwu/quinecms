@@ -124,13 +124,11 @@ for (const file of await htmlFiles('dist')) {
 }
 const site = JSON.parse(await readFile('content/site.json', 'utf8'));
 const selections = site.layouts?.map((layout) => layout.design) ?? [
-  site.layout ?? { id: 'starter', version: 1 },
+  site.layout,
 ];
 const layouts = await Promise.all(
   installedLayouts.map(async (path) =>
-    JSON.parse(
-      await readFile(`src/site-layouts/${path}/definition.json`, 'utf8'),
-    ),
+    JSON.parse(await readFile(`${path}/definition.json`, 'utf8')),
   ),
 );
 for (const selected of selections) {

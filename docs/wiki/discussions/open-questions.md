@@ -1,7 +1,7 @@
 ---
 title: Open questions
-updated: 2026-10-13
-status: Multiple site layouts settled; site and engine separation deferred
+updated: 2026-10-14
+status: Site and engine pilot implementation in progress
 ---
 # Open questions
 
@@ -22,20 +22,32 @@ question remains in the [selected scope](multiple-site-layouts.md). The user
 subsequently authorized work-until-grill; multiple configurations are now
 implemented. See [verification](../verification/runs/2026-10-13-multiple-site-layouts.md).
 
-## Separate site repositories and engine — pending grilling
+## Separate site repositories and engine — pilot product interview complete
 
-The user proposes an independent repository per site containing content and
-configuration, with some scaffolding/lightweight scripts acceptable, and a shared
-QuineCMS engine obtained during builds. Deployment must be provider agnostic,
-including bare metal. **This is not fully agreed:** the user explicitly requires
-grilling and wants to revisit it after engine adjustments. No implementation or
-new architecture decision is authorized now.
+After source study, the user explicitly discarded the form and continued in chat.
+DEC-172–DEC-174 select a core/admin-only engine, manual pinned engine upgrades with
+maintainer-owned migration, and one independent public pilot. The engine is now
+public, verified by repository metadata after the user's visibility change.
+Deployment remains provider agnostic, including bare metal (DEC-142).
 
-The [discussion record](site-engine-separation.md) preserves the proposed structure,
-pinned-checkout/package options, version and update recommendations, current build
-and editor source-check constraints, and questions about custom code, compatibility,
-development, publication and transition. Those mechanics remain proposals. No
-grilling round has started; return to the discussion when the user resumes it.
+The [submitted Q6–Q9 answers](../journal/2026-10-13-grill-3f45ceb2-5c2b-407b-bbba-4d71a6e78f03.md)
+settle extensions-only customization, directly consumed library dependencies,
+blocking draft save/publication from a mismatched editor, and Archline as the public
+pilot (DEC-175–DEC-178). Required core capabilities belong in the core repository.
+
+The [Q10–Q14 answers](../journal/2026-10-13-grill-47541500-3fe6-4bc4-9cec-83fad35ad61c.md)
+settle independent manual library upgrades, committed subscription configuration,
+upstream-only library code changes, a configured reset layout and Archline/Intr as
+the initial library (DEC-179–DEC-183). Local-copy and patch customization were not
+selected. No consequential product question remains on current evidence.
+
+The [authorized engineering plan](site-engine-separation.md#proposed-engineering-plan)
+covers public authoring interfaces, packaging/composition, library extraction,
+editor identity enforcement, preserving excluded examples and pilot acceptance
+checks. Implementation was subsequently authorized with `work-until-grill` on
+2026-10-14. See the [implemented interface](../features/site-engine.md); clean public
+pilot delivery and browser verification are in progress. Revisit grilling only for
+a new consequential product tradeoff.
 
 ## Upload from media fields — delivered locally
 

@@ -1,8 +1,0 @@
-// Retain installed versions while saved sites still reference them.
-export default [
-  'starter/v1',
-  'chartr/v1',
-  'quine/v1',
-  'intr/v1',
-  'archline/v1',
-];

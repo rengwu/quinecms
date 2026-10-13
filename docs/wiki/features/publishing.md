@@ -12,7 +12,7 @@ The [save/recovery contract](../discussions/technical-contracts.md) requires one
 
 ## Entry points and prerequisites
 
-`/admin/` → Settings → Connection selects the provider, owner/namespace, repository, draft branch and publish branch. GitLab additionally accepts an HTTPS instance URL, defaulting to `https://gitlab.com`, and nested namespaces such as `team/subgroup`. Use a repository containing this source with the chosen publish branch already present. The implementation does not infer a target from the clone's remote or hosting account.
+`/admin/` → Settings → Connection selects the provider, owner/namespace, repository, draft branch and publish branch. GitLab additionally accepts an HTTPS instance URL, defaulting to `https://gitlab.com`, and nested namespaces such as `team/subgroup`. Use the site repository, containing content and its pinned engine/library configuration, with the chosen publish branch already present. The implementation does not infer a target from the clone's remote or hosting account.
 
 Build defaults use `PUBLIC_GIT_PROVIDER`, `PUBLIC_GIT_NAMESPACE`, `PUBLIC_GIT_REPO`, `PUBLIC_DRAFT_BRANCH`, `PUBLIC_PUBLISH_BRANCH` and `PUBLIC_GITLAB_URL`; `.env.example` documents them. GitHub defaults also accept the earlier owner/repository environment names. A retained tab draft restores its own repository identity. Connection fields remain editable.
 
@@ -38,7 +38,7 @@ Draft and publish branches must be nonempty and different. Both provider adapter
 
 GitHub uses its Git tree, commit and non-forced ref-update APIs through Octokit. Its transaction flow is unchanged by adding GitLab.
 
-GitLab uses its REST API through browser `fetch`. Repository trees are paginated at one fixed commit and record blobs are read by object ID. Source blob IDs are compared with the deployed editor's generated source manifest, as for GitHub. This assumes the ordinary SHA-1 repository object format used by that manifest.
+GitLab uses its REST API through browser `fetch`. Repository trees are paginated at one fixed commit and record blobs are read by object ID. Site build-input blob IDs are compared with the deployed editor's manifest on both Save and Publish, as for GitHub. The [engine contract](site-engine.md#save-and-publish-protection) describes pin/lock/config/extension checks and recovery. This assumes the ordinary SHA-1 repository object format used by that manifest.
 
 For Save, the commits API creates a unique `lean-save-<uuid>` branch and one commit based on the exact loaded SHA. A SHA-pinned, non-squashing fast-forward merge request advances the shared draft branch. This extra step avoids treating GitLab's per-file `last_commit_id` checks as a whole-snapshot compare-and-swap. For Publish, a `lean-publish-<uuid>` branch pins the already saved snapshot and an equivalent merge request advances the configured publish branch; newer draft commits remain untouched.
 

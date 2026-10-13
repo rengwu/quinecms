@@ -10,7 +10,11 @@ import { readContentFiles } from '../src/core/load';
 import { definitions } from '../src/generated/definitions';
 
 const git = (...args: string[]) =>
-  execFileSync('git', args, { encoding: 'utf8', maxBuffer: 64 * 1024 * 1024 });
+  execFileSync('git', args, {
+    cwd: process.env.QUINECMS_SITE_ROOT ?? process.cwd(),
+    encoding: 'utf8',
+    maxBuffer: 64 * 1024 * 1024,
+  });
 
 function baseline(ref: string) {
   const sha = git(

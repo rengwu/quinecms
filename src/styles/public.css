@@ -1,5 +1,0 @@
-/* Shared neutral baseline. Each layout and block owns its appearance. */
-* { box-sizing: border-box; }
-body { margin: 0; }
-button, input, textarea, select { font: inherit; }
-a { color: inherit; }

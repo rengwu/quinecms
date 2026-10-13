@@ -1,209 +1,63 @@
 # QuineCMS
 
-Repository: [rengwu/quinecms](https://github.com/rengwu/quinecms).
-Use **QuineCMS** for display text and `quinecms` for repository names, URLs,
-routes, slugs and filesystem paths.
+QuineCMS is a static website engine and content editor. Each site has its own
+repository containing content, configuration, assets and original extensions.
+The engine and optional design libraries are pinned dependencies, upgraded manually.
+The engine contains no bundled website designs.
 
-A starting point for custom websites built locally by developers and their AI agents,
-with a content editor for the people who maintain them afterward. Design freely;
-the included pages, blocks and layouts are examples you can adapt or replace.
-Use the builder's content capabilities where they help the site and its owner.
+- [Site authoring guide](docs/wiki/features/local-authoring.md)
+- [Engine and extension contract](docs/wiki/features/site-engine.md)
+- [Archline pilot](https://github.com/rengwu/quinecms-site-archline)
+- [Archline and Intr library](https://github.com/rengwu/quinecms-library)
+- [Feature map](docs/wiki/features/index.md)
 
-Astro produces a static website and React editor at `/admin/`. Source and content
-live in one repository. The connected editor saves to a GitHub or GitLab draft branch;
-publishing advances the saved snapshot to your publish branch (`main` by default).
-Your deployment workflow can then build and host the static output. There is no application server in production.
+## Build a site
 
-Start with [AGENTS.md](AGENTS.md) and the [local authoring guide](docs/wiki/features/local-authoring.md).
-The guide covers choosing content structures, building a new site, changing an
-existing one and authoring custom blocks/layouts. Its design advice is optional;
-the documented record formats describe the current implementation.
-
-## Run locally
-
-Use one main dashboard for every installed theme and block: start `pnpm dev`, then
-open `/admin/` at the printed URL. **Site Layouts → Add layout** offers Starter,
-chartr, Quine, Intr Studio and Archline. **Pages → page → Add block → All themes**
-offers blocks from all themes, regardless of the active layout. Static/generic
-page compatibility and layout-owned footer selection still apply.
-
-Changing a layout uses its default settings and preserves the site's pages,
-blocks and content. It does not import a reference site's sample pages. The
-[Quine](examples/quine/README.md), [Intr Studio](examples/intr/README.md) and
-[Archline](examples/archline/README.md) directories hold optional sample content,
-backups and editing maps. Their `example:*` commands are developer sandboxes for
-inspecting those records; no theme requires a separate command or dashboard.
-
-Node 22.12+ and pnpm 10.34.1:
+Use Node 22.12+ and pnpm 10.34.1. Run these commands **in the site's repository**:
 
 ```sh
 pnpm install --frozen-lockfile
-cp .env.example .env              # optional for dev; configure credentials before building
 pnpm dev
+pnpm validate:content
+pnpm check
+pnpm build
+pnpm check:build
+pnpm preview
 ```
 
-Open `/admin/` on the URL printed by the dev server (normally
-`http://127.0.0.1:4321/admin/`) and use `admin@example.com` / `asdf1234`.
-Development always uses this single shared login, regardless of `.env`.
-Production builds and `pnpm preview` use the configured `ADMIN_EMAIL` /
-`ADMIN_PASSWORD` pair instead. Both modes guard one dashboard and one set of content.
-Without provider credentials, you can edit the
-browser preview and export a content backup. Browser edits do not write local
-project files. Local agents normally edit source and JSON directly, then use the
-browser to inspect the result and the client's controls.
+Development `/admin/` uses `admin@example.com` / `asdf1234`. Production builds
+require `ADMIN_EMAIL` and `ADMIN_PASSWORD` from the site's ignored `.env` or build
+environment. Provider and upload tokens are entered in the editor, never built in.
+Browser edits remain a local draft until saved to the configured GitHub/GitLab
+repository; they do not write the local checkout.
+
+The shared CLI assembles an ignored `.quinecms/workspace/` and writes the final
+static website to the site's `dist/`. Deploy that directory with any static web
+server or hosting provider, including bare metal. No application server or
+provider-specific deployment integration is required. Serve at the domain root;
+the initial library uses root-relative paths.
+
+## Work on the engine
+
+This repository maintains the engine, admin portal and extension interfaces.
+Design implementations belong in a library or the site's original extensions.
+Missing engine capabilities should be added here, without site-level engine patches.
 
 ```sh
-pnpm validate:content                 # all content checks
-pnpm validate:content --draft         # allow incomplete publication fields
-pnpm validate:content --base HEAD     # include schema/deletion impact checks
-pnpm verify                          # types, tests, production build, assets
-pnpm preview                         # serve dist/
+pnpm install --frozen-lockfile
+pnpm test       # core/editor tests and independent fixture typecheck/build/dev checks
+pnpm verify     # tests plus generated wiki consistency
 ```
 
-The validator uses the same content rules as the editor/build and changes no
-content or Git refs. It refreshes generated registries first, independently of
-routes, so unfinished drafts can be checked. `--draft` and `--base` can be combined;
-`--base` reads an existing local Git commit and does not fetch it. `tsx` is a pinned
-development tool for running that TypeScript command.
+The integration suite creates disposable sites with test-owned extensions. It
+checks React, Svelte, Vue and vanilla rendering, encrypted admin output, runtime
+sharing, validation and source mismatch guards. Credentials in those fixtures are
+for tests only. Mock Git tests do not establish live provider or hosting behavior.
 
-Regression sample content lives in `tests/fixtures/content/`; the site's root
-`content/` can be replaced without preserving demo routes. Full tests still exercise
-the shipped block/layout implementations. Deliberately removing those implementations
-may call for corresponding changes to their regression tests.
+The initial distribution uses full Git commit dependencies, not an npm release.
+The package's `files` allowlist excludes tests, content, designs and documentation.
+Installed engine files remain read-only; generated output belongs to each site.
 
-Astro launches background instances. Stop the owned instance with
-`pnpm exec astro dev stop` or `pnpm exec astro preview stop`. After adding blocks,
-layouts or routes, restart development with `pnpm dev` so generation runs again.
-Starting a second launcher does not replace an existing instance. Refresh `/admin/`
-after editor source changes; its separate encrypted bundle is rebuilt on a full page request. Public output
-and the editor both deserve a quick check after source changes.
-
-## Find the site's content
-
-| Location | Contents |
-| --- | --- |
-| `content/site.json` | Named `layouts: [{ id, name, active, design: { id, version, settings } }]` and a `globals` object. Each layout owns its settings. |
-| `content/pages/<id>.json` | Static or generic pages, an explicit `layoutId` and ordered blocks. Static pages own paths; generic pages are collection templates. |
-| `content/collections/<id>.json` | Collection-owned fields, `many`/`single` mode, title field and optional generic-page routing. |
-| `content/objects/<id>.json` | Reusable object definitions; values remain owned by their entry. |
-| `content/entries/<collectionId>/<id>.json` | Schema values and, for routed ordinary entries, a slug. |
-| `content/media/<id>.json` | Media URLs and variant metadata. |
-| `src/core/types.ts` | Current record, field and renderer context types. |
-| `src/blocks/<name>/vN/`, `blocks.config.mjs` | Installed blocks and explicit registration. |
-| `src/site-layouts/<name>/vN/`, `layouts.config.mjs` | Installed layout wrappers, settings UIs, policies and registration. |
-
-Every snapshot has a site record; publication also needs a static home page at `/`.
-Directories for unused record kinds can be absent.
-The committed demo includes a legacy site record supported by the existing reader;
-[the guide](docs/wiki/features/local-authoring.md#starting-a-new-site) shows the canonical
-shape for new work. No demo page or visual theme is required for a client site.
-
-Pages, Content, Schemas → Collections/Objects, Media, Site Layouts and Settings are
-available in the editor. Collections support scalars, objects, typed arrays and
-references. Generic blocks bind to typed forward paths and explicit list projections.
-A collection's generic-page assignment enables entry routes; an index is an ordinary
-static page. [Content model](docs/wiki/features/content-model.md) ·
-[Generic pages](docs/wiki/features/generic-pages.md).
-
-Each saved site layout owns its settings, width/gutter overrides and defaults: Starter 1200px/0px,
-chartr 1512px/40px. Pages assign an active layout; generic-page entries inherit that
-assignment. Site Layouts lists named configurations with on/off switches. Layouts
-in use cannot be disabled/deleted, and one must stay active. Confirming a design or
-version change resets only that configuration to the selected defaults.
-Settings contains Repository connection, admin Appearance, Backups, Session and Factory reset. Styling variables are
-available to blocks; custom designs can choose how to use them.
-
-The [authoring guide](docs/wiki/features/local-authoring.md#custom-blocks-and-layouts)
-explains custom renderers, settings, styling, versions and registration. Both the
-public site and browser preview use the registered implementation. New source
-implementations require generation and a rebuild. Existing records name their exact
-implementation version; replacing or removing one warrants checking those uses.
-
-## Deliver and deploy
-
-1. Put the site repository on GitHub or GitLab with a publish branch (`main` by
-   default). Configure your hosting or CI workflow to build that branch with
-   `pnpm build` and serve the generated `dist/` directory on your chosen static
-   host. Limit public deployments to the publish branch to keep drafts unpublished.
-2. Configure the build values described in `.env.example`: `PUBLIC_GIT_PROVIDER`
-   (`github` or `gitlab`), `PUBLIC_GIT_NAMESPACE`, `PUBLIC_GIT_REPO` and
-   `PUBLIC_DRAFT_BRANCH` / `PUBLIC_PUBLISH_BRANCH` (defaults: `draft` / `main`).
-   For GitLab, the namespace includes any subgroups;
-   `PUBLIC_GITLAB_URL` defaults to `https://gitlab.com` and can point at an HTTPS
-   self-managed instance. The older `PUBLIC_GITHUB_OWNER`/`PUBLIC_GITHUB_REPO`
-   variables remain GitHub fallbacks when the neutral names are unset.
-   Set `ADMIN_EMAIL` and `ADMIN_PASSWORD` as build secrets. Both are required. The
-   build derives a key from the normalized email and exact password using Argon2id
-   and encrypts the standalone dashboard and initial data with AES-256-GCM.
-   Missing credentials or encryption failure stops the build. The deployed login
-   page contains ciphertext, never the configured credentials or key. See the
-   [encrypted admin contract](docs/wiki/features/admin-encryption.md) for browser
-   requirements, provider-neutral deployment setup and limits.
-3. In `/admin/` → Settings → Connection, choose the provider and repository, then enter an
-   access token: GitHub needs repository Contents read/write; GitLab needs `api`
-   scope and project permissions to create branches/commits and merge into the
-   draft and publish branches. Branch rules need to allow the intended updates.
-   Connect loads the draft, creating a missing draft branch from the publish branch.
-   Both provider forms show example placeholders. Publish branch defaults to `main`
-   and must differ from Draft branch. Changing it requires reconnecting.
-4. Save draft writes all pending records in one commit. Structurally valid incomplete
-   content can be saved. Publish requires a saved, fully valid snapshot and advances
-   the publish branch without force. The editor reports deployment pending;
-   deployment success is tracked separately by your hosting or CI workflow.
-
-GitLab uses temporary branches and SHA-pinned merge requests internally for both
-Save and Publish. Configure the project for **Fast-forward merge**, with squashing
-optional or disabled, to preserve exact saved snapshots and reject concurrent edits.
-Successful operations request temporary-branch removal; merge requests remain in
-the project's history. Required approvals or pipelines can block completion;
-the editor does not bypass them or schedule delayed automatic merges. Interrupted
-operations may leave temporary branches or requests for manual cleanup. Self-managed
-instances must allow browser API requests from the editor's origin. See the
-[Git publishing guide](docs/wiki/features/publishing.md) for details and verification limits.
-
-Local code changes and client content changes can be on different branches. Before
-updating an existing site, review the saved draft and reconcile source/content in
-normal Git work. Rebuild/deploy the editor for changed source contracts and synchronize
-the publish and draft branches; the portal rejects source mismatches and divergent
-publication history.
-See the [existing-site workflow](docs/wiki/features/local-authoring.md#adjusting-an-existing-site).
-
-Stale saves preserve local work. Export a backup, reload the remote draft and reconcile
-edits. Backup import replaces the local content snapshot; it is not a merge. Tab recovery
-survives reload, not a closed session. Git provider/R2 credentials remain in session storage,
-are excluded from backups and Git. Lock editor clears credentials and reloads the
-encrypted login page. Each reload requires email/password again; the retained
-draft is restored after unlocking. Browser draft/token storage is not encrypted
-by this feature. Trusted installed code shares the editor document. Changing the repository connection clears its token;
-tokens are restored only for the matching provider, instance, repository, draft
-branch and publish branch.
-
-Factory reset clears all pages, entries, collection and object schemas, and media
-records from the local draft, and restores Starter v1 defaults. It requires
-confirmation and leaves uploaded R2 files intact. Save draft persists the reset;
-create a new home page at `/` before publishing. Discard edits restores the last
-loaded/saved snapshot until the reset is saved.
-
-## Media
-
-Media → Storage settings accepts runtime Cloudflare R2 credentials, account ID,
-bucket and public HTTPS base URL. Uploads go directly from the browser to R2; media
-records in Git hold URLs. Configure bucket CORS for the editor's exact origins.
-The [media guide](docs/wiki/features/media.md) documents upload processing, settings
-and verification limits.
-
-The original is retained. Eligible static images receive smaller WebP variants;
-video/audio/PDF files are not transcoded. Assets can be public before page publication.
-Upload cleanup is best-effort; successful uploads from discarded drafts remain for
-manual cleanup. Rich text can reference uploaded images and YouTube videos.
-
-Live GitHub/GitLab writes, R2 credentials/CORS and hosting deployment are separate from the
-mocked tests and have not been established by those tests.
-
-## Project documentation
-
-The [feature map](docs/wiki/features/index.md) describes current capabilities.
-The [wiki](docs/wiki/index.md) retains decisions, history and build-specific evidence.
-Current feature pages and source contracts take precedence over superseded proposals.
-Rebuild its offline reader with `node docs/wiki/_build.mjs`; check it with
-`node docs/wiki/_build.mjs --check`.
+The previous integrated prototype, including nonselected demos, is preserved at
+[`bfbb522`](https://github.com/rengwu/quinecms/tree/bfbb522). It is historical material,
+not a second maintained library or a required migration path.

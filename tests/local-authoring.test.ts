@@ -12,15 +12,12 @@ import { decryptAdmin } from '../src/admin/crypto';
 const exec = promisify(execFile);
 const command = (cwd: string, args: string[]) =>
   exec(process.execPath, args, { cwd, maxBuffer: 16 * 1024 * 1024 });
-const validator = [
-  resolve('node_modules/tsx/dist/cli.mjs'),
-  resolve('scripts/validate-content.ts'),
-];
+const cli = resolve('bin/quinecms.mjs');
+const validator = [cli, 'validate'];
 
 it('validates unfinished drafts and baseline schema changes without modifying content', async () => {
-  const directory = await mkdtemp(join(tmpdir(), 'lean-validation-test-'));
+  const directory = await projectFixture();
   try {
-    await cp(fixtureDirectory, join(directory, 'content'), { recursive: true });
     const git = (args: string[]) => exec('git', args, { cwd: directory });
     await git(['init', '-q']);
     await git(['add', 'content']);
@@ -79,12 +76,12 @@ it('validates unfinished drafts and baseline schema changes without modifying co
   }
 }, 30000);
 
-it('checks a fresh site independently of demo routes and keeps static-demo coverage in a fixture', async () => {
+it('builds an independent site, encrypts its admin, and keeps static routes free of browser JavaScript', async () => {
   const directory = await projectFixture();
   try {
     const build = async () => {
-      await command(directory, ['scripts/generate-blocks.mjs']);
-      await command(directory, ['node_modules/astro/bin/astro.mjs', 'build']);
+      await command(directory, [cli, 'validate']);
+      await command(directory, [cli, 'build']);
       const html = await readFile(
         join(directory, 'dist/admin/index.html'),
         'utf8',
@@ -112,7 +109,7 @@ it('checks a fresh site independently of demo routes and keeps static-demo cover
       expect(admin.code).toContain('Lock editor');
       expect(admin.code).toContain('quinecms:recovery:v2');
       expect(admin.css.length).toBeGreaterThan(0);
-      const result = await command(directory, ['scripts/check-build.mjs']);
+      const result = await command(directory, [cli, 'check-build']);
       return JSON.parse(result.stdout);
     };
     const demo = await build();
@@ -142,7 +139,7 @@ it('checks a fresh site independently of demo routes and keeps static-demo cover
         id: 'site_client',
         globals: {},
         layout: {
-          id: 'starter',
+          id: 'alpha',
           version: 1,
           settings: { title: 'Client site', navigation: [] },
         },
@@ -158,21 +155,11 @@ it('checks a fresh site independently of demo routes and keeps static-demo cover
       blocks: [],
     };
     await writeFile(pagePath, JSON.stringify(page));
-    await command(directory, [
-      'scripts/generate-blocks.mjs',
-      '--registry-only',
-    ]);
-    await command(directory, [
-      'node_modules/tsx/dist/cli.mjs',
-      'scripts/validate-content.ts',
-      '--draft',
-    ]);
-    await expect(
-      command(directory, [
-        'node_modules/tsx/dist/cli.mjs',
-        'scripts/validate-content.ts',
-      ]),
-    ).rejects.toMatchObject({ code: 1 });
+    await command(directory, [cli, 'validate', '--draft']);
+    await command(directory, [cli, 'validate', '--draft']);
+    await expect(command(directory, [cli, 'validate'])).rejects.toMatchObject({
+      code: 1,
+    });
     page.title = 'Client home';
     page.path = '/';
     await writeFile(pagePath, JSON.stringify(page));
@@ -189,10 +176,8 @@ it('fails the static build without both admin credentials', async () => {
   const directory = await projectFixture();
   try {
     await writeFile(join(directory, '.env'), 'ADMIN_EMAIL=\nADMIN_PASSWORD=\n');
-    await command(directory, ['scripts/generate-blocks.mjs']);
-    await expect(
-      command(directory, ['node_modules/astro/bin/astro.mjs', 'build']),
-    ).rejects.toMatchObject({
+    await command(directory, [cli, 'validate']);
+    await expect(command(directory, [cli, 'build'])).rejects.toMatchObject({
       code: 1,
       stderr: expect.stringContaining('ADMIN_EMAIL and ADMIN_PASSWORD'),
     });
@@ -213,14 +198,15 @@ it.each([
     const directory = await projectFixture();
     try {
       await writeFile(join(directory, '.env'), env);
-      await command(directory, ['scripts/generate-blocks.mjs']);
+      await command(directory, [cli, 'check']);
       await writeFile(
-        join(directory, 'check-dev.mjs'),
+        join(directory, '.quinecms/workspace/check-dev.mjs'),
         `
       import { dev } from 'astro';
       import { writeFile } from 'node:fs/promises';
         // Astro skips its HTTP middleware when it inherits Vitest's marker.
         delete process.env.VITEST;
+        process.env.QUINECMS_SITE_ROOT = ${JSON.stringify(directory)};
         const server = await dev({ root: process.cwd(), server: { host: '127.0.0.1', port: 0 }, logLevel: 'error' });
       try {
         const response = await fetch('http://127.0.0.1:' + server.address.port + '/admin/');
@@ -231,8 +217,11 @@ it.each([
       }
     `,
       );
-      await command(directory, ['check-dev.mjs']);
-      const html = await readFile(join(directory, 'dev-admin.html'), 'utf8');
+      await command(join(directory, '.quinecms/workspace'), ['check-dev.mjs']);
+      const html = await readFile(
+        join(directory, '.quinecms/workspace/dev-admin.html'),
+        'utf8',
+      );
       const envelope = JSON.parse(
         html.match(
           /<script\b[^>]*id="admin-payload"[^>]*>([\s\S]*?)<\/script>/,

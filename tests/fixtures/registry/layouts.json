@@ -1,0 +1,633 @@
+[
+  {
+    "id": "archline",
+    "version": 1,
+    "label": "Archline",
+    "description": "Architectural photography, warm paper, fine grid lines and quiet editorial typography. Pair with the Archline blocks.",
+    "activation": "load",
+    "defaults": {
+      "contentMaxWidth": 2200,
+      "pageGutter": 32,
+      "title": "Archline\u00ae \u2014 Interior & Architecture Studio",
+      "description": "An architecture and interiors theme exploring light, material and space.",
+      "brand": "ARCHLINE\u00ae",
+      "tagline": "Interior & Architecture Studio",
+      "navigation": [
+        {
+          "_rowId": "row-1",
+          "label": "studio",
+          "url": "/#studio"
+        },
+        {
+          "_rowId": "row-2",
+          "label": "projects",
+          "url": "/projects"
+        },
+        {
+          "_rowId": "row-3",
+          "label": "expertise",
+          "url": "/#expertise"
+        },
+        {
+          "_rowId": "row-4",
+          "label": "insights",
+          "url": "/#insights"
+        },
+        {
+          "_rowId": "row-5",
+          "label": "contact",
+          "url": "/#contact"
+        }
+      ],
+      "socials": [
+        {
+          "_rowId": "row-1",
+          "label": "Facebook",
+          "url": "https://www.facebook.com/"
+        },
+        {
+          "_rowId": "row-2",
+          "label": "Instagram",
+          "url": "https://www.instagram.com/"
+        },
+        {
+          "_rowId": "row-3",
+          "label": "X (Twitter)",
+          "url": "https://x.com/"
+        },
+        {
+          "_rowId": "row-4",
+          "label": "Youtube",
+          "url": "https://www.youtube.com/"
+        }
+      ],
+      "menuImage": null,
+      "email": "hello@archiline.studio",
+      "emailURL": "mailto:hello@archiline.studio",
+      "phone": "+84 (0) 24 1234 5678",
+      "phoneURL": "tel:+842412345678",
+      "address": "120 Yen Lang District, Dong Da,\nHa Noi \u2013 Viet Nam",
+      "hours": "Mon\u2013Fri / 09:30 \u2013 18:00\nClosed on public holidays",
+      "copyright": "\u00a92025 Archline \u00b7 Reference theme demo",
+      "legal": [
+        {
+          "_rowId": "row-1",
+          "label": "Reference design",
+          "url": "https://archline.framer.website/"
+        },
+        {
+          "_rowId": "row-2",
+          "label": "Made by @deke",
+          "url": "https://x.com/designbydeke"
+        }
+      ]
+    },
+    "fields": [
+      {
+        "key": "title",
+        "label": "Site title",
+        "type": "text"
+      },
+      {
+        "key": "description",
+        "label": "Site description",
+        "type": "text",
+        "multiline": true
+      },
+      {
+        "key": "brand",
+        "label": "Brand",
+        "type": "text"
+      },
+      {
+        "key": "tagline",
+        "label": "Tagline",
+        "type": "text"
+      },
+      {
+        "key": "navigation",
+        "label": "Navigation",
+        "type": "list",
+        "fields": [
+          {
+            "key": "label",
+            "label": "Label",
+            "type": "text"
+          },
+          {
+            "key": "url",
+            "label": "URL",
+            "type": "url"
+          }
+        ]
+      },
+      {
+        "key": "socials",
+        "label": "Social links",
+        "type": "list",
+        "fields": [
+          {
+            "key": "label",
+            "label": "Label",
+            "type": "text"
+          },
+          {
+            "key": "url",
+            "label": "URL",
+            "type": "url"
+          }
+        ]
+      },
+      {
+        "key": "menuImage",
+        "label": "Expanded menu image",
+        "type": "media"
+      },
+      {
+        "key": "email",
+        "label": "Email label",
+        "type": "text"
+      },
+      {
+        "key": "emailURL",
+        "label": "Email URL",
+        "type": "url"
+      },
+      {
+        "key": "phone",
+        "label": "Phone label",
+        "type": "text"
+      },
+      {
+        "key": "phoneURL",
+        "label": "Phone URL",
+        "type": "url"
+      },
+      {
+        "key": "address",
+        "label": "Address",
+        "type": "text",
+        "multiline": true
+      },
+      {
+        "key": "hours",
+        "label": "Working hours",
+        "type": "text",
+        "multiline": true
+      },
+      {
+        "key": "copyright",
+        "label": "Copyright",
+        "type": "text"
+      },
+      {
+        "key": "legal",
+        "label": "Footer links",
+        "type": "list",
+        "fields": [
+          {
+            "key": "label",
+            "label": "Label",
+            "type": "text"
+          },
+          {
+            "key": "url",
+            "label": "URL",
+            "type": "url"
+          }
+        ]
+      }
+    ],
+    "component": "View.tsx",
+    "settingsComponent": "Settings.tsx",
+    "policy": "policy.ts",
+    "headComponent": "Head.tsx"
+  },
+  {
+    "id": "chartr",
+    "version": 1,
+    "label": "chartr",
+    "description": "Monospaced typography, a compact header, section rails and independent website appearance.",
+    "activation": "load",
+    "defaults": {
+      "contentMaxWidth": 1512,
+      "pageGutter": 40,
+      "title": "chartr",
+      "brand": "chartr",
+      "appearance": "system",
+      "allowToggle": true,
+      "homeURL": "/",
+      "navigation": [
+        {
+          "_rowId": "nav-0",
+          "label": "Workspace",
+          "url": "#preview"
+        },
+        {
+          "_rowId": "nav-1",
+          "label": "Plugins",
+          "url": "#plugins"
+        },
+        {
+          "_rowId": "nav-2",
+          "label": "Docs",
+          "url": "https://github.com/rengwu/chartr/tree/v0.3.0/docs"
+        }
+      ],
+      "sourceLabel": "GitHub",
+      "sourceURL": "https://github.com/rengwu/chartr",
+      "downloadLabel": "Download chartr",
+      "downloadURL": "https://github.com/rengwu/chartr/releases/tag/v0.3.0",
+      "footerLinks": [
+        {
+          "_rowId": "footer-0",
+          "label": "GitHub",
+          "url": "https://github.com/rengwu/chartr"
+        },
+        {
+          "_rowId": "footer-1",
+          "label": "License",
+          "url": "https://github.com/rengwu/chartr/blob/v0.3.0/LICENSE-GPL"
+        }
+      ],
+      "copyright": "\u00a9 2026 chartr",
+      "description": "chartr is a native workspace for terminal agents. Organize projects, arrange panes, add tools through plugins, and return to your running sessions."
+    },
+    "fields": [
+      {
+        "key": "title",
+        "label": "Site title",
+        "type": "text"
+      },
+      {
+        "key": "description",
+        "label": "Site description",
+        "type": "text",
+        "multiline": true
+      },
+      {
+        "key": "brand",
+        "label": "Brand name",
+        "type": "text"
+      },
+      {
+        "key": "homeURL",
+        "label": "Home URL",
+        "type": "url"
+      },
+      {
+        "key": "appearance",
+        "label": "Initial appearance",
+        "type": "select",
+        "options": [
+          {
+            "value": "system",
+            "label": "Follow system"
+          },
+          {
+            "value": "light",
+            "label": "Light"
+          },
+          {
+            "value": "dark",
+            "label": "Dark"
+          }
+        ]
+      },
+      {
+        "key": "allowToggle",
+        "label": "Show appearance switch",
+        "type": "toggle"
+      },
+      {
+        "key": "navigation",
+        "label": "Header navigation",
+        "type": "list",
+        "fields": [
+          {
+            "key": "label",
+            "label": "Label",
+            "type": "text"
+          },
+          {
+            "key": "url",
+            "label": "URL",
+            "type": "url"
+          }
+        ]
+      },
+      {
+        "key": "sourceLabel",
+        "label": "Source link label",
+        "type": "text"
+      },
+      {
+        "key": "sourceURL",
+        "label": "Source URL",
+        "type": "url"
+      },
+      {
+        "key": "downloadLabel",
+        "label": "Header action label",
+        "type": "text"
+      },
+      {
+        "key": "downloadURL",
+        "label": "Header action URL",
+        "type": "url"
+      },
+      {
+        "key": "footerLinks",
+        "label": "Footer links",
+        "type": "list",
+        "fields": [
+          {
+            "key": "label",
+            "label": "Label",
+            "type": "text"
+          },
+          {
+            "key": "url",
+            "label": "URL",
+            "type": "url"
+          }
+        ]
+      },
+      {
+        "key": "copyright",
+        "label": "Copyright",
+        "type": "text"
+      }
+    ],
+    "component": "View.tsx",
+    "settingsComponent": "Settings.tsx",
+    "policy": "policy.ts",
+    "headComponent": "Head.tsx"
+  },
+  {
+    "id": "intr",
+    "version": 1,
+    "label": "Intr Studio",
+    "description": "Quiet editorial interiors: oversized type, open spacing, a floating menu and a dark footer. Pair with the Intr blocks.",
+    "activation": "load",
+    "defaults": {
+      "contentMaxWidth": 1400,
+      "pageGutter": 32,
+      "title": "intr \u00ae \u2014 Residential Interior Design Studio",
+      "description": "Thoughtful residential interiors, shaped around the way you live.",
+      "brand": "intr \u00ae",
+      "navigation": [
+        {
+          "_rowId": "intr-nav-1",
+          "label": "Home",
+          "url": "/"
+        },
+        {
+          "_rowId": "intr-nav-2",
+          "label": "Our Vision",
+          "url": "/#about"
+        },
+        {
+          "_rowId": "intr-nav-3",
+          "label": "What We Do",
+          "url": "/#services"
+        },
+        {
+          "_rowId": "intr-nav-4",
+          "label": "Selected Works",
+          "url": "/#projects"
+        },
+        {
+          "_rowId": "intr-nav-5",
+          "label": "Gallery",
+          "url": "/projects"
+        }
+      ],
+      "actionLabel": "Get Started",
+      "actionURL": "/#contact",
+      "footerDescription": "Considered spaces. Lasting materials. Interiors designed around the way you live.",
+      "projectCollection": null,
+      "email": "hello@interior.studio",
+      "emailURL": "mailto:hello@interior.studio",
+      "phone": "+97 77 555 71 37",
+      "phoneURL": "tel:+97775557137",
+      "copyright": "\u00a9 2026 \u2014 Intr Studio"
+    },
+    "fields": [
+      {
+        "key": "title",
+        "label": "Site title",
+        "type": "text"
+      },
+      {
+        "key": "description",
+        "label": "Site description",
+        "type": "text",
+        "multiline": true
+      },
+      {
+        "key": "brand",
+        "label": "Brand",
+        "type": "text"
+      },
+      {
+        "key": "navigation",
+        "label": "Navigation",
+        "type": "list",
+        "fields": [
+          {
+            "key": "label",
+            "label": "Label",
+            "type": "text"
+          },
+          {
+            "key": "url",
+            "label": "URL",
+            "type": "url"
+          }
+        ]
+      },
+      {
+        "key": "actionLabel",
+        "label": "Action label",
+        "type": "text"
+      },
+      {
+        "key": "actionURL",
+        "label": "Action URL",
+        "type": "url"
+      },
+      {
+        "key": "footerDescription",
+        "label": "Footer description",
+        "type": "text",
+        "multiline": true
+      },
+      {
+        "key": "projectCollection",
+        "label": "Footer project collection",
+        "type": "collection"
+      },
+      {
+        "key": "email",
+        "label": "Email label",
+        "type": "text"
+      },
+      {
+        "key": "emailURL",
+        "label": "Email link",
+        "type": "url"
+      },
+      {
+        "key": "phone",
+        "label": "Phone label",
+        "type": "text"
+      },
+      {
+        "key": "phoneURL",
+        "label": "Phone link",
+        "type": "url"
+      },
+      {
+        "key": "copyright",
+        "label": "Copyright",
+        "type": "text"
+      }
+    ],
+    "component": "View.tsx",
+    "settingsComponent": "Settings.tsx",
+    "policy": "policy.ts",
+    "headComponent": "Head.tsx"
+  },
+  {
+    "id": "quine",
+    "version": 1,
+    "label": "Quine Systems",
+    "description": "Warm neutral canvas, expressive typography and a compact fixed navigation. Pair with the independent Quine blocks.",
+    "activation": "load",
+    "defaults": {
+      "contentMaxWidth": 1440,
+      "pageGutter": 32,
+      "title": "Quine Systems",
+      "description": "A digital design studio creating memorable brand experiences, engineered for maximum impact.",
+      "brand": "Quine Systems",
+      "homeURL": "/",
+      "navigation": [
+        {
+          "_rowId": "nav-services",
+          "label": "Services",
+          "url": "#services"
+        },
+        {
+          "_rowId": "nav-works",
+          "label": "Works",
+          "url": "#works"
+        }
+      ],
+      "actionLabel": "Get in touch",
+      "actionURL": "#contact"
+    },
+    "fields": [
+      {
+        "key": "title",
+        "label": "Site title",
+        "type": "text"
+      },
+      {
+        "key": "description",
+        "label": "Site description",
+        "type": "text",
+        "multiline": true
+      },
+      {
+        "key": "brand",
+        "label": "Accessible brand name",
+        "type": "text"
+      },
+      {
+        "key": "homeURL",
+        "label": "Home URL",
+        "type": "url"
+      },
+      {
+        "key": "navigation",
+        "label": "Header navigation",
+        "type": "list",
+        "fields": [
+          {
+            "key": "label",
+            "label": "Label",
+            "type": "text"
+          },
+          {
+            "key": "url",
+            "label": "URL",
+            "type": "url"
+          }
+        ]
+      },
+      {
+        "key": "actionLabel",
+        "label": "Header action label",
+        "type": "text"
+      },
+      {
+        "key": "actionURL",
+        "label": "Header action URL",
+        "type": "url"
+      }
+    ],
+    "component": "View.tsx",
+    "settingsComponent": "Settings.tsx",
+    "policy": "policy.ts",
+    "headComponent": "Head.tsx"
+  },
+  {
+    "id": "starter",
+    "version": 1,
+    "label": "Starter",
+    "description": "A flexible header, grouped navigation, optional footer and familiar typography controls.",
+    "activation": "never",
+    "defaults": {
+      "title": "Welcome",
+      "theme": "light",
+      "navigation": [],
+      "bodyFont": "arial",
+      "headingFont": "arial",
+      "bodyFontSize": 16,
+      "bodyLineHeight": 1.5,
+      "contentMaxWidth": 1200,
+      "pageGutter": 0,
+      "header": {
+        "brand": "Your Brand",
+        "logo": null,
+        "items": [
+          {
+            "_rowId": "nav_home",
+            "label": "Home",
+            "url": "/",
+            "links": []
+          },
+          {
+            "_rowId": "nav_journal",
+            "label": "Journal",
+            "url": "/journal",
+            "links": []
+          },
+          {
+            "_rowId": "nav_blocks",
+            "label": "Blocks",
+            "url": "/blocks",
+            "links": []
+          }
+        ],
+        "actionLabel": "Contact Us",
+        "actionURL": "https://google.com"
+      }
+    },
+    "fields": [],
+    "component": "View.tsx",
+    "settingsComponent": "Settings.tsx",
+    "policy": "policy.ts"
+  }
+]

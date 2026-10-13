@@ -318,7 +318,7 @@ describe('GitLab transactions (mock API)', () => {
     await expect(m.store.publish(saved)).rejects.toThrow('title is required');
     await expect(
       m.store.publish({ ...base, sourceFiles: { 'src/changed.ts': 'new' } }),
-    ).rejects.toThrow('different editor');
+    ).rejects.toThrow('matching editor');
     content.pages.find((p) => p.kind === 'static')!.title = 'Ready';
     const ready = await m.store.save(saved, content);
     m.commits.other = { files: m.commits.c0.files, parent_ids: ['c0'] };
@@ -390,3 +390,28 @@ it('encodes nested project paths and sends tokens only in headers to the selecte
     connect('test-token', { ...repository, branch: 'main' }, definitions),
   ).rejects.toThrow('separate draft');
 });
+
+it.each([
+  'package.json',
+  'pnpm-lock.yaml',
+  'quinecms.config.json',
+  'extensions/local/src/View.tsx',
+  'public/logo.svg',
+])(
+  'blocks save and publish with mismatched %s without writing or changing local edits',
+  async (path) => {
+    const m = mock(),
+      base = await m.store.load();
+    base.sourceFiles = { [path]: 'different' };
+    const edited = structuredClone(base.content);
+    edited.pages[0].title = 'Keep this unsaved edit';
+    const before = structuredClone(edited);
+    const count = m.calls.length;
+    await expect(m.store.save(base, edited)).rejects.toThrow('matching editor');
+    await expect(m.store.publish(base)).rejects.toThrow('matching editor');
+    expect(m.calls.slice(count).some((c) => c.method !== 'GET')).toBe(false);
+    expect(m.refs.draft).toBe('c0');
+    expect(m.refs.main).toBe('c0');
+    expect(edited).toEqual(before);
+  },
+);

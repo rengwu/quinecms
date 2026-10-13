@@ -104,6 +104,16 @@ const content: Content = {
   entries: [],
   media: [oldMedia],
 };
+content.site.layout ??= {
+  id: 'starter',
+  version: 1,
+  settings: {
+    ...content.site.globals,
+    title: content.site.title ?? 'Test',
+    navigation: content.site.navigation ?? [],
+  },
+};
+
 let root: Root | undefined;
 let host: HTMLDivElement;
 async function mount(initial = content, configured = true) {

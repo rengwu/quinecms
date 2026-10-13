@@ -6,6 +6,12 @@ updated: 2026-10-13
 
 **ID:** FEAT-block-library
 
+**Transition note (2026-10-14):** The original bundled design catalog described below
+is preserved at engine commit `bfbb522`. The current engine ships no designs;
+[configured extensions](site-engine.md) supply the catalog. The initial shared
+library contains Archline and Intr. Historical test counts and recipes below apply
+to their recorded revisions, not the new pilot.
+
 ## Intent and basis
 
 [DEC-079–DEC-091](../decisions/index.md) and the [accepted scope](../discussions/block-library.md) expand the legacy TailwindBlocks reference into current-system content blocks. The six reference websites guide coverage, not exact copies.

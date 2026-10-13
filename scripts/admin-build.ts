@@ -2,6 +2,16 @@ import { build } from 'vite';
 import { svelte } from '@sveltejs/vite-plugin-svelte';
 import vue from '@vitejs/plugin-vue';
 import { resolve } from 'node:path';
+import { readFileSync } from 'node:fs';
+const engine = JSON.parse(readFileSync('package.json', 'utf8'));
+const alias = Object.fromEntries(
+  Object.entries(engine.exports ?? {})
+    .filter(([key]) => key !== './package.json')
+    .map(([key, path]) => [
+      'quinecms/' + key.slice(2),
+      resolve(path as string),
+    ]),
+);
 import { kumoStyles } from './kumo-styles.mjs';
 
 // A separate, self-contained editor never enters Astro's public asset graph.
@@ -20,7 +30,7 @@ export async function adminBundle(development = false) {
       svelte({ configFile: false, compilerOptions: { dev: false } }),
       vue(),
     ],
-    resolve: { dedupe: ['react', 'react-dom', 'svelte', 'vue'] },
+    resolve: { dedupe: ['react', 'react-dom', 'svelte', 'vue'], alias },
     define: {
       'process.env.NODE_ENV': JSON.stringify('production'),
       'import.meta.env.DEV': JSON.stringify(development),
