@@ -1,36 +1,36 @@
 
-> lean-sitebuilder@0.1.0 verify /Users/rengwu/Desktop/Projects/lean-sitebuilder
+> quinecms@0.1.0 verify <project-root>
 > pnpm check && pnpm test && pnpm build && pnpm check:build
 
 
-> lean-sitebuilder@0.1.0 check /Users/rengwu/Desktop/Projects/lean-sitebuilder
+> quinecms@0.1.0 check <project-root>
 > pnpm prepare:blocks && astro check
 
 
-> lean-sitebuilder@0.1.0 prepare:blocks /Users/rengwu/Desktop/Projects/lean-sitebuilder
+> quinecms@0.1.0 prepare:blocks <project-root>
 > node scripts/generate-blocks.mjs
 
 Registered 99 block versions.
 Registered 3 layout versions.
 09:45:40 [types] Generated 54ms
-09:45:40 [check] Getting diagnostics for Astro files in /Users/rengwu/Desktop/Projects/lean-sitebuilder...
+09:45:40 [check] Getting diagnostics for Astro files in <project-root>...
 Result (377 files): 
 - 0 errors
 - 0 warnings
 - 0 hints
 
 
-> lean-sitebuilder@0.1.0 test /Users/rengwu/Desktop/Projects/lean-sitebuilder
+> quinecms@0.1.0 test <project-root>
 > pnpm prepare:blocks && vitest run
 
 
-> lean-sitebuilder@0.1.0 prepare:blocks /Users/rengwu/Desktop/Projects/lean-sitebuilder
+> quinecms@0.1.0 prepare:blocks <project-root>
 > node scripts/generate-blocks.mjs
 
 Registered 99 block versions.
 Registered 3 layout versions.
 
- RUN  v5.0.3 /Users/rengwu/Desktop/Projects/lean-sitebuilder
+ RUN  v5.0.3 <project-root>
 
 
  Test Files  29 passed (29)
@@ -42,11 +42,11 @@ Registered 3 layout versions.
              at least ~1.07s faster with isolate: false — reuses workers across files instead of one per file
 
 
-> lean-sitebuilder@0.1.0 build /Users/rengwu/Desktop/Projects/lean-sitebuilder
+> quinecms@0.1.0 build <project-root>
 > pnpm prepare:blocks && astro build
 
 
-> lean-sitebuilder@0.1.0 prepare:blocks /Users/rengwu/Desktop/Projects/lean-sitebuilder
+> quinecms@0.1.0 prepare:blocks <project-root>
 > node scripts/generate-blocks.mjs
 
 Registered 99 block versions.
@@ -54,7 +54,7 @@ Registered 3 layout versions.
 09:46:11 [types] Generated 136ms
 09:46:11 [build] output: "static"
 09:46:11 [build] mode: "static"
-09:46:11 [build] directory: /Users/rengwu/Desktop/Projects/lean-sitebuilder/dist/
+09:46:11 [build] directory: <project-root>/dist/
 09:46:11 [build] Collecting build info...
 09:46:11 [build] ✓ Completed in 195ms.
 09:46:11 [build] Building static entrypoints...
@@ -76,7 +76,7 @@ Registered 3 layout versions.
 09:46:13 [build] 7 page(s) built in 1.80s
 09:46:13 [build] Complete!
 
-> lean-sitebuilder@0.1.0 check:build /Users/rengwu/Desktop/Projects/lean-sitebuilder
+> quinecms@0.1.0 check:build <project-root>
 > node scripts/check-build.mjs
 
 {

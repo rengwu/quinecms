@@ -1,4 +1,5 @@
 import ObjectField from './ObjectField';
+import MediaField from './MediaField';
 import ReferenceField from './ReferenceField';
 import { useModel } from './ModelContext';
 import { fieldPaths } from '../core/schema';
@@ -214,52 +215,14 @@ export default function Fields({
                 ))}
               </Select>
             ) : f.type === 'media' ? (
-              <>
-                <Select
-                  className={styles.full}
-                  id={inputId}
-                  aria-label={f.label}
-                  placeholder="Choose media…"
-                  renderValue={(id) =>
-                    media.find((m) => m.id === id)?.name || 'Choose media…'
-                  }
-                  value={
-                    typeof value === 'object' &&
-                    value !== null &&
-                    !Array.isArray(value)
-                      ? String(value.mediaId ?? '')
-                      : ''
-                  }
-                  disabled={readOnly}
-                  onValueChange={(value) =>
-                    set(
-                      (value ?? '') ? { mediaId: value ?? '', alt: '' } : null,
-                    )
-                  }
-                >
-                  <Select.Option value="">Choose media…</Select.Option>
-                  {media.map((m) => (
-                    <Select.Option key={m.id} value={m.id}>
-                      {m.name}
-                    </Select.Option>
-                  ))}
-                </Select>
-                <Input
-                  aria-label={`${f.label} alternative text`}
-                  placeholder="Alternative text"
-                  value={
-                    typeof value === 'object' &&
-                    value !== null &&
-                    !Array.isArray(value)
-                      ? String(value.alt ?? '')
-                      : ''
-                  }
-                  disabled={readOnly || !value}
-                  onChange={(e) =>
-                    set({ ...(value as object), alt: e.target.value })
-                  }
-                />
-              </>
+              <MediaField
+                id={inputId}
+                label={f.label}
+                value={value}
+                media={media}
+                onChange={set}
+                readOnly={readOnly}
+              />
             ) : f.type === 'text' && f.multiline ? (
               <InputArea
                 id={inputId}

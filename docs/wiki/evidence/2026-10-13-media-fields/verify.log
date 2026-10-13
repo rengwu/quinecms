@@ -1,0 +1,124 @@
+
+> quinecms@0.1.0 verify <project-root>
+> pnpm check && pnpm test && pnpm build && pnpm check:build
+
+
+> quinecms@0.1.0 check <project-root>
+> pnpm prepare:blocks && astro check
+
+
+> quinecms@0.1.0 prepare:blocks <project-root>
+> node scripts/generate-blocks.mjs
+
+Registered 128 block versions.
+Registered 5 layout versions.
+16:50:25 [types] Generated 60ms
+16:50:25 [check] Getting diagnostics for Astro files in <project-root>...
+Result (457 files):
+- 0 errors
+- 0 warnings
+- 0 hints
+
+
+> quinecms@0.1.0 test <project-root>
+> pnpm prepare:blocks && vitest run
+
+
+> quinecms@0.1.0 prepare:blocks <project-root>
+> node scripts/generate-blocks.mjs
+
+Registered 128 block versions.
+Registered 5 layout versions.
+
+ RUN  v5.0.3 <project-root>
+
+
+ Test Files  36 passed (36)
+      Tests  239 passed (239)
+   Start at  16:50:42
+   Duration  32.31s (tests 52%, import 32%, environment 12%, transform 4%)
+
+
+> quinecms@0.1.0 build <project-root>
+> pnpm prepare:blocks && astro build
+
+
+> quinecms@0.1.0 prepare:blocks <project-root>
+> node scripts/generate-blocks.mjs
+
+Registered 128 block versions.
+Registered 5 layout versions.
+16:51:16 [types] Generated 40ms
+16:51:16 [build] output: "static"
+16:51:16 [build] mode: "static"
+16:51:16 [build] directory: <project-root>/dist/
+16:51:16 [build] Collecting build info...
+16:51:16 [build] ✓ Completed in 105ms.
+16:51:16 [build] Building static entrypoints...
+16:51:16 [vite] ✓ built in 289ms
+16:51:17 [vite] ✓ built in 191ms
+16:51:17 [build] Rearranging server assets...
+
+ generating static routes
+16:51:17   ├─ /admin/index.html (+1.03s)
+16:51:18   ├─ /blocks/index.html (+20ms)
+16:51:18   ├─ /chartr/index.html (+10ms)
+16:51:18   ├─ /journal/a-slower-way-to-build/index.html (+8ms)
+16:51:18   ├─ /journal/keep-the-essentials/index.html (+6ms)
+16:51:18   ├─ /journal/index.html (+5ms)
+16:51:18   ├─ /index.html (+10ms)
+16:51:18 ✓ Completed in 1.14s.
+
+16:51:18 [build] ✓ Completed in 1.68s.
+16:51:18 [build] 7 page(s) built in 1.81s
+16:51:18 [build] Complete!
+
+> quinecms@0.1.0 check:build <project-root>
+> node scripts/check-build.mjs
+
+{
+  "runtimeCopies": {
+    "svelte": 1,
+    "react": 1,
+    "@vue/runtime-dom": 1,
+    "react-dom": 1,
+    "@vue/runtime-core": 1
+  },
+  "pages": [
+    {
+      "page": "admin/index.html",
+      "javascriptModules": 1,
+      "gzipJavaScriptBytes": 1665
+    },
+    {
+      "page": "blocks/index.html",
+      "javascriptModules": 3,
+      "gzipJavaScriptBytes": 69538
+    },
+    {
+      "page": "chartr/index.html",
+      "javascriptModules": 5,
+      "gzipJavaScriptBytes": 37580
+    },
+    {
+      "page": "index.html",
+      "javascriptModules": 6,
+      "gzipJavaScriptBytes": 40936
+    },
+    {
+      "page": "journal/a-slower-way-to-build/index.html",
+      "javascriptModules": 0,
+      "gzipJavaScriptBytes": 0
+    },
+    {
+      "page": "journal/index.html",
+      "javascriptModules": 0,
+      "gzipJavaScriptBytes": 0
+    },
+    {
+      "page": "journal/keep-the-essentials/index.html",
+      "javascriptModules": 0,
+      "gzipJavaScriptBytes": 0
+    }
+  ]
+}

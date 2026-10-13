@@ -1,4 +1,4 @@
-# lean-sitebuilder
+# QuineCMS
 
 A starting point for custom websites built locally by developers and their AI agents,
 with a content editor for the people who maintain them afterward. Design freely;

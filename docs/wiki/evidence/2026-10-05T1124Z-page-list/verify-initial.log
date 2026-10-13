@@ -1,19 +1,19 @@
 
-> lean-sitebuilder@0.1.0 verify /Users/rengwu/Desktop/Projects/lean-sitebuilder
+> quinecms@0.1.0 verify <project-root>
 > pnpm check && pnpm test && pnpm build && pnpm check:build
 
 
-> lean-sitebuilder@0.1.0 check /Users/rengwu/Desktop/Projects/lean-sitebuilder
+> quinecms@0.1.0 check <project-root>
 > pnpm prepare:blocks && astro check
 
 
-> lean-sitebuilder@0.1.0 prepare:blocks /Users/rengwu/Desktop/Projects/lean-sitebuilder
+> quinecms@0.1.0 prepare:blocks <project-root>
 > node scripts/generate-blocks.mjs
 
 Registered 8 block versions.
 19:24:03 [vite] Re-optimizing dependencies because vite config has changed
 19:24:03 [types] Generated 160ms
-19:24:03 [check] Getting diagnostics for Astro files in /Users/rengwu/Desktop/Projects/lean-sitebuilder...
+19:24:03 [check] Getting diagnostics for Astro files in <project-root>...
 [96msrc/editor/PageList.tsx[0m:[93m46[0m:[93m29[0m - [91merror[0m[90m ts(2322): [0mType '{ children: string; scope: string; }' is not assignable to type 'IntrinsicAttributes & HTMLAttributes<HTMLTableCellElement> & { sticky?: "left" | "right" | undefined; } & RefAttributes<HTMLTableCellElement>'.
   Property 'scope' does not exist on type 'IntrinsicAttributes & HTMLAttributes<HTMLTableCellElement> & { sticky?: "left" | "right" | undefined; } & RefAttributes<HTMLTableCellElement>'.
 

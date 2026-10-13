@@ -1,10 +1,10 @@
 ---
 title: Verification setup
-updated: 2026-10-12
+updated: 2026-10-13
 ---
 # Verification setup
 
-Run from the lean-sitebuilder repository with Node 22.12+ and pinned pnpm 10.34.1. The initial run used macOS, Node 22.19.0, and Helium via the native computer-use tool.
+Run from the QuineCMS repository with Node 22.12+ and pinned pnpm 10.34.1. The initial run used macOS, Node 22.19.0, and Helium via the native computer-use tool.
 
 ## Commands and readiness
 
@@ -43,6 +43,13 @@ The optional bundled public fixtures are Home, Block examples, the nine-block ch
 ## Evidence and cleanup
 
 Store outcome logs, source manifests, and observations under `evidence/<run-id>/`, without tokens or private content. Link them from the run. Preserve evidence before cleanup.
+
+On 2026-10-13, the QuineCMS rename editorially normalized project names in
+historical repository text and replaced the local checkout prefix with
+`<project-root>` in affected evidence. These files are no longer byte-for-byte
+original captures; original committed versions remain in Git history. Screenshots
+were preserved. The [rename record and file manifest](runs/2026-10-13-quinecms-rename.md#historical-text-normalization)
+identify the affected files; historical hashes still describe their original run.
 
 On 2026-10-09, historical hosting-specific filenames were removed from published
 source manifests to keep documentation provider neutral (DEC-142). Affected

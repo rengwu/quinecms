@@ -263,7 +263,7 @@ During preview, generic renderers receive literal props and `context.bindingPlac
 
 Rich-text values are Markdown strings. Uploaded images use `![alt](media:media_id)` and YouTube uses `![title](youtube:VIDEO_ID)`; `src/core/embeds.ts` validates identifiers and accepted YouTube URLs. The shared Markdown renderer resolves image IDs through media metadata and emits only canonical youtube-nocookie iframe URLs. Raw HTML is escaped. Visual Lexical nodes preserve these destinations through editing, undo and reload. Unsupported Markdown remains in source mode; missing media and unsupported embed destinations block publication. Choose an already uploaded image through the rich-text Image control; upload new files through Media first.
 
-The existing demo entries were replaced under DEC-073. There is no automatic legacy-entry migration: imported entry block arrays and old collection `template` values are structural errors. Tab recovery now uses `lean-sitebuilder:recovery:v2`; older recovery storage remains untouched. JSON file envelopes retain `formatVersion: 1`, with the explicit page discriminator and structural checks distinguishing the revised shape.
+The existing demo entries were replaced under DEC-073. There is no automatic legacy-entry migration: imported entry block arrays and old collection `template` values are structural errors. Tab recovery now uses `quinecms:recovery:v2`; older recovery storage remains untouched. JSON file envelopes retain `formatVersion: 1`, with the explicit page discriminator and structural checks distinguishing the revised shape.
 
 ## Persistent admin navigation — DEC-074
 

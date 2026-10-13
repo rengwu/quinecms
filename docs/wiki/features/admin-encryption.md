@@ -1,6 +1,6 @@
 ---
 title: Encrypted static admin
-updated: 2026-10-12
+updated: 2026-10-13
 ---
 # Encrypted static admin
 
@@ -15,6 +15,10 @@ builds. DEC-152 makes development use one fixed pair: `admin@example.com` /
 whitespace are preserved. The pair is encoded as a versioned JSON array before
 key derivation, avoiding ambiguous concatenation. This is one shared credential
 pair, not email ownership verification, a user directory, or two-factor login.
+
+New QuineCMS builds use `quinecms:admin` as the credential encoding's domain
+identifier (DEC-164). Encryption and decryption share that encoding in each build;
+the rename does not change configured credentials.
 
 Argon2id v19 derives a 32-byte key using 64 MiB of memory, three passes and one
 lane, through pinned `hash-wasm`. Each encryption uses a new 32-byte random salt

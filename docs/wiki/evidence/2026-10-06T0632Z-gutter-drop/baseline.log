@@ -1,5 +1,5 @@
 
- RUN  v5.0.3 /Users/rengwu/Desktop/Projects/lean-sitebuilder
+ RUN  v5.0.3 <project-root>
 
  ❯ tests/block-list.test.ts (17 tests | 8 failed) 115ms
    × drops item 0 in the gutter at y=105 10ms

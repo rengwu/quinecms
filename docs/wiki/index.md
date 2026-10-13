@@ -1,9 +1,15 @@
 ---
-title: lean-sitebuilder
+title: QuineCMS
 updated: 2026-10-13
 status: Accepted
 ---
-# lean-sitebuilder
+# QuineCMS
+
+The project is now **QuineCMS** (DEC-164), with package name `quinecms` and updated
+login/dashboard branding, documentation and example backups. Existing drafts and
+backups remain readable. [Rename verification](verification/runs/2026-10-13-quinecms-rename.md)
+covers 244 tests, production checks and a Chrome login/dashboard check; it also
+records editorial name normalization in historical text evidence.
 
 All themes now share the [main dashboard](features/site-layouts.md#one-dashboard-for-all-themes-dec-163)
 (DEC-163). Run `pnpm dev`; choose any installed theme in Site Layout and any block
@@ -12,10 +18,12 @@ Reference example runners remain optional sample-content tools.
 [Verification](verification/runs/2026-10-13-unified-dashboard.md) covers all 231
 tests, the production build and both catalogs in the main browser dashboard.
 
-Planned editor improvement: [upload directly from media fields](features/media.md#planned-upload-from-media-fields)
+Latest editor improvement: [upload directly from media fields](features/media.md#upload-from-media-fields)
 (DEC-160–DEC-162). Keep the dropdown, add Upload and a small thumbnail, open existing
 storage settings in place, and retain uploaded files when block edits are cancelled.
-Scope is settled; implementation is pending.
+[Verification](verification/runs/2026-10-13-media-fields.md): 239 tests, production
+build/artifact checks and representative desktop/mobile editor checks pass.
+Live R2 upload execution remains unverified.
 
 Completed [Archline theme](journal/2026-10-13-archline-theme-scope.md): 18 editable
 blocks, an isolated homepage and project index, and six projects using a shared

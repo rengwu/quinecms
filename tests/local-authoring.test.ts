@@ -110,7 +110,7 @@ it('checks a fresh site independently of demo routes and keeps static-demo cover
       expect(admin.props.config.encryptedAdmin).toBe(true);
       expect(admin.props.config).not.toHaveProperty('passwordHash');
       expect(admin.code).toContain('Lock editor');
-      expect(admin.code).toContain('lean-sitebuilder:recovery:v2');
+      expect(admin.code).toContain('quinecms:recovery:v2');
       expect(admin.css.length).toBeGreaterThan(0);
       const result = await command(directory, ['scripts/check-build.mjs']);
       return JSON.parse(result.stdout);

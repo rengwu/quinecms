@@ -112,7 +112,7 @@ export async function testStorageConnection(
     await import('@aws-sdk/client-s3');
   const client = new S3Client({ ...r2ClientOptions(config), maxAttempts: 1 });
   const key = `connection-test/${crypto.randomUUID()}.txt`;
-  const body = `lean-sitebuilder connection test: ${crypto.randomUUID()}`;
+  const body = `QuineCMS connection test: ${crypto.randomUUID()}`;
   let uploaded = false;
   let problem = '';
   try {

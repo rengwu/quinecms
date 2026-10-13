@@ -24,7 +24,7 @@ The live page text and the local source were inspected on 2026-10-06. The source
 
 The live site has release/download copy that differs from the local source's older placeholder state; some section copy also differs. Use the live website as the recreation target and the local repository as implementation/reference material. Recheck the actual live page and release destinations during implementation instead of copying stale local availability claims. This initial source study is not a visual parity check.
 
-The source's current design is the one under `site/`. Its archived design rounds are historical references. Preserve the source repository, its archives and provenance records; implement the adapted layout/blocks in lean-sitebuilder. Keep chartr branding lowercase and preserve required font/icon notices when copying assets.
+The source's current design is the one under `site/`. Its archived design rounds are historical references. Preserve the source repository, its archives and provenance records; implement the adapted layout/blocks in QuineCMS. Keep chartr branding lowercase and preserve required font/icon notices when copying assets.
 
 ## Proposed decomposition
 

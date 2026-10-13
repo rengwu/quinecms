@@ -1,9 +1,9 @@
 
-> lean-sitebuilder@0.1.0 dev /Users/rengwu/Desktop/Projects/lean-sitebuilder
+> quinecms@0.1.0 dev <project-root>
 > pnpm prepare:blocks && astro dev --host 127.0.0.1
 
 
-> lean-sitebuilder@0.1.0 prepare:blocks /Users/rengwu/Desktop/Projects/lean-sitebuilder
+> quinecms@0.1.0 prepare:blocks <project-root>
 > node scripts/generate-blocks.mjs
 
 Registered 93 block versions.

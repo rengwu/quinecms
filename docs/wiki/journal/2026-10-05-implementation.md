@@ -5,7 +5,7 @@ status: Implemented; live integration verification outstanding
 ---
 # First application implementation
 
-The user explicitly authorized implementation after the committed product and technical interviews. Work remains in the lean-sitebuilder repository; jstack supplied the feature-map, verify-change, and wiki workflows.
+The user explicitly authorized implementation after the committed product and technical interviews. Work remains in the QuineCMS repository; jstack supplied the feature-map, verify-change, and wiki workflows.
 
 The application now builds a static public website and `/admin/` portal with Astro 7.3.5, TypeScript 6.0.3, React 19.3, Svelte 5.57.1, Vue 3.5.43, Base UI, Lexical, Octokit, and the AWS S3 client. Exact versions and transitive resolution are pinned in the package/lockfile. TypeScript was aligned with the integrations' supported peer range during setup.
 

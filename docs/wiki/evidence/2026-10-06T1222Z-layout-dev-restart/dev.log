@@ -1,4 +1,4 @@
-8:21:03 PM [vite-plugin-svelte] no Svelte config found at /Users/rengwu/Desktop/Projects/lean-sitebuilder - using default configuration.
+8:21:03 PM [vite-plugin-svelte] no Svelte config found at <project-root> - using default configuration.
 {"message":"connected.","label":"vite","level":"info"}
 {"message":"Generated 1ms","label":"types","level":"info"}
 {"message":"connected.","label":"vite","level":"info"}

@@ -1,35 +1,35 @@
 
-> lean-sitebuilder@0.1.0 verify /Users/rengwu/Desktop/Projects/lean-sitebuilder
+> quinecms@0.1.0 verify <project-root>
 > pnpm check && pnpm test && pnpm build && pnpm check:build
 
 
-> lean-sitebuilder@0.1.0 check /Users/rengwu/Desktop/Projects/lean-sitebuilder
+> quinecms@0.1.0 check <project-root>
 > pnpm prepare:blocks && astro check
 
 
-> lean-sitebuilder@0.1.0 prepare:blocks /Users/rengwu/Desktop/Projects/lean-sitebuilder
+> quinecms@0.1.0 prepare:blocks <project-root>
 > node scripts/generate-blocks.mjs
 
 Registered 12 block versions.
 02:11:09 [vite] Re-optimizing dependencies because vite config has changed
 02:11:09 [types] Generated 169ms
-02:11:09 [check] Getting diagnostics for Astro files in /Users/rengwu/Desktop/Projects/lean-sitebuilder...
+02:11:09 [check] Getting diagnostics for Astro files in <project-root>...
 Result (87 files): 
 - 0 errors
 - 0 warnings
 - 0 hints
 
 
-> lean-sitebuilder@0.1.0 test /Users/rengwu/Desktop/Projects/lean-sitebuilder
+> quinecms@0.1.0 test <project-root>
 > pnpm prepare:blocks && vitest run
 
 
-> lean-sitebuilder@0.1.0 prepare:blocks /Users/rengwu/Desktop/Projects/lean-sitebuilder
+> quinecms@0.1.0 prepare:blocks <project-root>
 > node scripts/generate-blocks.mjs
 
 Registered 12 block versions.
 
- RUN  v5.0.3 /Users/rengwu/Desktop/Projects/lean-sitebuilder
+ RUN  v5.0.3 <project-root>
 
  ❯ tests/editor-navigation.test.ts (10 tests | 1 failed) 882ms
    × edits site fonts, size, line height and gutter together, recovers them and clears numeric overrides 332ms

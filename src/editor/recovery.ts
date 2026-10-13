@@ -1,3 +1,4 @@
+import { legacyRecoveryKey } from './legacy-brand';
 import { object, validate } from '../core/content';
 import { definitions } from '../generated/definitions';
 import type { Content, Snapshot } from '../core/types';
@@ -8,7 +9,10 @@ export interface Recovery {
   base: Snapshot | null;
   content: Content;
 }
-export const recoveryKey = 'lean-sitebuilder:recovery:v2';
+export const recoveryKey = 'quinecms:recovery:v2';
+export const recoveryText = () =>
+  sessionStorage.getItem(recoveryKey) ??
+  sessionStorage.getItem(legacyRecoveryKey);
 let rejected = false;
 export const recoveryProblem = () =>
   rejected
@@ -16,14 +20,16 @@ export const recoveryProblem = () =>
     : '';
 export function discardRecovery() {
   sessionStorage.removeItem(recoveryKey);
+  sessionStorage.removeItem(legacyRecoveryKey);
   rejected = false;
 }
 export function readRecovery(): Recovery | null {
   rejected = false;
   try {
-    if (!sessionStorage.getItem(recoveryKey)) return null;
+    const raw = recoveryText();
+    if (!raw) return null;
     rejected = true;
-    const value = JSON.parse(sessionStorage.getItem(recoveryKey) ?? 'null');
+    const value = JSON.parse(raw);
     if (
       value?.version !== 1 ||
       !value.repository ||
@@ -57,10 +63,10 @@ export function readRecovery(): Recovery | null {
   }
 }
 export function retain(value: Recovery) {
-  if (rejected && sessionStorage.getItem(recoveryKey) !== null)
-    throw Error(recoveryProblem());
+  if (rejected && recoveryText() !== null) throw Error(recoveryProblem());
   rejected = false;
   sessionStorage.setItem(recoveryKey, JSON.stringify(value));
+  sessionStorage.removeItem(legacyRecoveryKey);
 }
 export function download(value: unknown, name: string) {
   const url = URL.createObjectURL(

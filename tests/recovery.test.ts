@@ -1,9 +1,20 @@
 // @vitest-environment jsdom
 import { modelFixture } from './support/content-model';
-import { it, expect, afterEach } from 'vitest';
-import { readRecovery, retain, recoveryKey } from '../src/editor/recovery';
+import { it, expect, afterEach, vi } from 'vitest';
+import {
+  readRecovery,
+  retain,
+  recoveryKey,
+  recoveryText,
+  discardRecovery,
+  recoveryProblem,
+} from '../src/editor/recovery';
+import { legacyRecoveryKey } from '../src/editor/legacy-brand';
 import { fixture } from './support/fixture';
-afterEach(() => sessionStorage.clear());
+afterEach(() => {
+  sessionStorage.clear();
+  vi.restoreAllMocks();
+});
 it('rejects invalid and incompatible recovery data without throwing', () => {
   sessionStorage.setItem(recoveryKey, '{broken');
   expect(readRecovery()).toBeNull();
@@ -88,4 +99,63 @@ it('recovers unfinished recursive definitions without expanding them and preserv
     }),
   ).toThrow('preserved');
   expect(sessionStorage.getItem(recoveryKey)).toBe('{broken');
+});
+
+it('recovers pre-rename drafts and migrates only after the new record is stored', () => {
+  const value = {
+    version: 1 as const,
+    repository: { owner: '', repo: '', branch: 'draft' },
+    base: null,
+    content: fixture(),
+  };
+  value.content.pages[0].title = 'Unsaved client work';
+  sessionStorage.setItem(legacyRecoveryKey, JSON.stringify(value));
+  expect(readRecovery()).toEqual(value);
+  expect(sessionStorage.getItem(recoveryKey)).toBeNull();
+  const write = vi
+    .spyOn(Storage.prototype, 'setItem')
+    .mockImplementationOnce(() => {
+      throw Error('Storage is full');
+    });
+  expect(() => retain(value)).toThrow('Storage is full');
+  expect(sessionStorage.getItem(legacyRecoveryKey)).toBe(JSON.stringify(value));
+  write.mockRestore();
+  retain(value);
+  expect(readRecovery()).toEqual(value);
+  expect(sessionStorage.getItem(recoveryKey)).toBe(JSON.stringify(value));
+  expect(sessionStorage.getItem(legacyRecoveryKey)).toBeNull();
+});
+
+it('preserves unreadable pre-rename drafts for download and explicit discard', () => {
+  sessionStorage.setItem(legacyRecoveryKey, '{unreadable');
+  expect(readRecovery()).toBeNull();
+  expect(recoveryProblem()).toContain('preserved');
+  expect(recoveryText()).toBe('{unreadable');
+  expect(() =>
+    retain({
+      version: 1,
+      repository: { owner: '', repo: '', branch: 'draft' },
+      base: null,
+      content: fixture(),
+    }),
+  ).toThrow('preserved');
+  expect(sessionStorage.getItem(legacyRecoveryKey)).toBe('{unreadable');
+  discardRecovery();
+  expect(recoveryText()).toBeNull();
+  expect(recoveryProblem()).toBe('');
+});
+
+it('prefers the current draft over an older retained draft', () => {
+  const value = {
+    version: 1 as const,
+    repository: { owner: '', repo: '', branch: 'draft' },
+    base: null,
+    content: fixture(),
+  };
+  retain(value);
+  sessionStorage.setItem(legacyRecoveryKey, '{obsolete');
+  expect(readRecovery()).toEqual(value);
+  discardRecovery();
+  expect(sessionStorage.getItem(recoveryKey)).toBeNull();
+  expect(sessionStorage.getItem(legacyRecoveryKey)).toBeNull();
 });

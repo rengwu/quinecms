@@ -1,5 +1,5 @@
 
-> lean-sitebuilder@0.1.0 check:build /private/var/folders/00/h_k67s0j5dq0qvg6ylqysk2w0000gn/T/lean-agent-audit-v39crrs3
+> quinecms@0.1.0 check:build /private/var/folders/00/h_k67s0j5dq0qvg6ylqysk2w0000gn/T/lean-agent-audit-v39crrs3
 > node scripts/check-build.mjs
 
 node:internal/modules/run_main:123

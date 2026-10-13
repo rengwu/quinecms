@@ -533,15 +533,21 @@ and is recorded in the [save UX journal](../journal/2026-10-12-git-save-ux.md).
 
 | ID | Decision | Basis and rationale |
 | --- | --- | --- |
-| DEC-160 | Keep the media dropdown and add Upload plus a small thumbnail to the shared media field. Reuse the existing uploader and select the uploaded file on success. | Q1 explicitly selects the thumbnail as well as Upload. Simple field status/errors and preserving the previous selection on failure are part of the presented flow. See the [submitted answers](../journal/2026-10-13-grill-3216fc08-5d84-4f48-92f3-20bf92b7afd7.md) and [planned behavior](../features/media.md#planned-upload-from-media-fields). |
+| DEC-160 | Keep the media dropdown and add Upload plus a small thumbnail to the shared media field. Reuse the existing uploader and select the uploaded file on success. | Q1 explicitly selects the thumbnail as well as Upload. Simple field status/errors and preserving the previous selection on failure are part of the presented flow. See the [submitted answers](../journal/2026-10-13-grill-3216fc08-5d84-4f48-92f3-20bf92b7afd7.md) and [implemented behavior](../features/media.md#upload-from-media-fields). |
 | DEC-161 | Open the existing storage settings dialog from the field when upload storage is not configured. | Q2 selects staying in the block. Preserve field edits; after saving settings, the user clicks Upload again. |
 | DEC-162 | Keep a successfully uploaded file in the Media library when block changes are cancelled. | Q3 selects reuse: Cancel restores the block's previous selection, without deleting the uploaded file or its draft media record. Existing Save/Publish behavior remains. |
 
-These decisions define the next increment; implementation has not started in this
-interview.
+Implementation was subsequently authorized with work-until-grill. See the
+[local verification and limits](../verification/runs/2026-10-13-media-fields.md).
 
 ## One main dashboard — direct instruction, 2026-10-13
 
 | ID | Decision | Basis and rationale |
 | --- | --- | --- |
 | DEC-163 | Make all installed themes and blocks available in one main dashboard, with `pnpm dev` as the normal workflow. Remove theme-specific layout restrictions. | The user explicitly corrected the isolated-mode workflow: “all themes and blocks available to one dashboard.” This supersedes DEC-103–DEC-105's hidden whitelist. Example content/backups remain optional developer fixtures; they are not separate capabilities or required modes. Existing site content, page-kind rules and active-layout settings semantics remain intact. See [current contract](../features/site-layouts.md#one-dashboard-for-all-themes-dec-163). |
+
+## QuineCMS name — direct instruction, 2026-10-13
+
+| ID | Decision | Basis and rationale |
+| --- | --- | --- |
+| DEC-164 | Name the project QuineCMS, using `quinecms` for package and new machine identifiers. Replace the former project name across repository text. | Direct user instruction. The implementation retains two read-only compatibility identifiers so existing tab drafts and backup files remain usable; it does not require a content migration. Historical text is editorially normalized and original screenshots are preserved. See [verification and normalization record](../verification/runs/2026-10-13-quinecms-rename.md). |

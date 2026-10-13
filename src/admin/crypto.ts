@@ -27,7 +27,7 @@ export function credentials(email: string, password: string) {
       'Set ADMIN_EMAIL and ADMIN_PASSWORD before building the admin.',
     );
   // Structured encoding avoids ambiguous email/password concatenations.
-  return JSON.stringify(['lean-sitebuilder:admin', 1, normalized, password]);
+  return JSON.stringify(['quinecms:admin', 1, normalized, password]);
 }
 
 function base64(bytes: Uint8Array) {

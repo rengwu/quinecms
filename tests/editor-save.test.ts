@@ -3,6 +3,7 @@ import { afterEach, beforeEach, expect, it, vi } from 'vitest';
 import { act, createElement } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import App from '../src/editor/App';
+import { legacyBackupFormat } from '../src/editor/legacy-brand';
 import styles from '../src/editor/editor.module.css';
 import { filesFor } from '../src/core/content';
 import type { Content, Snapshot } from '../src/core/types';
@@ -161,7 +162,7 @@ it('keeps stale edits, exports their original base, and reopens recovery after d
   await click('Export backup', dialog());
   expect(download).toHaveBeenCalledWith(
     {
-      format: 'lean-sitebuilder-backup',
+      format: 'quinecms-backup',
       version: 1,
       repository: pending.repository,
       baseSha: 'base',
@@ -255,3 +256,35 @@ it('does not describe a different repository as newer or replace edits when conn
   expect(host.textContent).toContain('Connect to the repository first');
   expect(store.save).not.toHaveBeenCalled();
 });
+
+it.each(['quinecms-backup', legacyBackupFormat])(
+  'imports %s backups after confirmation without losing content',
+  async (format) => {
+    await mount();
+    await click('Settings');
+    const restored = fixture();
+    restored.pages[0].title = 'Restored client work';
+    const upload = host.querySelector<HTMLInputElement>(
+      'input[type="file"][accept="application/json"]',
+    )!;
+    expect(upload).not.toBeNull();
+    Object.defineProperty(upload, 'files', {
+      configurable: true,
+      value: [
+        {
+          text: async () =>
+            JSON.stringify({ format, version: 1, content: restored }),
+        },
+      ],
+    });
+    await act(async () =>
+      upload.dispatchEvent(new Event('change', { bubbles: true })),
+    );
+    expect(dialog().textContent).toContain('Restore this backup?');
+    expect(readRecovery()?.content.pages[0].title).not.toBe(
+      'Restored client work',
+    );
+    await click('Continue', dialog());
+    expect(readRecovery()?.content.pages[0].title).toBe('Restored client work');
+  },
+);

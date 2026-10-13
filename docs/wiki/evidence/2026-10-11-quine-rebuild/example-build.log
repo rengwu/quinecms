@@ -1,22 +1,22 @@
 
-> lean-sitebuilder@0.1.0 example:quine /Users/rengwu/Desktop/Projects/lean-sitebuilder
+> quinecms@0.1.0 example:quine <project-root>
 > node scripts/example-site.mjs quine build
 
 Isolated example: /var/folders/00/h_k67s0j5dq0qvg6ylqysk2w0000gn/T/lean-example-quine-5oj7Zu
 Local editor: quine@example.test / quine-preview (demo credentials; do not deploy).
 
-> lean-sitebuilder@0.1.0 validate:content /private/var/folders/00/h_k67s0j5dq0qvg6ylqysk2w0000gn/T/lean-example-quine-5oj7Zu
+> quinecms@0.1.0 validate:content /private/var/folders/00/h_k67s0j5dq0qvg6ylqysk2w0000gn/T/lean-example-quine-5oj7Zu
 > node scripts/generate-blocks.mjs --registry-only && tsx scripts/validate-content.ts
 
 Registered 99 block versions.
 Registered 3 layout versions.
 Content is valid for publication.
 
-> lean-sitebuilder@0.1.0 build /private/var/folders/00/h_k67s0j5dq0qvg6ylqysk2w0000gn/T/lean-example-quine-5oj7Zu
+> quinecms@0.1.0 build /private/var/folders/00/h_k67s0j5dq0qvg6ylqysk2w0000gn/T/lean-example-quine-5oj7Zu
 > pnpm prepare:blocks && astro build
 
 
-> lean-sitebuilder@0.1.0 prepare:blocks /private/var/folders/00/h_k67s0j5dq0qvg6ylqysk2w0000gn/T/lean-example-quine-5oj7Zu
+> quinecms@0.1.0 prepare:blocks /private/var/folders/00/h_k67s0j5dq0qvg6ylqysk2w0000gn/T/lean-example-quine-5oj7Zu
 > node scripts/generate-blocks.mjs
 
 Registered 99 block versions.
@@ -41,7 +41,7 @@ Registered 3 layout versions.
 02:16:28 [build] 2 page(s) built in 1.79s
 02:16:28 [build] Complete!
 
-> lean-sitebuilder@0.1.0 check:build /private/var/folders/00/h_k67s0j5dq0qvg6ylqysk2w0000gn/T/lean-example-quine-5oj7Zu
+> quinecms@0.1.0 check:build /private/var/folders/00/h_k67s0j5dq0qvg6ylqysk2w0000gn/T/lean-example-quine-5oj7Zu
 > node scripts/check-build.mjs
 
 {

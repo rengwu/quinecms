@@ -1,9 +1,9 @@
 
-> lean-sitebuilder@0.1.0 build /private/var/folders/00/h_k67s0j5dq0qvg6ylqysk2w0000gn/T/lean-example-archline-ebc711
+> quinecms@0.1.0 build /private/var/folders/00/h_k67s0j5dq0qvg6ylqysk2w0000gn/T/lean-example-archline-ebc711
 > pnpm prepare:blocks && astro build
 
 
-> lean-sitebuilder@0.1.0 prepare:blocks /private/var/folders/00/h_k67s0j5dq0qvg6ylqysk2w0000gn/T/lean-example-archline-ebc711
+> quinecms@0.1.0 prepare:blocks /private/var/folders/00/h_k67s0j5dq0qvg6ylqysk2w0000gn/T/lean-example-archline-ebc711
 > node scripts/generate-blocks.mjs
 
 Registered 128 block versions.
@@ -35,7 +35,7 @@ Registered 5 layout versions.
 14:41:54 [build] 9 page(s) built in 2.32s
 14:41:54 [build] Complete!
 
-> lean-sitebuilder@0.1.0 check:build /private/var/folders/00/h_k67s0j5dq0qvg6ylqysk2w0000gn/T/lean-example-archline-ebc711
+> quinecms@0.1.0 check:build /private/var/folders/00/h_k67s0j5dq0qvg6ylqysk2w0000gn/T/lean-example-archline-ebc711
 > node scripts/check-build.mjs
 
 {

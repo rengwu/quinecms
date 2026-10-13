@@ -1,9 +1,9 @@
 
-> lean-sitebuilder@0.1.0 build /Users/rengwu/Desktop/Projects/lean-sitebuilder
+> quinecms@0.1.0 build <project-root>
 > pnpm prepare:blocks && astro build
 
 
-> lean-sitebuilder@0.1.0 prepare:blocks /Users/rengwu/Desktop/Projects/lean-sitebuilder
+> quinecms@0.1.0 prepare:blocks <project-root>
 > node scripts/generate-blocks.mjs
 
 Registered 128 block versions.
@@ -11,7 +11,7 @@ Registered 5 layout versions.
 14:41:51 [types] Generated 43ms
 14:41:51 [build] output: "static"
 14:41:51 [build] mode: "static"
-14:41:51 [build] directory: /Users/rengwu/Desktop/Projects/lean-sitebuilder/dist/
+14:41:51 [build] directory: <project-root>/dist/
 14:41:51 [build] Collecting build info...
 14:41:51 [build] ✓ Completed in 114ms.
 14:41:51 [build] Building static entrypoints...
@@ -33,7 +33,7 @@ Registered 5 layout versions.
 14:41:53 [build] 7 page(s) built in 2.22s
 14:41:53 [build] Complete!
 
-> lean-sitebuilder@0.1.0 check:build /Users/rengwu/Desktop/Projects/lean-sitebuilder
+> quinecms@0.1.0 check:build <project-root>
 > node scripts/check-build.mjs
 
 {

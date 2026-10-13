@@ -1,22 +1,22 @@
 
-> lean-sitebuilder@0.1.0 example:intr /Users/rengwu/Desktop/Projects/lean-sitebuilder
+> quinecms@0.1.0 example:intr <project-root>
 > node scripts/example-site.mjs intr build
 
 Isolated example: /var/folders/00/h_k67s0j5dq0qvg6ylqysk2w0000gn/T/lean-example-intr-wbvgjc
 Built demo editor: intr@example.test / intr-preview (do not deploy).
 
-> lean-sitebuilder@0.1.0 validate:content /private/var/folders/00/h_k67s0j5dq0qvg6ylqysk2w0000gn/T/lean-example-intr-wbvgjc
+> quinecms@0.1.0 validate:content /private/var/folders/00/h_k67s0j5dq0qvg6ylqysk2w0000gn/T/lean-example-intr-wbvgjc
 > node scripts/generate-blocks.mjs --registry-only && tsx scripts/validate-content.ts
 
 Registered 110 block versions.
 Registered 4 layout versions.
 Content is valid for publication.
 
-> lean-sitebuilder@0.1.0 build /private/var/folders/00/h_k67s0j5dq0qvg6ylqysk2w0000gn/T/lean-example-intr-wbvgjc
+> quinecms@0.1.0 build /private/var/folders/00/h_k67s0j5dq0qvg6ylqysk2w0000gn/T/lean-example-intr-wbvgjc
 > pnpm prepare:blocks && astro build
 
 
-> lean-sitebuilder@0.1.0 prepare:blocks /private/var/folders/00/h_k67s0j5dq0qvg6ylqysk2w0000gn/T/lean-example-intr-wbvgjc
+> quinecms@0.1.0 prepare:blocks /private/var/folders/00/h_k67s0j5dq0qvg6ylqysk2w0000gn/T/lean-example-intr-wbvgjc
 > node scripts/generate-blocks.mjs
 
 Registered 110 block versions.
@@ -43,7 +43,7 @@ Registered 4 layout versions.
 03:38:17 [build] 4 page(s) built in 1.70s
 03:38:17 [build] Complete!
 
-> lean-sitebuilder@0.1.0 check:build /private/var/folders/00/h_k67s0j5dq0qvg6ylqysk2w0000gn/T/lean-example-intr-wbvgjc
+> quinecms@0.1.0 check:build /private/var/folders/00/h_k67s0j5dq0qvg6ylqysk2w0000gn/T/lean-example-intr-wbvgjc
 > node scripts/check-build.mjs
 
 {

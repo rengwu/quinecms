@@ -1,5 +1,5 @@
 
-> lean-sitebuilder@0.1.0 preview /Users/rengwu/Desktop/Projects/lean-sitebuilder
+> quinecms@0.1.0 preview <project-root>
 > astro preview --host 127.0.0.1 --port 4327
 
 {"message":"Preview server running at http://127.0.0.1:4327 (pid 78868)\n  Stop:   astro preview stop\n  Status: astro preview status\n  Logs:   astro preview logs","label":"SKIP_FORMAT","level":"info"}

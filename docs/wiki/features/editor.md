@@ -95,6 +95,13 @@ Schema rich-text fields and Text blocks provide visual headings, paragraphs, bol
 
 Local content and its base/repository identity survive reloads silently in tab storage. Unreadable recovery data is preserved for download and requires explicit discard before it can be overwritten. This includes unfinished schema edits that cannot yet be saved. Export/import backups contain content, not credentials or binary uploads. Storage failure is visible. Lock clears Git provider/R2 credentials and returns to the gate. Connection selects GitHub or GitLab, including an HTTPS GitLab instance and nested namespace when needed. Changing the destination clears the access token; retained Git credentials are bound to provider, instance, repository, draft branch and publish branch. See [publishing](publishing.md).
 
+QuineCMS uses `quinecms:recovery:v2` for tab recovery and `quinecms-backup` for
+new version-1 backups (DEC-164). The previous project identifiers remain readable.
+A retained draft moves to the new key only after a successful storage write;
+unreadable legacy data remains downloadable until explicitly discarded. A current
+record takes precedence when both keys exist. Backup import validates either
+format and still asks before replacing content. [Rename verification](../verification/runs/2026-10-13-quinecms-rename.md).
+
 Local development skips the unsaved-edit reload confirmation at the user's request; production retains it. Tab recovery continues in both. Site Layout owns content max-width/page gutter and their per-layout defaults (DEC-130); Starter also owns the typography controls. Settings contains Repository connection, admin Appearance, Backups, Session and Factory reset. Website tokens stay scoped away from admin controls. See the [Site Layout contract](site-layouts.md).
 
 DEC-108 applies the same drill-down rule sitewide: opening a repeated item replaces all parent/sibling controls with its dedicated level. Back returns one parent at a time, including nested header dropdowns and footer columns. The inspector-wide `PanelNavigation` outlet also contains block/entry field lists and schema default rows; their parent forms remain mounted but hidden from display and accessibility. Area/document/layout changes clear the level, and focus moves to its heading. Custom settings authors use `PanelLevel` for their own drill-down screens.

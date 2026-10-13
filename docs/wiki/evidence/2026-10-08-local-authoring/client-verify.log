@@ -1,13 +1,13 @@
 
-> lean-sitebuilder@0.1.0 verify /private/var/folders/00/h_k67s0j5dq0qvg6ylqysk2w0000gn/T/lean-client-verify-q7092nxy
+> quinecms@0.1.0 verify /private/var/folders/00/h_k67s0j5dq0qvg6ylqysk2w0000gn/T/lean-client-verify-q7092nxy
 > pnpm check && pnpm test && pnpm build && pnpm check:build
 
 
-> lean-sitebuilder@0.1.0 check /private/var/folders/00/h_k67s0j5dq0qvg6ylqysk2w0000gn/T/lean-client-verify-q7092nxy
+> quinecms@0.1.0 check /private/var/folders/00/h_k67s0j5dq0qvg6ylqysk2w0000gn/T/lean-client-verify-q7092nxy
 > pnpm prepare:blocks && astro check
 
 
-> lean-sitebuilder@0.1.0 prepare:blocks /private/var/folders/00/h_k67s0j5dq0qvg6ylqysk2w0000gn/T/lean-client-verify-q7092nxy
+> quinecms@0.1.0 prepare:blocks /private/var/folders/00/h_k67s0j5dq0qvg6ylqysk2w0000gn/T/lean-client-verify-q7092nxy
 > node scripts/generate-blocks.mjs
 
 Registered 94 block versions.
@@ -30,11 +30,11 @@ Result (338 files):
 - 2 hints
 
 
-> lean-sitebuilder@0.1.0 test /private/var/folders/00/h_k67s0j5dq0qvg6ylqysk2w0000gn/T/lean-client-verify-q7092nxy
+> quinecms@0.1.0 test /private/var/folders/00/h_k67s0j5dq0qvg6ylqysk2w0000gn/T/lean-client-verify-q7092nxy
 > pnpm prepare:blocks && vitest run
 
 
-> lean-sitebuilder@0.1.0 prepare:blocks /private/var/folders/00/h_k67s0j5dq0qvg6ylqysk2w0000gn/T/lean-client-verify-q7092nxy
+> quinecms@0.1.0 prepare:blocks /private/var/folders/00/h_k67s0j5dq0qvg6ylqysk2w0000gn/T/lean-client-verify-q7092nxy
 > node scripts/generate-blocks.mjs
 
 Registered 94 block versions.
@@ -52,11 +52,11 @@ Registered 2 layout versions.
              at least ~657ms faster with isolate: false — reuses workers across files instead of one per file
 
 
-> lean-sitebuilder@0.1.0 build /private/var/folders/00/h_k67s0j5dq0qvg6ylqysk2w0000gn/T/lean-client-verify-q7092nxy
+> quinecms@0.1.0 build /private/var/folders/00/h_k67s0j5dq0qvg6ylqysk2w0000gn/T/lean-client-verify-q7092nxy
 > pnpm prepare:blocks && astro build
 
 
-> lean-sitebuilder@0.1.0 prepare:blocks /private/var/folders/00/h_k67s0j5dq0qvg6ylqysk2w0000gn/T/lean-client-verify-q7092nxy
+> quinecms@0.1.0 prepare:blocks /private/var/folders/00/h_k67s0j5dq0qvg6ylqysk2w0000gn/T/lean-client-verify-q7092nxy
 > node scripts/generate-blocks.mjs
 
 Registered 94 block versions.
@@ -82,7 +82,7 @@ Registered 2 layout versions.
 17:22:09 [build] 2 page(s) built in 1.29s
 17:22:09 [build] Complete!
 
-> lean-sitebuilder@0.1.0 check:build /private/var/folders/00/h_k67s0j5dq0qvg6ylqysk2w0000gn/T/lean-client-verify-q7092nxy
+> quinecms@0.1.0 check:build /private/var/folders/00/h_k67s0j5dq0qvg6ylqysk2w0000gn/T/lean-client-verify-q7092nxy
 > node scripts/check-build.mjs
 
 {

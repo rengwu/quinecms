@@ -1,4 +1,4 @@
-# lean-sitebuilder
+# QuineCMS
 
 A starting point for freely designed, AI-built websites that clients can maintain
 through a content editor. Work locally in this clone. Let the brief, references

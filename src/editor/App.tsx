@@ -1,3 +1,4 @@
+import { legacyBackupFormat } from './legacy-brand';
 import { ModelContext } from './ModelContext';
 import { fieldDefaults } from '../core/lists';
 import BlockCatalog from './BlockCatalog';
@@ -7,6 +8,7 @@ import BlockCreation from './BlockCreation';
 import LayoutSurface, { PageBlocks } from './LayoutSurface';
 import LayoutSettings from './LayoutSettings';
 import StorageSettings from './StorageSettings';
+import MediaUpload, { MediaUploadContext } from './MediaUpload';
 import { migrateSite, activeLayout, layoutKey } from '../core/layouts';
 import { PanelNavigation } from './PanelNavigation';
 import { Button } from '@cloudflare/kumo/components/button';
@@ -14,7 +16,7 @@ import { Input } from '@cloudflare/kumo/components/input';
 import { Select } from '@cloudflare/kumo/components/select';
 import { Switch } from '@cloudflare/kumo/components/switch';
 import { Label } from '@cloudflare/kumo/components/label';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { createElement, useEffect, useMemo, useRef, useState } from 'react';
 import { Dialog } from '@cloudflare/kumo/components/dialog';
 import { CaretRightIcon, PlusIcon } from '@phosphor-icons/react';
 import Schemas from './Schemas';
@@ -30,7 +32,14 @@ import { KumoPortalProvider } from '@cloudflare/kumo/utils';
 import { Link } from '@cloudflare/kumo/components/link';
 import BlockList from './BlockList';
 import '@cloudflare/kumo/styles/standalone';
-import type { Block, Content, Entry, Page, Snapshot } from '../core/types';
+import type {
+  Block,
+  Content,
+  Entry,
+  Media,
+  Page,
+  Snapshot,
+} from '../core/types';
 import {
   contextFor,
   factoryReset,
@@ -46,14 +55,17 @@ import { definitions } from '../generated/definitions';
 import { connect, repositoryKey } from '../integrations/git';
 import type { Repository, RepositoryStore } from '../integrations/repository';
 import { Conflict, publishBranch } from '../integrations/repository';
-import type { StorageConfig } from '../integrations/media';
+import {
+  validateStorageConfig,
+  type StorageConfig,
+} from '../integrations/media';
 import {
   download,
   readRecovery,
   retain,
   recoveryProblem,
   discardRecovery,
-  recoveryKey,
+  recoveryText,
 } from './recovery';
 import Fields from './Fields';
 import BlockFields from './BlockFields';
@@ -213,7 +225,6 @@ function Editor({
     } | null>(null),
     [size, setSize] = useState('desktop');
   const importRef = useRef<HTMLInputElement>(null);
-  const uploadRef = useRef<HTMLInputElement>(null);
   const [layoutPageId, setLayoutPageId] = useState('');
   const [pendingDocument, setPendingDocument] = useState<Page | Entry | null>(
     null,
@@ -350,6 +361,35 @@ function Editor({
           ? e.message
           : 'The operation failed. Your edits are still here.',
       );
+    } finally {
+      setBusy(false);
+    }
+  }
+  function ensureStorage() {
+    try {
+      validateStorageConfig(r2);
+      return true;
+    } catch {
+      setModal('storage');
+      return false;
+    }
+  }
+  async function uploadMedia(
+    file: File,
+    onProgress: (message: string) => void,
+    onUploaded?: (media: Media) => void,
+  ) {
+    setBusy(true);
+    try {
+      const { upload } = await import('../integrations/media');
+      const media = await upload(file, r2, onProgress);
+      // Apply the field first: layout editors can replace a whole content snapshot.
+      // Append afterward so that snapshot cannot drop the new media record.
+      onUploaded?.(media);
+      setContent((content) => ({
+        ...content,
+        media: [...content.media, media],
+      }));
     } finally {
       setBusy(false);
     }
@@ -579,7 +619,7 @@ function Editor({
   function backup() {
     download(
       {
-        format: 'lean-sitebuilder-backup',
+        format: 'quinecms-backup',
         version: 1,
         repository: draftRepository,
         baseSha: base?.sha ?? null,
@@ -591,7 +631,10 @@ function Editor({
   async function importBackup(file: File) {
     await run(async () => {
       const data = JSON.parse(await file.text());
-      if (data.format !== 'lean-sitebuilder-backup' || data.version !== 1)
+      if (
+        !['quinecms-backup', legacyBackupFormat].includes(data.format) ||
+        data.version !== 1
+      )
         throw Error('Choose a site backup created by this editor.');
       const errors = validate(data.content, definitions).filter(
         (i) => i.phase === 'structure',
@@ -614,7 +657,9 @@ function Editor({
       });
     });
   }
-  return (
+  return createElement(
+    MediaUploadContext.Provider,
+    { value: { busy, ensureStorage, upload: uploadMedia } },
     <ModelContext.Provider value={content}>
       <div className={styles.app}>
         <header className={`kumo-ui ${styles.topbar}`} data-mode={mode}>
@@ -626,7 +671,7 @@ function Editor({
           >
             Menu
           </Button>
-          <span className={styles.brand}>lean-sitebuilder</span>
+          <span className={styles.brand}>QuineCMS</span>
           {showPreview && (
             <Button
               onClick={() => setSize(size === 'desktop' ? 'mobile' : 'desktop')}
@@ -1224,42 +1269,11 @@ function Editor({
                             }
                           >
                             <div className={styles.formStack}>
-                              <Button
-                                variant="primary"
-                                onClick={() => uploadRef.current?.click()}
-                              >
-                                Upload file
-                              </Button>
+                              <MediaUpload label="Upload file" />
                               <p className={styles.muted}>
                                 Uploads go to R2 and may be public before
                                 publishing.
                               </p>
-                              <input
-                                ref={uploadRef}
-                                hidden
-                                type="file"
-                                onChange={(e) => {
-                                  const file = e.target.files?.[0];
-                                  if (!file) return;
-                                  void run(async () => {
-                                    const { upload } =
-                                      await import('../integrations/media');
-                                    const media = await upload(
-                                      file,
-                                      r2,
-                                      () => {},
-                                    );
-                                    setContent((c) => ({
-                                      ...c,
-                                      media: [...c.media, media],
-                                    }));
-                                    setMessage(
-                                      'Upload complete. Save the draft to record it.',
-                                    );
-                                  });
-                                  e.target.value = '';
-                                }}
-                              />
                             </div>
                             <div className={styles.formStack}>
                               {content.media.map((m) => (
@@ -1369,7 +1383,7 @@ function Editor({
                                   <Button
                                     onClick={() =>
                                       download(
-                                        sessionStorage.getItem(recoveryKey),
+                                        recoveryText(),
                                         'retained-recovery.json',
                                       )
                                     }
@@ -1458,6 +1472,7 @@ function Editor({
                 <LayoutSurface
                   content={previewContent}
                   onNavigate={(url, documentId) => {
+                    if (busy) return;
                     if (documentId) openDocument(documentId);
                     else {
                       const id = Object.entries(
@@ -1766,6 +1781,6 @@ function Editor({
           </Dialog>
         </Dialog.Root>
       </div>
-    </ModelContext.Provider>
+    </ModelContext.Provider>,
   );
 }

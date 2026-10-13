@@ -5,13 +5,14 @@ status: Intr recreation delivered; follow-up proposals recorded
 ---
 # Open questions
 
-## Upload from media fields — scope settled, implementation pending
+## Upload from media fields — delivered locally
 
 DEC-160–DEC-162 select Upload plus a small thumbnail beside the existing selector,
 the existing storage dialog opened in place, and retaining uploads in Media when
-block changes are cancelled. The [planned behavior](../features/media.md#planned-upload-from-media-fields)
-reuses the existing upload path. No further product question blocks this small
-increment; this interview has not started implementation.
+block changes are cancelled. The [implemented behavior](../features/media.md#upload-from-media-fields)
+reuses the existing upload path. No unresolved scope question remains.
+[Local checks](../verification/runs/2026-10-13-media-fields.md) pass; live R2
+upload execution remains unverified.
 
 ## Archline theme — delivered
 

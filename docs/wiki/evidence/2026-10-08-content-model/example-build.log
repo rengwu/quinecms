@@ -1,9 +1,9 @@
 
-> lean-sitebuilder@0.1.0 build /private/var/folders/00/h_k67s0j5dq0qvg6ylqysk2w0000gn/T/lean-content-model-fqf2h2rb
+> quinecms@0.1.0 build /private/var/folders/00/h_k67s0j5dq0qvg6ylqysk2w0000gn/T/lean-content-model-fqf2h2rb
 > pnpm prepare:blocks && astro build
 
 
-> lean-sitebuilder@0.1.0 prepare:blocks /private/var/folders/00/h_k67s0j5dq0qvg6ylqysk2w0000gn/T/lean-content-model-fqf2h2rb
+> quinecms@0.1.0 prepare:blocks /private/var/folders/00/h_k67s0j5dq0qvg6ylqysk2w0000gn/T/lean-content-model-fqf2h2rb
 > node scripts/generate-blocks.mjs
 
 Registered 94 block versions.

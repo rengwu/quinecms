@@ -1,9 +1,9 @@
 
-> lean-sitebuilder@0.1.0 build /private/var/folders/00/h_k67s0j5dq0qvg6ylqysk2w0000gn/T/lean-example-quine-HGZtLk
+> quinecms@0.1.0 build /private/var/folders/00/h_k67s0j5dq0qvg6ylqysk2w0000gn/T/lean-example-quine-HGZtLk
 > pnpm prepare:blocks && astro build
 
 
-> lean-sitebuilder@0.1.0 prepare:blocks /private/var/folders/00/h_k67s0j5dq0qvg6ylqysk2w0000gn/T/lean-example-quine-HGZtLk
+> quinecms@0.1.0 prepare:blocks /private/var/folders/00/h_k67s0j5dq0qvg6ylqysk2w0000gn/T/lean-example-quine-HGZtLk
 > node scripts/generate-blocks.mjs
 
 Registered 99 block versions.
@@ -28,7 +28,7 @@ Registered 3 layout versions.
 09:47:49 [build] 2 page(s) built in 1.57s
 09:47:49 [build] Complete!
 
-> lean-sitebuilder@0.1.0 check:build /private/var/folders/00/h_k67s0j5dq0qvg6ylqysk2w0000gn/T/lean-example-quine-HGZtLk
+> quinecms@0.1.0 check:build /private/var/folders/00/h_k67s0j5dq0qvg6ylqysk2w0000gn/T/lean-example-quine-HGZtLk
 > node scripts/check-build.mjs
 
 {

@@ -6,7 +6,7 @@ The commands below are optional developer sandboxes for this sample content,
 not separate theme modes.
 
 A recreation of [quinesystems.com](https://quinesystems.com/) using the normal
-lean-sitebuilder layout, block, media and editor contracts. Original assets are
+QuineCMS layout, block, media and editor contracts. Original assets are
 reused; components and effects are independently implemented. Root demo content
 is preserved.
 

@@ -6,7 +6,7 @@ The commands below are optional developer sandboxes for this sample content,
 not separate theme modes.
 
 A static recreation of [Intr Studio](https://intrstudio.framer.website/) using
-lean-sitebuilder's ordinary layouts, blocks, collections, references and media.
+QuineCMS's ordinary layouts, blocks, collections, references and media.
 It contains a homepage, project listing and one sample detail page, Maison Dorée.
 The active demo and Quine example remain intact.
 

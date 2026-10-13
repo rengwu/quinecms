@@ -23,7 +23,7 @@ Collections currently opens configuration immediately: name, path, field definit
 | [Payload collection configuration](https://payloadcms.com/docs/configuration/collections), [list view](https://payloadcms.com/docs/custom-components/list-view), [edit view](https://payloadcms.com/docs/custom-components/edit-view) | Collections/fields are configured in code. Admin browsing and editing use distinct collection-list and document-edit views. | Opening a collection should lead to its entries, rather than immediately exposing field-definition controls. |
 | [Strapi Content Manager](https://docs.strapi.io/cms/features/content-manager) and [Content-type Builder](https://docs.strapi.io/cms/features/content-type-builder) | Content Manager separates entry lists and forms; Content-type Builder is a separate schema-design tool, available in development only. | Separate authoring from modeling. Our already accepted portal schema editor need not inherit Strapi's environment restriction. |
 
-The recommendations below are design judgments based on those patterns, not usability-test results for lean-sitebuilder.
+The recommendations below are design judgments based on those patterns, not usability-test results for QuineCMS.
 
 ## Accepted block action
 

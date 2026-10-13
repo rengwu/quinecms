@@ -1,9 +1,9 @@
 
-> lean-sitebuilder@0.1.0 build /private/var/folders/00/h_k67s0j5dq0qvg6ylqysk2w0000gn/T/lean-chartr-production-5A8vyj
+> quinecms@0.1.0 build /private/var/folders/00/h_k67s0j5dq0qvg6ylqysk2w0000gn/T/lean-chartr-production-5A8vyj
 > pnpm prepare:blocks && astro build
 
 
-> lean-sitebuilder@0.1.0 prepare:blocks /private/var/folders/00/h_k67s0j5dq0qvg6ylqysk2w0000gn/T/lean-chartr-production-5A8vyj
+> quinecms@0.1.0 prepare:blocks /private/var/folders/00/h_k67s0j5dq0qvg6ylqysk2w0000gn/T/lean-chartr-production-5A8vyj
 > node scripts/generate-blocks.mjs
 
 Registered 93 block versions.
@@ -34,7 +34,7 @@ Registered 2 layout versions.
 19:43:32 [build] 7 page(s) built in 1.78s
 19:43:32 [build] Complete!
 
-> lean-sitebuilder@0.1.0 check:build /private/var/folders/00/h_k67s0j5dq0qvg6ylqysk2w0000gn/T/lean-chartr-production-5A8vyj
+> quinecms@0.1.0 check:build /private/var/folders/00/h_k67s0j5dq0qvg6ylqysk2w0000gn/T/lean-chartr-production-5A8vyj
 > node scripts/check-build.mjs
 
 {

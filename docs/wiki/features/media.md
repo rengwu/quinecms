@@ -10,9 +10,9 @@ updated: 2026-10-13
 
 The [agreed media design](../discussions/agreed-design.md) uses R2 with runtime credentials, original files, modest browser-generated variants, and IDs in content. It does not add an upload server or media transcoding service.
 
-## Planned upload from media fields
+## Upload from media fields
 
-Accepted in DEC-160–DEC-162; not implemented or verified yet. See the
+Implemented from DEC-160–DEC-162. See the
 [interview answers](../journal/2026-10-13-grill-3216fc08-5d84-4f48-92f3-20bf92b7afd7.md).
 
 - Keep the existing shared media dropdown and alternative-text field. Add an
@@ -25,15 +25,27 @@ Accepted in DEC-160–DEC-162; not implemented or verified yet. See the
 - Cancelling block changes restores the previous selection; a successful upload
   stays in Media for reuse. The existing draft Save/Publish flow still applies.
 
-The lean implementation should extend the shared media field wherever it is
-already used, including nested forms. A visual library picker, drag-and-drop,
+The shared media field provides these controls wherever it is already used,
+including block creation, nested forms, collection entries and layout settings. A visual library picker, drag-and-drop,
 upload queues and automatic deletion are outside this increment. Image thumbnails
 can reuse the existing media URLs; other supported files retain their names.
-No new storage service or content format is needed.
+The editor uses its existing busy state during upload: editing, cancellation,
+Save/Publish and editor navigation wait for completion. Field selection is applied
+before the media record is appended, so layout editors that replace their content
+snapshot cannot discard the upload. New block/item creation remains uncommitted;
+cancelling it keeps the uploaded media record available in the draft. Alternative
+text starts empty when a new file is selected, matching the existing selector.
+
+The Media library uses the same upload control and inline feedback. No new
+storage service, dependency or content format was added. Failed upload cleanup
+remains owned by the existing uploader.
+
+[Local verification](../verification/runs/2026-10-13-media-fields.md) covers the
+editor flows and mocked uploads. Live R2 upload execution remains unverified.
 
 ## Entry points and prerequisites
 
-`/admin/` → Media → Storage settings. The Media block selects an uploaded record. Credentials are runtime tab-session settings, not content records or build secrets.
+`/admin/` → any shared media field → Upload, or Media → Upload file. Storage settings are available from Media and open from Upload when configuration is missing or invalid. Credentials are runtime tab-session settings, not content records or build secrets.
 
 ### Connect a bucket
 
@@ -97,7 +109,7 @@ Failed batches attempt to delete their own attempted keys. Successful uploads di
 
 ## Verification recipe
 
-1. `pnpm exec vitest run tests/storage-settings.test.ts tests/media-connection.test.ts tests/media.test.ts` exercises pasted endpoint parsing, shared setup/upload validation, draft edits and cancellation, clipboard failure, connection-test write/read/delete success and failure paths, SDK-mocked upload batches, metadata, smaller variants, failed-batch cleanup, executable-format rejection, and decode fallback.
+1. `pnpm exec vitest run tests/media-fields.test.ts tests/storage-settings.test.ts tests/media-connection.test.ts tests/media.test.ts` exercises field selection and preview updates, cancellation retaining library records, nested/new-block/layout/entry uploads, busy/error/retry behavior, pasted endpoint parsing, shared setup/upload validation, draft edits and cancellation, clipboard failure, connection-test write/read/delete success and failure paths, SDK-mocked upload batches, metadata, smaller variants, failed-batch cleanup, executable-format rejection, and decode fallback.
 2. With a disposable bucket, upload a large JPEG and a static PNG, inspect original/variant sizes and Content-Type, select them in a Media block, Save/Publish, and verify responsive image loading.
 3. Test animation preservation and denied CORS/credentials. Confirm no credentials in exported JSON or built assets, and clean up only the test object's prefix afterward.
 
@@ -118,6 +130,8 @@ pressed Test with invalid fields, before any network effects.
 Canvas/SDK mocks are not proof of browser encoders, R2 CORS, or live object cleanup. No automatic deletion of successfully uploaded assets, image service, or video transcoding is supplied.
 
 ## Verification history
+
+- [Upload from media fields](../verification/runs/2026-10-13-media-fields.md): full local verification, eight editor upload regressions, desktop/mobile controls and validation errors; no live R2 upload.
 
 - [Test connection button](../verification/runs/2026-10-13-r2-connection-test.md): mocked write/read/delete verification and actual 4324 UI check; no live bucket probe.
 - [Simplified R2 setup](../verification/runs/2026-10-13-r2-setup.md): local setup behavior and regression verification; no live R2 connection.
