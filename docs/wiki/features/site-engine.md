@@ -135,7 +135,10 @@ Engine and library pins are independent. To upgrade, first save/export the curre
 draft, create a branch, change one pin, install and commit the resulting lockfile.
 Run content validation (including `--base` for schema changes), typecheck, build,
 artifact checks and relevant browser journeys. Make any necessary content/custom
-code changes yourself, then deploy the matching editor. Failed checks do not migrate
+code changes yourself. Put the reviewed upgrade commit on the connected draft
+branch, then deploy/open its matching editor and publish that snapshot. If deploying
+through Git directly, align draft and publish branches to the same reviewed commit
+without overwriting divergent work. A new editor cannot write an old-source draft. Failed checks do not migrate
 or delete inputs. Keep the prior content snapshot as well as old pins: restoring
 code alone does not undo content edited under a newer contract.
 
@@ -168,3 +171,8 @@ required before calling an engine/library revision delivered.
 Portable output is checked using an ordinary static server. Live Git, browser
 credentials, R2 uploads and hosting each require their own evidence; local/mocked
 results must not be described as proving those integrations.
+
+
+## Engine separation verification — 2026-10-14
+
+[Independent engine and public pilot verification](../verification/runs/2026-10-14-engine-separation.md): engine/library/clean-build/browser/live-GitHub checks pass; public hosting awaits its destination.

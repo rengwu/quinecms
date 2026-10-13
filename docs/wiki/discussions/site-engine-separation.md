@@ -1,7 +1,7 @@
 ---
 title: Separate site repositories and the QuineCMS engine
 updated: 2026-10-14
-status: Pilot implementation authorized and in progress
+status: Engine and library implementation verified; public hosting destination pending
 ---
 # Separate site repositories and the QuineCMS engine
 
@@ -13,7 +13,7 @@ maintaining full CMS forks and distributing engine fixes and features across sit
 the initial deferral, the user requested study and grilling, replaced the first
 unsubmitted form with direct discussion, then completed two form rounds. The
 accepted choices are DEC-172–DEC-183. No further product questionnaire is needed
-for the scoped pilot on current evidence. The engineering plan below is being implemented and verified. The earlier discussion alone did not authorize implementation; the subsequent direct instruction does.
+for the scoped pilot on current evidence. The engineering plan below has been implemented; the [verification record](../verification/runs/2026-10-14-engine-separation.md) distinguishes completed checks from pending public hosting. The earlier discussion alone did not authorize implementation; the subsequent direct instruction does.
 
 ## Direct discussion — 2026-10-14
 

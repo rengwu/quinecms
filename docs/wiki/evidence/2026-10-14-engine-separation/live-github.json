@@ -1,0 +1,14 @@
+{
+  "result": "Passed",
+  "repository": "https://github.com/rengwu/quinecms-site-archline",
+  "loaded": "22f28e83b7e56aa49276d0c447ea0e795f1b4400",
+  "saved": "3911a48b0f72acab129d1d8c3c32a5833077cc19",
+  "published": "aa9d6daf8bbc550b8073d4f51bf38bcacf9cc512",
+  "scenarios": [
+    "live content save and reload",
+    "real source mismatch blocks save and publish without API writes",
+    "unsaved input preserved",
+    "matching source restored",
+    "original content restored and exact snapshot published"
+  ]
+}

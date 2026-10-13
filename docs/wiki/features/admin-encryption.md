@@ -136,3 +136,8 @@ the editor-to-loader lock boundary.
 See the [implementation and browser checks](../journal/2026-10-09-admin-encryption.md).
 These checks do not establish live hosting, GitHub/GitLab or R2 behavior or replace
 an independent security review.
+
+
+## Engine separation verification — 2026-10-14
+
+[Independent engine and public pilot verification](../verification/runs/2026-10-14-engine-separation.md): engine/library/clean-build/browser/live-GitHub checks pass; public hosting awaits its destination.

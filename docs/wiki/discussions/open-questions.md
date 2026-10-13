@@ -1,7 +1,7 @@
 ---
 title: Open questions
 updated: 2026-10-14
-status: Site and engine pilot implementation in progress
+status: Site and engine implemented; public hosting destination unresolved
 ---
 # Open questions
 
@@ -39,15 +39,16 @@ The [Q10–Q14 answers](../journal/2026-10-13-grill-47541500-3fe6-4bc4-9cec-83fa
 settle independent manual library upgrades, committed subscription configuration,
 upstream-only library code changes, a configured reset layout and Archline/Intr as
 the initial library (DEC-179–DEC-183). Local-copy and patch customization were not
-selected. No consequential product question remains on current evidence.
+selected. No engine/library product question remains on current evidence.
 
 The [authorized engineering plan](site-engine-separation.md#proposed-engineering-plan)
 covers public authoring interfaces, packaging/composition, library extraction,
 editor identity enforcement, preserving excluded examples and pilot acceptance
 checks. Implementation was subsequently authorized with `work-until-grill` on
-2026-10-14. See the [implemented interface](../features/site-engine.md); clean public
-pilot delivery and browser verification are in progress. Revisit grilling only for
-a new consequential product tradeoff.
+2026-10-14. See the [implemented interface](../features/site-engine.md); engine/library checks, a clean public dependency build, browser journeys and live
+GitHub writes have passed. Public repositories are available. The remaining delivery
+question is which hosting destination should receive the portable pilot output.
+No hosting provider or production credentials have been selected.
 
 ## Upload from media fields — delivered locally
 

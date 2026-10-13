@@ -90,3 +90,8 @@ compatibility rules remain. Choosing a layout does not restrict the block catalo
 - [Generated layout Head dev-server repair](../verification/runs/2026-10-06T1222Z-layout-dev-restart.md).
 
 - [Site Layout foundation, chartr and dedicated navigation levels](../verification/runs/2026-10-06T1140Z-site-layouts.md). Automated retention/version/whitelist checks and bounded Safari browser observations; live providers are separate and untested.
+
+
+## Engine separation verification — 2026-10-14
+
+[Independent engine and public pilot verification](../verification/runs/2026-10-14-engine-separation.md): engine/library/clean-build/browser/live-GitHub checks pass; public hosting awaits its destination.

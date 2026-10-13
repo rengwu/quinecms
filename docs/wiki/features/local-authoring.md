@@ -357,3 +357,8 @@ was verified, and any intentionally source-maintained parts.
 
 See the [local authoring implementation run](../verification/runs/2026-10-08-local-authoring.md)
 for the new-site regression, draft/baseline validation and verification limits.
+
+
+## Engine separation verification — 2026-10-14
+
+[Independent engine and public pilot verification](../verification/runs/2026-10-14-engine-separation.md): engine/library/clean-build/browser/live-GitHub checks pass; public hosting awaits its destination.
