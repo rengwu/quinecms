@@ -104,13 +104,14 @@ try {
       timer = setTimeout(rebuild, 120);
     });
     const cleanup = () => {
+      clearTimeout(timer);
       watcher.close();
       child?.kill('SIGTERM');
     };
     process.once('SIGINT', cleanup);
     process.once('SIGTERM', cleanup);
     try {
-      await run(astro, ['--no-warnings']);
+      await run(join(engineRoot, 'scripts/dev-server.mjs'));
     } finally {
       watcher.close();
     }

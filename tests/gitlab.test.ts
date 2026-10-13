@@ -397,12 +397,14 @@ it.each([
   'quinecms.config.json',
   'extensions/local/src/View.tsx',
   'public/logo.svg',
+  'src/generated/original.ts',
 ])(
   'blocks save and publish with mismatched %s without writing or changing local edits',
   async (path) => {
-    const m = mock(),
-      base = await m.store.load();
-    base.sourceFiles = { [path]: 'different' };
+    const m = mock();
+    m.commits.c0.files[path] = 'changed site input';
+    const base = await m.store.load();
+    expect(base.sourceFiles).toHaveProperty(path);
     const edited = structuredClone(base.content);
     edited.pages[0].title = 'Keep this unsaved edit';
     const before = structuredClone(edited);

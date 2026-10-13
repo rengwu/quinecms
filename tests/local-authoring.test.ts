@@ -1,5 +1,5 @@
 import { expect, it } from 'vitest';
-import { execFile } from 'node:child_process';
+import { execFile, spawn } from 'node:child_process';
 import { promisify } from 'node:util';
 import { cp, mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
@@ -246,3 +246,62 @@ it.each([
   },
   60000,
 );
+
+it('keeps the dev server and watcher together while local content and routes change', async () => {
+  const directory = await projectFixture();
+  const env = { ...process.env };
+  delete env.VITEST;
+  const child = spawn(process.execPath, [cli, 'dev', '--port', '0'], {
+    cwd: directory,
+    env,
+  });
+  let output = '';
+  child.stderr.on('data', (data) => (output += data));
+  const exited = new Promise((resolve) => child.once('exit', resolve));
+  try {
+    const url = await new Promise<string>((accept, reject) => {
+      const timer = setTimeout(
+        () => reject(Error(output || 'Dev startup timed out')),
+        25000,
+      );
+      child.stdout.on('data', (data) => {
+        output += data;
+        const found = output.match(/QuineCMS dev: (http:\/\/127\.0\.0\.1:\d+)/);
+        if (found) {
+          clearTimeout(timer);
+          accept(found[1]);
+        }
+      });
+      child.once('exit', (code) => {
+        clearTimeout(timer);
+        reject(Error(`Dev exited ${code}: ${output}`));
+      });
+    });
+    const home = join(directory, 'content/pages/page_home.json');
+    const page = JSON.parse(await readFile(home, 'utf8'));
+    page.title = 'Changed from the original site';
+    await writeFile(home, JSON.stringify(page));
+    const waitForText = async (path: string, expected: string) => {
+      for (let attempt = 0; attempt < 80; attempt++) {
+        const response = await fetch(url + path);
+        if (response.ok && (await response.text()).includes(expected)) return;
+        await new Promise((resolve) => setTimeout(resolve, 100));
+      }
+      throw Error(`Dev did not render ${expected}: ${output}`);
+    };
+    await waitForText('/', page.title);
+    page.id = 'page_new';
+    page.path = '/new-page';
+    page.blocks = [];
+    await writeFile(
+      join(directory, 'content/pages/page_new.json'),
+      JSON.stringify(page),
+    );
+    await waitForText('/new-page', page.title);
+    expect(child.exitCode).toBeNull();
+  } finally {
+    child.kill('SIGTERM');
+    await exited;
+    await rm(directory, { recursive: true, force: true });
+  }
+}, 60000);

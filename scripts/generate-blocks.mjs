@@ -194,10 +194,7 @@ const blocks=page.blocks;`
     entrypoint: `./src/generated/pages/${record.id}.astro`,
   });
 }
-await writeFile(
-  'src/generated/routes.mjs',
-  `export default ${JSON.stringify(routes, null, 2)};\n`,
-);
+await writeFile('src/generated/routes.json', JSON.stringify(routes, null, 2));
 
 const sources = JSON.parse(await readFile('build-inputs.json', 'utf8'));
 await writeFile(

@@ -74,7 +74,7 @@ export function checkPublication(
 }
 
 export const isSource = (path: string, expected: Record<string, string>) =>
-  (path.startsWith('src/') && !path.startsWith('src/generated/')) ||
+  path.startsWith('src/') ||
   path.startsWith('scripts/') ||
   path.startsWith('extensions/') ||
   path.startsWith('public/') ||

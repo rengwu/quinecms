@@ -15,7 +15,6 @@ const alias = Object.fromEntries(
 );
 import { buildAssets } from './scripts/build-assets.mjs';
 import { kumoStyles } from './scripts/kumo-styles.mjs';
-import routes from './src/generated/routes.mjs';
 export default defineConfig({
   output: 'static',
   build: { inlineStylesheets: 'never' },
@@ -46,7 +45,13 @@ export default defineConfig({
     {
       name: 'content-routes',
       hooks: {
-        'astro:config:setup': ({ injectRoute }) => {
+        'astro:config:setup': ({ injectRoute, addWatchFile }) => {
+          const routeFile = new URL(
+            './src/generated/routes.json',
+            import.meta.url,
+          );
+          addWatchFile(routeFile);
+          const routes = JSON.parse(readFileSync(routeFile, 'utf8'));
           for (const route of routes) injectRoute(route);
         },
       },
