@@ -29,21 +29,33 @@ it('converts old Site Options losslessly and round-trips only the active setting
     formatVersion: 1,
     id: old.site.id,
     globals: {},
-    layout: {
-      id: 'starter',
-      version: 1,
-      settings: {
-        contentMaxWidth: 960,
-        pageGutter: 0,
-        title: old.site.title,
-        navigation: old.site.navigation,
-        theme: 'dark',
-        bodyFont: 'georgia',
-        header: old.site.header,
-        ...(old.site.footer ? { footer: old.site.footer } : {}),
+    layouts: [
+      {
+        id: `layout_${old.site.id}`,
+        name: 'Main layout',
+        active: true,
+        design: {
+          id: 'starter',
+          version: 1,
+          settings: {
+            contentMaxWidth: 960,
+            pageGutter: 0,
+            title: old.site.title,
+            navigation: old.site.navigation,
+            theme: 'dark',
+            bodyFont: 'georgia',
+            header: old.site.header,
+            ...(old.site.footer ? { footer: old.site.footer } : {}),
+          },
+        },
       },
-    },
+    ],
   });
+  expect(
+    converted.pages.every(
+      (page) => page.layoutId === converted.site.layouts![0].id,
+    ),
+  ).toBe(true);
   expect(layoutTitle(converted.site)).toBe(old.site.title);
   expect(layoutGlobals(converted.site)).toMatchObject(before.site.globals);
   expect(parseFiles(filesFor(converted))).toEqual(converted);
@@ -52,7 +64,7 @@ it('converts old Site Options losslessly and round-trips only the active setting
 
 it('switches with fresh defaults, preserves every content record, and pins retained versions', () => {
   const c = migrateSite(fixture());
-  c.site.layout!.settings.title = 'Personalized';
+  c.site.layouts![0].design.settings.title = 'Personalized';
   const v1 = layoutDefinitions.find((d) => d.id === 'starter')!;
   const v2 = {
     ...v1,
@@ -70,27 +82,34 @@ it('switches with fresh defaults, preserves every content record, and pins retai
     version: 2,
     settings: v2.defaults,
   });
-  expect(next.site.layout!.settings).not.toBe(v2.defaults);
-  expect(selectLayout(next, v1).site.layout!.settings).toEqual(v1.defaults);
+  expect(next.site.layouts![0].design.settings).not.toBe(v2.defaults);
+  expect(selectLayout(next, v1).site.layouts![0].design.settings).toEqual(
+    v1.defaults,
+  );
   // Installing new code does not change the saved selection.
   expect(activeLayout(c.site).version).toBe(1);
-  expect(selectLayout(c, v1).site.layout!.settings.title).toBe('Personalized');
+  expect(selectLayout(c, v1).site.layouts![0].design.settings.title).toBe(
+    'Personalized',
+  );
 });
 
 it('rejects missing layout versions while retaining the saved selection', () => {
   const c = migrateSite(fixture());
-  c.site.layout!.version = 900;
+  c.site.layouts![0].design.version = 900;
   expect(validate(c, definitions)).toContainEqual(
-    expect.objectContaining({ path: 'site.layout', phase: 'structure' }),
+    expect.objectContaining({
+      path: 'site.layouts[0].design.settings',
+      phase: 'structure',
+    }),
   );
-  expect(parseFiles(filesFor(c)).site.layout).toEqual(c.site.layout);
+  expect(parseFiles(filesFor(c)).site.layouts).toEqual(c.site.layouts);
 });
 
 it('owns spacing per layout, applies its defaults on switching and round-trips overrides', () => {
   const starter = layoutDefinitions.find((d) => d.id === 'starter')!;
   const chartr = layoutDefinitions.find((d) => d.id === 'chartr')!;
   const c = migrateSite(fixture());
-  Object.assign(c.site.layout!.settings, {
+  Object.assign(c.site.layouts![0].design.settings, {
     contentMaxWidth: 880,
     pageGutter: 0,
   });
@@ -99,7 +118,7 @@ it('owns spacing per layout, applies its defaults on switching and round-trips o
     contentMaxWidth: 1512,
     pageGutter: 40,
   });
-  Object.assign(next.site.layout!.settings, {
+  Object.assign(next.site.layouts![0].design.settings, {
     contentMaxWidth: 1024,
     pageGutter: 0,
   });
@@ -113,7 +132,7 @@ it('owns spacing per layout, applies its defaults on switching and round-trips o
     contentMaxWidth: 1200,
     pageGutter: 0,
   });
-  expect(c.site.layout!.settings).toMatchObject({
+  expect(c.site.layouts![0].design.settings).toMatchObject({
     contentMaxWidth: 880,
     pageGutter: 0,
   });
@@ -122,7 +141,7 @@ it('owns spacing per layout, applies its defaults on switching and round-trips o
 it('validates layout spacing and uses that layout defaults for empty or invalid overrides', () => {
   for (const definition of layoutDefinitions) {
     const c = selectLayout(migrateSite(fixture()), definition);
-    const settings = c.site.layout!.settings;
+    const settings = c.site.layouts![0].design.settings;
     const fallback = siteStyle(definition.defaults);
     for (const [key, values] of Object.entries({
       contentMaxWidth: [0, -1, '900px', Infinity],
@@ -132,7 +151,7 @@ it('validates layout spacing and uses that layout defaults for empty or invalid 
         settings[key] = value;
         expect(validate(c, definitions)).toContainEqual(
           expect.objectContaining({
-            path: `site.layout.settings.${key}`,
+            path: `site.layouts[0].design.settings.${key}`,
             phase: 'structure',
           }),
         );

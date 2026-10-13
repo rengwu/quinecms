@@ -22,7 +22,7 @@ the documented record formats describe the current implementation.
 ## Run locally
 
 Use one main dashboard for every installed theme and block: start `pnpm dev`, then
-open `/admin/` at the printed URL. **Site Layout → Change layout** offers Starter,
+open `/admin/` at the printed URL. **Site Layouts → Add layout** offers Starter,
 chartr, Quine, Intr Studio and Archline. **Pages → page → Add block → All themes**
 offers blocks from all themes, regardless of the active layout. Static/generic
 page compatibility and layout-owned footer selection still apply.
@@ -82,8 +82,8 @@ and the editor both deserve a quick check after source changes.
 
 | Location | Contents |
 | --- | --- |
-| `content/site.json` | Active `layout: { id, version, settings }` and a `globals` object. Layout settings own content width/gutter and author-defined site settings. |
-| `content/pages/<id>.json` | Static or generic pages and ordered block instances. Static pages own paths; generic pages are collection templates. |
+| `content/site.json` | Named `layouts: [{ id, name, active, design: { id, version, settings } }]` and a `globals` object. Each layout owns its settings. |
+| `content/pages/<id>.json` | Static or generic pages, an explicit `layoutId` and ordered blocks. Static pages own paths; generic pages are collection templates. |
 | `content/collections/<id>.json` | Collection-owned fields, `many`/`single` mode, title field and optional generic-page routing. |
 | `content/objects/<id>.json` | Reusable object definitions; values remain owned by their entry. |
 | `content/entries/<collectionId>/<id>.json` | Schema values and, for routed ordinary entries, a slug. |
@@ -98,15 +98,18 @@ The committed demo includes a legacy site record supported by the existing reade
 [the guide](docs/wiki/features/local-authoring.md#starting-a-new-site) shows the canonical
 shape for new work. No demo page or visual theme is required for a client site.
 
-Pages, Content, Schemas → Collections/Objects, Media, Site Layout and Settings are
+Pages, Content, Schemas → Collections/Objects, Media, Site Layouts and Settings are
 available in the editor. Collections support scalars, objects, typed arrays and
 references. Generic blocks bind to typed forward paths and explicit list projections.
 A collection's generic-page assignment enables entry routes; an index is an ordinary
 static page. [Content model](docs/wiki/features/content-model.md) ·
 [Generic pages](docs/wiki/features/generic-pages.md).
 
-Site Layout owns width/gutter overrides and their defaults: Starter 1200px/0px,
-chartr 1512px/40px. Switching layout/version uses the selected definition's defaults.
+Each saved site layout owns its settings, width/gutter overrides and defaults: Starter 1200px/0px,
+chartr 1512px/40px. Pages assign an active layout; generic-page entries inherit that
+assignment. Site Layouts lists named configurations with on/off switches. Layouts
+in use cannot be disabled/deleted, and one must stay active. Confirming a design or
+version change resets only that configuration to the selected defaults.
 Settings contains Repository connection, admin Appearance, Backups, Session and Factory reset. Styling variables are
 available to blocks; custom designs can choose how to use them.
 

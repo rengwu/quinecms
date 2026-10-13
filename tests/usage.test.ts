@@ -13,9 +13,9 @@ it('names the navigation item and editor instead of exposing IDs and storage pat
   const content = migrateSite(modelFixture());
   const use = incomingUsage(content).get('page_home')![0];
   expect(describeUsage(content, use)).toEqual({
-    title: 'Site Layout',
+    title: 'Main layout',
     location: 'Header › Navigation › Home',
-    target: { area: 'layout' },
+    target: { area: 'layout', id: `layout_${content.site.id}` },
   });
 });
 
@@ -78,7 +78,7 @@ it('distinguishes schema defaults and routes block uses to their owning block', 
 
 it('clears removed or changed inherited links while preserving unchanged links and their order', () => {
   const content = migrateSite(modelFixture());
-  const settings = content.site.layout!.settings;
+  const settings = content.site.layouts![0].design.settings;
   const header = headerValues(starterContent(content, settings));
   const items = header.items as Record<string, any>[];
   const edited = {

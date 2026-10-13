@@ -1,10 +1,13 @@
 import { normalizeLists } from './lists';
 import {
-  activeLayout,
   layoutDefinition,
   layoutPolicy,
   layoutGlobals,
   layoutDefinitions,
+  siteLayouts,
+  contentForLayout,
+  contentForPage,
+  migrateSite,
 } from './layouts';
 import { entryPath } from './routes';
 export { entryPath } from './routes';
@@ -86,7 +89,7 @@ export function factoryReset(content: Content): Content {
   );
   if (!starter)
     throw Error('Install the Starter v1 layout before resetting the site.');
-  return {
+  return migrateSite({
     site: {
       formatVersion: 1,
       id: content.site.id,
@@ -102,7 +105,7 @@ export function factoryReset(content: Content): Content {
     objects: [],
     entries: [],
     media: [],
-  };
+  });
 }
 export function parseFiles(files: Record<string, string>): Content {
   const c: Content = {
@@ -158,6 +161,10 @@ export function resolveLink(c: Content, ref: Link): string | undefined {
     : undefined;
 }
 export function contextFor(c: Content, instanceId: string): Context {
+  const owner = c.pages.find((page) =>
+    page.blocks.some((block) => block.id === instanceId),
+  );
+  if (!c.site.layout && owner) c = contentForPage(c, owner);
   const block =
     c.pages.flatMap((p) => p.blocks).find((b) => b.id === instanceId) ??
     (c.site.footer?.id === instanceId ? c.site.footer : undefined);
@@ -376,11 +383,22 @@ export function newBlock(d: Definition): Block {
 }
 export function validate(content: Content, definitions: Definition[]): Issue[] {
   const issues: Issue[] = [];
+  let unusedLayout = false;
+  let layoutPath: string | undefined;
   const add = (
     path: string,
     message: string,
     phase: Issue['phase'] = 'structure',
-  ) => issues.push({ path, message, phase });
+  ) => {
+    if (unusedLayout && phase === 'publish') return;
+    issues.push({
+      path: layoutPath
+        ? path.replace(/^site\.layout\.settings/, layoutPath)
+        : path,
+      message,
+      phase,
+    });
+  };
   if (
     !object(content) ||
     !object(content.site) ||
@@ -418,6 +436,59 @@ export function validate(content: Content, definitions: Definition[]): Issue[] {
     if (ids.has(r.id)) add(r.id, 'Duplicate record ID.');
     ids.add(r.id);
   }
+  if (issues.length) return issues;
+  if (content.site.layouts !== undefined) {
+    if (content.site.layout !== undefined)
+      add('site.layout', 'Store layout instances in site.layouts only.');
+    if (!Array.isArray(content.site.layouts)) {
+      add('site.layouts', 'Site layouts must be a list.');
+      return issues;
+    }
+    for (const [index, layout] of content.site.layouts.entries()) {
+      const path = `site.layouts[${index}]`;
+      if (
+        !object(layout) ||
+        typeof layout.id !== 'string' ||
+        !/^[\w-]+$/.test(layout.id) ||
+        typeof layout.name !== 'string' ||
+        !layout.name.trim() ||
+        typeof layout.active !== 'boolean' ||
+        !object(layout.design) ||
+        typeof layout.design.id !== 'string' ||
+        !Number.isInteger(layout.design.version) ||
+        layout.design.version < 1 ||
+        !object(layout.design.settings)
+      ) {
+        add(
+          path,
+          'A site layout needs an ID, name, active state and design with version and settings.',
+        );
+        continue;
+      }
+      if (ids.has(layout.id)) add(path, 'Duplicate record ID.');
+      ids.add(layout.id);
+    }
+    if (!content.site.layouts.some((layout) => layout?.active === true))
+      add('site.layouts', 'At least one layout must stay active.');
+    for (const page of content.pages) {
+      if (
+        !content.site.layouts.some(
+          (layout) => layout?.id === page.layoutId && layout.active === true,
+        )
+      )
+        add(`${page.id}.layoutId`, 'Choose an existing active site layout.');
+    }
+  } else if (
+    content.site.layout !== undefined &&
+    (!object(content.site.layout) ||
+      typeof content.site.layout.id !== 'string' ||
+      !Number.isInteger(content.site.layout.version) ||
+      !object(content.site.layout.settings))
+  )
+    add(
+      'site.layout',
+      'A layout needs an ID, installed version and settings object.',
+    );
   if (issues.length) return issues;
   const route = (p: unknown, where: string) => {
     if (typeof p !== 'string') add(where, 'URL paths must be text.');
@@ -771,34 +842,55 @@ export function validate(content: Content, definitions: Definition[]): Issue[] {
   }
   if (!object(content.site.globals))
     add('site.globals', 'Invalid shared settings.');
-  else if (
-    content.site.layout !== undefined &&
-    (!object(content.site.layout) ||
-      typeof content.site.layout.id !== 'string' ||
-      !Number.isInteger(content.site.layout.version) ||
-      !object(content.site.layout.settings))
-  )
-    add(
-      'site.layout',
-      'A layout needs an ID, installed version and settings object.',
-    );
-  else {
-    const active = activeLayout(content.site);
-    const definition = layoutDefinition(content.site);
-    if (!definition)
-      add(
-        'site.layout',
-        `Layout ${active.id}@${active.version} is not installed. Restore its retained implementation.`,
-      );
-    else {
-      fields(definition.fields, active.settings, 'site.layout.settings');
-      layoutPolicy(content.site)?.validate?.(active.settings, content, {
-        fields,
-        blocks,
-        add,
-      });
+  else
+    for (const [index, layout] of siteLayouts(content.site).entries()) {
+      const view = contentForLayout(content, layout.design);
+      const definition = layoutDefinition(view.site);
+      const path = content.site.layouts
+        ? `site.layouts[${index}].design.settings`
+        : content.site.layout
+          ? 'site.layout.settings'
+          : 'site.globals';
+      const used = content.site.layouts
+        ? content.pages.some((page) => page.layoutId === layout.id)
+        : content.pages.length > 0;
+      unusedLayout = !used;
+      layoutPath = content.site.layouts ? path : undefined;
+      if (!definition)
+        add(
+          path,
+          `Layout ${layout.design.id}@${layout.design.version} is not installed. Restore its retained implementation.`,
+        );
+      else {
+        fields(definition.fields, layout.design.settings, path);
+        // Preserve the legacy policy's paths only while validating that old format.
+        layoutPolicy(view.site)?.validate?.(
+          layout.design.settings,
+          content.site.layouts ? view : content,
+          { fields, blocks, add },
+        );
+      }
+      const rules: [string, (value: unknown) => boolean, string][] = [
+        [
+          'contentMaxWidth',
+          validContentMaxWidth,
+          'Content max-width must be a positive number in pixels.',
+        ],
+        [
+          'pageGutter',
+          validPageGutter,
+          'Page gutter must be zero or a positive number in pixels.',
+        ],
+      ];
+      for (const [key, valid, message] of rules)
+        if (
+          layout.design.settings[key] != null &&
+          !valid(layout.design.settings[key])
+        )
+          add(`${path}.${key}`, message);
+      unusedLayout = false;
+      layoutPath = undefined;
     }
-  }
   for (const m of content.media) {
     if (!object(m) || !Array.isArray(m.variants) || !object(m.original)) {
       add('media', 'Invalid media record.');
@@ -815,30 +907,6 @@ export function validate(content: Content, definitions: Definition[]): Issue[] {
         f.bytes < 0
       )
         add(m.id, 'Invalid media file metadata.');
-  }
-  if (
-    object(content.site.globals) &&
-    (content.site.layout === undefined ||
-      (object(content.site.layout) && object(content.site.layout.settings)))
-  ) {
-    const values = activeLayout(content.site).settings;
-    const path = content.site.layout ? 'site.layout.settings' : 'site.globals';
-    const settings: [string, (value: unknown) => boolean, string][] = [
-      [
-        'contentMaxWidth',
-        validContentMaxWidth,
-        'Content max-width must be a positive number in pixels.',
-      ],
-      [
-        'pageGutter',
-        validPageGutter,
-        'Page gutter must be zero or a positive number in pixels.',
-      ],
-    ];
-    for (const [key, valid, message] of settings) {
-      if (values[key] != null && !valid(values[key]))
-        add(`${path}.${key}`, message);
-    }
   }
   if (!content.pages.some((p) => p.kind === 'static' && p.path === '/'))
     add('pages', 'Create a home page at /.', 'publish');

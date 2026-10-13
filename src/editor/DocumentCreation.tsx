@@ -2,6 +2,7 @@ import { Input } from '@cloudflare/kumo/components/input';
 import { Label } from '@cloudflare/kumo/components/label';
 import type { Content, Entry, Page } from '../core/types';
 import Fields from './Fields';
+import LayoutChoice from './LayoutChoice';
 import FormScreen from './FormScreen';
 import styles from './editor.module.css';
 
@@ -44,6 +45,11 @@ export default function DocumentCreation({
               onChange={(e) => onChange({ ...document, title: e.target.value })}
             />
           </div>
+          <LayoutChoice
+            content={content}
+            value={document.layoutId}
+            onChange={(layoutId) => onChange({ ...document, layoutId })}
+          />
           {document.kind === 'static' && (
             <div className={styles.field}>
               <Label htmlFor="new-page-path">URL path</Label>

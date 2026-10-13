@@ -25,7 +25,7 @@ it.each(['legacy', 'starter', 'chartr'])(
         migrateSite(content),
         layoutDefinitions.find((d) => d.id === layout)!,
       );
-      content.site.layout!.settings.title = 'Customized site';
+      content.site.layouts![0].design.settings.title = 'Customized site';
     }
     content.media.push({
       formatVersion: 1,
@@ -49,7 +49,14 @@ it.each(['legacy', 'starter', 'chartr'])(
         formatVersion: 1,
         id: content.site.id,
         globals: {},
-        layout: { id: 'starter', version: 1, settings: starter.defaults },
+        layouts: [
+          {
+            id: `layout_${content.site.id}`,
+            name: 'Main layout',
+            active: true,
+            design: { id: 'starter', version: 1, settings: starter.defaults },
+          },
+        ],
       },
       pages: [],
       entries: [],
@@ -65,15 +72,17 @@ it.each(['legacy', 'starter', 'chartr'])(
     expect(Object.keys(filesFor(reset))).toEqual(['content/site.json']);
     expect(parseFiles(filesFor(reset))).toEqual(reset);
     const originalHeader = structuredClone(starter.defaults.header);
-    const header = reset.site.layout!.settings.header as {
+    const header = reset.site.layouts![0].design.settings.header as {
       items: { label: string }[];
     };
     header.items[0].label = 'Changed label';
     expect(starter.defaults.header).toEqual(originalHeader);
-    (reset.site.layout!.settings.navigation as unknown[]).push({
+    (reset.site.layouts![0].design.settings.navigation as unknown[]).push({
       label: 'New link',
     });
     expect(starter.defaults.navigation).toEqual([]);
-    expect(factoryReset(reset).site.layout!.settings).toEqual(starter.defaults);
+    expect(factoryReset(reset).site.layouts![0].design.settings).toEqual(
+      starter.defaults,
+    );
   },
 );

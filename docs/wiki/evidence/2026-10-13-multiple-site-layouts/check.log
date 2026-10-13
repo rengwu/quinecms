@@ -1,0 +1,16 @@
+
+> quinecms@0.1.0 check <project-root>
+> pnpm prepare:blocks && astro check
+
+
+> quinecms@0.1.0 prepare:blocks <project-root>
+> node scripts/generate-blocks.mjs
+
+Registered 128 block versions.
+Registered 5 layout versions.
+23:12:29 [types] Generated 70ms
+23:12:29 [check] Getting diagnostics for Astro files in <project-root>...
+Result (471 files):
+- 0 errors
+- 0 warnings
+- 0 hints

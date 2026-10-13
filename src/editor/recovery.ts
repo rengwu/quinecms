@@ -154,6 +154,29 @@ function editableShape(c: unknown): c is Content {
   )
     return false;
   if (
+    c.site.layouts !== undefined &&
+    (c.site.layout !== undefined ||
+      !Array.isArray(c.site.layouts) ||
+      !c.site.layouts.every(
+        (layout: any) =>
+          object(layout) &&
+          typeof layout.id === 'string' &&
+          typeof layout.name === 'string' &&
+          typeof layout.active === 'boolean' &&
+          object(layout.design) &&
+          typeof layout.design.id === 'string' &&
+          Number.isInteger(layout.design.version) &&
+          object(layout.design.settings),
+      ) ||
+      !c.site.layouts.some((layout: any) => layout.active) ||
+      !c.pages.every((page: any) =>
+        c.site.layouts.some(
+          (layout: any) => layout.active && layout.id === page.layoutId,
+        ),
+      ))
+  )
+    return false;
+  if (
     c.site.layout !== undefined &&
     (!object(c.site.layout) ||
       typeof c.site.layout.id !== 'string' ||
@@ -162,6 +185,7 @@ function editableShape(c: unknown): c is Content {
   )
     return false;
   if (
+    c.site.layouts === undefined &&
     c.site.layout === undefined &&
     (typeof c.site.title !== 'string' || !Array.isArray(c.site.navigation))
   )

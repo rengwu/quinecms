@@ -1,11 +1,15 @@
 import type { Content, Field } from '../core/types';
 import { isRecord, objectFields, rowFields, type Usage } from '../core/schema';
-import { activeLayout, layoutDefinition } from '../core/layouts';
+import {
+  activeLayout,
+  layoutDefinition,
+  contentForLayout,
+} from '../core/layouts';
 import { definitions } from '../generated/definitions';
 import { headerFields } from '../core/header';
 
 export type UsageTarget =
-  | { area: 'layout' }
+  | { area: 'layout'; id?: string }
   | { area: 'pages' | 'content'; id: string; blockId?: string }
   | { area: 'collections' | 'objects'; id: string };
 
@@ -79,10 +83,16 @@ export function describeUsage(
   content: Content,
   use: Usage,
 ): { title: string; location: string; target?: UsageTarget } {
-  if (use.ownerId === content.site.id) {
-    const layout = activeLayout(content.site);
-    let path = use.path.replace(/^site\.(?:layout\.settings\.)?/, '');
-    let fields = layoutDefinition(content.site)?.fields ?? [];
+  const saved = content.site.layouts?.find(
+    (layout) => layout.id === use.ownerId,
+  );
+  if (saved || use.ownerId === content.site.id) {
+    const layout = saved?.design ?? activeLayout(content.site);
+    let path = saved
+      ? use.path.replace(/^settings\.?/, '')
+      : use.path.replace(/^site\.(?:layout\.settings\.)?/, '');
+    let fields =
+      layoutDefinition(contentForLayout(content, layout).site)?.fields ?? [];
     let value: unknown = layout.settings;
     const prefix: string[] = [];
     if (layout.id === 'starter') {
@@ -95,15 +105,21 @@ export function describeUsage(
       }
     }
     return {
-      title: 'Site Layout',
+      title: saved?.name ?? 'Site Layout',
       location: [...prefix, ...location(path, fields, value, content)].join(
         ' › ',
       ),
-      target: { area: 'layout' },
+      target: { area: 'layout', id: saved?.id },
     };
   }
   const page = content.pages.find((p) => p.id === use.ownerId);
   if (page) {
+    if (use.path === 'layoutId')
+      return {
+        title: page.title || 'Untitled page',
+        location: 'Pages › Site layout',
+        target: { area: 'pages', id: page.id },
+      };
     const match = /^blocks\[(\d+)\](?:\.props)?\.?/.exec(use.path);
     const block = match ? page.blocks[Number(match[1])] : undefined;
     const definition = definitions.find(

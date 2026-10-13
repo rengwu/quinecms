@@ -124,7 +124,8 @@ function button(label: string, scope: Element = host) {
 it('opens layout navigation and footer items in dedicated levels, hiding all parent settings', async () => {
   const chartr = layoutDefinitions.find((d) => d.id === 'chartr')!;
   await mount(selectLayout(structuredClone(content), chartr));
-  await click('Site Layout');
+  await click('Site Layouts');
+  await click('Main layout');
   await click('Workspace');
   const level = () =>
     editorPanel().querySelector<HTMLElement>(
@@ -158,7 +159,8 @@ it('opens layout navigation and footer items in dedicated levels, hiding all par
 it('focuses chartr mobile navigation and returns focus on Escape', async () => {
   const chartr = layoutDefinitions.find((d) => d.id === 'chartr')!;
   await mount(selectLayout(structuredClone(content), chartr));
-  await click('Site Layout');
+  await click('Site Layouts');
+  await click('Main layout');
   const toggle = host.querySelector<HTMLButtonElement>('[data-menu-toggle]')!;
   await act(async () => toggle.click());
   expect(toggle.getAttribute('aria-expanded')).toBe('true');
@@ -196,7 +198,8 @@ it('gives nested navigation items their own levels, returning one parent at a ti
     ],
   };
   await mount(initial);
-  await click('Site Layout');
+  await click('Site Layouts');
+  await click('Main layout');
   await click('Resources');
   const level = () =>
     editorPanel().querySelector<HTMLElement>(
@@ -225,8 +228,8 @@ it('gives nested navigation items their own levels, returning one parent at a ti
       ?.closest('[hidden]'),
   ).toBeNull();
   expect(
-    (readRecovery()!.content.site.layout!.settings.header as any).items[0]
-      .links[0].description,
+    (readRecovery()!.content.site.layouts![0].design.settings.header as any)
+      .items[0].links[0].description,
   ).toBe('Updated manual');
 });
 async function click(label: string, scope?: Element) {
@@ -377,11 +380,12 @@ it('preserves site width across navigation and scopes it to the live preview', a
     editorPanel().querySelector('[aria-label="Content max-width"]'),
   ).toBeNull();
   expect(editorPanel().querySelector('[aria-label="Page gutter"]')).toBeNull();
-  await click('Site Layout');
+  await click('Site Layouts');
+  await click('Main layout');
   await input('Content max-width', '880');
-  expect(readRecovery()?.content.site.layout?.settings.contentMaxWidth).toBe(
-    880,
-  );
+  expect(
+    readRecovery()?.content.site.layouts?.[0].design.settings.contentMaxWidth,
+  ).toBe(880);
   await click('Pages');
   await click('Home');
   const preview = () =>
@@ -396,7 +400,8 @@ it('preserves site width across navigation and scopes it to the live preview', a
       .querySelector<HTMLElement>('aside')!
       .style.getPropertyValue('--site-content-max-width'),
   ).toBe('');
-  await click('Site Layout');
+  await click('Site Layouts');
+  await click('Main layout');
   expect(
     editorPanel().querySelector<HTMLInputElement>(
       '[aria-label="Content max-width"]',
@@ -412,7 +417,8 @@ it('preserves site width across navigation and scopes it to the live preview', a
 
 it('edits site fonts, size, line height and gutter together, recovers them and clears numeric overrides', async () => {
   await mount();
-  await click('Site Layout');
+  await click('Site Layouts');
+  await click('Main layout');
   for (const [label, choice] of [
     ['Body font', 'Arial'],
     ['Heading font', 'Georgia'],
@@ -434,8 +440,12 @@ it('edits site fonts, size, line height and gutter together, recovers them and c
   await input('Body font size', '18');
   await input('Body line height', '1.8');
   await input('Page gutter', '40');
-  expect(readRecovery()?.content.site.layout?.settings.pageGutter).toBe(40);
-  expect(readRecovery()?.content.site.layout?.settings).toMatchObject({
+  expect(
+    readRecovery()?.content.site.layouts?.[0].design.settings.pageGutter,
+  ).toBe(40);
+  expect(
+    readRecovery()?.content.site.layouts?.[0].design.settings,
+  ).toMatchObject({
     bodyFont: 'arial',
     headingFont: 'georgia',
     bodyFontSize: 18,
@@ -468,7 +478,8 @@ it('edits site fonts, size, line height and gutter together, recovers them and c
         ?.closest('.site-surface'),
     ).toBeNull();
   }
-  await click('Site Layout');
+  await click('Site Layouts');
+  await click('Main layout');
   expect(
     editorPanel().querySelector('[aria-label="Body font"]')?.textContent,
   ).toContain('Arial');
@@ -578,7 +589,7 @@ it('opens entries from public preview links in Content and blocks referenced del
   );
   expect(editorPanel().textContent).not.toContain('site.layout.settings');
   await click('Open', editorPanel());
-  expect(editorPanel().textContent).toContain('Site Layout');
+  expect(editorPanel().textContent).toContain('Main layout');
   await click('Read entry', editorPanel());
   await click('Remove item');
   await openEntry();
@@ -785,7 +796,7 @@ it('lists every page and keeps page edits through the table and block hierarchy'
   expect(host.querySelectorAll('table tbody tr')).toHaveLength(2);
   expect(
     [...host.querySelectorAll('table th')].map((el) => el.textContent),
-  ).toEqual(['Page title', 'Type', 'URL path']);
+  ).toEqual(['Page title', 'Type', 'URL path', 'Site layout']);
   expect(host.querySelector('table')?.textContent).toContain('/about');
   expect(host.querySelector('[aria-label="Toggle preview width"]')).toBeNull();
   await click('Home');
@@ -934,22 +945,23 @@ it('assigns only generic pages to schemas and persists an explicit data-only sel
 
 it('offers every installed layout in one dashboard, preserves content when switching and keeps previews nonmutating', async () => {
   await mount(content);
-  await click('Site Layout');
+  await click('Site Layouts');
+  await click('Main layout');
   await input('Content max-width', '880');
   await input('Page gutter', '12');
   const before = structuredClone(readRecovery()!.content);
   expect(
     editorPanel().querySelector('[aria-label="Site title"]'),
   ).not.toBeNull();
-  await click('Change layout');
+  await click('Change design');
   let dialog = host.querySelector('[role="dialog"]')!;
   for (const definition of layoutDefinitions) {
     expect(
-      dialog.querySelector(`[aria-label="Use ${definition.label} layout"]`),
+      dialog.querySelector(`[aria-label="Use ${definition.label} design"]`),
     ).not.toBeNull();
   }
   expect(
-    dialog.querySelector('[aria-label="Use chartr layout"]'),
+    dialog.querySelector('[aria-label="Use chartr design"]'),
   ).not.toBeNull();
   await act(async () =>
     (
@@ -973,18 +985,22 @@ it('offers every installed layout in one dashboard, preserves content when switc
     ).click(),
   );
   expect(readRecovery()!.content).toEqual(before);
-  await click('Change layout');
+  await click('Change design');
   dialog = host.querySelector('[role="dialog"]')!;
   await act(async () =>
     (
-      dialog.querySelector('[aria-label="Use chartr layout"]') as HTMLElement
+      dialog.querySelector('[aria-label="Use chartr design"]') as HTMLElement
     ).click(),
   );
   await act(async () => {
     await vi.dynamicImportSettled();
   });
-  expect(readRecovery()!.content.site.layout?.id).toBe('chartr');
-  expect(readRecovery()!.content.site.layout?.settings).toMatchObject({
+  expect(readRecovery()!.content).toEqual(before);
+  await click('Reset and change design');
+  expect(readRecovery()!.content.site.layouts?.[0].design.id).toBe('chartr');
+  expect(
+    readRecovery()!.content.site.layouts?.[0].design.settings,
+  ).toMatchObject({
     contentMaxWidth: 1512,
     pageGutter: 40,
   });
@@ -1015,22 +1031,23 @@ it('offers every installed layout in one dashboard, preserves content when switc
   );
   expect(readRecovery()!.content.pages).toEqual(before.pages);
   expect(readRecovery()!.content.entries).toEqual(before.entries);
-  await click('Change layout');
+  await click('Change design');
   for (const definition of layoutDefinitions) {
     expect(
       host.querySelector(
-        `[role="dialog"] [aria-label="Use ${definition.label} layout"]`,
+        `[role="dialog"] [aria-label="Use ${definition.label} design"]`,
       ),
     ).not.toBeNull();
   }
   await act(async () =>
     (
       host.querySelector(
-        '[role="dialog"] [aria-label="Use Starter layout"]',
+        '[role="dialog"] [aria-label="Use Starter design"]',
       ) as HTMLElement
     ).click(),
   );
-  expect(readRecovery()!.content.site.layout?.id).toBe('starter');
+  await click('Reset and change design');
+  expect(readRecovery()!.content.site.layouts?.[0].design.id).toBe('starter');
   expect(readRecovery()!.content.pages).toEqual(before.pages);
   expect(readRecovery()!.content.entries).toEqual(before.entries);
 });
@@ -1433,11 +1450,11 @@ it('confirms factory reset, retains the empty draft across reloads and allows di
       site: {
         id: initial.site.id,
         globals: {},
-        layout: { id: 'starter', version: 1 },
+        layouts: [{ design: { id: 'starter', version: 1 }, active: true }],
       },
     },
   });
-  expect(reset.content.site.layout!.settings).toEqual(
+  expect(reset.content.site.layouts![0].design.settings).toEqual(
     layoutDefinitions.find((d) => d.id === 'starter')!.defaults,
   );
   expect(button('Save draft').disabled).toBe(false);
@@ -1445,7 +1462,8 @@ it('confirms factory reset, retains the empty draft across reloads and allows di
   expect(sessionStorage.getItem('lean:r2')).toBe(storage);
   await click('Pages');
   expect(host.textContent).not.toContain(initial.pages[0].title);
-  await click('Site Layout');
+  await click('Site Layouts');
+  await click('Main layout');
   expect(editorPanel().textContent).toContain('Starter');
   for (const [label, value] of Object.entries({
     'Site title': 'Welcome',
@@ -1610,7 +1628,8 @@ it('previews an appended block on an existing page and discards it when navigati
 
 it('stages footer creation and replacement in dedicated forms without changing the live layout before Create', async () => {
   await mount();
-  await click('Site Layout');
+  await click('Site Layouts');
+  await click('Main layout');
   const before = readRecovery()!.content;
   await click('Choose footer');
   await click('Four column footer', host);
@@ -1629,12 +1648,179 @@ it('stages footer creation and replacement in dedicated forms without changing t
   await input('Brand', 'Created brand');
   await click('Create footer');
   const committed = readRecovery()!.content;
-  expect((committed.site.layout!.settings.footer as any).props.brand).toBe(
-    'Created brand',
-  );
+  expect(
+    (committed.site.layouts![0].design.settings.footer as any).props.brand,
+  ).toBe('Created brand');
   await click('Change footer');
   await click('Four column footer', host);
   await input('Brand', 'Cancelled replacement');
   await click('Cancel');
   expect(readRecovery()!.content).toEqual(committed);
+});
+
+it('creates independent layouts, requires page choices and guards the layout lifecycle', async () => {
+  await mount();
+  await click('Site Layouts');
+  const rows = () => host.querySelectorAll('table tbody tr');
+  const active = (name: string) =>
+    host.querySelector<HTMLButtonElement>(
+      `[role="switch"][aria-label="Active: ${name}"]`,
+    )!;
+  expect(rows()).toHaveLength(1);
+  expect(active('Main layout').disabled).toBe(true);
+  expect(host.querySelector('[aria-label="Live preview"]')).toBeNull();
+  const before = structuredClone(readRecovery()!.content);
+  const chooseStarter = async () => {
+    await click('Add layout');
+    await act(async () =>
+      host
+        .querySelector<HTMLButtonElement>('[aria-label="Use Starter design"]')!
+        .click(),
+    );
+    await act(async () => {
+      await vi.dynamicImportSettled();
+    });
+  };
+  await chooseStarter();
+  expectCreation('layout');
+  await input('Layout name', 'Cancelled');
+  expect(readRecovery()!.content).toEqual(before);
+  await click('Cancel');
+  expect(rows()).toHaveLength(1);
+  await chooseStarter();
+  await input('Layout name', 'Compact');
+  await input('Content max-width', '760');
+  await click('Create layout');
+  const layoutId = readRecovery()!.content.site.layouts![1].id;
+  expect(readRecovery()!.content.site.layouts![1]).toMatchObject({
+    name: 'Compact',
+    active: true,
+  });
+  expect(readRecovery()!.content.pages).toEqual(before.pages);
+  await click('← Back');
+  expect(rows()).toHaveLength(2);
+  expect(active('Compact').disabled).toBe(false);
+  await click('Pages');
+  await click('Add page');
+  await click('Generic page');
+  expect(
+    editorPanel().querySelector('[aria-label="Site layout"]')?.textContent,
+  ).toContain('Choose a layout');
+  await click('Create page');
+  expect(readRecovery()!.content.pages).toHaveLength(1);
+  expect(host.textContent).toContain(
+    'Choose a site layout before creating the page',
+  );
+  await input('Page title', 'Articles');
+  await chooseOption('Site layout', 'Compact');
+  await click('Create page');
+  expect(
+    readRecovery()!.content.pages.find((page) => page.kind === 'generic')
+      ?.layoutId,
+  ).toBe(layoutId);
+  await click('Site Layouts');
+  expect(active('Compact').disabled).toBe(true);
+  await click('Compact');
+  expect(button('Delete layout').disabled).toBe(true);
+  expect(editorPanel().textContent).toContain('Articles');
+  await click('Pages');
+  await click('Articles');
+  await chooseOption('Site layout', 'Main layout');
+  await click('Site Layouts');
+  await act(async () => active('Compact').click());
+  expect(active('Compact').getAttribute('aria-checked')).toBe('false');
+  await click('Pages');
+  await click('Add page');
+  await click('Static page');
+  expect(
+    editorPanel().querySelector('[aria-label="Site layout"]')?.textContent,
+  ).toContain('Main layout');
+  await click('Cancel');
+  await click('Home');
+  await act(async () =>
+    editorPanel()
+      .querySelector<HTMLButtonElement>('[aria-label="Site layout"]')!
+      .click(),
+  );
+  expect(
+    [...document.querySelectorAll('[role="option"]')].map(
+      (option) => option.textContent,
+    ),
+  ).toEqual(['Main layout']);
+  await act(async () =>
+    document.querySelector<HTMLElement>('[role="option"]')!.click(),
+  );
+  await click('Site Layouts');
+  await act(async () => active('Compact').click());
+  await click('Pages');
+  await click('Home');
+  await chooseOption('Site layout', 'Compact');
+  expect(
+    host
+      .querySelector<HTMLElement>(
+        '[aria-label="Live preview"] .starter-layout',
+      )!
+      .style.getPropertyValue('--site-content-max-width'),
+  ).toBe('760px');
+  await chooseOption('Site layout', 'Main layout');
+  await click('Site Layouts');
+  await click('Compact');
+  await click('Delete layout');
+  await click('Cancel', host.querySelector('[role="dialog"][data-open]')!);
+  expect(readRecovery()!.content.site.layouts).toHaveLength(2);
+  await click('Delete layout');
+  await click(
+    'Delete layout',
+    host.querySelector('[role="dialog"][data-open]')!,
+  );
+  expect(rows()).toHaveLength(1);
+  expect(readRecovery()!.content.site.layouts).toHaveLength(1);
+});
+
+it('keeps the last active layout when no pages exist and recovers multiple layout settings', async () => {
+  await mount({ ...content, pages: [] });
+  await click('Site Layouts');
+  const first = host.querySelector<HTMLButtonElement>(
+    '[role="switch"][aria-label="Active: Main layout"]',
+  )!;
+  expect(first.disabled).toBe(true);
+  await click('Main layout');
+  expect(button('Delete layout').disabled).toBe(true);
+  expect(editorPanel().textContent).toContain('At least one layout');
+  await click('← Back');
+  await click('Add layout');
+  await act(async () =>
+    host
+      .querySelector<HTMLButtonElement>('[aria-label="Use chartr design"]')!
+      .click(),
+  );
+  await act(async () => {
+    await vi.dynamicImportSettled();
+  });
+  await input('Layout name', 'Journal shell');
+  await input('Content max-width', '940');
+  await click('Create layout');
+  const saved = structuredClone(readRecovery()!.content);
+  await act(async () => root.unmount());
+  host.remove();
+  await mount();
+  expect(readRecovery()!.content).toEqual(saved);
+  await click('Site Layouts');
+  await click('Journal shell');
+  expect(
+    editorPanel().querySelector<HTMLInputElement>(
+      '[aria-label="Content max-width"]',
+    )!.value,
+  ).toBe('940');
+  await click('Change design');
+  await act(async () =>
+    host
+      .querySelector<HTMLButtonElement>('[aria-label="Use Starter design"]')!
+      .click(),
+  );
+  expect(
+    host.querySelector('[role="dialog"][data-open]')?.textContent,
+  ).toContain('Reset layout settings?');
+  await click('Cancel', host.querySelector('[role="dialog"][data-open]')!);
+  expect(readRecovery()!.content).toEqual(saved);
 });

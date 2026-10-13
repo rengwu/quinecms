@@ -123,7 +123,9 @@ for (const file of await htmlFiles('dist')) {
   }
 }
 const site = JSON.parse(await readFile('content/site.json', 'utf8'));
-const selected = site.layout ?? { id: 'starter', version: 1 };
+const selections = site.layouts?.map((layout) => layout.design) ?? [
+  site.layout ?? { id: 'starter', version: 1 },
+];
 const layouts = await Promise.all(
   installedLayouts.map(async (path) =>
     JSON.parse(
@@ -131,10 +133,12 @@ const layouts = await Promise.all(
     ),
   ),
 );
-const layout = layouts.find(
-  (d) => d.id === selected.id && d.version === selected.version,
-);
-assert(layout, 'Active layout version must be installed');
+for (const selected of selections) {
+  assert(
+    layouts.some((d) => d.id === selected.id && d.version === selected.version),
+    'Every saved layout design version must be installed',
+  );
+}
 // Page-specific budgets belong to site or regression fixtures. Custom layouts
 // and blocks may intentionally add scripts or embeds to any public route.
 console.log(

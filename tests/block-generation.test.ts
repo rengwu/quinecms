@@ -11,6 +11,9 @@ import {
 import { tmpdir } from 'node:os';
 import { resolve, join } from 'node:path';
 import { execFileSync } from 'node:child_process';
+import { fixture } from './support/fixture';
+import { migrateSite } from '../src/core/layouts';
+import { filesFor } from '../src/core/content';
 import { fixtureDirectory } from './support/fixture';
 
 it('generates only the selected shared footer and leaves unchanged registry files in place on rerun', async () => {
@@ -80,6 +83,33 @@ it('generates only the selected shared footer and leaves unchanged registry file
     );
     expect(routes).toContain('<Public');
     expect(routes).not.toContain('renderers');
+    // Assign separate saved layouts to static and generic pages. Generated
+    // entry routes must import their generic page's design and head directly.
+    const multiple = migrateSite(fixture());
+    multiple.site.layouts!.push({
+      id: 'layout_chartr',
+      name: 'Journal',
+      active: true,
+      design: { id: 'chartr', version: 1, settings: {} },
+    });
+    multiple.pages.find((page) => page.kind === 'generic')!.layoutId =
+      'layout_chartr';
+    for (const [path, body] of Object.entries(filesFor(multiple))) {
+      await writeFile(join(dir, path), body);
+    }
+    generate();
+    const home = await readFile(
+      join(dir, 'src/generated/pages/page_home.astro'),
+      'utf8',
+    );
+    const entry = await readFile(
+      join(dir, `src/generated/pages/${multiple.entries[0].id}.astro`),
+      'utf8',
+    );
+    expect(home).toContain("from '../Layout0.astro'");
+    expect(entry).toContain("from '../Layout1.astro'");
+    expect(entry).toContain("from '../LayoutHead1.astro'");
+    expect(entry).toContain('contentForPage(fullContent,page)');
     // Installing another retained implementation must not silently upgrade the
     // public renderer or remove the prior settings editor from the registry.
     await cp(
@@ -112,7 +142,7 @@ it('generates only the selected shared footer and leaves unchanged registry file
       { cwd: dir, stdio: 'pipe' },
     );
     expect(
-      await readFile(join(dir, 'src/generated/SelectedLayout.astro'), 'utf8'),
+      await readFile(join(dir, 'src/generated/Layout0.astro'), 'utf8'),
     ).toContain('starter/v1/View.tsx');
     expect(
       await readFile(join(dir, 'src/generated/layout-browser.ts'), 'utf8'),
@@ -123,4 +153,4 @@ it('generates only the selected shared footer and leaves unchanged registry file
   } finally {
     await rm(dir, { recursive: true, force: true });
   }
-});
+}, 15000);

@@ -29,7 +29,7 @@ const items: (NavigationLeaf | NavigationGroup)[] = [
     ],
   },
   { area: 'media', label: 'Media' },
-  { area: 'layout', label: 'Site Layout' },
+  { area: 'layout', label: 'Site Layouts' },
   { area: 'settings', label: 'Settings' },
 ];
 

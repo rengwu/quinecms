@@ -31,7 +31,16 @@
   align-self: flex-start;
   margin-left: 14px;
 }
+.choice {
+  position: relative;
+}
+.choose::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+}
 .choose {
+  width: 100%;
   border: 0;
   background: none;
   color: inherit;

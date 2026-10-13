@@ -1,0 +1,21 @@
+
+> quinecms@0.1.0 test <project-root>
+> pnpm prepare:blocks && vitest run
+
+
+> quinecms@0.1.0 prepare:blocks <project-root>
+> node scripts/generate-blocks.mjs
+
+Registered 128 block versions.
+Registered 5 layout versions.
+
+ RUN  v5.0.3 <project-root>
+
+
+ Test Files  37 passed (37)
+      Tests  258 passed (258)
+   Start at  23:16:50
+   Duration  41.64s (tests 50%, import 31%, environment 13%, transform 6%)
+
+    Isolate  37 workers spawned · ~949ms startup each (spawn + environment, per file)
+             at least ~2.95s faster with isolate: false — reuses workers across files instead of one per file

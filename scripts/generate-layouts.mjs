@@ -67,27 +67,22 @@ ${definitions.map(({ definition: d, sources }) => `${JSON.stringify(`${d.id}@${d
   console.log(`Registered ${definitions.length} layout versions.`);
   // Registry-only generation lets the validator inspect unfinished site drafts.
   if (!site) return;
-  const active = site.layout ?? { id: 'starter', version: 1 };
-  const selected = definitions.find(
-    ({ definition: d }) => d.id === active.id && d.version === active.version,
-  );
-  if (!selected)
-    throw new Error(`Missing installed layout ${active.id}@${active.version}`);
-  await writeFile(
-    'src/generated/SelectedHead.astro',
-    selected.sources.headComponent
-      ? `---
+  for (const [index, selected] of definitions.entries()) {
+    await writeFile(
+      `src/generated/LayoutHead${index}.astro`,
+      selected.sources.headComponent
+        ? `---
 import Head from ${JSON.stringify(selected.sources.headComponent)};
 import { activeLayout } from '../core/layouts';
 const { content } = Astro.props;
 ---
 <Head settings={activeLayout(content.site).settings} content={content} />
 `
-      : '---\n---\n',
-  );
-  await writeFile(
-    'src/generated/SelectedLayout.astro',
-    `---
+        : '---\n---\n',
+    );
+    await writeFile(
+      `src/generated/Layout${index}.astro`,
+      `---
 import Layout from ${JSON.stringify(selected.sources.component)};
 import { activeLayout } from '../core/layouts';
 const { content } = Astro.props;
@@ -95,5 +90,7 @@ const { settings } = activeLayout(content.site);
 ---
 <Layout {content} {settings} ${selected.definition.activation === 'never' ? '' : 'client:load'}><slot /></Layout>
 `,
-  );
+    );
+  }
+  return definitions.map(({ definition }) => definition);
 }

@@ -10,6 +10,7 @@ import { createHash } from 'node:crypto';
 import semver from 'semver';
 import blocks from '../blocks.config.mjs';
 import { publicRoutes } from '../src/core/routes.ts';
+import { pageLayout } from '../src/core/layout-state.ts';
 import { generateLayouts } from './generate-layouts.mjs';
 // Keep unchanged files in place so a running dev server never sees an empty registry.
 const written = new Set();
@@ -104,7 +105,7 @@ if (process.argv.includes('--registry-only')) {
 }
 
 const site = JSON.parse(await readFile('content/site.json', 'utf8'));
-await generateLayouts(writeFile, site);
+const installedLayouts = await generateLayouts(writeFile, site);
 const footerIndex = site.footer
   ? defs.findIndex(
       (d) =>
@@ -132,7 +133,7 @@ const {content}=Astro.props;
 `,
 );
 
-const content = { pages: [], collections: [], entries: [] };
+const content = { site, pages: [], collections: [], entries: [] };
 async function walk(dir, kind) {
   const entries = await readdir(dir, { withFileTypes: true }).catch((error) => {
     if (error.code === 'ENOENT') return [];
@@ -153,6 +154,12 @@ await mkdir('src/generated/pages', { recursive: true });
 const routes = [];
 for (const { path, page, entry } of publicRoutes(content)) {
   const record = entry ?? page;
+  const design = pageLayout(content, page).design;
+  const layoutIndex = installedLayouts.findIndex(
+    (d) => d.id === design.id && d.version === design.version,
+  );
+  if (layoutIndex < 0)
+    throw Error(`Missing installed layout ${design.id}@${design.version}`);
   if (
     !/^\/(?:[a-zA-Z0-9_-]+\/)*[a-zA-Z0-9_-]*$/.test(path) ||
     /^\/(admin|_astro|assets)(\/|$)/.test(path) ||
@@ -183,12 +190,16 @@ for (const { path, page, entry } of publicRoutes(content)) {
     `src/generated/pages/${record.id}.astro`,
     `---
 import Public from '../../layouts/Public.astro';
+import PageLayout from '../Layout${layoutIndex}.astro';
+import PageHead from '../LayoutHead${layoutIndex}.astro';
+import {contentForPage} from '../../core/layout-state';
 import {loadContent} from '../../core/load';
 import {contextFor} from '../../core/content';
 ${entry ? "import {resolveBlock} from '../../core/bindings';" : ''}
 ${imports}
-const content=await loadContent();
-const page=content.pages.find(p=>p.id===${JSON.stringify(page.id)})!;
+const fullContent=await loadContent();
+const page=fullContent.pages.find(p=>p.id===${JSON.stringify(page.id)})!;
+const content=contentForPage(fullContent,page);
 ${
   entry
     ? `const entry=content.entries.find(e=>e.id===${JSON.stringify(entry.id)})!;
@@ -199,7 +210,7 @@ const blocks=page.blocks.map(b=>resolveBlock(b,entry.values,content,collection.f
 const blocks=page.blocks;`
 }
 ---
-<Public content={content} title={title}>${markup}</Public>
+<Public content={content} title={title}><PageHead slot="head" content={content}/><PageLayout content={content}>${markup}</PageLayout></Public>
 `,
   );
   routes.push({

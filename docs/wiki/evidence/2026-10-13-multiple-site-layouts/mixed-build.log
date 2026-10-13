@@ -1,0 +1,34 @@
+
+> quinecms@0.1.0 build <mixed-layout-fixture>
+> pnpm prepare:blocks && astro build
+
+
+> quinecms@0.1.0 prepare:blocks <mixed-layout-fixture>
+> node scripts/generate-blocks.mjs
+
+Registered 128 block versions.
+Registered 5 layout versions.
+23:02:13 [types] Generated 174ms
+23:02:13 [build] output: "static"
+23:02:13 [build] mode: "static"
+23:02:13 [build] directory: <mixed-layout-fixture>/dist/
+23:02:13 [build] Collecting build info...
+23:02:13 [build] ✓ Completed in 250ms.
+23:02:13 [build] Building static entrypoints...
+23:02:14 [vite] ✓ built in 357ms
+23:02:14 [vite] ✓ built in 210ms
+23:02:14 [build] Rearranging server assets...
+
+ generating static routes
+23:02:14   ├─ /admin/index.html (+930ms)
+23:02:15   ├─ /blocks/index.html (+21ms)
+23:02:15   ├─ /chartr/index.html (+11ms)
+23:02:15   ├─ /journal/a-slower-way-to-build/index.html (+10ms)
+23:02:15   ├─ /journal/keep-the-essentials/index.html (+7ms)
+23:02:15   ├─ /journal/index.html (+5ms)
+23:02:15   ├─ /index.html (+10ms)
+23:02:15 ✓ Completed in 1.06s.
+
+23:02:15 [build] ✓ Completed in 1.69s.
+23:02:15 [build] 7 page(s) built in 1.94s
+23:02:15 [build] Complete!

@@ -1,9 +1,41 @@
 ---
 title: Open questions
 updated: 2026-10-13
-status: Intr recreation delivered; follow-up proposals recorded
+status: Multiple site layouts settled; site and engine separation deferred
 ---
 # Open questions
+
+## Multiple site layouts — implemented locally
+
+DEC-165–DEC-166 settle the Pages-style table, separate configurations of the same
+design, on/off switches, no disabling or deletion while pages use a layout, and
+at least one active layout at all times. The user requests a simple, predictable
+design under rule-lean; the short grill-form rounds are complete.
+
+The [first answers](../journal/2026-10-13-grill-c8cb3798-7a1e-4893-82b4-af46d9db9496.md)
+settle new-page assignment, generic-page inheritance, initial activation and
+design changes with a reset warning (DEC-167–DEC-170).
+[Q5](../journal/2026-10-13-grill-5b84ef63-3687-481f-9b0a-04a86e991a33.md)
+limits publication completeness requirements to layouts used by pages (DEC-171),
+while all records retain basic structural checks. No consequential product
+question remains in the [selected scope](multiple-site-layouts.md). The user
+subsequently authorized work-until-grill; multiple configurations are now
+implemented. See [verification](../verification/runs/2026-10-13-multiple-site-layouts.md).
+
+## Separate site repositories and engine — pending grilling
+
+The user proposes an independent repository per site containing content and
+configuration, with some scaffolding/lightweight scripts acceptable, and a shared
+QuineCMS engine obtained during builds. Deployment must be provider agnostic,
+including bare metal. **This is not fully agreed:** the user explicitly requires
+grilling and wants to revisit it after engine adjustments. No implementation or
+new architecture decision is authorized now.
+
+The [discussion record](site-engine-separation.md) preserves the proposed structure,
+pinned-checkout/package options, version and update recommendations, current build
+and editor source-check constraints, and questions about custom code, compatibility,
+development, publication and transition. Those mechanics remain proposals. No
+grilling round has started; return to the discussion when the user resumes it.
 
 ## Upload from media fields — delivered locally
 

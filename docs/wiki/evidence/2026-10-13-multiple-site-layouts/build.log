@@ -1,0 +1,35 @@
+
+> quinecms@0.1.0 build <project-root>
+> pnpm prepare:blocks && astro build
+
+
+> quinecms@0.1.0 prepare:blocks <project-root>
+> node scripts/generate-blocks.mjs
+
+Registered 128 block versions.
+Registered 5 layout versions.
+23:17:33 [vite] Re-optimizing dependencies because vite config has changed
+23:17:33 [types] Generated 146ms
+23:17:33 [build] output: "static"
+23:17:33 [build] mode: "static"
+23:17:33 [build] directory: <project-root>/dist/
+23:17:33 [build] Collecting build info...
+23:17:33 [build] ✓ Completed in 205ms.
+23:17:33 [build] Building static entrypoints...
+23:17:34 [vite] ✓ built in 297ms
+23:17:34 [vite] ✓ built in 190ms
+23:17:34 [build] Rearranging server assets...
+
+ generating static routes
+23:17:34   ├─ /admin/index.html (+998ms)
+23:17:35   ├─ /blocks/index.html (+23ms)
+23:17:35   ├─ /chartr/index.html (+9ms)
+23:17:35   ├─ /journal/a-slower-way-to-build/index.html (+8ms)
+23:17:35   ├─ /journal/keep-the-essentials/index.html (+6ms)
+23:17:35   ├─ /journal/index.html (+6ms)
+23:17:35   ├─ /index.html (+12ms)
+23:17:35 ✓ Completed in 1.12s.
+
+23:17:35 [build] ✓ Completed in 1.67s.
+23:17:35 [build] 7 page(s) built in 1.91s
+23:17:35 [build] Complete!

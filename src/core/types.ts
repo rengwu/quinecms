@@ -18,6 +18,8 @@ export interface Page extends Envelope {
   kind: 'static' | 'generic';
   path?: string;
   title: string;
+  /** Required in sites with saved layout configurations. */
+  layoutId?: string;
   blocks: Block[];
 }
 export interface Entry extends Envelope {
@@ -84,6 +86,8 @@ export interface Media extends Envelope {
 }
 export interface Site extends Envelope {
   globals: Values;
+  layouts?: SiteLayout[];
+  /** Previous single-layout format; also used in an ephemeral render context. */
   layout?: LayoutSelection;
   /** Legacy Site Options, read losslessly into the starter layout. */
   title?: string;
@@ -95,6 +99,12 @@ export interface LayoutSelection {
   id: string;
   version: number;
   settings: Values;
+}
+export interface SiteLayout {
+  id: string;
+  name: string;
+  active: boolean;
+  design: LayoutSelection;
 }
 export interface LayoutDefinition {
   id: string;

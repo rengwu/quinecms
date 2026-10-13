@@ -5,6 +5,22 @@ status: Accepted
 ---
 # QuineCMS
 
+Implemented: [multiple site layouts](features/site-layouts.md), following the
+[completed scoped interview](discussions/multiple-site-layouts.md) and subsequent
+work-until-grill authorization. DEC-165–DEC-171 cover the table, independent
+configurations, guarded switches/deletion, explicit page assignment, generic-page
+inheritance and confirmed design resets. Unused layouts may remain incomplete.
+[Verification](verification/runs/2026-10-13-multiple-site-layouts.md) records local
+checks, mixed-design public builds and browser observations.
+
+Pending discussion: [separate site repositories and the QuineCMS engine](discussions/site-engine-separation.md).
+The user wants to explore lightweight site repositories that obtain the shared
+engine for portable builds, including bare metal. **The architecture is not fully
+agreed and still requires grilling.** Implementation is deferred until after
+engine adjustments and further discussion; the topic preserves candidate designs,
+current source/publishing constraints and questions to resume. No new architecture
+decision or implementation is recorded.
+
 The project is now **QuineCMS** (DEC-164), with package name `quinecms` and updated
 login/dashboard branding, documentation and example backups. Existing drafts and
 backups remain readable. [Rename verification](verification/runs/2026-10-13-quinecms-rename.md)
@@ -12,7 +28,7 @@ covers 244 tests, production checks and a Chrome login/dashboard check; it also
 records editorial name normalization in historical text evidence.
 
 All themes now share the [main dashboard](features/site-layouts.md#one-dashboard-for-all-themes-dec-163)
-(DEC-163). Run `pnpm dev`; choose any installed theme in Site Layout and any block
+(DEC-163). Run `pnpm dev`; choose any installed theme in Site Layouts and any block
 theme through Add block → All themes. The former layout whitelist is removed.
 Reference example runners remain optional sample-content tools.
 [Verification](verification/runs/2026-10-13-unified-dashboard.md) covers all 231

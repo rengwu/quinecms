@@ -82,17 +82,25 @@ For new records, the canonical layout shape is a useful starting point:
   "formatVersion": 1,
   "id": "site_main",
   "globals": {},
-  "layout": {
-    "id": "starter",
-    "version": 1,
-    "settings": { "title": "Client site", "navigation": [] }
-  }
+  "layouts": [{
+    "id": "layout_main",
+    "name": "Main layout",
+    "active": true,
+    "design": {
+      "id": "starter",
+      "version": 1,
+      "settings": { "title": "Client site", "navigation": [] }
+    }
+  }]
 }
 ```
 
 That selects Starter as an example, not a design requirement. An installed custom
-layout can use its own settings. Public-site content spacing belongs to the active
-layout settings (`contentMaxWidth`, `pageGutter` in the built-in layouts). Starter
+design can use its own settings, and multiple named configurations can use the
+same design independently. Every page, including a generic page, assigns an active
+configuration by `layoutId`; entries inherit their generic page’s assignment. At
+least one layout must be active, and used layouts cannot be disabled or deleted.
+Public-site content spacing belongs to the assigned layout settings (`contentMaxWidth`, `pageGutter` in the built-in layouts). Starter
 uses 1200px/0px defaults and chartr 1512px/40px. Switching layout/version initializes
 the selected manifest's defaults. Styling tokens are optional inputs for block authors.
 
@@ -102,6 +110,7 @@ A static page might begin as:
 {
   "formatVersion": 1,
   "id": "page_home",
+  "layoutId": "layout_main",
   "kind": "static",
   "path": "/",
   "title": "Home",
@@ -136,7 +145,7 @@ Map visible sections and client tasks to builder capabilities before coding:
 
 | Reference need | Builder location | Client location |
 | --- | --- | --- |
-| Shared shell, typography, navigation | Registered Site Layout | Site Layout |
+| Shared shell, typography, navigation | Registered layout design and named configuration | Site Layouts |
 | Section copy/images/actions | Registered block fields | Pages → page → block |
 | A short list owned by one section | Block `list` fields with `_rowId` rows | The block's named list |
 | Independent reusable content | Collection and entries, when useful | Content and Schemas |
@@ -144,7 +153,7 @@ Map visible sections and client tasks to builder capabilities before coding:
 | New interaction | Block renderer and activation | Preview and public site |
 
 All installed themes and blocks are available together in the main dashboard:
-run `pnpm dev`, use Site Layout → Change layout and Pages → Add block → All themes.
+run `pnpm dev`, use Site Layouts → Add layout and Pages → Add block → All themes.
 The following example runners only isolate sample records for developer checks;
 they do not unlock additional themes or blocks.
 

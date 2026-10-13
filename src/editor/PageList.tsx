@@ -1,17 +1,19 @@
 import { Button } from '@cloudflare/kumo/components/button';
 import { Table } from '@cloudflare/kumo/components/table';
 import { PlusIcon } from '@phosphor-icons/react';
-import type { Page } from '../core/types';
+import type { Page, SiteLayout } from '../core/types';
 import styles from './editor.module.css';
 import { useAdminTheme } from './AdminTheme';
 
 export default function PageList({
   pages,
+  layouts,
   busy,
   onAdd,
   onOpen,
 }: {
   pages: Page[];
+  layouts: SiteLayout[];
   busy: boolean;
   onAdd(): void;
   onOpen(id: string): void;
@@ -42,6 +44,7 @@ export default function PageList({
                 <Table.Head>Page title</Table.Head>
                 <Table.Head>Type</Table.Head>
                 <Table.Head>URL path</Table.Head>
+                <Table.Head>Site layout</Table.Head>
               </Table.Row>
             </Table.Header>
             <Table.Body>
@@ -70,11 +73,15 @@ export default function PageList({
                   <Table.Cell>
                     {page.kind === 'static' ? page.path || '—' : '—'}
                   </Table.Cell>
+                  <Table.Cell>
+                    {layouts.find((layout) => layout.id === page.layoutId)
+                      ?.name ?? 'Unavailable'}
+                  </Table.Cell>
                 </Table.Row>
               ))}
               {!pages.length && (
                 <Table.Row>
-                  <Table.Cell colSpan={3}>
+                  <Table.Cell colSpan={4}>
                     <p className={styles.muted}>No pages yet.</p>
                   </Table.Cell>
                 </Table.Row>

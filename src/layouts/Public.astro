@@ -1,7 +1,5 @@
 ---
 import type { Content } from '../core/types';
-import SelectedLayout from '../generated/SelectedLayout.astro';
-import SelectedHead from '../generated/SelectedHead.astro';
 import { layoutTitle } from '../core/layouts';
 import '../styles/public.css';
 interface Props {
@@ -18,11 +16,9 @@ const { content, title } = Astro.props;
     <meta name="viewport" content="width=device-width" />
     <meta name="generator" content={Astro.generator} />
     <title>{[title, layoutTitle(content.site)].filter(Boolean).join(' · ')}</title>
-    <SelectedHead content={content} />
+    <slot name="head" />
   </head>
   <body data-layout-surface>
-    <SelectedLayout content={content}>
-      <slot />
-    </SelectedLayout>
+    <slot />
   </body>
 </html>

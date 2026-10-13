@@ -300,7 +300,18 @@ export function incomingUsage(content: Content): Map<string, Usage[]> {
     for (const [key, child] of Object.entries(value))
       links(child, ownerId, `${path}.${key}`);
   }
-  links(content.site, content.site.id, 'site');
+  if (Array.isArray(content.site.layouts)) {
+    for (const layout of content.site.layouts) {
+      links(layout.design.settings, layout.id, 'settings');
+      for (const page of content.pages)
+        if (page.layoutId === layout.id)
+          add(layout.id, {
+            ownerId: page.id,
+            label: page.title,
+            path: 'layoutId',
+          });
+    }
+  } else links(content.site, content.site.id, 'site');
   for (const page of content.pages) links(page.blocks, page.id, 'blocks');
   for (const entry of content.entries) links(entry.values, entry.id, 'values');
   return index;

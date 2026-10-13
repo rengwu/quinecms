@@ -5,6 +5,11 @@ status: Accepted
 ---
 # Decisions
 
+Multiple site layouts: DEC-165–DEC-171 record the user's requirements and completed
+grill answers. The [scoped design](../discussions/multiple-site-layouts.md) is
+settled and implemented locally following work-until-grill authorization. See
+[verification](../verification/runs/2026-10-13-multiple-site-layouts.md).
+
 Local authoring direction: DEC-134 prioritizes creative freedom and advisory guidance for agents working in cloned repositories. The user approves the short entry point, practical guide and dependable local validation. Remote agent access and MCP remain excluded. The [original investigation](../discussions/local-agent-authoring.md) records the findings; the [current guide](../features/local-authoring.md) describes the delivered workflow.
 
 Current direction: DEC-109 permits a breaking pre-production redesign. Earlier decisions remain historical/product context, rather than compatibility obligations for the replacement model.
@@ -551,3 +556,31 @@ Implementation was subsequently authorized with work-until-grill. See the
 | ID | Decision | Basis and rationale |
 | --- | --- | --- |
 | DEC-164 | Name the project QuineCMS for display text, using lowercase `quinecms` for repository names, URLs, routes, slugs, filesystem paths, the package and new machine identifiers. Replace the former project name across repository text. | Direct user instruction, including the explicit lowercase-path follow-up. The implementation retains two read-only compatibility identifiers so existing tab drafts and backup files remain usable; it does not require a content migration. Historical text is editorially normalized and original screenshots are preserved. See [verification and normalization record](../verification/runs/2026-10-13-quinecms-rename.md). |
+
+## Multiple site layouts — direct instructions, 2026-10-13
+
+| ID | Decision | Basis and rationale |
+| --- | --- | --- |
+| DEC-165 | Manage multiple saved site layouts in a table like Pages; allow multiple configurations of the same design with independent settings. | The user requests multiple layouts and explicitly confirms two layouts from one design with different settings. This revises the earlier single-selection direction; subsequent interview outcomes complete the [scoped design](../discussions/multiple-site-layouts.md). |
+| DEC-166 | Put on/off switches in the layout table. Prevent turning off or deleting a layout used by pages, and always retain at least one active layout. | The initial request prohibits deleting a used layout; the follow-up explicitly requires switches, forbids turning off used layouts, and requires at least one active layout. These are draft-state invariants as well as eventual publication requirements. |
+
+## Multiple site layouts — first grill round, 2026-10-13
+
+The [submitted answers](../journal/2026-10-13-grill-c8cb3798-7a1e-4893-82b4-af46d9db9496.md)
+establish the following planned behavior. No implementation is authorized by this
+interview alone.
+
+| ID | Decision | Basis and rationale |
+| --- | --- | --- |
+| DEC-167 | Select the only active layout automatically on page creation; if several are active, require a choice before Create. Store an explicit assignment and preserve blocks when it changes. | Q1 selects this approach over a separate default-layout setting. |
+| DEC-168 | Every collection entry uses the layout of its generic page; provide no entry-level override. A generic page counts as layout usage even without entries. | Q2 selects the template-owned assignment, keeping the page/template model simple. |
+| DEC-169 | Newly created layouts start active without changing existing page assignments. Inactive layouts retain their settings and cannot be selected by pages. | Q3 selects Start on in the presented lifecycle. |
+| DEC-170 | Allow an existing saved layout to change design with a warning before resetting settings to the selected design's defaults; all pages using it receive that change. | Q4 explicitly selects this alternative over the fixed-design recommendation. |
+
+## Multiple site layouts — publication round, 2026-10-13
+
+| ID | Decision | Basis and rationale |
+| --- | --- | --- |
+| DEC-171 | Require complete layout settings for publication only when pages use that layout. Unused active or inactive layouts may remain unfinished; all records still undergo basic structural checks and preserve the activation/reference invariants. | [Q5](../journal/2026-10-13-grill-5b84ef63-3687-481f-9b0a-04a86e991a33.md) selects this so work on an unused layout does not block existing pages. Generic pages count as usage even without entries. Implementation was subsequently authorized with work-until-grill. |
+
+DEC-165–DEC-171 are implemented in the [current Site Layouts contract](../features/site-layouts.md). The [verification run](../verification/runs/2026-10-13-multiple-site-layouts.md) records local checks and limits; the interview itself did not authorize implementation.

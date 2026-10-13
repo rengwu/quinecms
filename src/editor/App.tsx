@@ -6,10 +6,17 @@ import CatalogHeader from './CatalogHeader';
 import DocumentCreation from './DocumentCreation';
 import BlockCreation from './BlockCreation';
 import LayoutSurface, { PageBlocks } from './LayoutSurface';
-import LayoutSettings from './LayoutSettings';
+import SiteLayouts from './SiteLayouts';
+import LayoutChoice from './LayoutChoice';
 import StorageSettings from './StorageSettings';
 import MediaUpload, { MediaUploadContext } from './MediaUpload';
-import { migrateSite, activeLayout, layoutKey } from '../core/layouts';
+import {
+  migrateSite,
+  activeLayout,
+  layoutKey,
+  siteLayouts,
+  contentForPage,
+} from '../core/layouts';
 import { PanelNavigation } from './PanelNavigation';
 import { Button } from '@cloudflare/kumo/components/button';
 import { Input } from '@cloudflare/kumo/components/input';
@@ -225,18 +232,12 @@ function Editor({
     } | null>(null),
     [size, setSize] = useState('desktop');
   const importRef = useRef<HTMLInputElement>(null);
-  const [layoutPageId, setLayoutPageId] = useState('');
+  const [layoutId, setLayoutId] = useState('');
   const [pendingDocument, setPendingDocument] = useState<Page | Entry | null>(
     null,
   );
   const [pendingBlock, setPendingBlock] = useState<Block | null>(null);
-  const page =
-    tab === 'layout'
-      ? (content.pages.find((p) => p.id === layoutPageId) ??
-        content.pages.find((p) => p.id === selected) ??
-        content.pages.find((p) => p.path === '/') ??
-        content.pages[0])
-      : content.pages.find((p) => p.id === selected);
+  const page = content.pages.find((p) => p.id === selected);
   const doc = page ?? content.entries.find((e) => e.id === selected);
   const selectedBlock = page?.blocks.find((b) => b.id === blockId);
   const blockDefinition =
@@ -259,9 +260,7 @@ function Editor({
   );
   const editingBlock = editingDocument && Boolean(selectedBlock);
   const listingPages = tab === 'pages' && !editingDocument && !pendingDocument;
-  const showPreview =
-    !pendingDocument &&
-    ((tab === 'pages' && editingDocument) || tab === 'layout');
+  const showPreview = !pendingDocument && tab === 'pages' && editingDocument;
   // Creation stays outside content/recovery until Create, but renders through
   // the same page and context as a committed block.
   const previewContent = useMemo(
@@ -279,9 +278,13 @@ function Editor({
     [content, page, pendingBlock],
   );
   const previewPage = previewContent.pages.find((p) => p.id === page?.id);
+  const renderContent = previewPage
+    ? contentForPage(previewContent, previewPage)
+    : previewContent;
   const EditorSurface = showPreview ? 'aside' : 'main';
   function openArea(area: EditorArea) {
     setSchemaId('');
+    setLayoutId('');
     setPendingDocument(null);
     setPendingBlock(null);
     setModal('');
@@ -308,7 +311,9 @@ function Editor({
       setBlockId(target.blockId ?? '');
     } else {
       openArea(target.area);
-      if (target.area !== 'layout') setSchemaId(target.id);
+      if (target.area === 'layout')
+        setLayoutId(target.id ?? siteLayouts(content.site)[0]?.id ?? '');
+      else setSchemaId(target.id);
     }
   }
   function entryTitle(entry: Entry) {
@@ -577,9 +582,13 @@ function Editor({
     });
   }
   function addPage(kind: Page['kind']) {
+    const available = siteLayouts(content.site).filter(
+      (layout) => layout.active,
+    );
     const p: Page = {
       formatVersion: 1,
       id: id('page'),
+      layoutId: available.length === 1 ? available[0].id : '',
       kind,
       ...(kind === 'static'
         ? { path: '/new-page-' + content.pages.length }
@@ -608,6 +617,15 @@ function Editor({
   }
   function createDocument() {
     if (!pendingDocument) return;
+    if (
+      'kind' in pendingDocument &&
+      !siteLayouts(content.site).some(
+        (layout) => layout.active && layout.id === pendingDocument.layoutId,
+      )
+    ) {
+      setError('Choose a site layout before creating the page.');
+      return;
+    }
     setContent(
       'kind' in pendingDocument
         ? { ...content, pages: [...content.pages, pendingDocument] }
@@ -672,7 +690,7 @@ function Editor({
             Menu
           </Button>
           <span className={styles.brand}>QuineCMS</span>
-          {showPreview && (
+          {(showPreview || (tab === 'layout' && !!layoutId)) && (
             <Button
               onClick={() => setSize(size === 'desktop' ? 'mobile' : 'desktop')}
               aria-label="Toggle preview width"
@@ -742,9 +760,20 @@ function Editor({
         >
           <Navigation active={tab} disabled={busy} onSelect={openArea} />
         </aside>
-        {listingPages ? (
+        {tab === 'layout' ? (
+          <SiteLayouts
+            content={content}
+            selected={layoutId}
+            onSelect={setLayoutId}
+            size={size}
+            busy={busy}
+            onChange={setContent}
+            onOpen={openUsage}
+          />
+        ) : listingPages ? (
           <PageList
             pages={content.pages}
+            layouts={siteLayouts(content.site)}
             busy={busy}
             onAdd={() => setModal('page')}
             onOpen={openDocument}
@@ -766,7 +795,7 @@ function Editor({
                       collectionId,
                       pendingDocument?.id,
                       pendingBlock?.id,
-                      layoutKey(activeLayout(content.site)),
+                      layoutKey(activeLayout(renderContent.site)),
                     ].join(':')}
                   >
                     {pendingDocument ? (
@@ -999,6 +1028,13 @@ function Editor({
                                             }
                                           />
                                         </div>
+                                        <LayoutChoice
+                                          content={content}
+                                          value={doc.layoutId}
+                                          onChange={(layoutId) =>
+                                            changeDoc({ ...doc, layoutId })
+                                          }
+                                        />
                                         {doc.kind === 'static' && (
                                           <div className={styles.field}>
                                             <Label htmlFor="page-path">
@@ -1301,14 +1337,6 @@ function Editor({
                             </div>
                           </PanelSection>
                         )}
-                        {tab === 'layout' && (
-                          <LayoutSettings
-                            content={content}
-                            previewPage={page}
-                            onPreviewPage={setLayoutPageId}
-                            onChange={setContent}
-                          />
-                        )}
                         {tab === 'settings' && (
                           <>
                             <PanelSection title="Repository">
@@ -1441,7 +1469,7 @@ function Editor({
                                           setContent(factoryReset(content));
                                           setSelected('');
                                           setCollectionId('');
-                                          setLayoutPageId('');
+                                          setLayoutId('');
                                           openArea('settings');
                                           setMessage(
                                             'Site reset. Save the draft to keep these changes.',
@@ -1470,20 +1498,20 @@ function Editor({
                 aria-label="Live preview"
               >
                 <LayoutSurface
-                  content={previewContent}
+                  content={renderContent}
                   onNavigate={(url, documentId) => {
                     if (busy) return;
                     if (documentId) openDocument(documentId);
                     else {
                       const id = Object.entries(
-                        contextFor(content, 'navigation').links,
+                        contextFor(renderContent, 'navigation').links,
                       ).find(([, path]) => path === url)?.[0];
                       if (id) openDocument(id);
                     }
                   }}
                 >
                   <PageBlocks
-                    content={previewContent}
+                    content={renderContent}
                     page={previewPage}
                     selectedId={pendingBlock?.id ?? blockId}
                     revealId={pendingBlock?.id ?? blockId}
@@ -1616,7 +1644,7 @@ function Editor({
                   <>
                     <BlockCatalog
                       definitions={definitions}
-                      content={content}
+                      content={renderContent}
                       kind={page?.kind ?? 'static'}
                       onAdd={(d) => {
                         if (page) setPendingBlock(newBlock(d));

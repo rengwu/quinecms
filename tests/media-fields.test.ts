@@ -3,6 +3,7 @@ import { afterEach, expect, it, vi } from 'vitest';
 import { act, createElement } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import App from '../src/editor/App';
+import { migrateSite } from '../src/core/layouts';
 import { upload } from '../src/integrations/media';
 import { readRecovery } from '../src/editor/recovery';
 import type { Block, Content, Media } from '../src/core/types';
@@ -348,12 +349,15 @@ it('keeps an upload from a cancelled new block without inserting the block', asy
 
 it('retains both layout settings and the uploaded record when a layout replaces its content snapshot', async () => {
   await mount();
-  await click('Site Layout');
+  await click('Site Layouts');
+  await click('Main layout');
   await chooseFile('File for Logo');
-  expect((draft().site.layout!.settings.header as any).logo).toEqual({
-    mediaId: uploaded.id,
-    alt: '',
-  });
+  expect((draft().site.layouts![0].design.settings.header as any).logo).toEqual(
+    {
+      mediaId: uploaded.id,
+      alt: '',
+    },
+  );
   expect(draft().media).toEqual([oldMedia, uploaded]);
   expect(panel().querySelector('img[alt="New image"]')).not.toBeNull();
 });
@@ -409,7 +413,7 @@ it('uses the same upload path from Media and ignores a cancelled file selection'
   await chooseFile('File to upload', null);
   expect(upload).not.toHaveBeenCalled();
   await chooseFile('File to upload');
-  expect(draft().pages).toEqual(content.pages);
+  expect(draft().pages).toEqual(migrateSite(content).pages);
   expect(draft().media).toEqual([oldMedia, uploaded]);
   expect(panel().textContent).toContain('Save the draft');
 });

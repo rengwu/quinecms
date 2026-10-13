@@ -1,32 +1,42 @@
 ---
-title: Site Layout library
+title: Site Layouts
 updated: 2026-10-13
 ---
-# Site Layout library
+# Site Layouts
 
 **ID:** FEAT-site-layouts
 
 ## Intent and basis
 
-DEC-092–DEC-105 and DEC-107 select one versioned site wrapper, unrestricted author-owned settings, active-settings-only persistence, optional styling variables and a repository-based layout library. DEC-163 supersedes the picker whitelist: all installed layouts are always available in the same dashboard. DEC-108 requires dedicated nested editing levels. DEC-130 moves content spacing into the layout with author-defined defaults, superseding DEC-097. See the [accepted design](../discussions/site-layouts.md) and [implementation journal](../journal/2026-10-06-site-layouts-implementation.md).
+DEC-165–DEC-171 replace the single-selection model with independently named layout configurations and explicit page assignments. The [multiple-layout discussion](../discussions/multiple-site-layouts.md) records the accepted scope. DEC-092–DEC-105 and DEC-107 established versioned designs, unrestricted author-owned settings, optional styling variables and a repository-based design library. DEC-163 supersedes the picker whitelist: all installed layouts are always available in the same dashboard. DEC-108 requires dedicated nested editing levels. DEC-130 moves content spacing into the layout with author-defined defaults, superseding DEC-097. See the [accepted design](../discussions/site-layouts.md) and [implementation journal](../journal/2026-10-06-site-layouts-implementation.md).
 
 ## Entry points
 
-Open `/admin/` → **Site Layout**. Select a page for the live preview and use the toolbar to switch desktop/mobile widths. **Change layout** opens the searchable catalog. A card applies its defaults to the local draft; its separate Preview action renders the selected page without changing the draft. Save draft and Publish use the existing workflow.
+Open `/admin/` → **Site Layouts** for a Pages-style table showing the saved name, design/version, page count and Active switch. Open a row to edit its name/settings beside a live preview. Select a preview page and use the toolbar to switch desktop/mobile widths.
+
+**Add layout** opens the searchable design catalog, then a named creation form. Create layout adds an active configuration with independent settings; Cancel leaves the draft unchanged. Multiple configurations can use the same design. **Change design** on an existing layout uses the same catalog, followed by a reset confirmation naming the layout and affected page count. Catalog previews never mutate the draft. Save draft and Publish remain separate.
+
+Turning a layout off or deleting it requires zero assigned pages. At least one active layout must remain, even with no pages. Off retains settings and removes the layout from page choices. The usage list opens the assigned pages so they can be reassigned first.
 
 The visible title and close button share a fixed header row above the scrolling catalog and preview. Hover highlights the whole card background, including the Preview row; the rendered thumbnail retains its own appearance.
 
-**Site Layout → Content spacing** edits content max-width and page gutter. Starter defaults to 1200px/0px; chartr defaults to 1512px/40px. Clearing either override uses the active layout’s default. **Settings** contains Repository connection, admin Appearance, Backups, Session and Factory reset. Other standard admin areas retain their existing layout. Generic page previews preserve field placeholders.
+**Site Layouts → a layout → Content spacing** edits content max-width and page gutter. Starter defaults to 1200px/0px; chartr defaults to 1512px/40px. Clearing either override uses the active layout’s default. **Settings** contains Repository connection, admin Appearance, Backups, Session and Factory reset. Other standard admin areas retain their existing layout. Generic page previews preserve field placeholders.
 
 ## Stored contract and transitions
 
 When editing Starter's inherited header navigation, internal reference records track only the inherited links still present with the same destination. Removing or retargeting a navigation item clears its old deletion blocker; unchanged links remain protected and follow their edited labels/order. This repairs hidden stale references while retaining the existing URL-based header controls. See the [reference-summary run](../verification/runs/2026-10-08-readable-usage.md).
 
-Canonical `site.layout` is `{ id, version, settings }`. `settings` is the author's JSON object. Only the active selection is stored. Selecting a different layout or retained version starts with a fresh copy of that definition's defaults; selecting the exact current version does nothing. Pages, blocks, collections, entries and media remain intact. Spacing follows the selected layout’s fresh defaults, like its other settings. No inactive settings cache, automatic upgrade, or guessed field mapping exists.
+Canonical `site.layouts` is an array of `{ id, name, active, design: { id, version, settings } }` in `content/site.json`. The outer ID identifies a saved configuration; the design ID/version identifies installed code. Settings belong to each configuration, including inactive ones. Pages persist `layoutId`. A new page selects the sole active layout automatically; with several active layouts, the user must choose before Create. There is no default setting or ongoing inheritance. Reassigning a page preserves its blocks.
 
-Legacy `site.title`, `navigation`, `header`, `footer` and appearance globals convert into Starter v1 settings when loaded into the editor, imported, recovered or discarded back to the source snapshot. The existing legacy Starter reader includes width/gutter in those settings. Canonical spacing is stored as `site.layout.settings.contentMaxWidth` and `pageGutter`; `site.globals` does not override layout output. No migration of previously canonical global spacing is added. Public builds can render unchanged legacy fixtures; a subsequent editor save writes the canonical shape. Missing retained implementations preserve the data but prevent successful rendering/publication until the source is restored.
+Generic pages own the layout for all their collection entries, with no per-entry override. A generic page counts as usage even when no entry produces a route.
 
-Factory reset is a separate Settings action: after confirmation it clears the entire local content draft and restores the installed Starter v1 defaults, including when Starter is already active. It retains the site ID. See the [reset contract](editor.md#factory-reset-and-repository-settings).
+Changing a design or retained version resets only that configuration to fresh defaults after confirmation. All pages assigned to it receive the change. Other layouts, page blocks, collections, entries and media remain intact. Selecting the exact current design/version does nothing; there is no automatic upgrade or guessed field mapping.
+
+Legacy `site.layout` or the earlier Site Options fields are read into one active **Main layout**, with explicit assignments for existing pages. Saved settings and content are preserved. Public builds can read unchanged legacy records; subsequent editor saves use the new shape. `site.globals` does not override layout output. Missing retained implementations block structural validation, even for unused configurations.
+
+All configurations must be structurally valid, all page assignments must target active layouts, and at least one layout must be active. Only layouts referenced by pages require complete required settings to publish. Unused active or inactive layouts may remain incomplete. The same checks apply to import, Git drafts, publication and local builds.
+
+Factory reset clears the local content draft and creates one active Main layout using Starter v1 defaults. It retains the site ID. See the [reset contract](editor.md#factory-reset-and-repository-settings).
 
 ### Starter factory defaults (DEC-138)
 
@@ -37,6 +47,10 @@ New Starter selections and Factory reset use the user's supplied screenshots: si
 Install `src/site-layouts/<id>/vN/definition.json`, a React wrapper, React settings component and pure policy module; register the directory in `layouts.config.mjs`, then rebuild. Retain previous version directories, settings components and dependencies. Both installed versions remain resolvable; the editor offers an explicit version selector when alternatives exist.
 
 The manifest declares stable `id`, integer `version`, `label`, `description`, `defaults`, `fields`, `component`, `settingsComponent`, `policy`, optional `headComponent`, and `activation` (`never` or `load`). An empty `fields` list is valid for custom settings. `LayoutProps` supplies `settings`, public `content`, block `children`, optional `preview` and `onNavigate`. The only required visual responsibility is to contain the block children. Public rendering and editor preview share the wrapper source. An optional server-rendered Head component supplies metadata/assets; it is not mounted inside the preview document.
+
+Generated public routes import their assigned design wrapper and optional Head directly. Generic entry routes resolve the generic page's assignment. Editor page previews use the same selection for wrapper, block globals, spacing and title. The layout editor can preview its own configuration with any page without reassigning that page.
+
+`contentForPage` and `contentForLayout` provide render-only content views. In those views, the existing `activeLayout`, `layoutGlobals` and `layoutTitle` APIs resolve the chosen configuration via `site.layout`. Do not save these views: persisted content stores `site.layouts` only. This keeps author components unchanged while supporting per-page selection.
 
 `LayoutSettingsProps` supplies `settings`, `content` and `onChange(settings)`. Authors may build arbitrary React settings UI or reuse `Fields` and `PanelSection`; no universal header/footer/theme schema is imposed. Repeated fields use the editor-wide `PanelNavigation` boundary. Custom drill-down controls must use `PanelLevel` so parent and sibling controls disappear until Back.
 
@@ -57,18 +71,23 @@ compatibility rules remain. Choosing a layout does not restrict the block catalo
 Example directories retain sample records and importable backups; their optional
 developer runners also expose the full catalog. They are not required to select
 or use a theme. The main dashboard edits the current site's content; changing
-its layout preserves content and applies fresh layout defaults, as above.
+a saved layout’s design preserves page content and applies fresh defaults to that configuration, as above.
 
 ## Verification recipe
 
-1. Customize Starter width/gutter, preview chartr and close it. Confirm the candidate uses 1512px/40px and the draft is unchanged. Apply chartr, then Starter: each uses its defaults while content remains intact. Verify custom width, zero gutter, cleared overrides and recovery.
-2. Check Pages and Site Layout previews with static and generic pages. Visit Settings, Content, schemas and Media to confirm their normal admin layout.
+1. Customize Starter width/gutter, preview chartr and close it. Confirm the candidate uses 1512px/40px and the draft is unchanged. Confirm changing the design to chartr, then Starter: each uses its defaults while content remains intact. Verify custom width, zero gutter, cleared overrides and recovery.
+2. Check Pages and Site Layouts previews with static and generic pages. Visit Settings, Content, schemas and Media to confirm their normal admin layout.
 3. Open header/footer list items and a nested dropdown item. Each replaces all parent controls; Back returns exactly one level. Use the same behavior for block lists, entry lists and schema default rows.
-4. Recover a tab and export/import a backup. Confirm active ID/version/settings round-trip and old Site Options convert without losing values.
-5. Open Change layout and verify all installed themes appear. Switch layouts and reopen the catalog: all remain available. Open a page’s Add block catalog and confirm blocks from other themes remain selectable.
+4. Recover a tab and export/import a backup. Confirm every layout ID/name/active state/design/settings and page assignment round-trips; legacy settings remain intact.
+5. Open Add layout or Change design and verify all installed themes appear. Switch layouts and reopen the catalog: all remain available. Open a page’s Add block catalog and confirm blocks from other themes remain selectable.
 6. Install a newer retained version beside an older selected one. Confirm public rendering and both settings/preview loaders stay pinned until explicit selection. Run `pnpm verify`.
 
+7. Create two instances of Starter, edit their settings independently and reassign a page. Check counts, page preview and usage links. Cancel creation/design resets/deletion and confirm no unintended change.
+8. Verify used layouts cannot be disabled/deleted, generic pages count without entries, the last active layout is protected, and unused incomplete layouts do not block publication. Build pages using different designs and check their wrappers, titles, spacing and assets.
+
 ## Verification history
+
+- [Multiple layout configurations](../verification/runs/2026-10-13-multiple-site-layouts.md): lifecycle, assignments, validation, recovery and per-route builds.
 
 - [Card hover and aligned catalog headers](../verification/runs/2026-10-08-layout-catalog.md): automated checks pass; selected browser checks are partially incomplete.
 

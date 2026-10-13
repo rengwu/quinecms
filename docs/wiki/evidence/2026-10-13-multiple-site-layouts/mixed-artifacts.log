@@ -1,0 +1,50 @@
+
+> quinecms@0.1.0 check:build <mixed-layout-fixture>
+> node scripts/check-build.mjs
+
+{
+  "runtimeCopies": {
+    "svelte": 1,
+    "@vue/runtime-dom": 1,
+    "react-dom": 1,
+    "react": 1,
+    "@vue/runtime-core": 1
+  },
+  "pages": [
+    {
+      "page": "admin/index.html",
+      "javascriptModules": 1,
+      "gzipJavaScriptBytes": 1662
+    },
+    {
+      "page": "blocks/index.html",
+      "javascriptModules": 6,
+      "gzipJavaScriptBytes": 88501
+    },
+    {
+      "page": "chartr/index.html",
+      "javascriptModules": 6,
+      "gzipJavaScriptBytes": 41736
+    },
+    {
+      "page": "index.html",
+      "javascriptModules": 6,
+      "gzipJavaScriptBytes": 40936
+    },
+    {
+      "page": "journal/a-slower-way-to-build/index.html",
+      "javascriptModules": 5,
+      "gzipJavaScriptBytes": 88819
+    },
+    {
+      "page": "journal/index.html",
+      "javascriptModules": 0,
+      "gzipJavaScriptBytes": 0
+    },
+    {
+      "page": "journal/keep-the-essentials/index.html",
+      "javascriptModules": 5,
+      "gzipJavaScriptBytes": 88819
+    }
+  ]
+}
