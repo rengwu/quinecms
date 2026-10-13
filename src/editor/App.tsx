@@ -1472,7 +1472,7 @@ function Editor({
                     content={previewContent}
                     page={previewPage}
                     selectedId={pendingBlock?.id ?? blockId}
-                    revealId={pendingBlock?.id}
+                    revealId={pendingBlock?.id ?? blockId}
                     className={styles.previewBlock}
                   />
                   {!previewPage?.blocks.length && (

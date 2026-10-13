@@ -91,7 +91,12 @@ export function PageBlocks({
     // then leave scrolling alone while the author edits fields.
     const observer = new ResizeObserver(() => {
       if (!element.getBoundingClientRect().height) return;
-      element.scrollIntoView({ block: 'start', behavior: 'instant' });
+      element.scrollIntoView({
+        block: 'start',
+        behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches
+          ? 'instant'
+          : 'smooth',
+      });
       observer.disconnect();
     });
     observer.observe(element);

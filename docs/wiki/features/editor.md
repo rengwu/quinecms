@@ -1,6 +1,6 @@
 ---
 title: Visual editing and recovery
-updated: 2026-10-12
+updated: 2026-10-13
 ---
 # Visual editing and recovery
 
@@ -82,6 +82,14 @@ The [block library](block-library.md) adds themed/tagged browsing, shared chrome
 The shared sortable list uses optimistic FLIP animations for page blocks and every repeated-content list. From mouse-down, the carried row follows cursor Y at the original grab offset, with X locked; it is drawn above clipping containers. Neighbors animate into the temporary order over 150ms and interrupted movements start from the current visual position. The blue insertion marker has been removed. Edge scrolling uses a 32px activation band and a capped speed, following Chartr's shared sorter reference. Only the list changes while held; the site's content/preview order updates once on release. Releasing outside still commits, with positions above/below the list resolving to its ends. This explicitly supersedes the earlier outside-release cancellation behavior. Escape, system pointer cancellation, or conflicting content/disabled changes abort safely. Reduced motion retains exact pointer carrying and immediate reordering while skipping FLIP/settle motion.
 
 Create/edit/delete pages and entries; reorder blocks by dragging their rows (Alt+Up/Down with keyboard focus). Kumo supplies admin controls, dialogs, and toasts; its styles are scoped away from preview blocks. Select a block to edit its fields and version. This replaces the parent editor controls, including page fields and the parent back link. Back returns to the same document and restores those controls. Same-key compatible values survive a version switch, unmatched values are null, and Cancel restores the last loaded/saved instance. Unknown versions preserve raw data and prevent publication.
+
+Opening a block also brings it into view in the right preview. This reuses the
+new-block reveal behavior: wait until its preview has a visible height, scroll
+smoothly once, then leave scrolling alone while fields are edited. Reduced-motion
+preferences use an instant scroll instead.
+The 2026-10-13 wiring change passed the 35 editor-navigation tests and type checks.
+Browser automation could open the isolated Intr page but could not reliably
+activate its block controls, so this run did not establish visual scrolling.
 
 Schema rich-text fields and Text blocks provide visual headings, paragraphs, bold/italic, links, and lists with Markdown storage. Uploaded-image references and YouTube embeds round-trip in the visual editor. Unsupported Markdown remains available as source text. Custom React widgets and shared pure validators support compound block fields. Content browses collections → entry lists → schema-defined entry values only. Schemas browses Collections / Objects → definitions → individual fields, with label/key/type/required/options/default controls. Schema editing protects populated keys/types/options. Entries remain in Content and never appear in the Pages table. Add entry is confined to entry lists; Add collection belongs to the schema list. All Add actions (page, block, entry, collection, field and link) use the same blue Kumo primary variant, base size and plus icon. Add block remains aligned right beside Blocks, outside the draggable list. Main navigation preserves all local content edits. Site Layout delegates title, appearance and navigation to the active author settings; Settings owns Repository connection, admin Appearance, Backups, Session and Factory reset; content spacing belongs to Site Layout.
 
