@@ -1,0 +1,221 @@
+{
+  "formatVersion": 1,
+  "id": "page_intr_maison",
+  "kind": "static",
+  "path": "/projects/maison-doree",
+  "title": "Maison Dorée",
+  "blocks": [
+    {
+      "id": "block_intr_maison-hero",
+      "type": "intr-hero",
+      "version": 1,
+      "props": {
+        "heading": "Maison Dorée",
+        "description": "A private residential sanctuary shaped by stillness, natural materials and the art of living well.",
+        "image": {
+          "mediaId": "media_intr_maison_1",
+          "alt": "A stone kitchen island under sculptural pendant lights at Maison Dorée."
+        },
+        "metadata": [
+          {
+            "_rowId": "maison-meta-1",
+            "label": "Client",
+            "value": "Maison Dorée"
+          },
+          {
+            "_rowId": "maison-meta-2",
+            "label": "Location",
+            "value": "Dubai, UAE"
+          },
+          {
+            "_rowId": "maison-meta-3",
+            "label": "Completed",
+            "value": "2025"
+          }
+        ],
+        "scrollLabel": "Explore",
+        "scrollURL": "#project-story"
+      }
+    },
+    {
+      "id": "block_intr_story",
+      "type": "intr-story",
+      "version": 1,
+      "props": {
+        "heading": "A quiet home in Dubai, where warm materials and careful proportions make room for everyday life.",
+        "description": "Maison Dorée brings a restrained palette of stone, timber and soft plaster into a generous residential interior. The aim was a home that feels composed without becoming formal, where each room offers a different way to gather or retreat.\n\nWe developed the layouts, finishes and furniture as one continuous design. Sculptural lighting and crafted details give the spaces character, while natural textures keep them calm and welcoming.",
+        "listHeading": "Process",
+        "items": [
+          {
+            "_rowId": "maison-process-1",
+            "label": "Pre-Concept"
+          },
+          {
+            "_rowId": "maison-process-2",
+            "label": "Concept Design"
+          },
+          {
+            "_rowId": "maison-process-3",
+            "label": "Schematic Design"
+          },
+          {
+            "_rowId": "maison-process-4",
+            "label": "Detail Design"
+          },
+          {
+            "_rowId": "maison-process-5",
+            "label": "Tender Documentation"
+          },
+          {
+            "_rowId": "maison-process-6",
+            "label": "Construction Support"
+          }
+        ],
+        "anchor": "project-story"
+      }
+    },
+    {
+      "id": "block_intr_gallery-lead",
+      "type": "intr-gallery",
+      "version": 1,
+      "props": {
+        "heading": "",
+        "description": "",
+        "quote": "",
+        "images": [
+          {
+            "_rowId": "maison-lead-1",
+            "image": {
+              "mediaId": "media_intr_maison_2",
+              "alt": "A quiet interior with natural stone and warm timber."
+            },
+            "caption": "Natural stone and warm timber establish a calm first impression."
+          },
+          {
+            "_rowId": "maison-lead-2",
+            "image": {
+              "mediaId": "media_intr_maison_3",
+              "alt": "Textured plaster, soft upholstery and carefully composed details."
+            },
+            "caption": "A restrained palette allows light and texture to shape the room."
+          },
+          {
+            "_rowId": "maison-lead-3",
+            "image": {
+              "mediaId": "media_intr_maison_4",
+              "alt": "A considered residential interior in warm neutral tones."
+            },
+            "caption": "Practical details are considered as part of the whole interior."
+          }
+        ]
+      }
+    },
+    {
+      "id": "block_intr_gallery-details",
+      "type": "intr-gallery",
+      "version": 1,
+      "props": {
+        "heading": "",
+        "description": "",
+        "quote": "“The apartment needed to feel as if it had always looked this way — like nothing had been done to it at all. That kind of restraint is the hardest thing to achieve and the only thing worth pursuing.”",
+        "images": [
+          {
+            "_rowId": "maison-details-1",
+            "image": {
+              "mediaId": "media_intr_maison_5",
+              "alt": "A quiet interior with natural stone and warm timber."
+            },
+            "caption": ""
+          },
+          {
+            "_rowId": "maison-details-2",
+            "image": {
+              "mediaId": "media_intr_maison_6",
+              "alt": "Textured plaster, soft upholstery and carefully composed details."
+            },
+            "caption": ""
+          },
+          {
+            "_rowId": "maison-details-3",
+            "image": {
+              "mediaId": "media_intr_maison_7",
+              "alt": "A considered residential interior in warm neutral tones."
+            },
+            "caption": ""
+          }
+        ]
+      }
+    },
+    {
+      "id": "block_intr_gallery-views",
+      "type": "intr-gallery",
+      "version": 1,
+      "props": {
+        "heading": "Selected views",
+        "description": "A closer look at the materials, bespoke details and spaces that make up Maison Dorée.",
+        "quote": "",
+        "images": [
+          {
+            "_rowId": "maison-views-1",
+            "image": {
+              "mediaId": "media_intr_maison_8",
+              "alt": "A quiet interior with natural stone and warm timber."
+            },
+            "caption": ""
+          },
+          {
+            "_rowId": "maison-views-2",
+            "image": {
+              "mediaId": "media_intr_maison_9",
+              "alt": "Textured plaster, soft upholstery and carefully composed details."
+            },
+            "caption": ""
+          },
+          {
+            "_rowId": "maison-views-3",
+            "image": {
+              "mediaId": "media_intr_maison_10",
+              "alt": "A considered residential interior in warm neutral tones."
+            },
+            "caption": ""
+          },
+          {
+            "_rowId": "maison-views-4",
+            "image": {
+              "mediaId": "media_intr_maison_11",
+              "alt": "A quiet interior with natural stone and warm timber."
+            },
+            "caption": ""
+          }
+        ]
+      }
+    },
+    {
+      "id": "block_intr_related",
+      "type": "intr-projects",
+      "version": 1,
+      "props": {
+        "anchor": "projects",
+        "heading": "More spaces",
+        "description": "Different settings, each with its own character.",
+        "actionLabel": "See all works",
+        "actionURL": "/projects",
+        "collection": "collection_intr_projects",
+        "titleField": "title",
+        "summaryField": "location",
+        "imageField": "image",
+        "urlField": "url",
+        "projects": [
+          {
+            "_rowId": "related-projects-1",
+            "project": "entry_intr_dune"
+          },
+          {
+            "_rowId": "related-projects-2",
+            "project": "entry_intr_soft"
+          }
+        ]
+      }
+    }
+  ]
+}

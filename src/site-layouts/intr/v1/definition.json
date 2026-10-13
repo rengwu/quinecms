@@ -1,0 +1,135 @@
+{
+  "id": "intr",
+  "version": 1,
+  "label": "Intr Studio",
+  "description": "Quiet editorial interiors: oversized type, open spacing, a floating menu and a dark footer. Pair with the Intr blocks.",
+  "activation": "load",
+  "defaults": {
+    "contentMaxWidth": 1400,
+    "pageGutter": 32,
+    "title": "intr ® — Residential Interior Design Studio",
+    "description": "Thoughtful residential interiors, shaped around the way you live.",
+    "brand": "intr ®",
+    "navigation": [
+      {
+        "_rowId": "intr-nav-1",
+        "label": "Home",
+        "url": "/"
+      },
+      {
+        "_rowId": "intr-nav-2",
+        "label": "Our Vision",
+        "url": "/#about"
+      },
+      {
+        "_rowId": "intr-nav-3",
+        "label": "What We Do",
+        "url": "/#services"
+      },
+      {
+        "_rowId": "intr-nav-4",
+        "label": "Selected Works",
+        "url": "/#projects"
+      },
+      {
+        "_rowId": "intr-nav-5",
+        "label": "Gallery",
+        "url": "/projects"
+      }
+    ],
+    "actionLabel": "Get Started",
+    "actionURL": "/#contact",
+    "footerDescription": "Considered spaces. Lasting materials. Interiors designed around the way you live.",
+    "projectCollection": null,
+    "email": "hello@interior.studio",
+    "emailURL": "mailto:hello@interior.studio",
+    "phone": "+97 77 555 71 37",
+    "phoneURL": "tel:+97775557137",
+    "copyright": "© 2026 — Intr Studio"
+  },
+  "fields": [
+    {
+      "key": "title",
+      "label": "Site title",
+      "type": "text"
+    },
+    {
+      "key": "description",
+      "label": "Site description",
+      "type": "text",
+      "multiline": true
+    },
+    {
+      "key": "brand",
+      "label": "Brand",
+      "type": "text"
+    },
+    {
+      "key": "navigation",
+      "label": "Navigation",
+      "type": "list",
+      "fields": [
+        {
+          "key": "label",
+          "label": "Label",
+          "type": "text"
+        },
+        {
+          "key": "url",
+          "label": "URL",
+          "type": "url"
+        }
+      ]
+    },
+    {
+      "key": "actionLabel",
+      "label": "Action label",
+      "type": "text"
+    },
+    {
+      "key": "actionURL",
+      "label": "Action URL",
+      "type": "url"
+    },
+    {
+      "key": "footerDescription",
+      "label": "Footer description",
+      "type": "text",
+      "multiline": true
+    },
+    {
+      "key": "projectCollection",
+      "label": "Footer project collection",
+      "type": "collection"
+    },
+    {
+      "key": "email",
+      "label": "Email label",
+      "type": "text"
+    },
+    {
+      "key": "emailURL",
+      "label": "Email link",
+      "type": "url"
+    },
+    {
+      "key": "phone",
+      "label": "Phone label",
+      "type": "text"
+    },
+    {
+      "key": "phoneURL",
+      "label": "Phone link",
+      "type": "url"
+    },
+    {
+      "key": "copyright",
+      "label": "Copyright",
+      "type": "text"
+    }
+  ],
+  "component": "View.tsx",
+  "settingsComponent": "Settings.tsx",
+  "policy": "policy.ts",
+  "headComponent": "Head.tsx"
+}

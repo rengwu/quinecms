@@ -1,0 +1,80 @@
+
+> lean-sitebuilder@0.1.0 example:intr /Users/rengwu/Desktop/Projects/lean-sitebuilder
+> node scripts/example-site.mjs intr build
+
+Isolated example: /var/folders/00/h_k67s0j5dq0qvg6ylqysk2w0000gn/T/lean-example-intr-wbvgjc
+Built demo editor: intr@example.test / intr-preview (do not deploy).
+
+> lean-sitebuilder@0.1.0 validate:content /private/var/folders/00/h_k67s0j5dq0qvg6ylqysk2w0000gn/T/lean-example-intr-wbvgjc
+> node scripts/generate-blocks.mjs --registry-only && tsx scripts/validate-content.ts
+
+Registered 110 block versions.
+Registered 4 layout versions.
+Content is valid for publication.
+
+> lean-sitebuilder@0.1.0 build /private/var/folders/00/h_k67s0j5dq0qvg6ylqysk2w0000gn/T/lean-example-intr-wbvgjc
+> pnpm prepare:blocks && astro build
+
+
+> lean-sitebuilder@0.1.0 prepare:blocks /private/var/folders/00/h_k67s0j5dq0qvg6ylqysk2w0000gn/T/lean-example-intr-wbvgjc
+> node scripts/generate-blocks.mjs
+
+Registered 110 block versions.
+Registered 4 layout versions.
+03:38:15 [types] Generated 149ms
+03:38:15 [build] output: "static"
+03:38:15 [build] mode: "static"
+03:38:15 [build] directory: /private/var/folders/00/h_k67s0j5dq0qvg6ylqysk2w0000gn/T/lean-example-intr-wbvgjc/dist/
+03:38:15 [build] Collecting build info...
+03:38:15 [build] ✓ Completed in 210ms.
+03:38:15 [build] Building static entrypoints...
+03:38:16 [vite] ✓ built in 139ms
+03:38:16 [vite] ✓ built in 131ms
+03:38:16 [build] Rearranging server assets...
+
+ generating static routes 
+03:38:16   ├─ /admin/index.html (+1.04s) 
+03:38:17   ├─ /projects/maison-doree/index.html (+26ms) 
+03:38:17   ├─ /projects/index.html (+15ms) 
+03:38:17   ├─ /index.html (+10ms) 
+03:38:17 ✓ Completed in 1.17s.
+
+03:38:17 [build] ✓ Completed in 1.49s.
+03:38:17 [build] 4 page(s) built in 1.70s
+03:38:17 [build] Complete!
+
+> lean-sitebuilder@0.1.0 check:build /private/var/folders/00/h_k67s0j5dq0qvg6ylqysk2w0000gn/T/lean-example-intr-wbvgjc
+> node scripts/check-build.mjs
+
+{
+  "runtimeCopies": {
+    "react": 1,
+    "@vue/runtime-core": 1,
+    "@vue/runtime-dom": 1,
+    "react-dom": 1,
+    "svelte": 1
+  },
+  "pages": [
+    {
+      "page": "admin/index.html",
+      "javascriptModules": 1,
+      "gzipJavaScriptBytes": 1665
+    },
+    {
+      "page": "index.html",
+      "javascriptModules": 3,
+      "gzipJavaScriptBytes": 84389
+    },
+    {
+      "page": "projects/index.html",
+      "javascriptModules": 3,
+      "gzipJavaScriptBytes": 84389
+    },
+    {
+      "page": "projects/maison-doree/index.html",
+      "javascriptModules": 3,
+      "gzipJavaScriptBytes": 84389
+    }
+  ]
+}
+Built example: /var/folders/00/h_k67s0j5dq0qvg6ylqysk2w0000gn/T/lean-example-intr-wbvgjc/dist

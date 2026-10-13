@@ -1,0 +1,31 @@
+{
+  "formatVersion": 1,
+  "id": "media_intr_process_1",
+  "name": "process 1",
+  "original": {
+    "key": "local/intr/process-1.jpeg",
+    "url": "/intr/v1/process-1.jpeg",
+    "width": 2048,
+    "height": 1143,
+    "bytes": 447644,
+    "mime": "image/jpeg"
+  },
+  "variants": [
+    {
+      "key": "local/intr/process-1-512.jpeg",
+      "url": "/intr/v1/process-1-512.jpeg",
+      "width": 512,
+      "height": 286,
+      "bytes": 36062,
+      "mime": "image/jpeg"
+    },
+    {
+      "key": "local/intr/process-1-1024.jpeg",
+      "url": "/intr/v1/process-1-1024.jpeg",
+      "width": 1024,
+      "height": 572,
+      "bytes": 122080,
+      "mime": "image/jpeg"
+    }
+  ]
+}

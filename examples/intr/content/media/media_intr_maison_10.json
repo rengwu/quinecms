@@ -1,0 +1,31 @@
+{
+  "formatVersion": 1,
+  "id": "media_intr_maison_10",
+  "name": "maison 10",
+  "original": {
+    "key": "local/intr/maison-10.jpeg",
+    "url": "/intr/v1/maison-10.jpeg",
+    "width": 2048,
+    "height": 1143,
+    "bytes": 364012,
+    "mime": "image/jpeg"
+  },
+  "variants": [
+    {
+      "key": "local/intr/maison-10-512.jpeg",
+      "url": "/intr/v1/maison-10-512.jpeg",
+      "width": 512,
+      "height": 286,
+      "bytes": 27779,
+      "mime": "image/jpeg"
+    },
+    {
+      "key": "local/intr/maison-10-1024.jpeg",
+      "url": "/intr/v1/maison-10-1024.jpeg",
+      "width": 1024,
+      "height": 572,
+      "bytes": 96162,
+      "mime": "image/jpeg"
+    }
+  ]
+}

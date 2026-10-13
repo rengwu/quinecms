@@ -1,0 +1,68 @@
+{
+  "type": "intr-contact",
+  "version": 1,
+  "label": "Intr · Contact image",
+  "description": "Large closing photograph with an inset image and direct contact action.",
+  "theme": "Intr",
+  "tags": ["intr", "interior", "portfolio"],
+  "kind": "static",
+  "framework": "react",
+  "activation": "never",
+  "component": "View.tsx",
+  "fields": [
+    {
+      "key": "anchor",
+      "label": "Section anchor",
+      "type": "text"
+    },
+    {
+      "key": "heading",
+      "label": "Heading",
+      "type": "text"
+    },
+    {
+      "key": "caption",
+      "label": "Inset caption",
+      "type": "text"
+    },
+    {
+      "key": "detail",
+      "label": "Inset detail",
+      "type": "text"
+    },
+    {
+      "key": "image",
+      "label": "Background image",
+      "type": "media"
+    },
+    {
+      "key": "insetImage",
+      "label": "Inset image",
+      "type": "media"
+    },
+    {
+      "key": "actionLabel",
+      "label": "Action label",
+      "type": "text"
+    },
+    {
+      "key": "actionURL",
+      "label": "Action URL",
+      "type": "url"
+    }
+  ],
+  "defaults": {
+    "anchor": "contact",
+    "heading": "Want your interior to feel refined and timeless?",
+    "caption": "Where comfort meets timeless elegance.",
+    "detail": "Thoughtfully designed interiors",
+    "image": null,
+    "insetImage": null,
+    "actionLabel": "Talk to Us",
+    "actionURL": "mailto:hello@interior.studio"
+  },
+  "dependencies": {
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0"
+  }
+}

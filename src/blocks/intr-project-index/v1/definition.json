@@ -1,0 +1,90 @@
+{
+  "type": "intr-project-index",
+  "version": 1,
+  "label": "Intr · Project listing",
+  "description": "Full-width lead project followed by a two-column grid. Shares project content with the homepage.",
+  "theme": "Intr",
+  "tags": ["intr", "interior", "portfolio", "collection"],
+  "kind": "static",
+  "framework": "react",
+  "activation": "never",
+  "component": "View.tsx",
+  "fields": [
+    {
+      "key": "heading",
+      "label": "Heading",
+      "type": "text"
+    },
+    {
+      "key": "collection",
+      "label": "Project collection",
+      "type": "collection"
+    },
+    {
+      "key": "titleField",
+      "label": "Title field",
+      "type": "text",
+      "collectionField": {
+        "collectionKey": "collection",
+        "types": ["text"]
+      }
+    },
+    {
+      "key": "summaryField",
+      "label": "Location field",
+      "type": "text",
+      "collectionField": {
+        "collectionKey": "collection",
+        "types": ["text"]
+      }
+    },
+    {
+      "key": "imageField",
+      "label": "Image field",
+      "type": "text",
+      "collectionField": {
+        "collectionKey": "collection",
+        "types": ["media"]
+      }
+    },
+    {
+      "key": "urlField",
+      "label": "Detail URL field",
+      "type": "text",
+      "collectionField": {
+        "collectionKey": "collection",
+        "types": ["url"]
+      }
+    },
+    {
+      "key": "projects",
+      "label": "Projects and display order",
+      "type": "list",
+      "fields": [
+        {
+          "key": "project",
+          "label": "Project",
+          "type": "reference",
+          "collectionId": "collection_intr_projects"
+        }
+      ]
+    }
+  ],
+  "defaults": {
+    "anchor": "projects",
+    "heading": "Selected works",
+    "description": "A collection of interiors shaped by the people who use them. Different places, connected by a considered approach to comfort, proportion and materials.",
+    "actionLabel": "",
+    "actionURL": "",
+    "collection": null,
+    "titleField": "title",
+    "summaryField": "location",
+    "imageField": "image",
+    "urlField": "url",
+    "projects": []
+  },
+  "dependencies": {
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0"
+  }
+}

@@ -1,6 +1,6 @@
 ---
 title: Decisions
-updated: 2026-10-12
+updated: 2026-10-13
 status: Accepted
 ---
 # Decisions
@@ -511,3 +511,11 @@ and is recorded in the [save UX journal](../journal/2026-10-12-git-save-ux.md).
 | ID | Decision | Basis |
 | --- | --- | --- |
 | DEC-152 | Development always uses `admin@example.com` / `asdf1234` as the single shared login. Production retains its configured credential pair. | Direct user request and clarification: one account guards one dashboard and one set of content. The dev pair replaces environment credentials in dev; it is not a second account or a separate data store. See [admin contract](../features/admin-encryption.md). |
+
+## Intr Studio recreation trial — interview, 2026-10-13
+
+| ID | Decision | Basis and rationale |
+| --- | --- | --- |
+| DEC-153 | Recreate the homepage, project listing, and one sample project detail page as a simple static site, prioritizing content layout. | Q1 selects this smaller scope rather than all five detail pages. The direct brief allows cutting intro animation, video, and other effects. See the [scope record and transcript](../journal/2026-10-13-intr-rebuild-scope.md). |
+| DEC-154 | Keep Intr as a separate example alongside Quine, preserving the main demo. | Q2 explicitly selects the isolated example. |
+| DEC-155 | Reuse Intr's reference branding, copy, and images while correcting obvious placeholders. | Q3 selects reference content rather than a new studio identity. This defines the trial's content basis, not an implementation or verification result. |

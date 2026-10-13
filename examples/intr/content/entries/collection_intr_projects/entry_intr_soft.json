@@ -1,0 +1,14 @@
+{
+  "formatVersion": 1,
+  "id": "entry_intr_soft",
+  "collectionId": "collection_intr_projects",
+  "values": {
+    "title": "Soft Harmony",
+    "location": "Paris, France",
+    "image": {
+      "mediaId": "media_intr_project_2",
+      "alt": "A calm entry hall with a blue cabinet and pale stone floor."
+    },
+    "url": ""
+  }
+}

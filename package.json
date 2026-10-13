@@ -8,6 +8,7 @@
     "node": ">=22.12.0"
   },
   "scripts": {
+    "example:intr": "node scripts/example-site.mjs intr",
     "example:quine": "node scripts/example-site.mjs quine",
     "prepare:blocks": "node scripts/generate-blocks.mjs",
     "validate:content": "node scripts/generate-blocks.mjs --registry-only && tsx scripts/validate-content.ts",

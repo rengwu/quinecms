@@ -1,0 +1,23 @@
+{
+  "formatVersion": 1,
+  "id": "media_intr_service_1",
+  "name": "service 1",
+  "original": {
+    "key": "local/intr/service-1.png",
+    "url": "/intr/v1/service-1.png",
+    "width": 752,
+    "height": 748,
+    "bytes": 179108,
+    "mime": "image/png"
+  },
+  "variants": [
+    {
+      "key": "local/intr/service-1-512.png",
+      "url": "/intr/v1/service-1-512.png",
+      "width": 512,
+      "height": 509,
+      "bytes": 84234,
+      "mime": "image/png"
+    }
+  ]
+}

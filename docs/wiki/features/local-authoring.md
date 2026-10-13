@@ -1,6 +1,6 @@
 ---
 title: Building sites with local agents
-updated: 2026-10-11
+updated: 2026-10-13
 ---
 # Building sites with local agents
 
@@ -151,6 +151,21 @@ local credentials. Source assets and fonts are local; effects are independently
 implemented. A project gallery is a block-owned list because its owner selected
 that model. Do not introduce collections merely to exercise more CMS features.
 
+The [Intr trial](../journal/2026-10-13-intr-rebuild-scope.md), run with
+`pnpm example:intr`, adds a contrasting model: a data-only Projects collection
+shared by ordered homepage/listing cards, plus one static sample detail page.
+See `examples/intr/README.md` for the client editing map. Assign a generic page
+when every entry should produce a route; shared card data alone does not need one.
+An optional URL field lets the few completed detail pages link without creating
+dead links for the other cards. Static detail copy remains separately owned.
+
+For custom static collection blocks, `contextFor` exposes the conventional
+`titleField`, `summaryField`, `imageField`, `dateField` and `urlField` mappings from
+block props. Declare their `collectionField` selectors in the block manifest;
+this is a limited existing card-data adapter, not arbitrary schema access or
+automatic generic-page binding. Check the returned `Context` before implementing
+the renderer. Intr adds the missing URL mapping and covers shared edits in tests.
+
 Several details are easy to miss during implementation:
 
 - A media field value is an object containing `mediaId` and optional `alt`.
@@ -161,6 +176,16 @@ Several details are easy to miss during implementation:
   responsive renderer react to the editor's narrow preview, independently of
   the desktop browser window. The layout Head does not mount in that preview,
   so assets needed there also need a renderer-loaded path.
+- Choose responsive image sources for the visible crop. A landscape image filling
+  a tall phone hero needs more pixels than its narrow element width implies;
+  check `currentSrc` and sharpness after a fresh mobile load.
+- Give shared-content blocks clear field labels and an editing map. A reference
+  selects content; it does not open an inline editor for that content. In block
+  lists, reference-only rows currently fall back to numbered item labels.
+- Choose layout activation deliberately: `never` renders only on the server,
+  while `load` hydrates the React wrapper. Static blocks do not eliminate that
+  layout cost. Native navigation may be enough; measure the built page scripts
+  before choosing React hydration for a small menu behavior.
 - Read the actual dev-server URL and verify the page identity. A requested port
   may belong to another running site. Click an interactive control and inspect
   `pnpm exec astro dev logs`; an HTTP 200 and correct static screenshot do not

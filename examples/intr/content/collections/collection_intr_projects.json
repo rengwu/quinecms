@@ -1,0 +1,29 @@
+{
+  "formatVersion": 1,
+  "id": "collection_intr_projects",
+  "name": "Projects",
+  "mode": "many",
+  "titleField": "title",
+  "fields": [
+    {
+      "key": "title",
+      "label": "Project title",
+      "type": "text"
+    },
+    {
+      "key": "location",
+      "label": "Location",
+      "type": "text"
+    },
+    {
+      "key": "image",
+      "label": "Cover image",
+      "type": "media"
+    },
+    {
+      "key": "url",
+      "label": "Detail page URL (optional)",
+      "type": "url"
+    }
+  ]
+}

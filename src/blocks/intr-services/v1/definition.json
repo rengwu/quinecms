@@ -1,0 +1,64 @@
+{
+  "type": "intr-services",
+  "version": 1,
+  "label": "Intr · Services",
+  "description": "A dark service list with descriptions always visible, including on touch screens.",
+  "theme": "Intr",
+  "tags": ["intr", "interior", "portfolio"],
+  "kind": "static",
+  "framework": "react",
+  "activation": "never",
+  "component": "View.tsx",
+  "fields": [
+    {
+      "key": "anchor",
+      "label": "Section anchor",
+      "type": "text"
+    },
+    {
+      "key": "heading",
+      "label": "Heading",
+      "type": "text"
+    },
+    {
+      "key": "description",
+      "label": "Description",
+      "type": "text",
+      "multiline": true
+    },
+    {
+      "key": "image",
+      "label": "Introduction image",
+      "type": "media"
+    },
+    {
+      "key": "items",
+      "label": "Services",
+      "type": "list",
+      "fields": [
+        {
+          "key": "title",
+          "label": "Service",
+          "type": "text"
+        },
+        {
+          "key": "description",
+          "label": "Description",
+          "type": "text",
+          "multiline": true
+        }
+      ]
+    }
+  ],
+  "defaults": {
+    "anchor": "services",
+    "heading": "(Services)",
+    "description": "From a single room to a complete home, we consider the whole experience. We work from the first layout through to the final detail, bringing a clear direction to each stage.",
+    "image": null,
+    "items": []
+  },
+  "dependencies": {
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0"
+  }
+}

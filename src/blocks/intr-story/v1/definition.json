@@ -1,0 +1,58 @@
+{
+  "type": "intr-story",
+  "version": 1,
+  "label": "Intr · Project story",
+  "description": "An editorial project introduction with a compact list of services delivered.",
+  "theme": "Intr",
+  "tags": ["intr", "interior", "portfolio"],
+  "kind": "static",
+  "framework": "react",
+  "activation": "never",
+  "component": "View.tsx",
+  "fields": [
+    {
+      "key": "anchor",
+      "label": "Section anchor",
+      "type": "text"
+    },
+    {
+      "key": "heading",
+      "label": "Lead statement",
+      "type": "text"
+    },
+    {
+      "key": "description",
+      "label": "Project description",
+      "type": "text",
+      "multiline": true
+    },
+    {
+      "key": "listHeading",
+      "label": "List heading",
+      "type": "text"
+    },
+    {
+      "key": "items",
+      "label": "Services delivered",
+      "type": "list",
+      "fields": [
+        {
+          "key": "label",
+          "label": "Service",
+          "type": "text"
+        }
+      ]
+    }
+  ],
+  "defaults": {
+    "heading": "A home shaped around the art of living well.",
+    "description": "",
+    "listHeading": "Process",
+    "items": [],
+    "anchor": "project-story"
+  },
+  "dependencies": {
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0"
+  }
+}

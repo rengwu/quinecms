@@ -1,0 +1,14 @@
+{
+  "formatVersion": 1,
+  "id": "entry_intr_dune",
+  "collectionId": "collection_intr_projects",
+  "values": {
+    "title": "Dune Villa",
+    "location": "Dubai, UAE",
+    "image": {
+      "mediaId": "media_intr_project_3",
+      "alt": "A shaded terrace with timber furniture and a view over the dunes."
+    },
+    "url": ""
+  }
+}

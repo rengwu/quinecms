@@ -1,0 +1,46 @@
+{
+  "type": "intr-partners",
+  "version": 1,
+  "label": "Intr · Partners",
+  "description": "A staggered wordmark grid. Names remain editable text.",
+  "theme": "Intr",
+  "tags": ["intr", "interior", "portfolio"],
+  "kind": "static",
+  "framework": "react",
+  "activation": "never",
+  "component": "View.tsx",
+  "fields": [
+    {
+      "key": "heading",
+      "label": "Heading",
+      "type": "text"
+    },
+    {
+      "key": "description",
+      "label": "Description",
+      "type": "text",
+      "multiline": true
+    },
+    {
+      "key": "items",
+      "label": "Partner names",
+      "type": "list",
+      "fields": [
+        {
+          "key": "name",
+          "label": "Name",
+          "type": "text"
+        }
+      ]
+    }
+  ],
+  "defaults": {
+    "heading": "(Partners)",
+    "description": "We collaborate with specialist makers, suppliers and craftspeople who bring care and expertise to every part of a project.",
+    "items": []
+  },
+  "dependencies": {
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0"
+  }
+}

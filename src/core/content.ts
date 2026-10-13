@@ -166,6 +166,7 @@ export function contextFor(c: Content, instanceId: string): Context {
     'summaryField',
     'imageField',
     'dateField',
+    'urlField',
   ].flatMap((key) =>
     typeof block?.props[key] === 'string' ? [String(block.props[key])] : [],
   );

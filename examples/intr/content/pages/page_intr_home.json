@@ -1,0 +1,268 @@
+{
+  "formatVersion": 1,
+  "id": "page_intr_home",
+  "kind": "static",
+  "path": "/",
+  "title": "Home",
+  "blocks": [
+    {
+      "id": "block_intr_hero",
+      "type": "intr-hero",
+      "version": 1,
+      "props": {
+        "heading": "intr ® Studio",
+        "description": "We create functional and elegant interior spaces tailored to your lifestyle, taste, and budget — from concept to execution.",
+        "image": {
+          "mediaId": "media_intr_hero_1",
+          "alt": "Sculpted timber chair arm beside a textured plaster wall."
+        },
+        "metadata": [],
+        "scrollLabel": "Scroll down",
+        "scrollURL": "#about"
+      }
+    },
+    {
+      "id": "block_intr_intro",
+      "type": "intr-introduction",
+      "version": 1,
+      "props": {
+        "anchor": "about",
+        "heading": "Spaces",
+        "caption": "that feel like home",
+        "description": "We are an interior design studio creating homes with personality and purpose. Through considered materials, thoughtful planning and a close understanding of how you live, we shape spaces that feel beautiful, useful and entirely yours.",
+        "actionLabel": "Get Started",
+        "actionURL": "#contact",
+        "leftImage": {
+          "mediaId": "media_intr_about_1",
+          "alt": "A timber console and ceramic vase in a sunlit hallway."
+        },
+        "rightImage": {
+          "mediaId": "media_intr_about_2",
+          "alt": "Sculptural ceramic vessels on a stone plinth."
+        },
+        "stats": [
+          {
+            "_rowId": "intr-stats-1",
+            "value": "8+",
+            "label": "Years of Experience"
+          },
+          {
+            "_rowId": "intr-stats-2",
+            "value": "20+",
+            "label": "Design Awards & Features"
+          },
+          {
+            "_rowId": "intr-stats-3",
+            "value": "95%",
+            "label": "Client Satisfaction"
+          }
+        ]
+      }
+    },
+    {
+      "id": "block_intr_selected",
+      "type": "intr-projects",
+      "version": 1,
+      "props": {
+        "anchor": "projects",
+        "heading": "(Selected Work)",
+        "description": "A collection of interiors shaped by the people who use them. Different places, connected by a considered approach to comfort, proportion and materials.",
+        "actionLabel": "See all works",
+        "actionURL": "/projects",
+        "collection": "collection_intr_projects",
+        "titleField": "title",
+        "summaryField": "location",
+        "imageField": "image",
+        "urlField": "url",
+        "projects": [
+          {
+            "_rowId": "home-projects-1",
+            "project": "entry_intr_private"
+          },
+          {
+            "_rowId": "home-projects-2",
+            "project": "entry_intr_soft"
+          },
+          {
+            "_rowId": "home-projects-3",
+            "project": "entry_intr_dune"
+          },
+          {
+            "_rowId": "home-projects-4",
+            "project": "entry_intr_ciel"
+          }
+        ]
+      }
+    },
+    {
+      "id": "block_intr_features",
+      "type": "intr-features",
+      "version": 1,
+      "props": {
+        "heading": "(Features)",
+        "description": "Our work brings together creative thinking, practical planning and a close attention to detail. Every choice serves the space — how it looks, how it feels, and how it will be lived in.",
+        "items": [
+          {
+            "_rowId": "features-1",
+            "title": "Experience",
+            "description": "We combine a trained eye with practical experience, creating interiors that are elegant, comfortable and easy to live in.",
+            "image": {
+              "mediaId": "media_intr_feature_1",
+              "alt": "Curved upholstered chair with a small sculptural side table."
+            }
+          },
+          {
+            "_rowId": "features-2",
+            "title": "Approach",
+            "description": "Listening comes first. We build a shared direction around your routines, priorities and the character of your space.",
+            "image": {
+              "mediaId": "media_intr_feature_2",
+              "alt": "A bright sitting room with sculptural furniture."
+            }
+          },
+          {
+            "_rowId": "features-3",
+            "title": "Quality",
+            "description": "Materials are chosen for their feel, durability and how they age. Care at every junction makes the whole space work.",
+            "image": {
+              "mediaId": "media_intr_feature_3",
+              "alt": "Natural light falling across a cream lounge chair."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "block_intr_services",
+      "type": "intr-services",
+      "version": 1,
+      "props": {
+        "anchor": "services",
+        "heading": "(Services)",
+        "description": "From a single room to a complete home, we consider the whole experience. We work from the first layout through to the final detail, bringing a clear direction to each stage.",
+        "image": {
+          "mediaId": "media_intr_service_1",
+          "alt": "A warm living room with pale furniture and dried stems."
+        },
+        "items": [
+          {
+            "_rowId": "services-1",
+            "title": "Space Planning",
+            "description": "Every inch, intentionally placed. Layouts that make movement feel natural and bring clarity to the way each room works."
+          },
+          {
+            "_rowId": "services-2",
+            "title": "Furniture & Styling",
+            "description": "Furniture, lighting and objects chosen together for a balanced, personal interior."
+          },
+          {
+            "_rowId": "services-3",
+            "title": "Residential Design",
+            "description": "Homes shaped around everyday life, with warmth, comfort and room to grow."
+          },
+          {
+            "_rowId": "services-4",
+            "title": "Commercial Design",
+            "description": "Welcoming spaces that express a clear identity and work for the people who use them."
+          },
+          {
+            "_rowId": "services-5",
+            "title": "Interior Design",
+            "description": "A complete design language, bringing proportion, colour, light and materials into balance."
+          },
+          {
+            "_rowId": "services-6",
+            "title": "Project Supervision",
+            "description": "Coordination from drawings to installation, with care for the details that bring the design together."
+          }
+        ]
+      }
+    },
+    {
+      "id": "block_intr_process",
+      "type": "intr-process",
+      "version": 1,
+      "props": {
+        "heading": "(Process)",
+        "description": "A clear process gives each project room to develop. We work closely with you from the first conversation to the last detail.",
+        "items": [
+          {
+            "_rowId": "process-1",
+            "title": "Discovery & Concept",
+            "description": "We begin with your priorities, the space and the way you want to live. Together we establish a clear direction for the project.",
+            "image": {
+              "mediaId": "media_intr_process_1",
+              "alt": "Materials and drawings arranged on a design studio worktable."
+            }
+          },
+          {
+            "_rowId": "process-2",
+            "title": "Design Development",
+            "description": "Layouts, materials, lighting and furniture come together in a coordinated design, with the details resolved before work begins.",
+            "image": {
+              "mediaId": "media_intr_process_2",
+              "alt": "Interior design plans and a three-dimensional room study."
+            }
+          },
+          {
+            "_rowId": "process-3",
+            "title": "Execution & Handover",
+            "description": "We stay close to the work through site reviews, installation and final styling, making sure the completed space reflects the design.",
+            "image": {
+              "mediaId": "media_intr_process_3",
+              "alt": "A completed living room with soft upholstery and warm timber."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "block_intr_partners",
+      "type": "intr-partners",
+      "version": 1,
+      "props": {
+        "heading": "(Partners)",
+        "description": "We collaborate with specialist makers, suppliers and craftspeople who bring care and expertise to every part of a project.",
+        "items": [
+          {
+            "_rowId": "partners-1",
+            "name": "Material partners"
+          },
+          {
+            "_rowId": "partners-2",
+            "name": "Local makers"
+          },
+          {
+            "_rowId": "partners-3",
+            "name": "Lighting studios"
+          },
+          {
+            "_rowId": "partners-4",
+            "name": "Specialist crafts"
+          }
+        ]
+      }
+    },
+    {
+      "id": "block_intr_contact",
+      "type": "intr-contact",
+      "version": 1,
+      "props": {
+        "anchor": "contact",
+        "heading": "Want your interior to feel refined and timeless?",
+        "caption": "Where comfort meets timeless elegance.",
+        "detail": "Thoughtfully designed interiors",
+        "image": {
+          "mediaId": "media_intr_contact_3",
+          "alt": "Warm timber and natural stone in a sunlit kitchen."
+        },
+        "insetImage": {
+          "mediaId": "media_intr_contact_2",
+          "alt": "A refined kitchen island with sculptural pendant lighting."
+        },
+        "actionLabel": "Talk to Us",
+        "actionURL": "mailto:hello@interior.studio"
+      }
+    }
+  ]
+}

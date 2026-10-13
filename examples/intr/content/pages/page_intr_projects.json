@@ -1,0 +1,48 @@
+{
+  "formatVersion": 1,
+  "id": "page_intr_projects",
+  "kind": "static",
+  "path": "/projects",
+  "title": "Selected Works",
+  "blocks": [
+    {
+      "id": "block_intr_index",
+      "type": "intr-project-index",
+      "version": 1,
+      "props": {
+        "anchor": "projects",
+        "heading": "Selected works",
+        "description": "A collection of interiors shaped by the people who use them. Different places, connected by a considered approach to comfort, proportion and materials.",
+        "actionLabel": "See all works",
+        "actionURL": "/projects",
+        "collection": "collection_intr_projects",
+        "titleField": "title",
+        "summaryField": "location",
+        "imageField": "image",
+        "urlField": "url",
+        "projects": [
+          {
+            "_rowId": "index-projects-1",
+            "project": "entry_intr_maison"
+          },
+          {
+            "_rowId": "index-projects-2",
+            "project": "entry_intr_ciel"
+          },
+          {
+            "_rowId": "index-projects-3",
+            "project": "entry_intr_dune"
+          },
+          {
+            "_rowId": "index-projects-4",
+            "project": "entry_intr_soft"
+          },
+          {
+            "_rowId": "index-projects-5",
+            "project": "entry_intr_private"
+          }
+        ]
+      }
+    }
+  ]
+}

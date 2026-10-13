@@ -36,7 +36,7 @@ export async function prepareExample(name) {
   );
   await writeFile(
     join(directory, '.env'),
-    'ADMIN_EMAIL=quine@example.test\nADMIN_PASSWORD=quine-preview\n',
+    `ADMIN_EMAIL=${name}@example.test\nADMIN_PASSWORD=${name}-preview\n`,
   );
   return directory;
 }
@@ -48,13 +48,13 @@ if (
   const [name = 'quine', action = 'dev'] = process.argv.slice(2);
   if (!['prepare', 'dev', 'build'].includes(action))
     throw Error(
-      'Usage: node scripts/example-site.mjs quine [prepare|dev|build]',
+      'Usage: node scripts/example-site.mjs <name> [prepare|dev|build]',
     );
   const directory = await prepareExample(name);
   console.log(`Isolated example: ${directory}`);
   console.log(
     action === 'build'
-      ? 'Built demo editor: quine@example.test / quine-preview (do not deploy).'
+      ? `Built demo editor: ${name}@example.test / ${name}-preview (do not deploy).`
       : 'Development editor: admin@example.com / asdf1234.',
   );
   if (action !== 'prepare') {
@@ -65,13 +65,13 @@ if (
           stdio: 'inherit',
           env: {
             ...process.env,
-            ADMIN_EMAIL: 'quine@example.test',
-            ADMIN_PASSWORD: 'quine-preview',
+            ADMIN_EMAIL: `${name}@example.test`,
+            ADMIN_PASSWORD: `${name}-preview`,
             PUBLIC_GIT_NAMESPACE: '',
             PUBLIC_GIT_REPO: '',
             PUBLIC_GITHUB_OWNER: '',
             PUBLIC_GITHUB_REPO: '',
-            SITE_LAYOUT_WHITELIST: 'quine',
+            SITE_LAYOUT_WHITELIST: name,
           },
         });
         const stop = () => child.kill('SIGTERM');

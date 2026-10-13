@@ -1,0 +1,9 @@
+
+ RUN  v5.0.3 /Users/rengwu/Desktop/Projects/lean-sitebuilder
+
+
+ Test Files  1 passed (1)
+      Tests  3 passed (3)
+   Start at  03:38:12
+   Duration  677ms (tests 63%, transform 26%, import 10%)
+

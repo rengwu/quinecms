@@ -1,0 +1,23 @@
+{
+  "formatVersion": 1,
+  "id": "media_intr_feature_1",
+  "name": "feature 1",
+  "original": {
+    "key": "local/intr/feature-1.png",
+    "url": "/intr/v1/feature-1.png",
+    "width": 785,
+    "height": 715,
+    "bytes": 168172,
+    "mime": "image/png"
+  },
+  "variants": [
+    {
+      "key": "local/intr/feature-1-512.png",
+      "url": "/intr/v1/feature-1-512.png",
+      "width": 512,
+      "height": 466,
+      "bytes": 76454,
+      "mime": "image/png"
+    }
+  ]
+}

@@ -1,0 +1,69 @@
+{
+  "type": "intr-hero",
+  "version": 1,
+  "label": "Intr · Photo hero",
+  "description": "Full-height photograph, heading and optional project facts. No video or entrance animation.",
+  "theme": "Intr",
+  "tags": ["intr", "interior", "portfolio"],
+  "kind": "static",
+  "framework": "react",
+  "activation": "never",
+  "component": "View.tsx",
+  "fields": [
+    {
+      "key": "heading",
+      "label": "Heading",
+      "type": "text"
+    },
+    {
+      "key": "description",
+      "label": "Description",
+      "type": "text",
+      "multiline": true
+    },
+    {
+      "key": "image",
+      "label": "Background image",
+      "type": "media"
+    },
+    {
+      "key": "metadata",
+      "label": "Project facts",
+      "type": "list",
+      "fields": [
+        {
+          "key": "label",
+          "label": "Label",
+          "type": "text"
+        },
+        {
+          "key": "value",
+          "label": "Value",
+          "type": "text"
+        }
+      ]
+    },
+    {
+      "key": "scrollLabel",
+      "label": "Scroll label",
+      "type": "text"
+    },
+    {
+      "key": "scrollURL",
+      "label": "Scroll URL",
+      "type": "url"
+    }
+  ],
+  "defaults": {
+    "heading": "intr ® Studio",
+    "description": "We create functional and elegant interior spaces tailored to your lifestyle, taste, and budget — from concept to execution.",
+    "image": null,
+    "metadata": [],
+    "scrollLabel": "Scroll down",
+    "scrollURL": "#about"
+  },
+  "dependencies": {
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0"
+  }
+}

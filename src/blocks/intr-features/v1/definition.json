@@ -1,0 +1,62 @@
+{
+  "type": "intr-features",
+  "version": 1,
+  "label": "Intr · Studio features",
+  "description": "Three image and text pairs arranged in a checkerboard. Additional pairs flow into the grid.",
+  "theme": "Intr",
+  "tags": ["intr", "interior", "portfolio"],
+  "kind": "static",
+  "framework": "react",
+  "activation": "never",
+  "component": "View.tsx",
+  "fields": [
+    {
+      "key": "anchor",
+      "label": "Section anchor",
+      "type": "text"
+    },
+    {
+      "key": "heading",
+      "label": "Heading",
+      "type": "text"
+    },
+    {
+      "key": "description",
+      "label": "Description",
+      "type": "text",
+      "multiline": true
+    },
+    {
+      "key": "items",
+      "label": "Features",
+      "type": "list",
+      "fields": [
+        {
+          "key": "title",
+          "label": "Title",
+          "type": "text"
+        },
+        {
+          "key": "description",
+          "label": "Description",
+          "type": "text",
+          "multiline": true
+        },
+        {
+          "key": "image",
+          "label": "Image",
+          "type": "media"
+        }
+      ]
+    }
+  ],
+  "defaults": {
+    "heading": "(Features)",
+    "description": "Our work brings together creative thinking, practical planning and a close attention to detail. Every choice serves the space — how it looks, how it feels, and how it will be lived in.",
+    "items": []
+  },
+  "dependencies": {
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0"
+  }
+}

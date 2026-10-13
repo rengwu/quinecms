@@ -1,0 +1,31 @@
+{
+  "formatVersion": 1,
+  "id": "media_intr_about_2",
+  "name": "about 2",
+  "original": {
+    "key": "local/intr/about-2.jpeg",
+    "url": "/intr/v1/about-2.jpeg",
+    "width": 2048,
+    "height": 1143,
+    "bytes": 260658,
+    "mime": "image/jpeg"
+  },
+  "variants": [
+    {
+      "key": "local/intr/about-2-512.jpeg",
+      "url": "/intr/v1/about-2-512.jpeg",
+      "width": 512,
+      "height": 286,
+      "bytes": 19157,
+      "mime": "image/jpeg"
+    },
+    {
+      "key": "local/intr/about-2-1024.jpeg",
+      "url": "/intr/v1/about-2-1024.jpeg",
+      "width": 1024,
+      "height": 572,
+      "bytes": 68361,
+      "mime": "image/jpeg"
+    }
+  ]
+}

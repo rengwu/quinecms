@@ -17,9 +17,10 @@ the documented record formats describe the current implementation.
 
 ## Run locally
 
-To inspect a complete recreation without replacing the active demo, run
-`pnpm example:quine`. See the [Quine example](examples/quine/README.md) for its
-local login, client editing map and isolated build command.
+To inspect a recreation without replacing the active demo, run
+`pnpm example:quine` or `pnpm example:intr`. The [Quine example](examples/quine/README.md)
+uses block-owned projects; [Intr Studio](examples/intr/README.md) shares project
+content across three pages. Each guide includes its editing map and isolated build command.
 
 Node 22.12+ and pnpm 10.34.1:
 

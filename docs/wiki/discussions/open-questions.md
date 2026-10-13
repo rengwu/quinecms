@@ -1,9 +1,25 @@
 ---
 title: Open questions
-updated: 2026-10-12
-status: Git save UX implemented; no active interview
+updated: 2026-10-13
+status: Intr recreation delivered; follow-up proposals recorded
 ---
 # Open questions
+
+## Intr Studio recreation — delivered, follow-up proposals
+
+DEC-153–DEC-155 select a homepage, project listing, and one sample detail page in
+an isolated Intr example, using the reference content with obvious placeholders
+corrected. The direct brief prioritizes a simple static layout over motion.
+See the [scope and engineering choices](../journal/2026-10-13-intr-rebuild-scope.md).
+The isolated example and local verification are complete. Other project cards
+remain visible without detail links as a stated
+engineering choice. All five detail pages and a wider CMS redesign are outside
+the selected scope.
+
+The journal records proposals for readable reference-row labels, visible shared
+editing guidance, clearer renderer data mappings, asset/staging helpers and a
+smaller public navigation script using the existing non-hydrated layout option.
+These are not accepted extensions to the CMS.
 
 ## Development login — resolved
 
