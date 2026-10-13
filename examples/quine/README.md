@@ -1,5 +1,10 @@
 # Quine Systems
 
+This theme and its blocks are available in the **main dashboard**: run `pnpm dev`,
+then use **Site Layout → Change layout** and **Pages → Add block → All themes**.
+The commands below are optional developer sandboxes for this sample content,
+not separate theme modes.
+
 A recreation of [quinesystems.com](https://quinesystems.com/) using the normal
 lean-sitebuilder layout, block, media and editor contracts. Original assets are
 reused; components and effects are independently implemented. Root demo content

@@ -1,0 +1,23 @@
+{
+  "formatVersion": 1,
+  "id": "media_archline_armonia",
+  "name": "Armonia",
+  "original": {
+    "key": "archline/v1/armonia.webp",
+    "url": "/archline/v1/armonia.webp",
+    "mime": "image/webp",
+    "bytes": 103000,
+    "width": 998,
+    "height": 1000
+  },
+  "variants": [
+    {
+      "key": "archline/v1/armonia-800.webp",
+      "url": "/archline/v1/armonia-800.webp",
+      "mime": "image/webp",
+      "bytes": 59516,
+      "width": 798,
+      "height": 800
+    }
+  ]
+}

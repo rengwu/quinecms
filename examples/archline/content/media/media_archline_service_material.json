@@ -1,0 +1,23 @@
+{
+  "formatVersion": 1,
+  "id": "media_archline_service_material",
+  "name": "Service Material",
+  "original": {
+    "key": "archline/v1/service-material.webp",
+    "url": "/archline/v1/service-material.webp",
+    "mime": "image/webp",
+    "bytes": 96692,
+    "width": 824,
+    "height": 1200
+  },
+  "variants": [
+    {
+      "key": "archline/v1/service-material-800.webp",
+      "url": "/archline/v1/service-material-800.webp",
+      "mime": "image/webp",
+      "bytes": 44434,
+      "width": 549,
+      "height": 800
+    }
+  ]
+}

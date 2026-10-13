@@ -1,0 +1,127 @@
+{
+  "type": "archline-faq",
+  "version": 1,
+  "label": "Archline · Questions and answers",
+  "description": "Accessible native disclosures beside an introduction and contact link. Works without JavaScript.",
+  "theme": "Archline",
+  "tags": ["archline", "architecture", "editorial"],
+  "kind": "static",
+  "framework": "react",
+  "activation": "never",
+  "component": "View.tsx",
+  "fields": [
+    {
+      "key": "anchor",
+      "label": "Section anchor",
+      "type": "text"
+    },
+    {
+      "key": "label",
+      "label": "Section label",
+      "type": "text"
+    },
+    {
+      "key": "heading",
+      "label": "Heading",
+      "type": "text"
+    },
+    {
+      "key": "description",
+      "label": "Description",
+      "type": "text",
+      "multiline": true
+    },
+    {
+      "key": "actionLabel",
+      "label": "Link label",
+      "type": "text"
+    },
+    {
+      "key": "actionURL",
+      "label": "Link URL",
+      "type": "url"
+    },
+    {
+      "key": "items",
+      "label": "Questions",
+      "type": "list",
+      "fields": [
+        {
+          "key": "question",
+          "label": "Question",
+          "type": "text"
+        },
+        {
+          "key": "answer",
+          "label": "Answer",
+          "type": "text",
+          "multiline": true
+        }
+      ]
+    }
+  ],
+  "defaults": {
+    "anchor": "faq",
+    "label": "FAQ",
+    "heading": "A little clarity before we begin.",
+    "description": "Every project starts with a conversation. Here are a few useful things to know about working with the studio.",
+    "actionLabel": "Let’s talk",
+    "actionURL": "#contact",
+    "items": [
+      {
+        "_rowId": "row-1",
+        "question": "What can the studio help with?",
+        "answer": "We work across architecture, interiors and the selection of materials and furnishings. The scope is tailored to the needs of each project."
+      },
+      {
+        "_rowId": "row-2",
+        "question": "Do you take on homes and commercial spaces?",
+        "answer": "Our approach can be applied to private homes, places for hospitality, workplaces and spaces for gathering."
+      },
+      {
+        "_rowId": "row-3",
+        "question": "How long does a project take?",
+        "answer": "Timing depends on the size of the project, approvals and the work involved. We establish a realistic programme together at the start."
+      },
+      {
+        "_rowId": "row-4",
+        "question": "What happens during the design process?",
+        "answer": "We begin with discovery and concept studies, then develop the design in detail before coordinating the work and final styling."
+      },
+      {
+        "_rowId": "row-5",
+        "question": "Can we work together remotely?",
+        "answer": "We can review plans, share material studies and discuss design decisions through regular online meetings."
+      },
+      {
+        "_rowId": "row-6",
+        "question": "How do you approach materials?",
+        "answer": "We look for a balance of character, durability and tactile quality, considering how each material will change over time."
+      },
+      {
+        "_rowId": "row-7",
+        "question": "Do you help source furniture?",
+        "answer": "Furniture and lighting can form part of the agreed scope, helping bring the architecture and the interior together."
+      },
+      {
+        "_rowId": "row-8",
+        "question": "How is the budget developed?",
+        "answer": "We discuss priorities early and refine allowances as the design develops, keeping the relationship between scope and cost visible."
+      },
+      {
+        "_rowId": "row-9",
+        "question": "Can you collaborate with our existing team?",
+        "answer": "Yes. Clear roles and open communication help us work effectively with architects, contractors and specialist consultants."
+      },
+      {
+        "_rowId": "row-10",
+        "question": "How do we begin?",
+        "answer": "Use the enquiry link to introduce your project, its location and your aspirations. We can then arrange an initial conversation."
+      }
+    ]
+  },
+  "dependencies": {
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0"
+  }
+}

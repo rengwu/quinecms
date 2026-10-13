@@ -1,0 +1,69 @@
+{
+  "type": "archline-introduction",
+  "version": 1,
+  "label": "Archline · Studio introduction",
+  "description": "Large editorial statement above a three-column studio introduction.",
+  "theme": "Archline",
+  "tags": ["archline", "architecture", "editorial"],
+  "kind": "static",
+  "framework": "react",
+  "activation": "never",
+  "component": "View.tsx",
+  "fields": [
+    {
+      "key": "anchor",
+      "label": "Section anchor",
+      "type": "text"
+    },
+    {
+      "key": "label",
+      "label": "Section label",
+      "type": "text"
+    },
+    {
+      "key": "heading",
+      "label": "Heading",
+      "type": "text"
+    },
+    {
+      "key": "description",
+      "label": "Description",
+      "type": "text",
+      "multiline": true
+    },
+    {
+      "key": "smallImage",
+      "label": "Small studio image",
+      "type": "media"
+    },
+    {
+      "key": "largeImage",
+      "label": "Large studio image",
+      "type": "media"
+    },
+    {
+      "key": "actionLabel",
+      "label": "Link label",
+      "type": "text"
+    },
+    {
+      "key": "actionURL",
+      "label": "Link URL",
+      "type": "url"
+    }
+  ],
+  "defaults": {
+    "anchor": "studio",
+    "label": "About us",
+    "heading": "We create architecture that belongs to its place and to the people who live within it. Our work brings natural materials, purposeful details and a thoughtful balance of light and space into everyday life.",
+    "description": "A good space begins with listening. We take time to understand the rhythms of a place and the aspirations of the people who will use it.\n\nFrom the first sketch to the last material choice, we bring a consistent eye and a collaborative spirit. Each decision contributes to a whole that feels natural, welcoming and made to last.",
+    "smallImage": null,
+    "largeImage": null,
+    "actionLabel": "More about our process",
+    "actionURL": "#process"
+  },
+  "dependencies": {
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0"
+  }
+}

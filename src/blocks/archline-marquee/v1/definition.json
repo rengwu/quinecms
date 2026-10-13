@@ -1,0 +1,27 @@
+{
+  "type": "archline-marquee",
+  "version": 1,
+  "label": "Archline · Statement marquee",
+  "description": "A slow text marquee that pauses on hover and becomes static with reduced motion.",
+  "theme": "Archline",
+  "tags": ["archline", "architecture", "editorial"],
+  "kind": "static",
+  "framework": "react",
+  "activation": "never",
+  "component": "View.tsx",
+  "fields": [
+    {
+      "key": "text",
+      "label": "Statement",
+      "type": "text",
+      "multiline": true
+    }
+  ],
+  "defaults": {
+    "text": "Designed for living. Shaped by light. Grounded in place. Made to endure."
+  },
+  "dependencies": {
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0"
+  }
+}

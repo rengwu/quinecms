@@ -1,0 +1,23 @@
+{
+  "formatVersion": 1,
+  "id": "media_archline_atelier",
+  "name": "Atelier",
+  "original": {
+    "key": "archline/v1/atelier.webp",
+    "url": "/archline/v1/atelier.webp",
+    "mime": "image/webp",
+    "bytes": 352174,
+    "width": 2400,
+    "height": 1600
+  },
+  "variants": [
+    {
+      "key": "archline/v1/atelier-800.webp",
+      "url": "/archline/v1/atelier-800.webp",
+      "mime": "image/webp",
+      "bytes": 46466,
+      "width": 800,
+      "height": 533
+    }
+  ]
+}

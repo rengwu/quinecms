@@ -1,0 +1,104 @@
+{
+  "formatVersion": 1,
+  "id": "entry_archline_06_luma",
+  "collectionId": "collection_archline_projects",
+  "slug": "luma-garden-loft",
+  "values": {
+    "title": "Luma Garden Loft",
+    "year": "2022",
+    "image": {
+      "mediaId": "media_archline_luma",
+      "alt": "Quiet loft with natural light and warm materials"
+    },
+    "metadata": [
+      {
+        "_rowId": "row-1",
+        "label": "Client",
+        "value": "Private client"
+      },
+      {
+        "_rowId": "row-2",
+        "label": "Collection",
+        "value": "Architecture & interiors"
+      }
+    ],
+    "description": "Luma Garden Loft explores the relationship between everyday living and the architecture around it. A considered arrangement of spaces makes room for natural light, comfortable movement and moments of quiet. This reference-inspired concept study brings together a restrained palette and a warm, human approach.",
+    "facts": [
+      {
+        "_rowId": "row-1",
+        "label": "Status",
+        "value": "Concept study"
+      },
+      {
+        "_rowId": "row-2",
+        "label": "Year",
+        "value": "2022"
+      },
+      {
+        "_rowId": "row-3",
+        "label": "Type",
+        "value": "Architecture & interiors"
+      },
+      {
+        "_rowId": "row-4",
+        "label": "Focus",
+        "value": "Warm minimalism"
+      }
+    ],
+    "chapters": [
+      {
+        "_rowId": "row-1",
+        "title": "Project Overview",
+        "image": {
+          "mediaId": "media_archline_luma",
+          "alt": "Quiet loft with natural light and warm materials"
+        },
+        "description": "The design begins with a simple idea: make the experience of moving through a space feel natural. Openings connect rooms with their surroundings, while changes in scale create a gentle rhythm between shared areas and quieter corners.\n\nDaylight is treated as a material in its own right. Its movement across walls and floors gives the architecture a different character throughout the day."
+      },
+      {
+        "_rowId": "row-2",
+        "title": "Design Approach",
+        "image": {
+          "mediaId": "media_archline_interior",
+          "alt": "Open timber interior facing a planted courtyard"
+        },
+        "description": "A restrained palette brings the different spaces together. Warm timber, textured surfaces and clear structural lines offer a balance of precision and softness.\n\nThe arrangement of each room considers its purpose, the views beyond it and the relationship between people, furniture and the building."
+      },
+      {
+        "_rowId": "row-3",
+        "title": "Details",
+        "image": {
+          "mediaId": "media_archline_service_material",
+          "alt": "Material studies, drawings and coffee on a studio table"
+        },
+        "description": "Careful junctions and well-proportioned elements give the interior its sense of ease. Light is placed to reveal texture, and furnishings leave space for the architecture to breathe.\n\nThese smaller decisions support a coherent whole: a place with enough character to feel memorable, and enough simplicity to welcome everyday life."
+      }
+    ],
+    "gallery": [
+      {
+        "_rowId": "row-1",
+        "image": {
+          "mediaId": "media_archline_luma",
+          "alt": "Quiet loft with natural light and warm materials"
+        },
+        "caption": "Light and material"
+      },
+      {
+        "_rowId": "row-2",
+        "image": {
+          "mediaId": "media_archline_interior",
+          "alt": "Open timber interior facing a planted courtyard"
+        },
+        "caption": "A quiet composition"
+      },
+      {
+        "_rowId": "row-3",
+        "image": {
+          "mediaId": "media_archline_service_material",
+          "alt": "Material studies, drawings and coffee on a studio table"
+        },
+        "caption": "Considered details"
+      }
+    ]
+  }
+}

@@ -1,0 +1,75 @@
+{
+  "type": "archline-project-story",
+  "version": 1,
+  "label": "Archline · Project story",
+  "description": "A sticky summary and project facts beside a sequence of image-led chapters.",
+  "theme": "Archline",
+  "tags": ["archline", "architecture", "editorial"],
+  "kind": "generic",
+  "framework": "react",
+  "activation": "never",
+  "component": "View.tsx",
+  "fields": [
+    {
+      "key": "summaryLabel",
+      "label": "Summary label",
+      "type": "text"
+    },
+    {
+      "key": "description",
+      "label": "Description",
+      "type": "text",
+      "multiline": true
+    },
+    {
+      "key": "facts",
+      "label": "Project facts",
+      "type": "list",
+      "fields": [
+        {
+          "key": "label",
+          "label": "Label",
+          "type": "text"
+        },
+        {
+          "key": "value",
+          "label": "Value",
+          "type": "text"
+        }
+      ]
+    },
+    {
+      "key": "chapters",
+      "label": "Story chapters",
+      "type": "list",
+      "fields": [
+        {
+          "key": "title",
+          "label": "Chapter title",
+          "type": "text"
+        },
+        {
+          "key": "image",
+          "label": "Image",
+          "type": "media"
+        },
+        {
+          "key": "description",
+          "label": "Chapter text",
+          "type": "text",
+          "multiline": true
+        }
+      ]
+    }
+  ],
+  "defaults": {
+    "summaryLabel": "Project Details",
+    "description": "",
+    "facts": [],
+    "chapters": []
+  },
+  "dependencies": {
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0"
+  }
+}

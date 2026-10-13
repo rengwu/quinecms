@@ -1,0 +1,68 @@
+{
+  "type": "archline-partners",
+  "version": 1,
+  "label": "Archline · Partner strip",
+  "description": "An editable typographic partner strip. Demo partner names are illustrative.",
+  "theme": "Archline",
+  "tags": ["archline", "architecture", "editorial"],
+  "kind": "static",
+  "framework": "react",
+  "activation": "never",
+  "component": "View.tsx",
+  "fields": [
+    {
+      "key": "label",
+      "label": "Accessible label",
+      "type": "text"
+    },
+    {
+      "key": "items",
+      "label": "Partner names",
+      "type": "list",
+      "fields": [
+        {
+          "key": "name",
+          "label": "Name",
+          "type": "text"
+        }
+      ]
+    }
+  ],
+  "defaults": {
+    "label": "Example collaborators",
+    "items": [
+      {
+        "_rowId": "row-1",
+        "name": "Spherule"
+      },
+      {
+        "_rowId": "row-2",
+        "name": "GlobalBank"
+      },
+      {
+        "_rowId": "row-3",
+        "name": "Interlock"
+      },
+      {
+        "_rowId": "row-4",
+        "name": "Galileo"
+      },
+      {
+        "_rowId": "row-5",
+        "name": "FeatherDev"
+      },
+      {
+        "_rowId": "row-6",
+        "name": "CloudWatch"
+      },
+      {
+        "_rowId": "row-7",
+        "name": "Segment"
+      }
+    ]
+  },
+  "dependencies": {
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0"
+  }
+}

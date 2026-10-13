@@ -1,7 +1,6 @@
 ---
 import { gzipSync } from 'node:zlib';
 import { loadContent } from '../../core/load';
-import { layoutWhitelist } from '../../core/layouts';
 import { adminBundle } from '../../../scripts/admin-build';
 import { credentials, encryptAdmin } from '../../admin/crypto';
 // One shared credential pair. Dev uses fixed credentials regardless of .env;
@@ -20,7 +19,6 @@ if (provider !== 'github' && provider !== 'gitlab')
 const config = {
   provider,
   instance: import.meta.env.PUBLIC_GITLAB_URL ?? 'https://gitlab.com',
-  allowedLayoutIds: layoutWhitelist(import.meta.env.SITE_LAYOUT_WHITELIST),
   encryptedAdmin: true,
   owner:
     import.meta.env.PUBLIC_GIT_NAMESPACE ??

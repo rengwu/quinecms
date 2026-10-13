@@ -1,0 +1,23 @@
+{
+  "formatVersion": 1,
+  "id": "media_archline_gallery_2",
+  "name": "Gallery 2",
+  "original": {
+    "key": "archline/v1/gallery-2.webp",
+    "url": "/archline/v1/gallery-2.webp",
+    "mime": "image/webp",
+    "bytes": 158034,
+    "width": 1200,
+    "height": 800
+  },
+  "variants": [
+    {
+      "key": "archline/v1/gallery-2-800.webp",
+      "url": "/archline/v1/gallery-2-800.webp",
+      "mime": "image/webp",
+      "bytes": 44782,
+      "width": 800,
+      "height": 533
+    }
+  ]
+}

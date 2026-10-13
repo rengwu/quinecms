@@ -1,0 +1,83 @@
+{
+  "type": "archline-insights",
+  "version": 1,
+  "label": "Archline · Editorial cards",
+  "description": "A large lead article and two smaller editorial cards with editable destinations.",
+  "theme": "Archline",
+  "tags": ["archline", "architecture", "editorial"],
+  "kind": "static",
+  "framework": "react",
+  "activation": "never",
+  "component": "View.tsx",
+  "fields": [
+    {
+      "key": "anchor",
+      "label": "Section anchor",
+      "type": "text"
+    },
+    {
+      "key": "label",
+      "label": "Section label",
+      "type": "text"
+    },
+    {
+      "key": "heading",
+      "label": "Heading",
+      "type": "text"
+    },
+    {
+      "key": "items",
+      "label": "Articles",
+      "type": "list",
+      "fields": [
+        {
+          "key": "title",
+          "label": "Title",
+          "type": "text"
+        },
+        {
+          "key": "image",
+          "label": "Image",
+          "type": "media"
+        },
+        {
+          "key": "readTime",
+          "label": "Reading time",
+          "type": "text"
+        },
+        {
+          "key": "date",
+          "label": "Date label",
+          "type": "text"
+        },
+        {
+          "key": "url",
+          "label": "Article URL",
+          "type": "url"
+        }
+      ]
+    },
+    {
+      "key": "actionLabel",
+      "label": "Link label",
+      "type": "text"
+    },
+    {
+      "key": "actionURL",
+      "label": "Link URL",
+      "type": "url"
+    }
+  ],
+  "defaults": {
+    "anchor": "insights",
+    "label": "Insights",
+    "heading": "Notes on the places we call home.",
+    "items": [],
+    "actionLabel": "",
+    "actionURL": ""
+  },
+  "dependencies": {
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0"
+  }
+}

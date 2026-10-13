@@ -74,32 +74,3 @@ export function selectLayout(
     },
   };
 }
-/** Selection policy only. Never use this filtered catalog to resolve an active layout. */
-export function layoutWhitelist(
-  raw: string | undefined,
-  definitions = layoutDefinitions,
-): string[] | undefined {
-  if (raw === undefined) return undefined;
-  const ids = [
-    ...new Set(
-      raw
-        .split(',')
-        .map((id) => id.trim())
-        .filter(Boolean),
-    ),
-  ];
-  if (!ids.length)
-    throw new Error(
-      'SITE_LAYOUT_WHITELIST must contain at least one installed layout ID, or be unset.',
-    );
-  const unknown = ids.filter((id) => !definitions.some((d) => d.id === id));
-  if (unknown.length)
-    throw new Error(`Unknown SITE_LAYOUT_WHITELIST IDs: ${unknown.join(', ')}`);
-  return ids;
-}
-export function layoutChoices(
-  allowedIds?: string[],
-  definitions = layoutDefinitions,
-) {
-  return definitions.filter((d) => !allowedIds || allowedIds.includes(d.id));
-}

@@ -1,0 +1,23 @@
+{
+  "formatVersion": 1,
+  "id": "media_archline_studio_team",
+  "name": "Studio Team",
+  "original": {
+    "key": "archline/v1/studio-team.webp",
+    "url": "/archline/v1/studio-team.webp",
+    "mime": "image/webp",
+    "bytes": 148710,
+    "width": 2400,
+    "height": 1600
+  },
+  "variants": [
+    {
+      "key": "archline/v1/studio-team-800.webp",
+      "url": "/archline/v1/studio-team-800.webp",
+      "mime": "image/webp",
+      "bytes": 36562,
+      "width": 800,
+      "height": 533
+    }
+  ]
+}

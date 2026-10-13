@@ -1,0 +1,23 @@
+{
+  "formatVersion": 1,
+  "id": "media_archline_insight_minimal",
+  "name": "Insight Minimal",
+  "original": {
+    "key": "archline/v1/insight-minimal.webp",
+    "url": "/archline/v1/insight-minimal.webp",
+    "mime": "image/webp",
+    "bytes": 70972,
+    "width": 904,
+    "height": 1200
+  },
+  "variants": [
+    {
+      "key": "archline/v1/insight-minimal-800.webp",
+      "url": "/archline/v1/insight-minimal-800.webp",
+      "mime": "image/webp",
+      "bytes": 32004,
+      "width": 603,
+      "height": 800
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "formatVersion": 1,
+  "id": "media_archline_terra",
+  "name": "Terra",
+  "original": {
+    "key": "archline/v1/terra.webp",
+    "url": "/archline/v1/terra.webp",
+    "mime": "image/webp",
+    "bytes": 209128,
+    "width": 2000,
+    "height": 1334
+  },
+  "variants": [
+    {
+      "key": "archline/v1/terra-800.webp",
+      "url": "/archline/v1/terra-800.webp",
+      "mime": "image/webp",
+      "bytes": 48680,
+      "width": 800,
+      "height": 534
+    }
+  ]
+}

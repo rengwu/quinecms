@@ -1,0 +1,23 @@
+{
+  "formatVersion": 1,
+  "id": "media_archline_sereno",
+  "name": "Sereno",
+  "original": {
+    "key": "archline/v1/sereno.webp",
+    "url": "/archline/v1/sereno.webp",
+    "mime": "image/webp",
+    "bytes": 113804,
+    "width": 1582,
+    "height": 956
+  },
+  "variants": [
+    {
+      "key": "archline/v1/sereno-800.webp",
+      "url": "/archline/v1/sereno-800.webp",
+      "mime": "image/webp",
+      "bytes": 40532,
+      "width": 800,
+      "height": 483
+    }
+  ]
+}

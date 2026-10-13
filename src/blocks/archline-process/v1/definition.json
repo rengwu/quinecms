@@ -1,0 +1,99 @@
+{
+  "type": "archline-process",
+  "version": 1,
+  "label": "Archline · Process and image pair",
+  "description": "Numbered process steps, editorial copy and an asymmetric pair of studio photographs.",
+  "theme": "Archline",
+  "tags": ["archline", "architecture", "editorial"],
+  "kind": "static",
+  "framework": "react",
+  "activation": "never",
+  "component": "View.tsx",
+  "fields": [
+    {
+      "key": "anchor",
+      "label": "Section anchor",
+      "type": "text"
+    },
+    {
+      "key": "label",
+      "label": "Section label",
+      "type": "text"
+    },
+    {
+      "key": "heading",
+      "label": "Heading",
+      "type": "text"
+    },
+    {
+      "key": "description",
+      "label": "Description",
+      "type": "text",
+      "multiline": true
+    },
+    {
+      "key": "steps",
+      "label": "Process steps",
+      "type": "list",
+      "fields": [
+        {
+          "key": "title",
+          "label": "Step",
+          "type": "text"
+        }
+      ]
+    },
+    {
+      "key": "leftImage",
+      "label": "Left image",
+      "type": "media"
+    },
+    {
+      "key": "rightImage",
+      "label": "Right image",
+      "type": "media"
+    },
+    {
+      "key": "actionLabel",
+      "label": "Link label",
+      "type": "text"
+    },
+    {
+      "key": "actionURL",
+      "label": "Link URL",
+      "type": "url"
+    }
+  ],
+  "defaults": {
+    "anchor": "process",
+    "label": "Our process",
+    "heading": "A thoughtful process. A place that feels like you.",
+    "description": "We build a shared understanding before drawing the first line. Through a clear sequence of conversations, studies and refinements, we guide each project from its earliest possibility to the experience of a finished space.",
+    "steps": [
+      {
+        "_rowId": "row-1",
+        "title": "Concept & Sketch"
+      },
+      {
+        "_rowId": "row-2",
+        "title": "Design Development"
+      },
+      {
+        "_rowId": "row-3",
+        "title": "Execution & Build"
+      },
+      {
+        "_rowId": "row-4",
+        "title": "Final Styling"
+      }
+    ],
+    "leftImage": null,
+    "rightImage": null,
+    "actionLabel": "Discuss your project",
+    "actionURL": "#contact"
+  },
+  "dependencies": {
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0"
+  }
+}

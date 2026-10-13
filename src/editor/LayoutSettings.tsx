@@ -8,7 +8,6 @@ import type { Content, LayoutDefinition, Page } from '../core/types';
 import type { LayoutSettingsProps } from '../core/layout-contract';
 import {
   activeLayout,
-  layoutChoices,
   layoutDefinitions,
   layoutKey,
   selectLayout,
@@ -30,13 +29,11 @@ const editors = Object.fromEntries(
 );
 export default function LayoutSettings({
   content,
-  allowedIds,
   previewPage,
   onPreviewPage,
   onChange,
 }: {
   content: Content;
-  allowedIds?: string[];
   previewPage?: Page;
   onPreviewPage(id: string): void;
   onChange(content: Content): void;
@@ -50,11 +47,10 @@ export default function LayoutSettings({
   const [search, setSearch] = useState('');
   const [preview, setPreview] = useState<LayoutDefinition>();
   const [mobile, setMobile] = useState(false);
-  const choices = layoutChoices(allowedIds);
-  const cards = [...new Set(choices.map((d) => d.id))]
+  const cards = [...new Set(layoutDefinitions.map((d) => d.id))]
     .map(
       (id) =>
-        choices
+        layoutDefinitions
           .filter((d) => d.id === id)
           .sort(
             (a, b) =>

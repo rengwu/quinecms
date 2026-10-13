@@ -1,0 +1,14 @@
+{
+  "formatVersion": 1,
+  "id": "media_archline_testimonial_background",
+  "name": "Testimonial Background",
+  "original": {
+    "key": "archline/v1/testimonial-background.webp",
+    "url": "/archline/v1/testimonial-background.webp",
+    "mime": "image/webp",
+    "bytes": 45858,
+    "width": 256,
+    "height": 256
+  },
+  "variants": []
+}

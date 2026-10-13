@@ -1,0 +1,23 @@
+{
+  "formatVersion": 1,
+  "id": "media_archline_enquiry",
+  "name": "Enquiry",
+  "original": {
+    "key": "archline/v1/enquiry.webp",
+    "url": "/archline/v1/enquiry.webp",
+    "mime": "image/webp",
+    "bytes": 180348,
+    "width": 2400,
+    "height": 1407
+  },
+  "variants": [
+    {
+      "key": "archline/v1/enquiry-800.webp",
+      "url": "/archline/v1/enquiry-800.webp",
+      "mime": "image/webp",
+      "bytes": 21466,
+      "width": 800,
+      "height": 469
+    }
+  ]
+}

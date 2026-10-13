@@ -67,7 +67,6 @@ import {
 } from './AdminTheme';
 export interface Config extends Repository {
   encryptedAdmin?: boolean;
-  allowedLayoutIds?: string[];
   r2: Pick<StorageConfig, 'accountId' | 'bucket' | 'publicURL'>;
 }
 function stored<T>(key: string, fallback: T): T {
@@ -1291,7 +1290,6 @@ function Editor({
                         {tab === 'layout' && (
                           <LayoutSettings
                             content={content}
-                            allowedIds={config.allowedLayoutIds}
                             previewPage={page}
                             onPreviewPage={setLayoutPageId}
                             onChange={setContent}

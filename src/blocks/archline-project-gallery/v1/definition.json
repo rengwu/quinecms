@@ -1,0 +1,56 @@
+{
+  "type": "archline-project-gallery",
+  "version": 1,
+  "label": "Archline · Project gallery",
+  "description": "Editable image gallery bound to a project entry.",
+  "theme": "Archline",
+  "tags": ["archline", "architecture", "editorial"],
+  "kind": "generic",
+  "framework": "react",
+  "activation": "never",
+  "component": "View.tsx",
+  "fields": [
+    {
+      "key": "heading",
+      "label": "Heading",
+      "type": "text"
+    },
+    {
+      "key": "images",
+      "label": "Images",
+      "type": "list",
+      "fields": [
+        {
+          "key": "image",
+          "label": "Image",
+          "type": "media"
+        },
+        {
+          "key": "caption",
+          "label": "Caption",
+          "type": "text"
+        }
+      ]
+    },
+    {
+      "key": "actionLabel",
+      "label": "Link label",
+      "type": "text"
+    },
+    {
+      "key": "actionURL",
+      "label": "Link URL",
+      "type": "url"
+    }
+  ],
+  "defaults": {
+    "heading": "Project Gallery",
+    "images": [],
+    "actionLabel": "Explore all projects",
+    "actionURL": "/projects"
+  },
+  "dependencies": {
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0"
+  }
+}

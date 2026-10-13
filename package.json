@@ -20,7 +20,8 @@
     "wiki:check": "node docs/wiki/_build.mjs --check",
     "check:build": "node scripts/check-build.mjs",
     "format": "prettier --write src scripts tests *.mjs *.ts *.json content",
-    "verify": "pnpm check && pnpm test && pnpm build && pnpm check:build"
+    "verify": "pnpm check && pnpm test && pnpm build && pnpm check:build",
+    "example:archline": "node scripts/example-site.mjs archline"
   },
   "dependencies": {
     "@astrojs/react": "7.0.0",

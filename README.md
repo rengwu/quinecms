@@ -17,10 +17,18 @@ the documented record formats describe the current implementation.
 
 ## Run locally
 
-To inspect a recreation without replacing the active demo, run
-`pnpm example:quine` or `pnpm example:intr`. The [Quine example](examples/quine/README.md)
-uses block-owned projects; [Intr Studio](examples/intr/README.md) shares project
-content across three pages. Each guide includes its editing map and isolated build command.
+Use one main dashboard for every installed theme and block: start `pnpm dev`, then
+open `/admin/` at the printed URL. **Site Layout → Change layout** offers Starter,
+chartr, Quine, Intr Studio and Archline. **Pages → page → Add block → All themes**
+offers blocks from all themes, regardless of the active layout. Static/generic
+page compatibility and layout-owned footer selection still apply.
+
+Changing a layout uses its default settings and preserves the site's pages,
+blocks and content. It does not import a reference site's sample pages. The
+[Quine](examples/quine/README.md), [Intr Studio](examples/intr/README.md) and
+[Archline](examples/archline/README.md) directories hold optional sample content,
+backups and editing maps. Their `example:*` commands are developer sandboxes for
+inspecting those records; no theme requires a separate command or dashboard.
 
 Node 22.12+ and pnpm 10.34.1:
 

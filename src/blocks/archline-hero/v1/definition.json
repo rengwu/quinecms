@@ -1,0 +1,69 @@
+{
+  "type": "archline-hero",
+  "version": 1,
+  "label": "Archline · Photo hero",
+  "description": "Full-viewport photograph with a large heading, four-column grid and project link.",
+  "theme": "Archline",
+  "tags": ["archline", "architecture", "editorial"],
+  "kind": "static",
+  "framework": "react",
+  "activation": "never",
+  "component": "View.tsx",
+  "fields": [
+    {
+      "key": "anchor",
+      "label": "Section anchor",
+      "type": "text"
+    },
+    {
+      "key": "heading",
+      "label": "Heading",
+      "type": "text"
+    },
+    {
+      "key": "description",
+      "label": "Description",
+      "type": "text",
+      "multiline": true
+    },
+    {
+      "key": "image",
+      "label": "Background image",
+      "type": "media"
+    },
+    {
+      "key": "actionLabel",
+      "label": "Link label",
+      "type": "text"
+    },
+    {
+      "key": "actionURL",
+      "label": "Link URL",
+      "type": "url"
+    },
+    {
+      "key": "scrollLabel",
+      "label": "Scroll label",
+      "type": "text"
+    },
+    {
+      "key": "scrollURL",
+      "label": "Scroll destination",
+      "type": "url"
+    }
+  ],
+  "defaults": {
+    "anchor": "top",
+    "heading": "Harmony shaped by light, material, and space.",
+    "description": "Thoughtful architecture begins with the way a place feels. We bring light, texture and proportion together to create spaces with a lasting sense of calm.",
+    "image": null,
+    "actionLabel": "Explore our projects",
+    "actionURL": "/projects",
+    "scrollLabel": "(Scroll down)",
+    "scrollURL": "#studio"
+  },
+  "dependencies": {
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0"
+  }
+}

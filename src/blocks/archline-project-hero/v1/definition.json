@@ -1,0 +1,62 @@
+{
+  "type": "archline-project-hero",
+  "version": 1,
+  "label": "Archline · Project heading and cover",
+  "description": "Collection-bound project title, metadata and full-bleed cover.",
+  "theme": "Archline",
+  "tags": ["archline", "architecture", "editorial"],
+  "kind": "generic",
+  "framework": "react",
+  "activation": "never",
+  "component": "View.tsx",
+  "fields": [
+    {
+      "key": "heading",
+      "label": "Heading",
+      "type": "text"
+    },
+    {
+      "key": "image",
+      "label": "Cover image",
+      "type": "media"
+    },
+    {
+      "key": "metadata",
+      "label": "Header facts",
+      "type": "list",
+      "fields": [
+        {
+          "key": "label",
+          "label": "Label",
+          "type": "text"
+        },
+        {
+          "key": "value",
+          "label": "Value",
+          "type": "text"
+        }
+      ]
+    },
+    {
+      "key": "backLabel",
+      "label": "Back link label",
+      "type": "text"
+    },
+    {
+      "key": "backURL",
+      "label": "Back link URL",
+      "type": "url"
+    }
+  ],
+  "defaults": {
+    "heading": "",
+    "image": null,
+    "metadata": [],
+    "backLabel": "Back to all projects",
+    "backURL": "/projects"
+  },
+  "dependencies": {
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0"
+  }
+}

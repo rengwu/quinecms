@@ -1,0 +1,204 @@
+{
+  "id": "archline",
+  "version": 1,
+  "label": "Archline",
+  "description": "Architectural photography, warm paper, fine grid lines and quiet editorial typography. Pair with the Archline blocks.",
+  "activation": "load",
+  "defaults": {
+    "contentMaxWidth": 2200,
+    "pageGutter": 32,
+    "title": "Archline® — Interior & Architecture Studio",
+    "description": "An architecture and interiors theme exploring light, material and space.",
+    "brand": "ARCHLINE®",
+    "tagline": "Interior & Architecture Studio",
+    "navigation": [
+      {
+        "_rowId": "row-1",
+        "label": "studio",
+        "url": "/#studio"
+      },
+      {
+        "_rowId": "row-2",
+        "label": "projects",
+        "url": "/projects"
+      },
+      {
+        "_rowId": "row-3",
+        "label": "expertise",
+        "url": "/#expertise"
+      },
+      {
+        "_rowId": "row-4",
+        "label": "insights",
+        "url": "/#insights"
+      },
+      {
+        "_rowId": "row-5",
+        "label": "contact",
+        "url": "/#contact"
+      }
+    ],
+    "socials": [
+      {
+        "_rowId": "row-1",
+        "label": "Facebook",
+        "url": "https://www.facebook.com/"
+      },
+      {
+        "_rowId": "row-2",
+        "label": "Instagram",
+        "url": "https://www.instagram.com/"
+      },
+      {
+        "_rowId": "row-3",
+        "label": "X (Twitter)",
+        "url": "https://x.com/"
+      },
+      {
+        "_rowId": "row-4",
+        "label": "Youtube",
+        "url": "https://www.youtube.com/"
+      }
+    ],
+    "menuImage": null,
+    "email": "hello@archiline.studio",
+    "emailURL": "mailto:hello@archiline.studio",
+    "phone": "+84 (0) 24 1234 5678",
+    "phoneURL": "tel:+842412345678",
+    "address": "120 Yen Lang District, Dong Da,\nHa Noi – Viet Nam",
+    "hours": "Mon–Fri / 09:30 – 18:00\nClosed on public holidays",
+    "copyright": "©2025 Archline · Reference theme demo",
+    "legal": [
+      {
+        "_rowId": "row-1",
+        "label": "Reference design",
+        "url": "https://archline.framer.website/"
+      },
+      {
+        "_rowId": "row-2",
+        "label": "Made by @deke",
+        "url": "https://x.com/designbydeke"
+      }
+    ]
+  },
+  "fields": [
+    {
+      "key": "title",
+      "label": "Site title",
+      "type": "text"
+    },
+    {
+      "key": "description",
+      "label": "Site description",
+      "type": "text",
+      "multiline": true
+    },
+    {
+      "key": "brand",
+      "label": "Brand",
+      "type": "text"
+    },
+    {
+      "key": "tagline",
+      "label": "Tagline",
+      "type": "text"
+    },
+    {
+      "key": "navigation",
+      "label": "Navigation",
+      "type": "list",
+      "fields": [
+        {
+          "key": "label",
+          "label": "Label",
+          "type": "text"
+        },
+        {
+          "key": "url",
+          "label": "URL",
+          "type": "url"
+        }
+      ]
+    },
+    {
+      "key": "socials",
+      "label": "Social links",
+      "type": "list",
+      "fields": [
+        {
+          "key": "label",
+          "label": "Label",
+          "type": "text"
+        },
+        {
+          "key": "url",
+          "label": "URL",
+          "type": "url"
+        }
+      ]
+    },
+    {
+      "key": "menuImage",
+      "label": "Expanded menu image",
+      "type": "media"
+    },
+    {
+      "key": "email",
+      "label": "Email label",
+      "type": "text"
+    },
+    {
+      "key": "emailURL",
+      "label": "Email URL",
+      "type": "url"
+    },
+    {
+      "key": "phone",
+      "label": "Phone label",
+      "type": "text"
+    },
+    {
+      "key": "phoneURL",
+      "label": "Phone URL",
+      "type": "url"
+    },
+    {
+      "key": "address",
+      "label": "Address",
+      "type": "text",
+      "multiline": true
+    },
+    {
+      "key": "hours",
+      "label": "Working hours",
+      "type": "text",
+      "multiline": true
+    },
+    {
+      "key": "copyright",
+      "label": "Copyright",
+      "type": "text"
+    },
+    {
+      "key": "legal",
+      "label": "Footer links",
+      "type": "list",
+      "fields": [
+        {
+          "key": "label",
+          "label": "Label",
+          "type": "text"
+        },
+        {
+          "key": "url",
+          "label": "URL",
+          "type": "url"
+        }
+      ]
+    }
+  ],
+  "component": "View.tsx",
+  "settingsComponent": "Settings.tsx",
+  "policy": "policy.ts",
+  "headComponent": "Head.tsx"
+}

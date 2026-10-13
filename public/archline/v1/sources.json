@@ -1,0 +1,224 @@
+{
+  "reference": "https://archline.framer.website/",
+  "retrieved": "2026-10-13",
+  "note": "Reference demo assets; original rights remain with their owners. Locally optimized WebP derivatives.",
+  "images": [
+    {
+      "name": "hero",
+      "source": "https://framerusercontent.com/images/wmktNeE9khIvQImr0yiWQdMGkA.jpg",
+      "alt": "Modern stone and timber residence under a clear blue sky",
+      "file": "/archline/v1/hero.webp",
+      "mediaId": "media_archline_hero"
+    },
+    {
+      "name": "studio-desk",
+      "source": "https://framerusercontent.com/images/NUBEXU2EeV4669S8gkJqphZDb4.jpg",
+      "alt": "Architects reviewing plans and material samples",
+      "file": "/archline/v1/studio-desk.webp",
+      "mediaId": "media_archline_studio_desk"
+    },
+    {
+      "name": "studio-team",
+      "source": "https://framerusercontent.com/images/Dskc1Fl9cNpfHydpQXOv3tGciIY.jpg",
+      "alt": "Design team working in a light-filled studio",
+      "file": "/archline/v1/studio-team.webp",
+      "mediaId": "media_archline_studio_team"
+    },
+    {
+      "name": "interior",
+      "source": "https://framerusercontent.com/images/EpE3EXTbHQgZGhvDOnYoCiOPO4Q.jpg",
+      "alt": "Open timber interior facing a planted courtyard",
+      "file": "/archline/v1/interior.webp",
+      "mediaId": "media_archline_interior"
+    },
+    {
+      "name": "atelier",
+      "source": "https://framerusercontent.com/images/w8HPe1oYOoaXld5Wmpa6o2aflhI.jpeg",
+      "alt": "White architectural volumes around a sunlit courtyard",
+      "file": "/archline/v1/atelier.webp",
+      "mediaId": "media_archline_atelier"
+    },
+    {
+      "name": "sereno",
+      "source": "https://framerusercontent.com/images/VcDzCDr4ndVT1t9hTvHKYbUReoE.jpg",
+      "alt": "Warm interior opening onto a planted garden",
+      "file": "/archline/v1/sereno.webp",
+      "mediaId": "media_archline_sereno"
+    },
+    {
+      "name": "verra",
+      "source": "https://framerusercontent.com/images/25VNjJf7wbnn0I0IOhVORVsfs.jpg",
+      "alt": "Illuminated single-storey residence at dusk",
+      "file": "/archline/v1/verra.webp",
+      "mediaId": "media_archline_verra"
+    },
+    {
+      "name": "armonia",
+      "source": "https://framerusercontent.com/images/sCewEs74l0MlJTpD6cgSoRFXytE.jpg",
+      "alt": "Architectural pavilion with carefully framed light",
+      "file": "/archline/v1/armonia.webp",
+      "mediaId": "media_archline_armonia"
+    },
+    {
+      "name": "terra",
+      "source": "https://framerusercontent.com/images/IMUNWYEfkn5T37D2j6dPFh4kYBo.jpg",
+      "alt": "Minimal architectural spaces and tactile surfaces",
+      "file": "/archline/v1/terra.webp",
+      "mediaId": "media_archline_terra"
+    },
+    {
+      "name": "luma",
+      "source": "https://framerusercontent.com/images/kRKxe3Oh9CXLHNjAVN67WDNDEaw.png",
+      "alt": "Quiet loft with natural light and warm materials",
+      "file": "/archline/v1/luma.webp",
+      "mediaId": "media_archline_luma"
+    },
+    {
+      "name": "service-space",
+      "source": "https://framerusercontent.com/images/YnB9eyZtnZs6blNEykzA9a2KE.png",
+      "alt": "Calm living space in concrete, timber and linen",
+      "file": "/archline/v1/service-space.webp",
+      "mediaId": "media_archline_service_space"
+    },
+    {
+      "name": "service-form",
+      "source": "https://framerusercontent.com/images/5VgoaXhdHzKGQPGkJ8bgolXFRc.webp",
+      "alt": "Close-up of a sculptural leather seat",
+      "file": "/archline/v1/service-form.webp",
+      "mediaId": "media_archline_service_form"
+    },
+    {
+      "name": "service-material",
+      "source": "https://framerusercontent.com/images/okQF9b85KcWlEOVEDlqxyaLmC8g.png",
+      "alt": "Material studies, drawings and coffee on a studio table",
+      "file": "/archline/v1/service-material.webp",
+      "mediaId": "media_archline_service_material"
+    },
+    {
+      "name": "process-concept",
+      "source": "https://framerusercontent.com/images/KBr2qDVaMcfCjrmUWM5Iu9OZXg.png",
+      "alt": "Designers discussing a concept together",
+      "file": "/archline/v1/process-concept.webp",
+      "mediaId": "media_archline_process_concept"
+    },
+    {
+      "name": "process-studio",
+      "source": "https://framerusercontent.com/images/1VjItteiAHrdxsabYHPleb7XXj0.png",
+      "alt": "Material samples and concept boards in the studio",
+      "file": "/archline/v1/process-studio.webp",
+      "mediaId": "media_archline_process_studio"
+    },
+    {
+      "name": "testimonial-1",
+      "source": "https://framerusercontent.com/images/ubnRfkoCi9LFvT5L7Lew7iJuBy4.png",
+      "alt": "A considered architectural interior",
+      "file": "/archline/v1/testimonial-1.webp",
+      "mediaId": "media_archline_testimonial_1"
+    },
+    {
+      "name": "testimonial-2",
+      "source": "https://framerusercontent.com/images/zON4OODeFGmEVcExPw1AwoRCs.jpg",
+      "alt": "Architectural detail in soft daylight",
+      "file": "/archline/v1/testimonial-2.webp",
+      "mediaId": "media_archline_testimonial_2"
+    },
+    {
+      "name": "testimonial-3",
+      "source": "https://framerusercontent.com/images/FnGLm2yRNviYdXrQyrqRuUBnz0.png",
+      "alt": "Warm interior materials",
+      "file": "/archline/v1/testimonial-3.webp",
+      "mediaId": "media_archline_testimonial_3"
+    },
+    {
+      "name": "insight-light",
+      "source": "https://framerusercontent.com/images/FxIo2uo46s0Ps14UV9FI6BMfb8.jpg",
+      "alt": "Modern pavilion and tower framed against the evening sky",
+      "file": "/archline/v1/insight-light.webp",
+      "mediaId": "media_archline_insight_light"
+    },
+    {
+      "name": "insight-minimal",
+      "source": "https://framerusercontent.com/images/muwugAHF8il45q88wcuwIE6AGzI.png",
+      "alt": "Architect working at a drawing desk",
+      "file": "/archline/v1/insight-minimal.webp",
+      "mediaId": "media_archline_insight_minimal"
+    },
+    {
+      "name": "insight-nature",
+      "source": "https://framerusercontent.com/images/23sXMc0CZMvBpqlmMR44UYm5okE.jpg",
+      "alt": "Sunlight falling across a timber stair",
+      "file": "/archline/v1/insight-nature.webp",
+      "mediaId": "media_archline_insight_nature"
+    },
+    {
+      "name": "enquiry",
+      "source": "https://framerusercontent.com/images/fXYrgRayukM9r1bibwitkLWoc.jpg",
+      "alt": "Warm timber kitchen and living space",
+      "file": "/archline/v1/enquiry.webp",
+      "mediaId": "media_archline_enquiry"
+    },
+    {
+      "name": "overview",
+      "source": "https://framerusercontent.com/images/AvNfO5OX6ZvqEJq1hGE6HjllUk.png",
+      "alt": "Architectural study of light, volume and material",
+      "file": "/archline/v1/overview.webp",
+      "mediaId": "media_archline_overview"
+    },
+    {
+      "name": "approach",
+      "source": "https://framerusercontent.com/images/djbcRHCD89IflJ1okJAa1J65cuM.png",
+      "alt": "Interior composition with crafted details",
+      "file": "/archline/v1/approach.webp",
+      "mediaId": "media_archline_approach"
+    },
+    {
+      "name": "detail",
+      "source": "https://framerusercontent.com/images/dSAYMnW96VlydKwQTgjZzAJsjGk.jpg",
+      "alt": "Refined material junctions and natural textures",
+      "file": "/archline/v1/detail.webp",
+      "mediaId": "media_archline_detail"
+    },
+    {
+      "name": "gallery-1",
+      "source": "https://framerusercontent.com/images/j8WWI9oTZoyDgKQcnZN3zaKLChE.png",
+      "alt": "Interior gallery view with natural light",
+      "file": "/archline/v1/gallery-1.webp",
+      "mediaId": "media_archline_gallery_1"
+    },
+    {
+      "name": "gallery-2",
+      "source": "https://framerusercontent.com/images/aBNdRRfoCs4n1jaQM51t1jvvCNE.png",
+      "alt": "A calm room framed by architectural lines",
+      "file": "/archline/v1/gallery-2.webp",
+      "mediaId": "media_archline_gallery_2"
+    },
+    {
+      "name": "gallery-3",
+      "source": "https://framerusercontent.com/images/2vsmtdNhx1E1Whnqwi8XBRtOZ4.png",
+      "alt": "Tactile interior finishes and furnishings",
+      "file": "/archline/v1/gallery-3.webp",
+      "mediaId": "media_archline_gallery_3"
+    },
+    {
+      "name": "testimonial-background",
+      "source": "https://framerusercontent.com/images/rR6HYXBrMmX4cRpXfXUOvpvpB0.png",
+      "alt": "Warm modern residence framed by trees",
+      "file": "/archline/v1/testimonial-background.webp",
+      "mediaId": "media_archline_testimonial_background"
+    }
+  ],
+  "fonts": [
+    {
+      "family": "Inter Display",
+      "weight": 400,
+      "source": "https://framerusercontent.com/assets/bHYNJqzTyl2lqvmMiRRS6Y16Es.woff2",
+      "file": "/archline/v1/fonts/inter-display-regular.woff2"
+    },
+    {
+      "family": "Inter Display",
+      "weight": 500,
+      "source": "https://framerusercontent.com/assets/iwWTDc49ENF2tCHbqlNARXw6Ug.woff2",
+      "file": "/archline/v1/fonts/inter-display-medium.woff2"
+    }
+  ]
+}

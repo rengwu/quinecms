@@ -1,0 +1,116 @@
+{
+  "type": "archline-services",
+  "version": 1,
+  "label": "Archline · Services grid",
+  "description": "Dark checkerboard of service descriptions and photographs.",
+  "theme": "Archline",
+  "tags": ["archline", "architecture", "editorial"],
+  "kind": "static",
+  "framework": "react",
+  "activation": "never",
+  "component": "View.tsx",
+  "fields": [
+    {
+      "key": "anchor",
+      "label": "Section anchor",
+      "type": "text"
+    },
+    {
+      "key": "label",
+      "label": "Section label",
+      "type": "text"
+    },
+    {
+      "key": "heading",
+      "label": "Heading",
+      "type": "text"
+    },
+    {
+      "key": "items",
+      "label": "Services",
+      "type": "list",
+      "fields": [
+        {
+          "key": "title",
+          "label": "Service title",
+          "type": "text"
+        },
+        {
+          "key": "description",
+          "label": "Description",
+          "type": "text",
+          "multiline": true
+        }
+      ]
+    },
+    {
+      "key": "images",
+      "label": "Service photographs",
+      "type": "list",
+      "fields": [
+        {
+          "key": "image",
+          "label": "Image",
+          "type": "media"
+        }
+      ]
+    },
+    {
+      "key": "actionLabel",
+      "label": "Link label",
+      "type": "text"
+    },
+    {
+      "key": "actionURL",
+      "label": "Link URL",
+      "type": "url"
+    }
+  ],
+  "defaults": {
+    "anchor": "expertise",
+    "label": "Our services",
+    "heading": "From the scale of a building to the touch of a surface, we connect architectural thinking with the details that make a place feel complete.",
+    "items": [
+      {
+        "_rowId": "row-1",
+        "title": "Spatial Context",
+        "description": "Spaces planned around their surroundings and the lives unfolding within them."
+      },
+      {
+        "_rowId": "row-2",
+        "title": "Purity in Form",
+        "description": "Clear proportions and purposeful lines, with room for light and life."
+      },
+      {
+        "_rowId": "row-3",
+        "title": "Honest Materials",
+        "description": "Natural textures chosen to age beautifully and feel good to the touch."
+      },
+      {
+        "_rowId": "row-4",
+        "title": "Human Experience",
+        "description": "Comfort, movement and belonging at the heart of every decision."
+      }
+    ],
+    "images": [
+      {
+        "_rowId": "row-1",
+        "image": null
+      },
+      {
+        "_rowId": "row-2",
+        "image": null
+      },
+      {
+        "_rowId": "row-3",
+        "image": null
+      }
+    ],
+    "actionLabel": "Start a conversation",
+    "actionURL": "#contact"
+  },
+  "dependencies": {
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0"
+  }
+}

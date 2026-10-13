@@ -2,11 +2,9 @@ import { expect, it } from 'vitest';
 import { fixture } from './support/fixture';
 import {
   activeLayout,
-  layoutChoices,
   layoutDefinitions,
   layoutGlobals,
   layoutTitle,
-  layoutWhitelist,
   migrateSite,
   selectLayout,
 } from '../src/core/layouts';
@@ -79,26 +77,13 @@ it('switches with fresh defaults, preserves every content record, and pins retai
   expect(selectLayout(c, v1).site.layout!.settings.title).toBe('Personalized');
 });
 
-it('limits future picker choices without invalidating an excluded active layout', () => {
+it('rejects missing layout versions while retaining the saved selection', () => {
   const c = migrateSite(fixture());
-  const another = { ...layoutDefinitions[0], id: 'another' };
-  const installed = [...layoutDefinitions, another];
-  const allowed = layoutWhitelist(' another,another ', installed);
-  expect(layoutChoices(allowed, installed).map((d) => d.id)).toEqual([
-    'another',
-  ]);
-  expect(layoutChoices(undefined, installed)).toEqual(installed);
-  expect(layoutWhitelist(undefined)).toBeUndefined();
-  expect(activeLayout(c.site).id).toBe('starter');
-  expect(layoutTitle(c.site)).toBeTruthy();
-  expect(validate(c, definitions)).toEqual([]);
-  expect(parseFiles(filesFor(c)).site.layout).toEqual(c.site.layout);
-  expect(() => layoutWhitelist('')).toThrow('at least one');
-  expect(() => layoutWhitelist('unknown')).toThrow('Unknown');
   c.site.layout!.version = 900;
   expect(validate(c, definitions)).toContainEqual(
     expect.objectContaining({ path: 'site.layout', phase: 'structure' }),
   );
+  expect(parseFiles(filesFor(c)).site.layout).toEqual(c.site.layout);
 });
 
 it('owns spacing per layout, applies its defaults on switching and round-trips overrides', () => {

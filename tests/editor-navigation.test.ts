@@ -79,7 +79,7 @@ afterEach(async () => {
   localStorage.removeItem(adminThemeKey);
   vi.restoreAllMocks();
 });
-async function mount(initial = content, allowedLayoutIds?: string[]) {
+async function mount(initial = content) {
   (globalThis as any).IS_REACT_ACT_ENVIRONMENT = true;
   globalThis.ResizeObserver = class {
     observe() {}
@@ -98,7 +98,7 @@ async function mount(initial = content, allowedLayoutIds?: string[]) {
     root.render(
       createElement(App, {
         initial: structuredClone(initial),
-        config: { ...config, allowedLayoutIds },
+        config,
       }),
     ),
   );
@@ -932,8 +932,8 @@ it('assigns only generic pages to schemas and persists an explicit data-only sel
   expect(readRecovery()?.content.collections[0].genericPageId).toBeUndefined();
 });
 
-it('keeps an excluded active layout editable while restricting future selections and keeping previews nonmutating', async () => {
-  await mount(content, ['chartr']);
+it('offers every installed layout in one dashboard, preserves content when switching and keeps previews nonmutating', async () => {
+  await mount(content);
   await click('Site Layout');
   await input('Content max-width', '880');
   await input('Page gutter', '12');
@@ -943,7 +943,11 @@ it('keeps an excluded active layout editable while restricting future selections
   ).not.toBeNull();
   await click('Change layout');
   let dialog = host.querySelector('[role="dialog"]')!;
-  expect(dialog.querySelector('[aria-label="Use Starter layout"]')).toBeNull();
+  for (const definition of layoutDefinitions) {
+    expect(
+      dialog.querySelector(`[aria-label="Use ${definition.label} layout"]`),
+    ).not.toBeNull();
+  }
   expect(
     dialog.querySelector('[aria-label="Use chartr layout"]'),
   ).not.toBeNull();
@@ -1012,9 +1016,23 @@ it('keeps an excluded active layout editable while restricting future selections
   expect(readRecovery()!.content.pages).toEqual(before.pages);
   expect(readRecovery()!.content.entries).toEqual(before.entries);
   await click('Change layout');
-  expect(
-    host.querySelector('[role="dialog"] [aria-label="Use Starter layout"]'),
-  ).toBeNull();
+  for (const definition of layoutDefinitions) {
+    expect(
+      host.querySelector(
+        `[role="dialog"] [aria-label="Use ${definition.label} layout"]`,
+      ),
+    ).not.toBeNull();
+  }
+  await act(async () =>
+    (
+      host.querySelector(
+        '[role="dialog"] [aria-label="Use Starter layout"]',
+      ) as HTMLElement
+    ).click(),
+  );
+  expect(readRecovery()!.content.site.layout?.id).toBe('starter');
+  expect(readRecovery()!.content.pages).toEqual(before.pages);
+  expect(readRecovery()!.content.entries).toEqual(before.entries);
 });
 
 it('creates reusable object schemas and a single-entry collection, edits owned values and recovers them', async () => {
@@ -1389,7 +1407,7 @@ it('confirms factory reset, retains the empty draft across reloads and allows di
     JSON.stringify({ ...config.r2, accessKeyId: 'test-key' }),
   );
   const storage = sessionStorage.getItem('lean:r2');
-  await mount(initial, ['chartr']);
+  await mount(initial);
   await click('Settings');
   const before = readRecovery()!;
   await click('Factory reset');

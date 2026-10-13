@@ -1,0 +1,23 @@
+{
+  "formatVersion": 1,
+  "id": "media_archline_testimonial_3",
+  "name": "Testimonial 3",
+  "original": {
+    "key": "archline/v1/testimonial-3.webp",
+    "url": "/archline/v1/testimonial-3.webp",
+    "mime": "image/webp",
+    "bytes": 163408,
+    "width": 904,
+    "height": 1200
+  },
+  "variants": [
+    {
+      "key": "archline/v1/testimonial-3-800.webp",
+      "url": "/archline/v1/testimonial-3-800.webp",
+      "mime": "image/webp",
+      "bytes": 62376,
+      "width": 603,
+      "height": 800
+    }
+  ]
+}

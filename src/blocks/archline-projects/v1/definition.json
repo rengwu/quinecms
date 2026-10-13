@@ -1,0 +1,107 @@
+{
+  "type": "archline-projects",
+  "version": 1,
+  "label": "Archline · Selected projects",
+  "description": "Staggered two-column cards from a shared collection. Edit project content in Content; choose and order Archline entries here.",
+  "theme": "Archline",
+  "tags": ["archline", "architecture", "editorial"],
+  "kind": "static",
+  "framework": "react",
+  "activation": "never",
+  "component": "View.tsx",
+  "fields": [
+    {
+      "key": "anchor",
+      "label": "Section anchor",
+      "type": "text"
+    },
+    {
+      "key": "label",
+      "label": "Section label",
+      "type": "text"
+    },
+    {
+      "key": "heading",
+      "label": "Heading",
+      "type": "text"
+    },
+    {
+      "key": "description",
+      "label": "Description",
+      "type": "text",
+      "multiline": true
+    },
+    {
+      "key": "actionLabel",
+      "label": "Link label",
+      "type": "text"
+    },
+    {
+      "key": "actionURL",
+      "label": "Link URL",
+      "type": "url"
+    },
+    {
+      "key": "collection",
+      "label": "Project collection",
+      "type": "collection"
+    },
+    {
+      "key": "titleField",
+      "label": "Title field",
+      "type": "text",
+      "collectionField": {
+        "collectionKey": "collection",
+        "types": ["text"]
+      }
+    },
+    {
+      "key": "summaryField",
+      "label": "Year field",
+      "type": "text",
+      "collectionField": {
+        "collectionKey": "collection",
+        "types": ["text"]
+      }
+    },
+    {
+      "key": "imageField",
+      "label": "Cover image field",
+      "type": "text",
+      "collectionField": {
+        "collectionKey": "collection",
+        "types": ["media"]
+      }
+    },
+    {
+      "key": "projects",
+      "label": "Selected projects (empty shows all)",
+      "type": "list",
+      "fields": [
+        {
+          "key": "project",
+          "label": "Project",
+          "type": "reference",
+          "collectionId": "collection_archline_projects"
+        }
+      ]
+    }
+  ],
+  "defaults": {
+    "anchor": "projects",
+    "label": "Selected projects",
+    "heading": "Our Featured Projects",
+    "description": "A selection of places shaped through close collaboration. Each explores how thoughtful planning, enduring materials and natural light can enrich the everyday.",
+    "actionLabel": "See all",
+    "actionURL": "/projects",
+    "collection": null,
+    "titleField": "title",
+    "summaryField": "year",
+    "imageField": "image",
+    "projects": []
+  },
+  "dependencies": {
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0"
+  }
+}

@@ -1,0 +1,112 @@
+{
+  "formatVersion": 1,
+  "id": "entry_archline_01_atelier",
+  "collectionId": "collection_archline_projects",
+  "slug": "atelier-19-residence",
+  "values": {
+    "title": "Atelier 19 Residence",
+    "year": "2023",
+    "image": {
+      "mediaId": "media_archline_atelier",
+      "alt": "White architectural volumes around a sunlit courtyard"
+    },
+    "metadata": [
+      {
+        "_rowId": "row-1",
+        "label": "Client",
+        "value": "Private client"
+      },
+      {
+        "_rowId": "row-2",
+        "label": "Collection",
+        "value": "Architecture & interiors"
+      }
+    ],
+    "description": "Atelier 19 Residence explores the relationship between everyday living and the architecture around it. A considered arrangement of spaces makes room for natural light, comfortable movement and moments of quiet. This reference-inspired concept study brings together a restrained palette and a warm, human approach.",
+    "facts": [
+      {
+        "_rowId": "row-1",
+        "label": "Status",
+        "value": "Concept study"
+      },
+      {
+        "_rowId": "row-2",
+        "label": "Year",
+        "value": "2023"
+      },
+      {
+        "_rowId": "row-3",
+        "label": "Type",
+        "value": "Architecture & interiors"
+      },
+      {
+        "_rowId": "row-4",
+        "label": "Focus",
+        "value": "Light & proportion"
+      }
+    ],
+    "chapters": [
+      {
+        "_rowId": "row-1",
+        "title": "Project Overview",
+        "image": {
+          "mediaId": "media_archline_overview",
+          "alt": "Architectural study of light, volume and material"
+        },
+        "description": "The design begins with a simple idea: make the experience of moving through a space feel natural. Openings connect rooms with their surroundings, while changes in scale create a gentle rhythm between shared areas and quieter corners.\n\nDaylight is treated as a material in its own right. Its movement across walls and floors gives the architecture a different character throughout the day."
+      },
+      {
+        "_rowId": "row-2",
+        "title": "Design Approach",
+        "image": {
+          "mediaId": "media_archline_approach",
+          "alt": "Interior composition with crafted details"
+        },
+        "description": "A restrained palette brings the different spaces together. Warm timber, textured surfaces and clear structural lines offer a balance of precision and softness.\n\nThe arrangement of each room considers its purpose, the views beyond it and the relationship between people, furniture and the building."
+      },
+      {
+        "_rowId": "row-3",
+        "title": "Details",
+        "image": {
+          "mediaId": "media_archline_detail",
+          "alt": "Refined material junctions and natural textures"
+        },
+        "description": "Careful junctions and well-proportioned elements give the interior its sense of ease. Light is placed to reveal texture, and furnishings leave space for the architecture to breathe.\n\nThese smaller decisions support a coherent whole: a place with enough character to feel memorable, and enough simplicity to welcome everyday life."
+      }
+    ],
+    "gallery": [
+      {
+        "_rowId": "row-1",
+        "image": {
+          "mediaId": "media_archline_gallery_1",
+          "alt": "Interior gallery view with natural light"
+        },
+        "caption": "Light and material"
+      },
+      {
+        "_rowId": "row-2",
+        "image": {
+          "mediaId": "media_archline_gallery_2",
+          "alt": "A calm room framed by architectural lines"
+        },
+        "caption": "A quiet composition"
+      },
+      {
+        "_rowId": "row-3",
+        "image": {
+          "mediaId": "media_archline_gallery_3",
+          "alt": "Tactile interior finishes and furnishings"
+        },
+        "caption": "Considered details"
+      },
+      {
+        "_rowId": "row-4",
+        "image": {
+          "mediaId": "media_archline_testimonial_1",
+          "alt": "A considered architectural interior"
+        },
+        "caption": "Space to pause"
+      }
+    ]
+  }
+}

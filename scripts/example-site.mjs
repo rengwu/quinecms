@@ -71,7 +71,6 @@ if (
             PUBLIC_GIT_REPO: '',
             PUBLIC_GITHUB_OWNER: '',
             PUBLIC_GITHUB_REPO: '',
-            SITE_LAYOUT_WHITELIST: name,
           },
         });
         const stop = () => child.kill('SIGTERM');

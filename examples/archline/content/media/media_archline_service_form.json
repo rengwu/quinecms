@@ -1,0 +1,23 @@
+{
+  "formatVersion": 1,
+  "id": "media_archline_service_form",
+  "name": "Service Form",
+  "original": {
+    "key": "archline/v1/service-form.webp",
+    "url": "/archline/v1/service-form.webp",
+    "mime": "image/webp",
+    "bytes": 131134,
+    "width": 2048,
+    "height": 1365
+  },
+  "variants": [
+    {
+      "key": "archline/v1/service-form-800.webp",
+      "url": "/archline/v1/service-form-800.webp",
+      "mime": "image/webp",
+      "bytes": 27248,
+      "width": 800,
+      "height": 533
+    }
+  ]
+}

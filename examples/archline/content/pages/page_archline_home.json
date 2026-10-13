@@ -1,0 +1,454 @@
+{
+  "formatVersion": 1,
+  "id": "page_archline_home",
+  "kind": "static",
+  "path": "/",
+  "title": "Home",
+  "blocks": [
+    {
+      "id": "archline-hero",
+      "type": "archline-hero",
+      "version": 1,
+      "props": {
+        "anchor": "top",
+        "heading": "Harmony shaped by light, material, and space.",
+        "description": "Thoughtful architecture begins with the way a place feels. We bring light, texture and proportion together to create spaces with a lasting sense of calm.",
+        "image": {
+          "mediaId": "media_archline_hero",
+          "alt": "Modern stone and timber residence under a clear blue sky"
+        },
+        "actionLabel": "Explore our projects",
+        "actionURL": "/projects",
+        "scrollLabel": "(Scroll down)",
+        "scrollURL": "#studio"
+      }
+    },
+    {
+      "id": "archline-introduction",
+      "type": "archline-introduction",
+      "version": 1,
+      "props": {
+        "anchor": "studio",
+        "label": "About us",
+        "heading": "We create architecture that belongs to its place and to the people who live within it. Our work brings natural materials, purposeful details and a thoughtful balance of light and space into everyday life.",
+        "description": "A good space begins with listening. We take time to understand the rhythms of a place and the aspirations of the people who will use it.\n\nFrom the first sketch to the last material choice, we bring a consistent eye and a collaborative spirit. Each decision contributes to a whole that feels natural, welcoming and made to last.",
+        "smallImage": {
+          "mediaId": "media_archline_studio_desk",
+          "alt": "Architects reviewing plans and material samples"
+        },
+        "largeImage": {
+          "mediaId": "media_archline_studio_team",
+          "alt": "Design team working in a light-filled studio"
+        },
+        "actionLabel": "More about our process",
+        "actionURL": "#process"
+      }
+    },
+    {
+      "id": "archline-stats",
+      "type": "archline-stats",
+      "version": 1,
+      "props": {
+        "items": [
+          {
+            "_rowId": "row-1",
+            "value": "100+",
+            "label": "Curated Interiors"
+          },
+          {
+            "_rowId": "row-2",
+            "value": "12",
+            "label": "Years of Expertise"
+          },
+          {
+            "_rowId": "row-3",
+            "value": "30+",
+            "label": "International Features"
+          },
+          {
+            "_rowId": "row-4",
+            "value": "15",
+            "label": "Dedicated Designers"
+          }
+        ]
+      }
+    },
+    {
+      "id": "archline-image",
+      "type": "archline-image",
+      "version": 1,
+      "props": {
+        "image": {
+          "mediaId": "media_archline_interior",
+          "alt": "Open timber interior facing a planted courtyard"
+        },
+        "caption": ""
+      }
+    },
+    {
+      "id": "archline-projects",
+      "type": "archline-projects",
+      "version": 1,
+      "props": {
+        "anchor": "projects",
+        "label": "Selected projects",
+        "heading": "Our Featured Projects",
+        "description": "A selection of places shaped through close collaboration. Each explores how thoughtful planning, enduring materials and natural light can enrich the everyday.",
+        "actionLabel": "See all",
+        "actionURL": "/projects",
+        "collection": "collection_archline_projects",
+        "titleField": "title",
+        "summaryField": "year",
+        "imageField": "image",
+        "projects": [
+          {
+            "_rowId": "row-1",
+            "project": "entry_archline_01_atelier"
+          },
+          {
+            "_rowId": "row-2",
+            "project": "entry_archline_02_sereno"
+          },
+          {
+            "_rowId": "row-3",
+            "project": "entry_archline_03_verra"
+          },
+          {
+            "_rowId": "row-4",
+            "project": "entry_archline_04_armonia"
+          },
+          {
+            "_rowId": "row-5",
+            "project": "entry_archline_05_terra"
+          },
+          {
+            "_rowId": "row-6",
+            "project": "entry_archline_06_luma"
+          }
+        ]
+      }
+    },
+    {
+      "id": "archline-services",
+      "type": "archline-services",
+      "version": 1,
+      "props": {
+        "anchor": "expertise",
+        "label": "Our services",
+        "heading": "From the scale of a building to the touch of a surface, we connect architectural thinking with the details that make a place feel complete.",
+        "items": [
+          {
+            "_rowId": "row-1",
+            "title": "Spatial Context",
+            "description": "Spaces planned around their surroundings and the lives unfolding within them."
+          },
+          {
+            "_rowId": "row-2",
+            "title": "Purity in Form",
+            "description": "Clear proportions and purposeful lines, with room for light and life."
+          },
+          {
+            "_rowId": "row-3",
+            "title": "Honest Materials",
+            "description": "Natural textures chosen to age beautifully and feel good to the touch."
+          },
+          {
+            "_rowId": "row-4",
+            "title": "Human Experience",
+            "description": "Comfort, movement and belonging at the heart of every decision."
+          }
+        ],
+        "images": [
+          {
+            "_rowId": "row-1",
+            "image": {
+              "mediaId": "media_archline_service_space",
+              "alt": "Calm living space in concrete, timber and linen"
+            }
+          },
+          {
+            "_rowId": "row-2",
+            "image": {
+              "mediaId": "media_archline_service_form",
+              "alt": "Close-up of a sculptural leather seat"
+            }
+          },
+          {
+            "_rowId": "row-3",
+            "image": {
+              "mediaId": "media_archline_service_material",
+              "alt": "Material studies, drawings and coffee on a studio table"
+            }
+          }
+        ],
+        "actionLabel": "Start a conversation",
+        "actionURL": "#contact"
+      }
+    },
+    {
+      "id": "archline-process",
+      "type": "archline-process",
+      "version": 1,
+      "props": {
+        "anchor": "process",
+        "label": "Our process",
+        "heading": "A thoughtful process. A place that feels like you.",
+        "description": "We build a shared understanding before drawing the first line. Through a clear sequence of conversations, studies and refinements, we guide each project from its earliest possibility to the experience of a finished space.",
+        "steps": [
+          {
+            "_rowId": "row-1",
+            "title": "Concept & Sketch"
+          },
+          {
+            "_rowId": "row-2",
+            "title": "Design Development"
+          },
+          {
+            "_rowId": "row-3",
+            "title": "Execution & Build"
+          },
+          {
+            "_rowId": "row-4",
+            "title": "Final Styling"
+          }
+        ],
+        "leftImage": {
+          "mediaId": "media_archline_process_concept",
+          "alt": "Designers discussing a concept together"
+        },
+        "rightImage": {
+          "mediaId": "media_archline_process_studio",
+          "alt": "Material samples and concept boards in the studio"
+        },
+        "actionLabel": "Discuss your project",
+        "actionURL": "#contact"
+      }
+    },
+    {
+      "id": "archline-partners",
+      "type": "archline-partners",
+      "version": 1,
+      "props": {
+        "label": "Example collaborators",
+        "items": [
+          {
+            "_rowId": "row-1",
+            "name": "Spherule"
+          },
+          {
+            "_rowId": "row-2",
+            "name": "GlobalBank"
+          },
+          {
+            "_rowId": "row-3",
+            "name": "Interlock"
+          },
+          {
+            "_rowId": "row-4",
+            "name": "Galileo"
+          },
+          {
+            "_rowId": "row-5",
+            "name": "FeatherDev"
+          },
+          {
+            "_rowId": "row-6",
+            "name": "CloudWatch"
+          },
+          {
+            "_rowId": "row-7",
+            "name": "Segment"
+          }
+        ]
+      }
+    },
+    {
+      "id": "archline-testimonials",
+      "type": "archline-testimonials",
+      "version": 1,
+      "props": {
+        "label": "Client reflections",
+        "image": {
+          "mediaId": "media_archline_testimonial_background",
+          "alt": "Warm modern residence framed by trees"
+        },
+        "items": [
+          {
+            "_rowId": "row-1",
+            "quote": "The space feels calm from the moment you arrive. Light moves through the rooms beautifully, and the materials bring warmth to every part of our day.",
+            "name": "A home in balance",
+            "role": "Illustrative client reflection",
+            "image": {
+              "mediaId": "media_archline_testimonial_1",
+              "alt": "A considered architectural interior"
+            }
+          },
+          {
+            "_rowId": "row-2",
+            "quote": "There is a lovely sense of continuity between the building and its garden. Nothing feels added for the sake of it; every detail has a place.",
+            "name": "A connection to nature",
+            "role": "Illustrative client reflection",
+            "image": {
+              "mediaId": "media_archline_testimonial_2",
+              "alt": "Architectural detail in soft daylight"
+            }
+          },
+          {
+            "_rowId": "row-3",
+            "quote": "The process gave us the confidence to make thoughtful choices. We now have a space that works effortlessly and feels entirely our own.",
+            "name": "A place to belong",
+            "role": "Illustrative client reflection",
+            "image": {
+              "mediaId": "media_archline_testimonial_3",
+              "alt": "Warm interior materials"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "archline-insights",
+      "type": "archline-insights",
+      "version": 1,
+      "props": {
+        "anchor": "insights",
+        "label": "Insights",
+        "heading": "Notes on the places we call home.",
+        "items": [
+          {
+            "_rowId": "row-1",
+            "title": "Making room for light in the everyday",
+            "image": {
+              "mediaId": "media_archline_insight_light",
+              "alt": "Modern pavilion and tower framed against the evening sky"
+            },
+            "readTime": "6 min read",
+            "date": "Oct 6, 2025",
+            "url": "https://archline.framer.website/insights/designing-spaces-that-breathe-with-light-warmth-and-intention-every-day"
+          },
+          {
+            "_rowId": "row-2",
+            "title": "The art of doing more with less",
+            "image": {
+              "mediaId": "media_archline_insight_minimal",
+              "alt": "Architect working at a drawing desk"
+            },
+            "readTime": "7 min read",
+            "date": "Oct 12, 2025",
+            "url": "https://archline.framer.website/insights/the-quiet-power-of-minimalism-in-modern-interiors"
+          },
+          {
+            "_rowId": "row-3",
+            "title": "Bringing the landscape into the home",
+            "image": {
+              "mediaId": "media_archline_insight_nature",
+              "alt": "Sunlight falling across a timber stair"
+            },
+            "readTime": "8 min read",
+            "date": "Oct 15, 2025",
+            "url": "https://archline.framer.website/insights/crafting-harmony-between-architecture-and-nature"
+          }
+        ],
+        "actionLabel": "",
+        "actionURL": ""
+      }
+    },
+    {
+      "id": "archline-marquee",
+      "type": "archline-marquee",
+      "version": 1,
+      "props": {
+        "text": "Designed for living. Shaped by light. Grounded in place. Made to endure."
+      }
+    },
+    {
+      "id": "archline-faq",
+      "type": "archline-faq",
+      "version": 1,
+      "props": {
+        "anchor": "faq",
+        "label": "FAQ",
+        "heading": "A little clarity before we begin.",
+        "description": "Every project starts with a conversation. Here are a few useful things to know about working with the studio.",
+        "actionLabel": "Let’s talk",
+        "actionURL": "#contact",
+        "items": [
+          {
+            "_rowId": "row-1",
+            "question": "What can the studio help with?",
+            "answer": "We work across architecture, interiors and the selection of materials and furnishings. The scope is tailored to the needs of each project."
+          },
+          {
+            "_rowId": "row-2",
+            "question": "Do you take on homes and commercial spaces?",
+            "answer": "Our approach can be applied to private homes, places for hospitality, workplaces and spaces for gathering."
+          },
+          {
+            "_rowId": "row-3",
+            "question": "How long does a project take?",
+            "answer": "Timing depends on the size of the project, approvals and the work involved. We establish a realistic programme together at the start."
+          },
+          {
+            "_rowId": "row-4",
+            "question": "What happens during the design process?",
+            "answer": "We begin with discovery and concept studies, then develop the design in detail before coordinating the work and final styling."
+          },
+          {
+            "_rowId": "row-5",
+            "question": "Can we work together remotely?",
+            "answer": "We can review plans, share material studies and discuss design decisions through regular online meetings."
+          },
+          {
+            "_rowId": "row-6",
+            "question": "How do you approach materials?",
+            "answer": "We look for a balance of character, durability and tactile quality, considering how each material will change over time."
+          },
+          {
+            "_rowId": "row-7",
+            "question": "Do you help source furniture?",
+            "answer": "Furniture and lighting can form part of the agreed scope, helping bring the architecture and the interior together."
+          },
+          {
+            "_rowId": "row-8",
+            "question": "How is the budget developed?",
+            "answer": "We discuss priorities early and refine allowances as the design develops, keeping the relationship between scope and cost visible."
+          },
+          {
+            "_rowId": "row-9",
+            "question": "Can you collaborate with our existing team?",
+            "answer": "Yes. Clear roles and open communication help us work effectively with architects, contractors and specialist consultants."
+          },
+          {
+            "_rowId": "row-10",
+            "question": "How do we begin?",
+            "answer": "Use the enquiry link to introduce your project, its location and your aspirations. We can then arrange an initial conversation."
+          }
+        ]
+      }
+    },
+    {
+      "id": "archline-enquiry",
+      "type": "archline-enquiry",
+      "version": 1,
+      "props": {
+        "anchor": "contact",
+        "brand": "ARCHLINE®",
+        "tagline": "Interior & Architecture Studio",
+        "background": {
+          "mediaId": "media_archline_enquiry",
+          "alt": "Warm timber kitchen and living space"
+        },
+        "image": {
+          "mediaId": "media_archline_overview",
+          "alt": "Architectural study of light, volume and material"
+        },
+        "leftMark": "18",
+        "rightMark": "25",
+        "heading": "Let’s Create Together",
+        "description": "Tell us about the place you imagine. We would love to help you bring it into focus.",
+        "actionLabel": "Send us an enquiry",
+        "actionURL": "mailto:hello@archiline.studio"
+      }
+    }
+  ]
+}

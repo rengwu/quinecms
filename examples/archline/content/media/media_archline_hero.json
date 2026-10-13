@@ -1,0 +1,23 @@
+{
+  "formatVersion": 1,
+  "id": "media_archline_hero",
+  "name": "Hero",
+  "original": {
+    "key": "archline/v1/hero.webp",
+    "url": "/archline/v1/hero.webp",
+    "mime": "image/webp",
+    "bytes": 197150,
+    "width": 2400,
+    "height": 1707
+  },
+  "variants": [
+    {
+      "key": "archline/v1/hero-800.webp",
+      "url": "/archline/v1/hero-800.webp",
+      "mime": "image/webp",
+      "bytes": 20780,
+      "width": 800,
+      "height": 569
+    }
+  ]
+}
