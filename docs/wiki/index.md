@@ -1,9 +1,32 @@
 ---
 title: lean-sitebuilder
-updated: 2026-10-12
+updated: 2026-10-13
 status: Accepted
 ---
 # lean-sitebuilder
+
+Latest setup improvement: [simplified R2 storage](features/media.md#connect-a-bucket).
+Paste the S3 API URL, follow the public URL/credential guidance, and copy CORS for
+the current editor. Advanced upload options are collapsed; Save validates settings
+and Cancel discards edits. **Test connection** now checks upload, public read and
+cleanup independently of saving. [Setup verification](verification/runs/2026-10-13-r2-setup.md)
+and [connection-test verification](verification/runs/2026-10-13-r2-connection-test.md)
+cover local behavior; live R2 execution remains unverified.
+
+Latest editor optimization: [block catalog thumbnail loading](verification/runs/2026-10-13-catalog-performance.md).
+Samples are prepared on first visibility with shared context and observers; visited
+previews stay mounted while scrolling and are released on filtering/close. All 211
+tests and representative production browser checks pass. Return scrolling avoids
+remounts; opening timings remain variable. No scheduler, cache eviction layer,
+virtualized grid, image-generation pipeline or new dependency was introduced.
+
+Completed reference trial: [Intr Studio recreation](journal/2026-10-13-intr-rebuild-scope.md)
+(DEC-153–DEC-155). Run `pnpm example:intr` for the isolated homepage, project listing
+and Maison Dorée sample. Shared project entries, eleven static blocks and a custom
+layout preserve the composition while simplifying motion. The journal separates
+small fixes and instruction improvements from CMS follow-up proposals.
+[Verification](verification/runs/2026-10-13-intr-rebuild.md): 207 tests, production
+builds and representative Chrome public/editor checks pass.
 
 Development login is now `admin@example.com` / `asdf1234`, regardless of `.env`
 (DEC-152). One shared login guards one dashboard and its existing content;
