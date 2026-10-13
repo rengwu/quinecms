@@ -1,5 +1,9 @@
 # QuineCMS
 
+Repository: [rengwu/quinecms](https://github.com/rengwu/quinecms).
+Use **QuineCMS** for display text and `quinecms` for repository names, URLs,
+routes, slugs and filesystem paths.
+
 A starting point for custom websites built locally by developers and their AI agents,
 with a content editor for the people who maintain them afterward. Design freely;
 the included pages, blocks and layouts are examples you can adapt or replace.

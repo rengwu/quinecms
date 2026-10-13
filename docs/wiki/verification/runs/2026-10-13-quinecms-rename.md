@@ -8,7 +8,7 @@ result: Passed for selected local scenarios
 DEC-164 renames the product to QuineCMS and the package to `quinecms`. The login
 heading, page title, dashboard header, storage connection-test label, docs,
 generated wiki, example backup identifiers and planning outputs use the new name.
-The active workspace directory and remote repository were not moved or renamed.
+At this initial stage, the active workspace directory and remote repository were not moved or renamed.
 Existing media-field work was retained, and root site content was not changed.
 
 New backups use `quinecms-backup`; import also accepts the prior version-1 format
@@ -38,7 +38,7 @@ remain available to download, and explicit discard clears both keys.
 
 Production login encryption/decryption has automated coverage; the manual browser
 check used development. No live Git provider, R2 or hosting operation was performed.
-No commit, push or deployment was performed for this rename.
+These initial checks ended before the rename was committed and pushed. No deployment was performed.
 
 ## Historical text normalization
 
@@ -55,3 +55,23 @@ are historical, and their original committed versions remain in Git history.
 Original screenshots were left intact; embedded old branding remains historical
 evidence. Existing source-manifest hashes refer to the original run, not this
 editorial rewrite.
+
+## Lowercase paths follow-up
+
+The user's follow-up makes the distinction explicit: **QuineCMS** is display
+text; `quinecms` is used for repository names, URLs, routes, slugs and filesystem
+paths. README and AGENTS now record this convention.
+
+The private GitHub repository is [rengwu/quinecms](https://github.com/rengwu/quinecms),
+and `origin` uses `git@github.com:rengwu/quinecms.git`. The local checkout was moved
+to `/Users/rengwu/Desktop/Projects/quinecms`. Repository filenames and source
+routes contain no mixed-case project identifier; the package and new storage
+identifiers were already lowercase. Display headings retain QuineCMS.
+
+The main dev server was restarted from the renamed checkout at port 4322, with
+HTTP 200 verified for `/` and `/admin/` and the login title preserved. The two
+existing example servers retain ports 4323 and 4324 with their dependency links
+updated; both public routes returned HTTP 200. Wiki generation/link checks and
+Git whitespace checks pass. This changes naming and local paths, with no
+application behavior change; the 244-test verification above remains the latest
+functional run.

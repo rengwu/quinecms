@@ -1,5 +1,8 @@
 # QuineCMS
 
+Use **QuineCMS** for display text and `quinecms` for repository names, URLs,
+routes, slugs and filesystem paths.
+
 A starting point for freely designed, AI-built websites that clients can maintain
 through a content editor. Work locally in this clone. Let the brief, references
 and your design judgment lead; the bundled pages, layouts and block catalog are
