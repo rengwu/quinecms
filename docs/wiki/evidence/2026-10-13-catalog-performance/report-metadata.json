@@ -1,0 +1,21 @@
+{
+  "reports": 42,
+  "errors": [
+    {
+      "file": "verification/runs/2026-10-08-gitlab.md",
+      "error": "Report result must be Passed, Failed, or Untested."
+    },
+    {
+      "file": "verification/runs/2026-10-08-local-authoring.md",
+      "error": "Report result must be Passed, Failed, or Untested."
+    },
+    {
+      "file": "verification/runs/2026-10-11-quine-rebuild.md",
+      "error": "Report result must be Passed, Failed, or Untested."
+    },
+    {
+      "file": "verification/runs/2026-10-13-intr-rebuild.md",
+      "error": "Report result must be Passed, Failed, or Untested."
+    }
+  ]
+}

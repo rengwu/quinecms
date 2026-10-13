@@ -87,9 +87,13 @@
   overflow: hidden;
   position: relative;
   pointer-events: none;
+  /* Keep visited previews mounted without laying out/painting them offscreen.
+     The explicit aspect ratio preserves each card's scroll geometry. */
+  content-visibility: auto;
 }
 .scaled {
   width: 1200px;
+  transform: scale(var(--catalog-scale, 0.225));
   transform-origin: top left;
   container-type: inline-size;
 }

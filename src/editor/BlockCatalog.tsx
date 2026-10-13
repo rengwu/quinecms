@@ -1,4 +1,6 @@
 import {
+  memo,
+  useCallback,
   useEffect,
   useMemo,
   useRef,
@@ -11,7 +13,6 @@ import { Select } from '@cloudflare/kumo/components/select';
 import { CaretLeftIcon, CaretRightIcon, PlusIcon } from '@phosphor-icons/react';
 import type { Block, Content, Context, Definition } from '../core/types';
 import { contextFor } from '../core/content';
-import { layoutGlobals } from '../core/layouts';
 import { siteStyle } from '../core/site-style';
 import { catalogDefinitions, filterCatalog, tagsOf, themeOf } from './catalog';
 import Island from './Island';
@@ -19,7 +20,7 @@ import styles from './catalog.module.css';
 
 function sample(
   d: Definition,
-  content: Content,
+  sharedContext: Context,
 ): { block: Block; context: Context } {
   const block: Block = {
     id: 'catalog-' + d.type.replaceAll('/', '-'),
@@ -27,7 +28,7 @@ function sample(
     version: d.version,
     props: structuredClone(d.defaults),
   };
-  const context = { ...contextFor(content, block.id), preview: true };
+  const context = { ...sharedContext, instanceId: block.id };
   if (d.tags?.includes('blog')) {
     block.props = {
       ...block.props,
@@ -61,58 +62,43 @@ function sample(
   }
   return { block, context };
 }
-function Thumbnail({
+type ObserveThumbnail = (
+  element: HTMLElement,
+  reveal: () => void,
+) => () => void;
+
+const Thumbnail = memo(function Thumbnail({
   definition,
-  content,
+  context,
+  surfaceStyle,
+  observe,
 }: {
   definition: Definition;
-  content: Content;
+  context: Context;
+  surfaceStyle: CSSProperties;
+  observe: ObserveThumbnail;
 }) {
   const ref = useRef<HTMLDivElement>(null);
-  const [visible, setVisible] = useState(false);
-  const [scale, setScale] = useState(0.25);
+  const [ready, setReady] = useState(false);
   const data = useMemo(
-    () => sample(definition, content),
-    [definition, content],
+    () => (ready ? sample(definition, context) : null),
+    [ready, definition, context],
   );
-  useEffect(() => {
-    const el = ref.current!;
-    if (
-      typeof IntersectionObserver === 'undefined' ||
-      typeof ResizeObserver === 'undefined'
-    )
-      return;
-    const observer = new IntersectionObserver(
-      ([e]) => setVisible(e.isIntersecting),
-      { rootMargin: '160px' },
-    );
-    observer.observe(el);
-    const resize = new ResizeObserver(() => setScale(el.clientWidth / 1200));
-    resize.observe(el);
-    return () => {
-      observer.disconnect();
-      resize.disconnect();
-    };
-  }, []);
+  useEffect(() => observe(ref.current!, () => setReady(true)), [observe]);
   return (
     <div ref={ref} className={styles.thumbnail} aria-hidden="true" inert>
-      {visible && (
+      {data && (
         <div
           className={'site-surface ' + styles.scaled}
-          data-theme={layoutGlobals(content.site).theme}
-          style={
-            {
-              ...siteStyle(layoutGlobals(content.site)),
-              transform: `scale(${scale})`,
-            } as CSSProperties
-          }
+          data-theme={context.globals.theme}
+          style={surfaceStyle}
         >
           <Island {...data} />
         </div>
       )}
     </div>
   );
-}
+});
 export default function BlockCatalog({
   definitions,
   content,
@@ -132,6 +118,74 @@ export default function BlockCatalog({
   const [preview, setPreview] = useState<Definition | null>(null);
   const [mobile, setMobile] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const gridRef = useRef<HTMLDivElement>(null);
+  const pendingThumbnails = useRef(new Map<HTMLElement, () => void>());
+  const thumbnailObserver = useRef<IntersectionObserver | null>(null);
+  const observeThumbnail = useCallback<ObserveThumbnail>((element, reveal) => {
+    if (typeof IntersectionObserver === 'undefined') {
+      reveal();
+      return () => {};
+    }
+    pendingThumbnails.current.set(element, reveal);
+    thumbnailObserver.current?.observe(element);
+    return () => {
+      pendingThumbnails.current.delete(element);
+      thumbnailObserver.current?.unobserve(element);
+    };
+  }, []);
+  useEffect(() => {
+    const grid = gridRef.current;
+    if (!grid) return;
+    // Every card has the same width. Measure one thumbnail when the grid resizes,
+    // and inherit its scale without a React state update in every card.
+    const resize = () => {
+      const thumbnail = grid.querySelector<HTMLElement>('.' + styles.thumbnail);
+      if (thumbnail)
+        grid.style.setProperty(
+          '--catalog-scale',
+          String(thumbnail.clientWidth / 1200),
+        );
+    };
+    resize();
+    const sizes =
+      typeof ResizeObserver === 'undefined' ? null : new ResizeObserver(resize);
+    sizes?.observe(grid);
+    window.addEventListener('resize', resize);
+    const visibility =
+      typeof IntersectionObserver === 'undefined'
+        ? null
+        : new IntersectionObserver(
+            (entries) => {
+              for (const entry of entries) {
+                if (!entry.isIntersecting) continue;
+                const element = entry.target as HTMLElement;
+                pendingThumbnails.current.get(element)?.();
+                pendingThumbnails.current.delete(element);
+                visibility?.unobserve(element);
+              }
+            },
+            { root: scrollRef.current },
+          );
+    thumbnailObserver.current = visibility;
+    for (const element of pendingThumbnails.current.keys())
+      visibility?.observe(element);
+    return () => {
+      visibility?.disconnect();
+      thumbnailObserver.current = null;
+      sizes?.disconnect();
+      window.removeEventListener('resize', resize);
+    };
+  }, [preview]);
+  // Catalog samples are not stored page blocks. Their context differs only in
+  // instance ID (and the blog sample collection), so resolve the site once.
+  const context = useMemo(
+    () => ({ ...contextFor(content, 'catalog'), preview: true }),
+    [content],
+  );
+  const surfaceStyle = useMemo(
+    () => siteStyle(context.globals) as CSSProperties,
+    [context],
+  );
   const tagScrollRef = useRef<HTMLDivElement>(null);
   const [tagScroll, setTagScroll] = useState({ left: false, right: false });
   useEffect(() => {
@@ -178,8 +232,8 @@ export default function BlockCatalog({
   const filtered = filterCatalog(available, query, theme, tags);
   const choices = [...new Set(available.flatMap(tagsOf))].sort();
   const data = useMemo(
-    () => (preview ? sample(preview, content) : null),
-    [preview, content],
+    () => (preview ? sample(preview, context) : null),
+    [preview, context],
   );
   if (preview && data)
     return (
@@ -207,8 +261,8 @@ export default function BlockCatalog({
           <div
             className={'site-surface ' + styles.fullPreview}
             data-mobile={mobile}
-            data-theme={layoutGlobals(content.site).theme}
-            style={siteStyle(layoutGlobals(content.site)) as CSSProperties}
+            data-theme={context.globals.theme}
+            style={surfaceStyle}
             onClick={(e) => {
               if ((e.target as HTMLElement).closest('a')) e.preventDefault();
             }}
@@ -301,11 +355,16 @@ export default function BlockCatalog({
         {filtered.length} {filtered.length === 1 ? 'block' : 'blocks'}
         {kind === 'generic' ? ' · Supports schema bindings' : ''}
       </p>
-      <div className={styles.results}>
+      <div ref={gridRef} className={styles.results}>
         {filtered.map((d) => (
           <article className={styles.card} key={d.type}>
             <div className={styles.visual}>
-              <Thumbnail definition={d} content={content} />
+              <Thumbnail
+                definition={d}
+                context={context}
+                surfaceStyle={surfaceStyle}
+                observe={observeThumbnail}
+              />
               <Button
                 className={styles.addOverlay}
                 variant="ghost"
