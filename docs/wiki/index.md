@@ -16,9 +16,9 @@ checks, mixed-design public builds and browser observations.
 Implemented: [separate sites, engine and libraries](features/site-engine.md).
 The product interview selected Archline as the independent pilot, Archline + Intr
 as the first shared library, and manual engine/library pins. The engine now has an
-extensions-only build interface. Engine tests, library tests, clean builds, browser checks and live GitHub save/publication passed. Public repositories are available; the hosted URL awaits a selected destination.
+extensions-only build interface. Engine tests, library tests, clean builds, browser checks and live GitHub save/publication passed. Public repositories are available. [Q15](journal/2026-10-13-grill-2918a555-e230-4816-971e-5dab8013cba9.md) selects maintainer-owned Netlify deployment (DEC-184); the guide is ready and the hosted result awaits their report.
 The [discussion](discussions/site-engine-separation.md) retains accepted decisions
-and the preimplementation study. [Verification and remaining delivery input](verification/runs/2026-10-14-engine-separation.md).
+and the preimplementation study. [Verification and pending hosted result](verification/runs/2026-10-14-engine-separation.md).
 
 The project is now **QuineCMS** (DEC-164), with package name `quinecms` and updated
 login/dashboard branding, documentation and example backups. Existing drafts and

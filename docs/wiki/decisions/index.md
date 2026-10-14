@@ -9,7 +9,9 @@ Engine separation: DEC-172–DEC-183 settle the pilot's product behavior, includ
 manual pinned engine/library upgrades, extensions-only customization, upstream-only
 library changes and the Archline/Intr library. Archline is the public pilot.
 The [engineering plan](../discussions/site-engine-separation.md#proposed-engineering-plan)
-is proposed and untested; implementation has not been authorized.
+was implemented after work-until-grill authorization. Engine/library, clean build,
+browser and live GitHub checks pass. DEC-184 assigns the pilot's Netlify deployment
+to the maintainer; the live hosted result remains pending.
 
 Multiple site layouts: DEC-165–DEC-171 record the user's requirements and completed
 grill answers. The [scoped design](../discussions/multiple-site-layouts.md) is
@@ -630,3 +632,9 @@ engineering work; none of these decisions records implementation or verification
 | DEC-181 | Keep consumed library code unchanged; request deeper implementation changes upstream. | Q12 selects this instead of the proposed local-copy workflow or site-local patches. Exposed settings/interfaces remain customizable; independently authored site extensions remain supported under DEC-175. |
 | DEC-182 | Factory reset uses a developer-configured initial layout and that installed design's defaults. | Q13 selects predictable project configuration instead of asking the admin to choose a design on each reset. The engine supplies no bundled Starter fallback. |
 | DEC-183 | Include Archline and Intr in the first shared library. | Q14 selects those two designs instead of the complete existing catalog or Archline alone. Archline remains the only public pilot. This does not authorize discarding other example/site content. |
+
+## Public pilot delivery — submitted answer, 2026-10-14
+
+| ID | Decision | Basis and rationale |
+| --- | --- | --- |
+| DEC-184 | The maintainer will deploy the Archline pilot to Netlify manually and report the result; provide a simple deployment guide. | [Q15 notes](../journal/2026-10-13-grill-2918a555-e230-4816-971e-5dab8013cba9.md) explicitly select Netlify and maintainer-owned deployment, resolving the broader selected option. This is a pilot hosting choice, not an engine dependency or a claim that live deployment passed. DEC-142's provider-agnostic build contract remains unchanged. |

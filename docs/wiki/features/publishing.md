@@ -69,4 +69,4 @@ Transport mocks establish client transaction logic, not GitHub/GitLab permission
 
 ## Engine separation verification — 2026-10-14
 
-[Independent engine and public pilot verification](../verification/runs/2026-10-14-engine-separation.md): engine/library/clean-build/browser/live-GitHub checks pass; public hosting awaits its destination.
+[Independent engine and public pilot verification](../verification/runs/2026-10-14-engine-separation.md): engine/library/clean-build/browser/live-GitHub checks pass; the maintainer will deploy to Netlify and report the hosted result (DEC-184).

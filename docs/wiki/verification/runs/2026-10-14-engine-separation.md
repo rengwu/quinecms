@@ -12,9 +12,10 @@ including [local authoring](../../features/local-authoring.md),
 [Git save/publication](../../features/publishing.md).
 
 **Implementation and the exercised checks passed. The aggregate remains Untested
-because public hosting is part of the pilot acceptance scope and its destination
-has not been selected.** This is an unresolved delivery input, not a discovered
-engine failure. Live GitLab and R2 are explicitly outside this run.
+because public hosting is part of the pilot acceptance scope and has not yet been
+verified.** In [Q15](../../journal/2026-10-13-grill-2918a555-e230-4816-971e-5dab8013cba9.md),
+the maintainer chose to deploy to Netlify personally and report the result (DEC-184).
+The guide is ready; this pending external verification is not a discovered engine failure. Live GitLab and R2 are explicitly outside this run.
 
 ## Build and environment
 
@@ -54,7 +55,7 @@ suite, clean pilot build, production unlock and corrected reset text were rechec
 | Original extensions and library coexistence | A site-owned block registers alongside library blocks; library files remain unchanged; conflicting IDs/assets and missing initial layouts fail | Passed | `tests/block-generation.test.ts` in engine suite |
 | Live GitHub save/publish | A real content edit saves/reloads. Adding a real source file to draft blocks Save and Publish with no adapter writes and preserves input. Removing it restores compatibility; original records are saved and the exact snapshot published | Passed | [Live result](../../evidence/2026-10-14-engine-separation/live-github.json), [opt-in driver](https://github.com/rengwu/quinecms/blob/engine-separation/docs/wiki/verification/drivers/site-engine-github.mjs) |
 | Provider source guard regression | Both adapters load and reject changed pins/config/assets/extensions, including original source under src/generated; no mutating API calls occur on mismatch | Passed | Engine suite `github.test.ts` / `gitlab.test.ts` |
-| Public hosted URL | Requires a chosen destination and production build credentials; neither hosting deployment nor a live public URL is established | Untested | Delivery question remains open |
+| Public hosted URL | Maintainer selected Netlify and owns deployment; neither hosting deployment nor a live public URL has been verified | Untested | DEC-184; awaiting maintainer report |
 
 ## Repairs and limits
 
@@ -88,7 +89,9 @@ records were left unchanged. The wiki build/link check passes after this update.
 
 ## Next action
 
-Select the public hosting destination for the ready Archline `dist/`. Configure
-production admin credentials at that destination, deploy using the same site
-commands, and verify the hosted `/`, a project detail route and `/admin/`. The core
-build remains provider agnostic. Record that deployment as a new dated result.
+The maintainer will follow the
+[pilot Netlify guide](https://github.com/rengwu/quinecms-site-archline#deploy-this-pilot-to-netlify),
+configure production build credentials, deploy and report the result. Then verify
+the hosted `/`, a project detail route and `/admin/`, and record a new dated result.
+The core build remains provider agnostic; no host integration or live deployment
+was performed for this handoff.

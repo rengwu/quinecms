@@ -1,7 +1,7 @@
 ---
 title: Separate site repositories and the QuineCMS engine
 updated: 2026-10-14
-status: Engine and library implementation verified; public hosting destination pending
+status: Engine and library implementation verified; maintainer Netlify deployment pending
 ---
 # Separate site repositories and the QuineCMS engine
 

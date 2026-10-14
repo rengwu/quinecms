@@ -1,7 +1,7 @@
 ---
 title: Open questions
 updated: 2026-10-14
-status: Site and engine implemented; public hosting destination unresolved
+status: Site and engine implemented; maintainer Netlify deployment pending
 ---
 # Open questions
 
@@ -46,9 +46,14 @@ covers public authoring interfaces, packaging/composition, library extraction,
 editor identity enforcement, preserving excluded examples and pilot acceptance
 checks. Implementation was subsequently authorized with `work-until-grill` on
 2026-10-14. See the [implemented interface](../features/site-engine.md); engine/library checks, a clean public dependency build, browser journeys and live
-GitHub writes have passed. Public repositories are available. The remaining delivery
-question is which hosting destination should receive the portable pilot output.
-No hosting provider or production credentials have been selected.
+GitHub writes have passed. Public repositories are available.
+
+[Q15 notes](../journal/2026-10-13-grill-2918a555-e230-4816-971e-5dab8013cba9.md)
+select Netlify and maintainer-owned deployment (DEC-184). The
+[pilot deployment guide](https://github.com/rengwu/quinecms-site-archline#deploy-this-pilot-to-netlify)
+is ready. No delivery choice remains open; the hosted URL and verification await
+the maintainer's deployment report. Production credentials will be configured by
+the maintainer in their build environment.
 
 ## Upload from media fields — delivered locally
 
