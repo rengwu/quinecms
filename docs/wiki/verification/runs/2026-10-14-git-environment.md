@@ -14,6 +14,9 @@ proposal was cancelled and is not implemented.
 
 - Engine base `f948d7e`; [source manifest](../../evidence/2026-10-14-git-environment/source-manifest.json)
   identifies the tested implementation.
+- Published engine implementation: `e1004efcfec9b5d6859120cb4d66343ddddbfe3b`.
+  Pilot upgrade `adf37b2` preserves published content at `6d8b2c9` and the
+  existing library pin.
 - Node 22.19.0 / pnpm 10.34.1, macOS, Chrome.
 - Production browser checks used a disposable original-extension site, test admin
   credentials and a dummy token, served on loopback port 63983. Only that generated
@@ -35,6 +38,13 @@ proposal was cancelled and is not implemented.
 | Recovery | Stale, unbased and different-repository edits retain content and original metadata; only confirmed loading replaces work; cancellation/failure preserve it | Passed | `tests/editor-save.test.ts`; [browser stale dialog](../../evidence/2026-10-14-git-environment/stale-recovery.png) |
 | Token isolation | Legacy tab credentials cannot override build configuration; token absent from recovery/backup/new session storage; GitLab instance/namespaces use configured target | Passed | `tests/editor-save.test.ts` |
 | Unconfigured site | Local editing/recovery/backup remain; Save and Publish disabled and no connection form | Passed | `tests/editor-navigation.test.ts` |
+
+| Independent pilot | Clean public checkout with final pinned dependency passes install, frozen install, content validation, 163-file typecheck with zero errors/warnings, nine-route build and artifact checks | Passed | [Install](../../evidence/2026-10-14-git-environment/pilot-install.log), [verification](../../evidence/2026-10-14-git-environment/pilot-verify.log) |
+
+The pilot check used test admin credentials and a dummy Git token, with R2 disabled;
+no real deployment secrets were read or changed. It does not establish the newly
+upgraded hosted login/automatic connection. The maintainer must configure the new
+build variables and redeploy.
 
 ## Repairs and limits
 
