@@ -1,0 +1,315 @@
+{
+  "checkedAt": "2026-10-14T04:55:17.729876+00:00",
+  "pages": [
+    {
+      "url": "https://glowing-dodol-a3ed49.netlify.app/",
+      "status": 200,
+      "contentType": "text/html; charset=UTF-8",
+      "bytes": 138363,
+      "sha256": "3dc7e1989cf34d02e4dd6f44df08650ef2fe21e42cbb49bf735abe25c99ebe6c",
+      "etag": "\"bd9a18b32c8de9241d653c0c38d4af1d-ssl\"",
+      "server": "Netlify"
+    },
+    {
+      "url": "https://glowing-dodol-a3ed49.netlify.app/projects",
+      "status": 200,
+      "contentType": "text/html; charset=UTF-8",
+      "bytes": 98305,
+      "sha256": "dd4435f80b47d2a7535344aeb37ced1164c85c3a1387aa9eacd0aaee6b41e72f",
+      "etag": "\"7b05292733034ebd0f7b0f6a6fd985fd-ssl\"",
+      "server": "Netlify"
+    },
+    {
+      "url": "https://glowing-dodol-a3ed49.netlify.app/projects/atelier-19-residence",
+      "status": 200,
+      "contentType": "text/html; charset=UTF-8",
+      "bytes": 98919,
+      "sha256": "e894e040e14e2dad08626496a196686ff43cfaaa9b62a0e387332231dc47294d",
+      "etag": "\"e40d744ca3ae203823b528ff16e536c1-ssl\"",
+      "server": "Netlify"
+    },
+    {
+      "url": "https://glowing-dodol-a3ed49.netlify.app/admin/",
+      "status": 200,
+      "contentType": "text/html; charset=UTF-8",
+      "bytes": 850101,
+      "sha256": "ed3f234b40c50b5f493dc62ba36dd9206f39ed999293ec7a1a53c6236adae8fa",
+      "etag": "\"ad86df7163bc18e66e01a0d4c0d6c890-ssl\"",
+      "server": "Netlify"
+    }
+  ],
+  "assets": [
+    {
+      "url": "https://glowing-dodol-a3ed49.netlify.app/_astro/LayoutHead0.xDdI0Jdh.css",
+      "status": 200,
+      "contentType": "text/css; charset=UTF-8",
+      "bytes": 25782,
+      "sha256": "66ed68fa9cc040059982e612e7def530874c634d5f405f8dc1e54a0a9d20210c",
+      "etag": "\"92bc06d7ca4a6d4371988ab469cfbb7f-ssl\"",
+      "server": "Netlify"
+    },
+    {
+      "url": "https://glowing-dodol-a3ed49.netlify.app/archline/v1/sereno.webp",
+      "status": 200,
+      "contentType": "image/webp",
+      "bytes": 113804,
+      "sha256": "002dfcf8121fc8db6352b45b1e0f0af7d4620454fa303c3068f37f1fa8fab851",
+      "etag": "\"7d7af6e1d56710f191fc614f1576fbfb-ssl\"",
+      "server": "Netlify"
+    },
+    {
+      "url": "https://glowing-dodol-a3ed49.netlify.app/archline/v1/hero.webp",
+      "status": 200,
+      "contentType": "image/webp",
+      "bytes": 197150,
+      "sha256": "15e94e7d80bf12223135ac5d8d7430dd4b325adfa30f4d1502861db4b47f3cc5",
+      "etag": "\"51fd08d2e8cda797b55aa80ccf8fb951-ssl\"",
+      "server": "Netlify"
+    },
+    {
+      "url": "https://glowing-dodol-a3ed49.netlify.app/archline/v1/studio-desk.webp",
+      "status": 200,
+      "contentType": "image/webp",
+      "bytes": 241918,
+      "sha256": "5f1f426f1cebed7b4a108accd8c93f6260520c7dd6d7e61733a9f3300d39d96d",
+      "etag": "\"3c33b0a5c41683582481b831c992c2be-ssl\"",
+      "server": "Netlify"
+    },
+    {
+      "url": "https://glowing-dodol-a3ed49.netlify.app/archline/v1/studio-team.webp",
+      "status": 200,
+      "contentType": "image/webp",
+      "bytes": 148710,
+      "sha256": "ea7ac905afa48a937593f69ca981dc587f01c3855bd23bb4077d160d342795e1",
+      "etag": "\"8c681d5e84697f98583dff62e5115056-ssl\"",
+      "server": "Netlify"
+    },
+    {
+      "url": "https://glowing-dodol-a3ed49.netlify.app/archline/v1/interior.webp",
+      "status": 200,
+      "contentType": "image/webp",
+      "bytes": 399330,
+      "sha256": "33435662c8a3d512cf93de789335e2d8660dd02a0ed0d8eea95b221e8f9e34ad",
+      "etag": "\"e10316778e6d7b9de5662e5b95cc2430-ssl\"",
+      "server": "Netlify"
+    },
+    {
+      "url": "https://glowing-dodol-a3ed49.netlify.app/archline/v1/atelier.webp",
+      "status": 200,
+      "contentType": "image/webp",
+      "bytes": 352174,
+      "sha256": "b145dcb45e7e259d5e8249ff1decb4dfce4a4a35b0375b34bf0c3ae3801e6659",
+      "etag": "\"cbe2c11279f1cfdaa9d2372f0aaf3c9f-ssl\"",
+      "server": "Netlify"
+    },
+    {
+      "url": "https://glowing-dodol-a3ed49.netlify.app/archline/v1/verra.webp",
+      "status": 200,
+      "contentType": "image/webp",
+      "bytes": 373126,
+      "sha256": "ce5f994897abc859be14bb1ea10ad49635e3545905847c5319a74edd9652b5cc",
+      "etag": "\"84c8a7340edf2c924c69894c0609748d-ssl\"",
+      "server": "Netlify"
+    },
+    {
+      "url": "https://glowing-dodol-a3ed49.netlify.app/archline/v1/armonia.webp",
+      "status": 200,
+      "contentType": "image/webp",
+      "bytes": 103000,
+      "sha256": "382d5373bd55ff84f382c09a6fbfcf91b9af17f9d3aed798f62394f19736f700",
+      "etag": "\"90a75ddaee65721d663748315ba55168-ssl\"",
+      "server": "Netlify"
+    },
+    {
+      "url": "https://glowing-dodol-a3ed49.netlify.app/archline/v1/terra.webp",
+      "status": 200,
+      "contentType": "image/webp",
+      "bytes": 209128,
+      "sha256": "6bd2a714925d78b2eb8dccf2b2fb39bb832c2bf3553f138994d3bc2a21c57d28",
+      "etag": "\"bb7ac64c3f8f45760aa9de929e4695f0-ssl\"",
+      "server": "Netlify"
+    },
+    {
+      "url": "https://glowing-dodol-a3ed49.netlify.app/archline/v1/luma.webp",
+      "status": 200,
+      "contentType": "image/webp",
+      "bytes": 93784,
+      "sha256": "da5d4caac1e5729a41889b34e9a0d2a94f3ee46ba05cb062bfc600a198ed30a6",
+      "etag": "\"db6a5d6a204fb793a6def03273c0bf56-ssl\"",
+      "server": "Netlify"
+    },
+    {
+      "url": "https://glowing-dodol-a3ed49.netlify.app/archline/v1/service-space.webp",
+      "status": 200,
+      "contentType": "image/webp",
+      "bytes": 209412,
+      "sha256": "e1a4d369598221d3714ec242d1abffcb8ae0b7113fb7ae4d431c48cb861adb23",
+      "etag": "\"5cfa73f42aa771068e381b14419f3317-ssl\"",
+      "server": "Netlify"
+    },
+    {
+      "url": "https://glowing-dodol-a3ed49.netlify.app/archline/v1/service-form.webp",
+      "status": 200,
+      "contentType": "image/webp",
+      "bytes": 131134,
+      "sha256": "028463b9f2f473a0fdbddaa1c922acd816022a625f2915c1d038e731d18fda69",
+      "etag": "\"e2cc0bb4e89c5911ba93a0ee14651ca0-ssl\"",
+      "server": "Netlify"
+    },
+    {
+      "url": "https://glowing-dodol-a3ed49.netlify.app/archline/v1/service-material.webp",
+      "status": 200,
+      "contentType": "image/webp",
+      "bytes": 96692,
+      "sha256": "7dfa7c40f617e781532f1459479f19e3af688ba2a5623c3d69bb02bae04d7ef8",
+      "etag": "\"9c1354a389d1f1c34cf64c00df07a0c9-ssl\"",
+      "server": "Netlify"
+    },
+    {
+      "url": "https://glowing-dodol-a3ed49.netlify.app/archline/v1/process-concept.webp",
+      "status": 200,
+      "contentType": "image/webp",
+      "bytes": 58782,
+      "sha256": "65f76162169063e94794a3f4293d74ea4ccbc2feae55a4be7d15f65946b04a77",
+      "etag": "\"cdd91f719e9f6214d251756671514ae1-ssl\"",
+      "server": "Netlify"
+    },
+    {
+      "url": "https://glowing-dodol-a3ed49.netlify.app/archline/v1/process-studio.webp",
+      "status": 200,
+      "contentType": "image/webp",
+      "bytes": 91922,
+      "sha256": "9c15db7498328150984f396bbb812e2d546a4eb8eefc00572be39ff47da66593",
+      "etag": "\"7b0a121b8930ca104211d6f847563249-ssl\"",
+      "server": "Netlify"
+    },
+    {
+      "url": "https://glowing-dodol-a3ed49.netlify.app/archline/v1/testimonial-background.webp",
+      "status": 200,
+      "contentType": "image/webp",
+      "bytes": 45858,
+      "sha256": "a88bad86480b22f80a7aaca77f3d5cbb6b1f5244fc72764ddd818e53082bfb2b",
+      "etag": "\"f70254fdf352acf1716cf62941bcc633-ssl\"",
+      "server": "Netlify"
+    },
+    {
+      "url": "https://glowing-dodol-a3ed49.netlify.app/archline/v1/testimonial-1.webp",
+      "status": 200,
+      "contentType": "image/webp",
+      "bytes": 119046,
+      "sha256": "9e438cfcfb82567df0c1773dfddb38b25de93907cee502a0ba59850054f32a65",
+      "etag": "\"d55b6b6b703656db5ebd6f09e2661912-ssl\"",
+      "server": "Netlify"
+    },
+    {
+      "url": "https://glowing-dodol-a3ed49.netlify.app/archline/v1/insight-light.webp",
+      "status": 200,
+      "contentType": "image/webp",
+      "bytes": 107750,
+      "sha256": "0382201e27fadd0e8309894295276a73254b38d1fbebd713c01c4723cbcddecb",
+      "etag": "\"a688f7b139b424283ad39df48f3492c5-ssl\"",
+      "server": "Netlify"
+    },
+    {
+      "url": "https://glowing-dodol-a3ed49.netlify.app/archline/v1/insight-minimal.webp",
+      "status": 200,
+      "contentType": "image/webp",
+      "bytes": 70972,
+      "sha256": "d4afc18ab89a6bc5c31e0167465a70f200a17d616ee1eac43520b5713cc79243",
+      "etag": "\"fbe85eda3a2b7b4a7823876d0b6cd3e3-ssl\"",
+      "server": "Netlify"
+    },
+    {
+      "url": "https://glowing-dodol-a3ed49.netlify.app/archline/v1/insight-nature.webp",
+      "status": 200,
+      "contentType": "image/webp",
+      "bytes": 236816,
+      "sha256": "cbd2db2ba1f972287b155a2a16d91f61c7ec2d7d937825f8c88f4980212d45d6",
+      "etag": "\"8d58cb0e33f1c63eb5f80edc5dd578ff-ssl\"",
+      "server": "Netlify"
+    },
+    {
+      "url": "https://glowing-dodol-a3ed49.netlify.app/archline/v1/enquiry.webp",
+      "status": 200,
+      "contentType": "image/webp",
+      "bytes": 180348,
+      "sha256": "37773e8fc75dbb40985b02e34a8cc13268acadf39619db2e14f8b3d02dea33b2",
+      "etag": "\"b0cac8381b24191df4bd756d345a42b6-ssl\"",
+      "server": "Netlify"
+    },
+    {
+      "url": "https://glowing-dodol-a3ed49.netlify.app/archline/v1/overview.webp",
+      "status": 200,
+      "contentType": "image/webp",
+      "bytes": 147704,
+      "sha256": "ddfc907c3b0ca37335424254152062039b0810a092c077bcc7da3b60a4a897e7",
+      "etag": "\"b230b9797c5c7e53db82708fe049e0a0-ssl\"",
+      "server": "Netlify"
+    },
+    {
+      "url": "https://glowing-dodol-a3ed49.netlify.app/archline/v1/approach.webp",
+      "status": 200,
+      "contentType": "image/webp",
+      "bytes": 84628,
+      "sha256": "05c723c98275f1ee1db7deb25498e4cf9c283af1005cb69491277d08e8e62397",
+      "etag": "\"f76e94f3b4a0f82bd7bc5c18d678e2bc-ssl\"",
+      "server": "Netlify"
+    },
+    {
+      "url": "https://glowing-dodol-a3ed49.netlify.app/archline/v1/detail.webp",
+      "status": 200,
+      "contentType": "image/webp",
+      "bytes": 167742,
+      "sha256": "fd35cdbfab305d9058ba7d87bb3bd450a1179b12ebbe2cfa25de6f88018438a2",
+      "etag": "\"7016461ca35c769cb8117886ad00ea28-ssl\"",
+      "server": "Netlify"
+    },
+    {
+      "url": "https://glowing-dodol-a3ed49.netlify.app/archline/v1/gallery-1.webp",
+      "status": 200,
+      "contentType": "image/webp",
+      "bytes": 160968,
+      "sha256": "69c8babb1d8001caaa8579d6f22e2cf32412f969b7bb985dd8d944d1b3227420",
+      "etag": "\"d68b7efb7223169a2cea972a8345dd88-ssl\"",
+      "server": "Netlify"
+    },
+    {
+      "url": "https://glowing-dodol-a3ed49.netlify.app/archline/v1/gallery-2.webp",
+      "status": 200,
+      "contentType": "image/webp",
+      "bytes": 158034,
+      "sha256": "7684b534e4d22d2465467adf8f1ff0d59d5f45ef4982215a15474dbd6b966263",
+      "etag": "\"bb786f84a14af2b4747dc77641f23172-ssl\"",
+      "server": "Netlify"
+    },
+    {
+      "url": "https://glowing-dodol-a3ed49.netlify.app/archline/v1/gallery-3.webp",
+      "status": 200,
+      "contentType": "image/webp",
+      "bytes": 128054,
+      "sha256": "2a4e186b3d985286dd48c0dba2ebbc8761da900866410b0ccb6d3a62ad3a8911",
+      "etag": "\"499b63d82bae71bb68e057106ba32810-ssl\"",
+      "server": "Netlify"
+    },
+    {
+      "url": "https://glowing-dodol-a3ed49.netlify.app/_astro/index.B-lfIjY8.css",
+      "status": 200,
+      "contentType": "text/css; charset=UTF-8",
+      "bytes": 1515,
+      "sha256": "e3f82f062c8beb72d94f23a60693f4e71d04b90d763231f0f25ffe9186a83da9",
+      "etag": "\"2b7b851f50de2c42c110294f38e6964f-ssl\"",
+      "server": "Netlify"
+    },
+    {
+      "url": "https://glowing-dodol-a3ed49.netlify.app/_astro/index.astro_astro_type_script_index_0_lang.DkVUZO9T.js",
+      "status": 200,
+      "contentType": "application/javascript; charset=UTF-8",
+      "bytes": 3577,
+      "sha256": "e1734629355b12be6ee9f24d7d233dce2b520ad99531b3fc7b4e21161555f966",
+      "etag": "\"3afca6d9ddd80d81944c27f207bf56c7-ssl\"",
+      "server": "Netlify"
+    }
+  ],
+  "identityLimit": "Response hashes identify the observed deployment. Netlify build logs/deploy commit were not inspected.",
+  "toolNote": "Python bundled CA lookup failed; system curl succeeded with normal certificate verification. No certificate bypass was used."
+}

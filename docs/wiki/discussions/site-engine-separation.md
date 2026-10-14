@@ -1,7 +1,7 @@
 ---
 title: Separate site repositories and the QuineCMS engine
 updated: 2026-10-14
-status: Engine and library implementation verified; maintainer Netlify deployment pending
+status: Engine and library implemented; independent pilot publicly deployed
 ---
 # Separate site repositories and the QuineCMS engine
 
@@ -13,7 +13,7 @@ maintaining full CMS forks and distributing engine fixes and features across sit
 the initial deferral, the user requested study and grilling, replaced the first
 unsubmitted form with direct discussion, then completed two form rounds. The
 accepted choices are DEC-172–DEC-183. No further product questionnaire is needed
-for the scoped pilot on current evidence. The engineering plan below has been implemented; the [verification record](../verification/runs/2026-10-14-engine-separation.md) distinguishes completed checks from pending public hosting. The earlier discussion alone did not authorize implementation; the subsequent direct instruction does.
+for the scoped pilot on current evidence. The engineering plan below has been implemented; the [verification record](../verification/runs/2026-10-14-engine-separation.md) records the implementation checks. The subsequent [Netlify smoke check](../verification/runs/2026-10-14-netlify-pilot.md) confirms public delivery and login-page rendering, with signed-in hosted behavior explicitly unverified. The earlier discussion alone did not authorize implementation; the subsequent direct instruction does.
 
 ## Direct discussion — 2026-10-14
 

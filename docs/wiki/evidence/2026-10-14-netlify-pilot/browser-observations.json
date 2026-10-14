@@ -1,0 +1,32 @@
+{
+  "url": "https://glowing-dodol-a3ed49.netlify.app/",
+  "checkedAt": "2026-10-14T04:54:35.416Z",
+  "desktopViewport": {
+    "width": 1225,
+    "height": 742
+  },
+  "mobileViewport": {
+    "width": 390,
+    "height": 844
+  },
+  "routes": [
+    "/",
+    "/projects/atelier-19-residence",
+    "/projects",
+    "/admin/"
+  ],
+  "observed": [
+    "Homepage heading and hero rendered",
+    "Homepage project link opened Atelier 19 Residence",
+    "Back to all projects opened project index",
+    "Mobile MENU opened expanded navigation",
+    "Expanded mobile projects link opened project index",
+    "Admin Email, Password and enabled Unlock editor controls rendered"
+  ],
+  "consoleWarningsAndErrors": [],
+  "limits": [
+    "No production credentials entered",
+    "Hosted editor unlock and Git Save/Publish not exercised",
+    "Viewport restored"
+  ]
+}

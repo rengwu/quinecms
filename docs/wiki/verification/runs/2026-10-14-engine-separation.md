@@ -95,3 +95,11 @@ configure production build credentials, deploy and report the result. Then verif
 the hosted `/`, a project detail route and `/admin/`, and record a new dated result.
 The core build remains provider agnostic; no host integration or live deployment
 was performed for this handoff.
+
+## Subsequent hosted check — 2026-10-14
+
+The maintainer deployed the pilot and provided its public URL. The
+[separate Netlify smoke check](2026-10-14-netlify-pilot.md) passes for public pages,
+mobile navigation, referenced assets and the admin login page. The original run
+result above is preserved as recorded; the follow-up identifies its live output
+with response hashes and explicitly excludes hosted admin unlock and Save/Publish.

@@ -1,7 +1,7 @@
 ---
 title: Open questions
 updated: 2026-10-14
-status: Site and engine implemented; maintainer Netlify deployment pending
+status: Independent pilot deployed; hosted signed-in checks remain unverified
 ---
 # Open questions
 
@@ -51,9 +51,13 @@ GitHub writes have passed. Public repositories are available.
 [Q15 notes](../journal/2026-10-13-grill-2918a555-e230-4816-971e-5dab8013cba9.md)
 select Netlify and maintainer-owned deployment (DEC-184). The
 [pilot deployment guide](https://github.com/rengwu/quinecms-site-archline#deploy-this-pilot-to-netlify)
-is ready. No delivery choice remains open; the hosted URL and verification await
-the maintainer's deployment report. Production credentials will be configured by
-the maintainer in their build environment.
+is ready. The maintainer subsequently supplied the
+[live pilot](https://glowing-dodol-a3ed49.netlify.app/). Its public routes, mobile
+menu, referenced assets and admin login page pass the
+[hosted smoke check](../verification/runs/2026-10-14-netlify-pilot.md). No delivery
+choice remains open. Production admin unlock and hosted Save/Publish require a
+signed-in check and remain unverified; this is a coverage limit, not a new product
+question or an observed failure.
 
 ## Upload from media fields — delivered locally
 

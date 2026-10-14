@@ -43,6 +43,16 @@ The optional bundled public fixtures are Home, Block examples, the nine-block ch
 
 ## Evidence and cleanup
 
+For the independent pilot's public hosting check, use the maintainer-supplied
+`https://glowing-dodol-a3ed49.netlify.app/` in a fresh browser tab. Follow a homepage
+project link and its return link, test the mobile menu at 390px, restore the viewport,
+and open `/admin/`. Capture screenshots and normal HTTPS response hashes for the
+tested pages and referenced assets. A visible login form does not establish
+successful decryption or editor mounting; those checks require the configured
+production credentials and are separate from read-only public verification.
+Do not infer the deployed Git revision without build metadata. See the
+[executed public smoke check](runs/2026-10-14-netlify-pilot.md).
+
 Store outcome logs, source manifests, and observations under `evidence/<run-id>/`, without tokens or private content. Link them from the run. Preserve evidence before cleanup.
 
 On 2026-10-13, the QuineCMS rename editorially normalized project names in
