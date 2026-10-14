@@ -1,0 +1,19 @@
+{
+  "date": "2026-10-14",
+  "environment": "Production encrypted local fixture; Git transport replaced only in disposable workspace; no live Git writes",
+  "results": {
+    "automaticConnection": "Saved to draft immediately after login without settings interaction",
+    "settings": "No repository connection section, fields or token input",
+    "saveAndPublish": "Mock save succeeds; publish confirmation names main and completion reports deployment pending",
+    "retry": "Injected first-load failure shows retry and disables writes; retry succeeds",
+    "mobile": "390x844 retry control and notification fit",
+    "stale": "Mock stale save preserves page title, disables writes, offers backup and confirmed loading",
+    "cancelledLoad": "Page title Keep this pending edit preserved",
+    "confirmedLoad": "Returns to Pages and Saved to draft"
+  },
+  "logs": {
+    "connected": [],
+    "retry": [],
+    "stale": []
+  }
+}

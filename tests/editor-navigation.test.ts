@@ -9,7 +9,6 @@ import type { Block, Content } from '../src/core/types';
 import { readRecovery, retain } from '../src/editor/recovery';
 import { layoutDefinitions, selectLayout } from '../src/core/layouts';
 import { adminThemeKey } from '../src/editor/AdminTheme';
-import { repositoryKey } from '../src/integrations/git';
 vi.mock('../src/editor/Island', () => ({
   default: ({ block }: { block: Block }) =>
     createElement('div', {
@@ -18,9 +17,7 @@ vi.mock('../src/editor/Island', () => ({
     }),
 }));
 const config = {
-  owner: '',
-  repo: '',
-  branch: 'draft',
+  git: null,
   encryptedAdmin: false,
   r2: null,
 };
@@ -306,14 +303,14 @@ it('persists the admin theme across navigation and reload without changing site 
   expect(readRecovery()!.content).toEqual(snapshot);
   expect(button('Save draft').disabled).toBe(saveWasDisabled);
 
-  await click('Connection');
+  await click('Discard edits');
   expect(
     host
       .querySelector('[role="dialog"]')!
       .closest('[data-mode]')
       ?.getAttribute('data-mode'),
   ).toBe('light');
-  await click('Close');
+  await click('Cancel');
   await click('Pages');
   expect(
     host.querySelector('main[aria-label="Pages"]')?.getAttribute('data-mode'),
@@ -510,7 +507,7 @@ it('keeps field-only entry authoring in Content and restores each parent', async
   expect(host.querySelector('table')?.textContent).not.toContain(
     'Edited entry',
   );
-  expect(button('Save draft', host).disabled).toBe(false);
+  expect(button('Save draft', host).disabled).toBe(true); // No build-configured Git.
   expect(readRecovery()?.content.entries[0].values.title).toBe('Edited entry');
 });
 
@@ -1294,99 +1291,16 @@ it('stages collection, object and nested field creation atomically, including si
   expect(readRecovery()!.content).toEqual(committed);
 });
 
-it('selects GitLab and clears credentials when the provider or instance changes', async () => {
-  sessionStorage.setItem(
-    'lean:git',
-    JSON.stringify({
-      repository: repositoryKey(config),
-      token: 'github-test-token',
-    }),
-  );
+it('keeps repository setup out of settings and disables remote actions when unconfigured', async () => {
+  sessionStorage.setItem('lean:git', JSON.stringify({ token: 'old-token' }));
   await mount();
   await click('Settings');
-  await click('Connection');
-  const field = (label: string) =>
-    host.querySelector<HTMLInputElement>(`input[aria-label="${label}"]`)!;
-  expect(field('Access token').value).toBe('github-test-token');
-  expect(field('Owner').placeholder).toBe('my-username-or-org');
-  expect(field('Repository').placeholder).toBe('my-site');
-  expect(field('Draft branch').placeholder).toBe('draft');
-  expect(field('Publish branch').placeholder).toBe('main');
-  expect(field('Publish branch').value).toBe('main');
-  expect(field('Access token').placeholder).toBe('github_pat_…');
-  await act(async () =>
-    host
-      .querySelector<HTMLButtonElement>('[aria-label="Git provider"]')!
-      .click(),
-  );
-  await act(async () =>
-    [...document.querySelectorAll<HTMLElement>('[role="option"]')]
-      .find((o) => o.textContent === 'GitLab')!
-      .click(),
-  );
-  expect(field('GitLab instance URL').value).toBe('https://gitlab.com');
-  expect(field('Namespace (including subgroups)')).not.toBeNull();
-  expect(field('Namespace (including subgroups)').placeholder).toBe(
-    'my-team/my-subgroup',
-  );
-  expect(field('GitLab instance URL').placeholder).toBe('https://gitlab.com');
-  expect(field('Repository').placeholder).toBe('my-site');
-  expect(field('Draft branch').placeholder).toBe('draft');
-  expect(field('Publish branch').value).toBe('main');
-  expect(field('Access token').placeholder).toBe('glpat-…');
-  expect(field('Access token').value).toBe('');
-  expect(sessionStorage.getItem('lean:git')).toBeNull();
-  const change = async (label: string, value: string) =>
-    act(async () => {
-      const element = field(label);
-      Object.getOwnPropertyDescriptor(
-        HTMLInputElement.prototype,
-        'value',
-      )!.set!.call(element, value);
-      element.dispatchEvent(new Event('input', { bubbles: true }));
-    });
-  await change('Access token', 'gitlab-test-token');
-  await change('GitLab instance URL', 'https://gitlab.example.com');
-  expect(field('Access token').value).toBe('');
-  // Partially typed URLs remain editable; validation happens on Connect.
-  await change('GitLab instance URL', 'https:');
-  expect(field('GitLab instance URL').value).toBe('https:');
-  await change('Access token', 'gitlab-test-token');
-  await change('Publish branch', 'release/live');
-  expect(field('Access token').value).toBe('');
-  expect(field('Publish branch').value).toBe('release/live');
-  await click('Close');
-  await click('Connection');
-  expect(field('Publish branch').value).toBe('release/live');
-});
-
-it('restores the publish branch from the retained draft repository', async () => {
-  retain({
-    version: 1,
-    repository: { ...config, publishBranch: 'production' },
-    base: null,
-    content: structuredClone(content),
-  });
-  await mount();
-  await click('Settings');
-  await click('Connection');
-  expect(
-    host.querySelector<HTMLInputElement>('[aria-label="Publish branch"]')!
-      .value,
-  ).toBe('production');
-  expect(readRecovery()!.repository.publishBranch).toBe('production');
-});
-
-it('allows a fresh legacy site to reach connection validation without reporting unsaved edits', async () => {
-  await mount();
-  expect(host.querySelector('header')!.textContent).not.toContain('Connection');
-  await click('Settings');
-  expect(editorPanel().textContent).toContain('Connection');
-  await click('Connection');
-  await click('Connect');
-  expect(host.textContent).toContain('Enter your repository and access token.');
-  expect(host.textContent).not.toContain(
-    'Export or discard local preview edits',
+  expect(editorPanel().textContent).not.toContain('Connection');
+  expect(host.querySelector('[aria-label="Access token"]')).toBeNull();
+  expect(button('Save draft').disabled).toBe(true);
+  expect(button('Publish').disabled).toBe(true);
+  expect(host.querySelector('header [role="status"]')?.textContent).toBe(
+    'Local preview',
   );
 });
 
@@ -1446,7 +1360,7 @@ it('confirms factory reset, retains the empty draft across reloads and allows di
   expect(reset.content.site.layouts![0].design.settings).toEqual(
     layoutDefinitions.find((d) => d.id === 'starter')!.defaults,
   );
-  expect(button('Save draft').disabled).toBe(false);
+  expect(button('Save draft').disabled).toBe(true); // No build-configured Git.
   expect(localStorage.getItem(adminThemeKey)).toBe('light');
   expect(sessionStorage.getItem('lean:r2')).toBe(storage);
   await click('Pages');
@@ -1478,7 +1392,7 @@ it('confirms factory reset, retains the empty draft across reloads and allows di
   for (const label of ['Home', 'Journal', 'Blocks'])
     expect(button(label, editorPanel())).toBeDefined();
   await click('Publish');
-  expect(host.textContent).toContain('Create a home page at /.');
+  expect(button('Publish').disabled).toBe(true); // No configured repository.
   await act(async () => root.unmount());
   host.remove();
   await mount(initial);

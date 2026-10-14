@@ -34,15 +34,15 @@ wrong password and failed ciphertext authentication produce the same login error
 ## Build and deployment
 
 `src/pages/admin/index.astro` validates the credentials, loads the initial content
-and public repository defaults, validates optional R2 environment settings, and requests a standalone editor bundle from
+and validates optional Git/R2 environment settings, then requests a standalone editor bundle from
 `scripts/admin-build.ts`. That Vite build includes the editor, styles, provider
 clients, layouts and preview renderers. It writes no files, inlines dynamic
 imports and assets, and refuses unexpected external chunk/asset dependencies.
 The resulting JS/CSS and initial props are serialized, gzip-compressed and
 encrypted in memory. Astro writes a small login page with the encrypted envelope.
 No plaintext admin island or editor bundle enters the public client graph.
-DEC-185 includes configured R2 upload settings/keys in the encrypted props. An
-unlocked editor can read those keys for direct uploads; they are not isolated
+DEC-185 and DEC-186 include configured R2 keys and the Git access token in the
+encrypted props. An unlocked editor can read these credentials; they are not isolated
 from people with the admin login. See the [media credential boundary](media.md#credential-boundary).
 
 Public pages still build normally. Runtime sharing is retained within each
@@ -85,7 +85,8 @@ decrypted style element; tightening CSP requires testing these paths explicitly.
 
 Email/password and keys are not persisted by the application. Password fields
 are cleared after an attempt. Reloading asks for credentials again; a retained
-draft is restored after decryption. Lock editor clears Git/R2 credentials and
+draft is restored after decryption, then the configured Git connection loads automatically
+without replacing pending work. Lock editor clears legacy stored Git/R2 credentials and
 legacy gate flags, unmounts the editor, and reloads the document to discard the
 decrypted module. The existing draft recovery remains intact. Provider permission
 checks still authorize loading private repositories, saving, publishing and media
@@ -118,9 +119,8 @@ reload an already-open page to discard old module URLs. See the
 - Encryption protects the deployed admin bundle and its initial props. It does
   not make public pages, public block assets, R2 media, public repository contents
   or public hydration context private.
-- Existing tab draft recovery and runtime Git credentials still use session
-  storage. Build-configured R2 credentials stay in decrypted memory; old tab R2
-  settings are ignored and cleared on lock. This change does not encrypt browser storage or defend an already
+- Tab draft recovery still uses session storage. Build-configured Git/R2 credentials
+  stay in decrypted memory; old tab credentials/settings are ignored and cleared on lock. This change does not encrypt browser storage or defend an already
   compromised device, same-origin script, extension, repository or hosting account.
   Installed blocks/layouts execute as trusted code after unlock.
 

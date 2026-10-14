@@ -5,6 +5,13 @@ status: Independent pilot accepted; no engine-separation questions remain
 ---
 # Open questions
 
+## Git configuration — environment only
+
+The user cancelled the key-file login idea and requested the same environment-only
+pattern for Git (DEC-186). The encrypted admin payload carries a shared token;
+login connects automatically. Repository setup leaves Settings, while recovery
+and retry remain available. See the [publishing contract](../features/publishing.md).
+
 ## R2 configuration — environment only
 
 The user requests build-environment R2 connection/settings with no admin setup UI,

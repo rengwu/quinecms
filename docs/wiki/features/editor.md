@@ -1,6 +1,6 @@
 ---
 title: Visual editing and recovery
-updated: 2026-10-13
+updated: 2026-10-14
 ---
 # Visual editing and recovery
 
@@ -8,8 +8,9 @@ updated: 2026-10-13
 
 ## Git save status and recovery
 
-DEC-148–DEC-151 add a small status beside **Save draft**, with repository details
-in Settings. This supersedes DEC-050's removal of save-status text only. Silent tab
+DEC-148–DEC-151 add a small status beside **Save draft**. DEC-186 removes
+repository setup/details from Settings and connects from the build environment
+automatically after login. This supersedes DEC-050's removal of save-status text only. Silent tab
 recovery, submission-time validation and provider guards remain. Browser-to-local-file
 transfer is deferred. [Implementation](../journal/2026-10-12-git-save-ux.md).
 
@@ -18,8 +19,9 @@ The status shows **Local preview**, **Unsaved changes**, **Saving…**, **Saved 
 loaded/saved repository snapshot, including a recovered snapshot. It does not promise
 that the remote is still current. There is no polling; providers check the branch
 before creating a save commit and retain their existing concurrent-update protections.
-Settings shows the content's repository and draft/publish branches; partially edited
-connection settings do not relabel the pending content's destination.
+**Connecting…** and **Retry connection** cover initial loading and failures.
+Recovered content retains its destination metadata but cannot override the
+build-configured repository. See [automatic connection](publishing.md#automatic-connection-and-recovery).
 
 A stale save opens **A newer version is available**, preserving browser edits and
 offering **Export backup** and **Load latest version**. The same recovery opens when
@@ -91,9 +93,9 @@ The 2026-10-13 wiring change passed the 35 editor-navigation tests and type chec
 Browser automation could open the isolated Intr page but could not reliably
 activate its block controls, so this run did not establish visual scrolling.
 
-Schema rich-text fields and Text blocks provide visual headings, paragraphs, bold/italic, links, and lists with Markdown storage. Uploaded-image references and YouTube embeds round-trip in the visual editor. Unsupported Markdown remains available as source text. Custom React widgets and shared pure validators support compound block fields. Content browses collections → entry lists → schema-defined entry values only. Schemas browses Collections / Objects → definitions → individual fields, with label/key/type/required/options/default controls. Schema editing protects populated keys/types/options. Entries remain in Content and never appear in the Pages table. Add entry is confined to entry lists; Add collection belongs to the schema list. All Add actions (page, block, entry, collection, field and link) use the same blue Kumo primary variant, base size and plus icon. Add block remains aligned right beside Blocks, outside the draggable list. Main navigation preserves all local content edits. Site Layouts lists named configurations with activation switches. Individual layouts delegate title, appearance and navigation to their design settings; Settings owns Repository connection, admin Appearance, Backups, Session and Factory reset; content spacing belongs to Site Layout.
+Schema rich-text fields and Text blocks provide visual headings, paragraphs, bold/italic, links, and lists with Markdown storage. Uploaded-image references and YouTube embeds round-trip in the visual editor. Unsupported Markdown remains available as source text. Custom React widgets and shared pure validators support compound block fields. Content browses collections → entry lists → schema-defined entry values only. Schemas browses Collections / Objects → definitions → individual fields, with label/key/type/required/options/default controls. Schema editing protects populated keys/types/options. Entries remain in Content and never appear in the Pages table. Add entry is confined to entry lists; Add collection belongs to the schema list. All Add actions (page, block, entry, collection, field and link) use the same blue Kumo primary variant, base size and plus icon. Add block remains aligned right beside Blocks, outside the draggable list. Main navigation preserves all local content edits. Site Layouts lists named configurations with activation switches. Individual layouts delegate title, appearance and navigation to their design settings; Settings owns admin Appearance, Backups, Session and Factory reset; content spacing belongs to Site Layout.
 
-Local content and its base/repository identity survive reloads silently in tab storage. Unreadable recovery data is preserved for download and requires explicit discard before it can be overwritten. This includes unfinished schema edits that cannot yet be saved. Export/import backups contain content, not credentials or binary uploads. Storage failure is visible. Lock clears Git and legacy R2 tab credentials, discards decrypted R2 build configuration and returns to the gate. R2 setup lives in the build environment (DEC-185); there is no storage settings dialog. Connection selects GitHub or GitLab, including an HTTPS GitLab instance and nested namespace when needed. Changing the destination clears the access token; retained Git credentials are bound to provider, instance, repository, draft branch and publish branch. See [publishing](publishing.md).
+Local content and its base/repository identity survive reloads silently in tab storage. Unreadable recovery data is preserved for download and requires explicit discard before it can be overwritten. This includes unfinished schema edits that cannot yet be saved. Export/import backups contain content, not credentials or binary uploads. Storage failure is visible. Lock clears legacy Git/R2 tab credentials, discards decrypted build configuration and returns to the gate. Git/R2 configuration lives in the build environment (DEC-185/DEC-186); there are no connection setup dialogs. Build tokens are never persisted with draft recovery. See [publishing](publishing.md).
 
 QuineCMS uses `quinecms:recovery:v2` for tab recovery and `quinecms-backup` for
 new version-1 backups (DEC-164). The previous project identifiers remain readable.
@@ -102,7 +104,7 @@ unreadable legacy data remains downloadable until explicitly discarded. A curren
 record takes precedence when both keys exist. Backup import validates either
 format and still asks before replacing content. [Rename verification](../verification/runs/2026-10-13-quinecms-rename.md).
 
-Local development skips the unsaved-edit reload confirmation at the user's request; production retains it. Tab recovery continues in both. Site Layout owns content max-width/page gutter and their per-layout defaults (DEC-130); designs can also own typography controls. Settings contains Repository connection, admin Appearance, Backups, Session and Factory reset. Website tokens stay scoped away from admin controls. See the [Site Layout contract](site-layouts.md).
+Local development skips the unsaved-edit reload confirmation at the user's request; production retains it. Tab recovery continues in both. Site Layout owns content max-width/page gutter and their per-layout defaults (DEC-130); designs can also own typography controls. Settings contains admin Appearance, Backups, Session and Factory reset. Website tokens stay scoped away from admin controls. See the [Site Layout contract](site-layouts.md).
 
 DEC-108 applies the same drill-down rule sitewide: opening a repeated item replaces all parent/sibling controls with its dedicated level. Back returns one parent at a time, including nested header dropdowns and footer columns. The inspector-wide `PanelNavigation` outlet also contains block/entry field lists and schema default rows; their parent forms remain mounted but hidden from display and accessibility. Area/document/layout changes clear the level, and focus moves to its heading. Custom settings authors use `PanelLevel` for their own drill-down screens.
 
@@ -118,7 +120,10 @@ The Factory reset button uses the same left-aligned action row as the other Sett
 
 The reset is an unsaved local draft and survives tab reload through normal recovery. **Save draft** persists it to the connected draft branch; it does not publish automatically. An empty snapshot can be saved, but publication still requires a static home page at `/`. **Discard edits** restores the last loaded/saved snapshot until the reset is saved. Export a backup first to retain unsaved work. Repository identity, saved baseline, credentials and admin appearance remain intact. Uploaded R2 objects remain in storage; only their library records are cleared, as explicitly requested.
 
-**Connection** lives in Settings under Repository, rather than in the header. It opens the existing provider/repository dialog and shares the editor's busy-state lock. Both GitHub and GitLab forms include example placeholders and a Publish branch field defaulting to `main`. Changing the publish branch clears the connection and token; publication confirms the chosen branch. The header retains Save draft and Publish. [Implementation and verification](../journal/2026-10-08-factory-reset.md).
+Repository connection settings and tokens are build-environment configuration
+(DEC-186), with no form or repository details in Settings. The header retains
+Save draft, Publish, automatic connection status and recovery actions. Settings
+retains backup, session/reset and appearance controls.
 
 ## Form action alignment (DEC-131)
 
@@ -157,7 +162,7 @@ Create adds to the immediate parent. A child created inside an unfinished parent
 3. Preview is always interactive. Increment the Svelte counter; select it in the drawer and change Starting number. Verify the preview uses the new number and retains its interactive increment until removal/reload.
 4. Content → Journal shows an entry list and Add entry in a standard admin view, with no model controls or preview. Open an entry, change Title and verify its heading updates; verify there is no block list or Add block action, then return to the entry list. Values persist and no live rendering appears at any level. Schemas → Collections → Journal instead shows the model and compact field rows in the same admin layout. Open Title: populated key/type and removal are disabled. Add a field with a default, then create an entry through Content and verify the default. A blank required title produces no proactive issue notice; Publish reports validation through a toast.
 5. Add a block through the header action and dialog. Switch directly to Site through the main sidebar; the builder drawer and preview disappear. Site → Discard edits resets local test content. Export/import and password/Lock browser paths still require a follow-up browser run.
-6. Inspect Hero Design, Media and Site. Labels sit above aligned controls; settings/add actions appear beside section headings. Each navigation link is one bounded group, with removal inside it. Backups and Session are separate sections. Connection groups Close/Connect at the bottom right. Schema field removal is separated from editable fields.
+6. Inspect Hero Design, Media and Site. Labels sit above aligned controls; settings/add actions appear beside section headings. Each navigation link is one bounded group, with removal inside it. Backups and Session are separate sections. Schema field removal is separated from editable fields.
 7. Change a page title/path, return to Pages and open another page, then reopen the edited page: values persist and the table reflects them. Add page from the overview, choose Static page, rename it, then Create page. Repeat with Cancel and confirm no extra page appears. Delete that test page: Cancel keeps it; Continue returns to the table. With no pages, the table shows No pages yet and Add page remains available.
 8. Visit Media and Site through the main sidebar: both use a centered admin workspace with no builder drawer, website rendering or Mobile/Desktop button. Return to Pages → Home and verify the preview and width toggle return. A page-preview navigation link to an entry opens that entry's standard Content editor. Below 800px, Menu opens all five destinations; selecting one closes the dialog and changes the area.
 

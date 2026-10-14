@@ -2,7 +2,7 @@
 import { afterEach, beforeEach, expect, it, vi } from 'vitest';
 import { act, createElement } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
-import App from '../src/editor/App';
+import App, { type Config } from '../src/editor/App';
 import { legacyBackupFormat } from '../src/editor/legacy-brand';
 import styles from '../src/editor/editor.module.css';
 import { filesFor } from '../src/core/content';
@@ -10,7 +10,9 @@ import type { Content, Snapshot } from '../src/core/types';
 import { connect } from '../src/integrations/git';
 import { Conflict } from '../src/integrations/repository';
 import { download, readRecovery, retain } from '../src/editor/recovery';
-import { fixture } from './support/fixture';
+import { fixture as legacyFixture } from './support/fixture';
+import { migrateSite } from '../src/core/layouts';
+const fixture = () => migrateSite(legacyFixture());
 
 vi.mock('../src/editor/Island', () => ({ default: () => null }));
 vi.mock('../src/integrations/git', async (original) => ({
@@ -21,12 +23,15 @@ vi.mock('../src/editor/recovery', async (original) => ({
   ...(await original<typeof import('../src/editor/recovery')>()),
   download: vi.fn(),
 }));
-const config = {
+const repository = {
   provider: 'github' as const,
   owner: 'example',
   repo: 'site',
   branch: 'draft',
   publishBranch: 'main',
+};
+const config: Config = {
+  git: { repository, token: 'build-git-token' },
   r2: null,
 };
 const snapshot = (sha: string, content = fixture()): Snapshot => ({
@@ -38,7 +43,7 @@ const snapshot = (sha: string, content = fixture()): Snapshot => ({
   sourceFiles: {},
 });
 const store = {
-  repository: config,
+  repository,
   load: vi.fn<() => Promise<Snapshot>>(),
   save: vi.fn<(base: Snapshot, content: Content) => Promise<Snapshot>>(),
   publish: vi.fn<() => Promise<void>>(),
@@ -59,7 +64,7 @@ afterEach(async () => {
   vi.resetAllMocks();
   vi.unstubAllGlobals();
 });
-async function mount() {
+async function mount(settings = config) {
   (globalThis as any).IS_REACT_ACT_ENVIRONMENT = true;
   vi.stubGlobal(
     'ResizeObserver',
@@ -78,7 +83,7 @@ async function mount() {
   document.body.append(host);
   root = createRoot(host);
   await act(async () =>
-    root.render(createElement(App, { initial: fixture(), config })),
+    root.render(createElement(App, { initial: fixture(), config: settings })),
   );
 }
 function button(label: string, scope: Element = host) {
@@ -106,11 +111,6 @@ async function input(label: string, value: string) {
     el.dispatchEvent(new Event('input', { bubbles: true }));
   });
 }
-async function connection() {
-  await click('Settings');
-  await click('Connection');
-  await click('Connect');
-}
 async function edit() {
   await click('Pages');
   await click('Home');
@@ -118,7 +118,6 @@ async function edit() {
 }
 async function stale() {
   await mount();
-  await connection();
   await edit();
   store.save.mockRejectedValueOnce(new Conflict());
   await click('Save draft');
@@ -126,11 +125,14 @@ async function stale() {
 
 it('shows local, pending, saving and confirmed statuses without polling', async () => {
   await mount();
-  expect(status()).toBe('Local preview');
-  await connection();
   expect(status()).toBe('Saved to draft');
-  expect(host.textContent).toContain('example/site');
-  expect(host.textContent).toContain('Draft: draft · Publish: main');
+  expect(status()).toBe('Saved to draft');
+  expect(host.textContent).not.toContain('example/site');
+  expect(vi.mocked(connect)).toHaveBeenCalledWith(
+    config.git!.token,
+    repository,
+    expect.any(Array),
+  );
   await edit();
   expect(status()).toBe('Unsaved changes');
   const pending = readRecovery()!;
@@ -207,7 +209,6 @@ it.each(['Network unavailable', 'Token permission denied'])(
   'allows retry after %s without claiming a stale draft',
   async (message) => {
     await mount();
-    await connection();
     await edit();
     const pending = readRecovery()!;
     store.save.mockRejectedValueOnce(Error(message));
@@ -226,36 +227,114 @@ it('detects outdated recovered edits when reconnecting without attempting a save
   const base = snapshot('old');
   const content = structuredClone(base.content);
   content.pages[0].title = 'Recovered work';
-  retain({ version: 1, repository: config, base, content });
+  retain({ version: 1, repository, base, content });
   await mount();
-  await connection();
   expect(status()).toBe('Newer draft available');
   expect(dialog().textContent).toContain('A newer version is available');
   expect(readRecovery()!.content.pages[0].title).toBe('Recovered work');
   expect(store.save).not.toHaveBeenCalled();
 });
 
-it('does not describe a different repository as newer or replace edits when connecting', async () => {
-  await mount();
-  await connection();
-  await edit();
-  const pending = readRecovery()!;
-  await click('Settings');
-  await click('Connection');
-  await input('Repository', 'other-site');
-  vi.mocked(connect).mockResolvedValueOnce({
-    ...store,
-    repository: { ...config, repo: 'other-site' },
+it('preserves recovered edits from another repository until a confirmed load', async () => {
+  const base = snapshot('base');
+  const content = structuredClone(base.content);
+  content.pages[0].title = 'Other repository work';
+  retain({
+    version: 1,
+    repository: { ...repository, repo: 'other-site' },
+    base,
+    content,
   });
-  await click('Connect');
-  expect(host.textContent).toContain('remote draft differs');
-  expect(status()).toBe('Unsaved changes');
+  const pending = readRecovery();
+  await mount();
+  expect(dialog().textContent).toContain('Recovered edits need attention');
   expect(readRecovery()).toEqual(pending);
+  expect(button('Save draft').disabled).toBe(true);
+  expect(button('Publish').disabled).toBe(true);
   await click('Close', dialog());
-  await click('Save draft');
-  expect(host.textContent).toContain('Connect to the repository first');
+  await click('Recovered edits need attention');
+  await click('Load latest version', dialog());
+  await click('Cancel', dialog());
+  expect(readRecovery()).toEqual(pending);
+  await click('Load latest version', dialog());
+  await click('Load latest version', dialog());
+  expect(readRecovery()!.repository).toEqual(repository);
+  expect(readRecovery()!.content.pages[0].title).toBe('Home');
   expect(store.save).not.toHaveBeenCalled();
 });
+
+it('preserves unbased local edits and offers backup and confirmed loading', async () => {
+  const content = fixture();
+  content.pages[0].title = 'Local preview work';
+  retain({ version: 1, repository, base: null, content });
+  await mount();
+  expect(dialog().textContent).toContain('Recovered edits need attention');
+  expect(readRecovery()!.content).toEqual(content);
+  expect(button('Save draft').disabled).toBe(true);
+  await click('Export backup', dialog());
+  expect(download).toHaveBeenCalledWith(
+    expect.objectContaining({ content }),
+    'site-backup.json',
+  );
+});
+
+it.each(['Network unavailable', 'Token permission denied'])(
+  'retries initial connection after %s without losing recovered edits',
+  async (message) => {
+    const base = snapshot('base');
+    const content = structuredClone(base.content);
+    content.pages[0].title = 'Recovered work';
+    retain({ version: 1, repository, base, content });
+    store.load.mockRejectedValueOnce(Error(message));
+    await mount();
+    expect(status()).toBe('Retry connection');
+    expect(readRecovery()!.content).toEqual(content);
+    expect(button('Publish').disabled).toBe(true);
+    await click('Retry connection');
+    expect(status()).toBe('Unsaved changes');
+    expect(readRecovery()!.content).toEqual(content);
+    await click('Save draft');
+    expect(status()).toBe('Saved to draft');
+  },
+);
+
+it.each(['github', 'gitlab'] as const)(
+  'uses only build credentials for %s and excludes them from recovery and backup',
+  async (provider) => {
+    sessionStorage.setItem(
+      'lean:git',
+      JSON.stringify({ repository: 'stale', token: 'stale-token' }),
+    );
+    const target = {
+      ...repository,
+      provider,
+      ...(provider === 'gitlab'
+        ? { instance: 'https://gitlab.example.test', owner: 'team/subgroup' }
+        : {}),
+    };
+    vi.mocked(connect).mockResolvedValue({ ...store, repository: target });
+    await mount({
+      git: { repository: target, token: 'configured-token' },
+      r2: null,
+    });
+    expect(connect).toHaveBeenCalledWith(
+      'configured-token',
+      target,
+      expect.any(Array),
+    );
+    expect(sessionStorage.getItem('lean:git')).not.toContain(
+      'configured-token',
+    );
+    expect(JSON.stringify(readRecovery())).not.toContain('configured-token');
+    await click('Settings');
+    expect(host.textContent).not.toContain('Repository connection');
+    expect(host.querySelector('[aria-label="Access token"]')).toBeNull();
+    await click('Export backup');
+    expect(JSON.stringify(vi.mocked(download).mock.calls)).not.toContain(
+      'configured-token',
+    );
+  },
+);
 
 it.each(['quinecms-backup', legacyBackupFormat])(
   'imports %s backups after confirmation without losing content',

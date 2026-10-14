@@ -1,0 +1,22 @@
+
+> quinecms@0.2.0 verify /Users/rengwu/Desktop/Projects/quinecms
+> pnpm test && pnpm wiki:check
+
+
+> quinecms@0.2.0 test /Users/rengwu/Desktop/Projects/quinecms
+> vitest run
+
+
+ RUN  v5.0.3 /Users/rengwu/Desktop/Projects/quinecms
+
+
+ Test Files  31 passed (31)
+      Tests  259 passed (259)
+   Start at  16:18:56
+   Duration  76.06s (tests 68%, import 22%, environment 7%, transform 2%)
+
+
+> quinecms@0.2.0 wiki:check /Users/rengwu/Desktop/Projects/quinecms
+> node docs/wiki/_build.mjs --check
+
+Checked 188 pages and internal links; index.html is current.

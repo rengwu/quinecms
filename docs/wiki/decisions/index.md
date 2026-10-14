@@ -477,7 +477,7 @@ The user separately authorizes implementation of DEC-110–DEC-128, explicitly e
 | ID | Decision | Basis and rationale |
 | --- | --- | --- |
 | DEC-139 | Hide Lock editor when no editor password is configured. | The user reports the passwordless Continue screen and explicitly chooses hiding the button. Configured-password sites retain Lock editor and return to an empty password prompt. |
-| DEC-140 | Add example placeholders and a Publish branch field, default `main`, to both GitHub and GitLab connection forms. | Direct user request, explicitly extended to GitLab. Publication and missing-draft creation use the selected target. Requiring distinct draft/publish branches, including both in credential identity, and exposing `PUBLIC_PUBLISH_BRANCH` are implementation choices within the existing save/publish contract. See the [current contract](../features/publishing.md#connection-fields-and-publication-target). |
+| DEC-140 | Add example placeholders and a Publish branch field, default `main`, to both GitHub and GitLab connection forms. | Direct user request, explicitly extended to GitLab. Publication and missing-draft creation use the selected target. Requiring distinct draft/publish branches, including both in credential identity, and exposing `PUBLIC_PUBLISH_BRANCH` are implementation choices within the existing save/publish contract. See the [current contract](../features/publishing.md#publication-target). |
 
 
 ## Encrypted admin — direct instruction, 2026-10-09
@@ -643,4 +643,10 @@ engineering work; none of these decisions records implementation or verification
 
 | ID | Decision | Basis and rationale |
 | --- | --- | --- |
-| DEC-185 | Configure R2 connection, credentials and upload defaults in the site's build environment, remove all admin storage setup controls, and maintain a commented `.env.example`. | Direct user request after the pilot upload screen. Supersedes DEC-161's setup-dialog fallback and prior runtime-entered R2 settings. The implementation reuses the encrypted admin payload and direct browser uploads; authorized editors can recover credentials after unlock. All connection values blank disables uploads while existing media works; partial/invalid settings fail the build. Git token entry stays unchanged. See the [media contract](../features/media.md). |
+| DEC-185 | Configure R2 connection, credentials and upload defaults in the site's build environment, remove all admin storage setup controls, and maintain a commented `.env.example`. | Direct user request after the pilot upload screen. Supersedes DEC-161's setup-dialog fallback and prior runtime-entered R2 settings. The implementation reuses the encrypted admin payload and direct browser uploads; authorized editors can recover credentials after unlock. All connection values blank disables uploads while existing media works; partial/invalid settings fail the build. Git token entry was unchanged in this increment; DEC-186 subsequently replaces it. See the [media contract](../features/media.md). |
+
+## Git environment configuration — direct request, 2026-10-14
+
+| ID | Decision | Basis and rationale |
+| --- | --- | --- |
+| DEC-186 | Configure Git provider, repository, branches, instance and access token in the site's build environment; connect automatically after admin login and remove repository setup/details from Settings. | Direct user request to apply the R2 pattern, cancelling the key-file login idea. Supersedes runtime token entry/session retention and editable connection forms from DEC-011/DEC-016 and subsequent connection UI decisions. The existing encrypted payload carries a shared site token to authorized editors. `.env.example` documents non-public variable names, defaults, disabled/partial configuration and token rotation. Preserve draft recovery, source/concurrency guards, backup and confirmed load-latest actions; no authentication backend or key-file feature. See the [publishing contract](../features/publishing.md). |

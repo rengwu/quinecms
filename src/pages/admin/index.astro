@@ -4,6 +4,7 @@ import { loadContent } from '../../core/load';
 import { adminBundle } from '../../../scripts/admin-build';
 import { credentials, encryptAdmin } from '../../admin/crypto';
 import { storageFromEnv } from '../../admin/storage';
+import { gitFromEnv } from '../../admin/git';
 // One shared credential pair. Dev uses fixed credentials regardless of .env;
 // static builds still require the configured production pair.
 const email = import.meta.env.LEAN_DEV_SERVER
@@ -14,21 +15,17 @@ const password = import.meta.env.LEAN_DEV_SERVER
   : (import.meta.env.ADMIN_PASSWORD ?? '');
 credentials(email, password);
 const initial = await loadContent();
-const provider = import.meta.env.PUBLIC_GIT_PROVIDER ?? 'github';
-if (provider !== 'github' && provider !== 'gitlab')
-  throw Error('PUBLIC_GIT_PROVIDER must be github or gitlab.');
 const config = {
-  provider,
-  instance: import.meta.env.PUBLIC_GITLAB_URL ?? 'https://gitlab.com',
   encryptedAdmin: true,
-  owner:
-    import.meta.env.PUBLIC_GIT_NAMESPACE ??
-    (provider === 'github' ? (import.meta.env.PUBLIC_GITHUB_OWNER ?? '') : ''),
-  repo:
-    import.meta.env.PUBLIC_GIT_REPO ??
-    (provider === 'github' ? (import.meta.env.PUBLIC_GITHUB_REPO ?? '') : ''),
-  branch: import.meta.env.PUBLIC_DRAFT_BRANCH ?? 'draft',
-  publishBranch: import.meta.env.PUBLIC_PUBLISH_BRANCH ?? 'main',
+  git: gitFromEnv({
+    GIT_PROVIDER: import.meta.env.GIT_PROVIDER,
+    GIT_NAMESPACE: import.meta.env.GIT_NAMESPACE,
+    GIT_REPO: import.meta.env.GIT_REPO,
+    GIT_ACCESS_TOKEN: import.meta.env.GIT_ACCESS_TOKEN,
+    GIT_DRAFT_BRANCH: import.meta.env.GIT_DRAFT_BRANCH,
+    GIT_PUBLISH_BRANCH: import.meta.env.GIT_PUBLISH_BRANCH,
+    GITLAB_URL: import.meta.env.GITLAB_URL,
+  }),
   r2: storageFromEnv({
     R2_ACCOUNT_ID: import.meta.env.R2_ACCOUNT_ID,
     R2_BUCKET: import.meta.env.R2_BUCKET,

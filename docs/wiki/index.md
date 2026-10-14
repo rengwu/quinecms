@@ -5,7 +5,14 @@ status: Accepted
 ---
 # QuineCMS
 
-Latest change: [R2 environment configuration](features/media.md#build-environment-setup)
+Latest change: [Git environment configuration](features/publishing.md#build-environment-setup)
+(DEC-186). Sites configure the repository and shared access token in the build
+environment; login connects automatically, with no repository setup in Settings.
+Recovery retains pending edits and provides retry/confirmed loading.
+[Verification](verification/runs/2026-10-14-git-environment.md) covers 259 tests,
+production encryption and local browser journeys with mocked Git.
+
+Previous change: [R2 environment configuration](features/media.md#build-environment-setup)
 (DEC-185). The portal has no storage setup controls; sites configure optional
 uploads through documented `R2_*` variables in `.env.example`. Credentials travel
 inside the encrypted admin payload and become available to the unlocked editor.

@@ -201,7 +201,7 @@ Several details are easy to miss during implementation:
 
 Start with `git status`, the current site records, the relevant definitions and the
 client's request. If the client uses the portal, review its latest saved draft too:
-`PUBLIC_DRAFT_BRANCH` configures the branch, defaulting to `draft`. Fetching that
+`GIT_DRAFT_BRANCH` configures the branch, defaulting to `draft`. Fetching that
 branch through the developer's normal Git workflow makes its saved content available
 locally. Unsaved edits in someone else's browser are not in Git.
 

@@ -68,6 +68,7 @@ import { connect, repositoryKey } from '../integrations/git';
 import type { Repository, RepositoryStore } from '../integrations/repository';
 import { Conflict, publishBranch } from '../integrations/repository';
 import type { StorageConfig } from '../integrations/media';
+import type { GitConfig } from '../admin/git';
 import {
   download,
   readRecovery,
@@ -86,19 +87,10 @@ import {
   useAdminTheme,
   type AdminMode,
 } from './AdminTheme';
-export interface Config extends Repository {
+export interface Config {
   encryptedAdmin?: boolean;
+  git: GitConfig | null;
   r2: StorageConfig | null;
-}
-function stored<T>(key: string, fallback: T): T {
-  try {
-    return JSON.parse(sessionStorage.getItem(key) ?? 'null') ?? fallback;
-  } catch {
-    return fallback;
-  }
-}
-function stash(key: string, value: unknown) {
-  sessionStorage.setItem(key, JSON.stringify(value));
 }
 export default function App(props: {
   initial: Content;
@@ -170,30 +162,20 @@ function Editor({
   const [base, setBase] = useState<Snapshot | null>(
     () => recovery.current?.base ?? null,
   );
-  const [repo, setRepo] = useState<Repository>(
+  const repo = config.git?.repository;
+  const [draftRepository, setDraftRepository] = useState<Repository>(
     () =>
-      recovery.current?.repository ?? {
-        provider: config.provider ?? 'github',
-        instance: config.instance ?? 'https://gitlab.com',
-        owner: config.owner,
-        repo: config.repo,
-        branch: config.branch,
-        publishBranch: publishBranch(config),
-      },
+      recovery.current?.repository ??
+      repo ?? { owner: '', repo: '', branch: 'draft' },
   );
-  const [draftRepository, setDraftRepository] = useState(repo);
-  const [token, setToken] = useState(() => {
-    const saved = stored<{ repository: string; token: string } | null>(
-      'lean:git',
-      null,
-    );
-    return saved?.repository === repositoryKey(repo) ? saved.token : '';
-  });
+  const [connectionState, setConnectionState] = useState<
+    'connecting' | 'failed' | 'ready' | 'disabled'
+  >(config.git ? 'connecting' : 'disabled');
   const r2 = config.r2;
   const [store, setStore] = useState<RepositoryStore | null>(null);
-  const [busy, setBusy] = useState(false);
+  const [busy, setBusy] = useState(Boolean(config.git));
   const [saveState, setSaveState] = useState<
-    'idle' | 'saving' | 'failed' | 'stale'
+    'idle' | 'saving' | 'failed' | 'stale' | 'blocked'
   >('idle');
   const toasts = useKumoToastManager();
   function setError(description: string) {
@@ -323,6 +305,7 @@ function Editor({
     serialize(filesFor(migrateSite(base?.content ?? initial)));
   const activeRepo = store?.repository;
   const credentialsMatch =
+    repo &&
     activeRepo &&
     repositoryKey(activeRepo) === repositoryKey(repo) &&
     repositoryKey(draftRepository) === repositoryKey(repo);
@@ -400,44 +383,30 @@ function Editor({
         blocks: page.blocks.map((b) => (b.id === next.id ? next : b)),
       });
   }
-  function changeRepository(next: Partial<Repository>) {
-    setStore(null);
-    setToken('');
-    setRepo({ ...repo, ...next });
+  async function reconnect(cancelled = () => false) {
+    if (!config.git || !repo) return;
+    setBusy(true);
+    setConnectionState('connecting');
     try {
-      sessionStorage.removeItem('lean:git');
-    } catch {}
-  }
-  async function reconnect() {
-    await run(async () => {
-      if (dirty && !base)
-        throw Error(
-          'Export or discard local preview edits before loading a repository draft.',
-        );
-      const next = await connect(token, repo, definitions);
+      const next = await connect(config.git.token, repo, definitions);
+      if (cancelled()) return;
       const remote = await next.load();
-      if (
-        base &&
-        dirty &&
-        (base.sha !== remote.sha ||
-          repositoryKey(draftRepository) !== repositoryKey(repo))
-      ) {
-        setStore(next);
-        if (repositoryKey(draftRepository) === repositoryKey(repo)) {
-          setSaveState('stale');
-          setModal('stale');
-          return;
-        }
-        throw Error(
-          'The remote draft differs from your recovered work. Your edits are preserved. Export a backup, then reload the draft to reconcile them.',
-        );
-      }
-      try {
-        stash('lean:git', { repository: repositoryKey(repo), token });
-      } catch {
-        setError('Credentials could not be retained for this tab.');
-      }
+      if (cancelled()) return;
       setStore(next);
+      setConnectionState('ready');
+      if (
+        dirty &&
+        (!base || repositoryKey(draftRepository) !== repositoryKey(repo))
+      ) {
+        setSaveState('blocked');
+        setModal('recovered');
+        return;
+      }
+      if (dirty && base?.sha !== remote.sha) {
+        setSaveState('stale');
+        setModal('stale');
+        return;
+      }
       setDraftRepository(repo);
       setSaveState('idle');
       if (!dirty) {
@@ -447,16 +416,25 @@ function Editor({
         setCollectionId('');
         setBlockId('');
       }
-      recovery.current = {
-        version: 1,
-        repository: repo,
-        base: dirty ? base : remote,
-        content: dirty ? content : remote.content,
-      };
-      setMessage('Connected to the draft branch.');
-      setModal('');
-    });
+    } catch (error) {
+      if (cancelled()) return;
+      setConnectionState('failed');
+      setError(
+        error instanceof Error
+          ? error.message
+          : 'Could not load the repository draft. Your edits are still here.',
+      );
+    } finally {
+      if (!cancelled()) setBusy(false);
+    }
   }
+  useEffect(() => {
+    let cancelled = false;
+    void reconnect(() => cancelled);
+    return () => {
+      cancelled = true;
+    };
+  }, []);
   function reloadDraft() {
     setConfirm({
       title: 'Load the latest version?',
@@ -465,7 +443,8 @@ function Editor({
       destructive: true,
       action: () => {
         void run(async () => {
-          if (!store) throw Error('Connect to your repository first.');
+          if (!store)
+            throw Error('The repository is unavailable. Retry the connection.');
           const next = await store.load();
           setDraftRepository(store.repository);
           setBase(next);
@@ -537,7 +516,7 @@ function Editor({
       setSaveState('saving');
       try {
         if (!store || !credentialsMatch || !base)
-          throw Error('Connect to the repository first.');
+          throw Error('The repository is unavailable. Retry the connection.');
         const next = await store.save(base, content);
         setBase(next);
         setContent(migrateSite(next.content));
@@ -558,7 +537,7 @@ function Editor({
     if (!validFor('publish')) return;
     await run(async () => {
       if (!store || !credentialsMatch || !base)
-        throw Error('Connect to the repository first.');
+        throw Error('The repository is unavailable. Retry the connection.');
       if (dirty) throw Error('Save your changes before publishing.');
       await store.publish(base);
       setMessage(
@@ -685,7 +664,27 @@ function Editor({
           )}
           <div className={styles.saveControls}>
             <span role="status" className={styles.saveStatus}>
-              {saveState === 'stale' ? (
+              {connectionState === 'connecting' ? (
+                'Connecting…'
+              ) : connectionState === 'failed' ? (
+                <Button
+                  variant="ghost"
+                  className={styles.saveStatusAction}
+                  disabled={busy}
+                  onClick={() => void reconnect()}
+                >
+                  Retry connection
+                </Button>
+              ) : saveState === 'blocked' ? (
+                <Button
+                  variant="ghost"
+                  className={styles.saveStatusAction}
+                  disabled={busy}
+                  onClick={() => setModal('recovered')}
+                >
+                  Recovered edits need attention
+                </Button>
+              ) : saveState === 'stale' ? (
                 <Button
                   variant="ghost"
                   className={styles.saveStatusAction}
@@ -709,7 +708,15 @@ function Editor({
               )}
             </span>
             <Button
-              disabled={busy || !dirty || saveState === 'stale'}
+              disabled={
+                busy ||
+                !store ||
+                !credentialsMatch ||
+                !base ||
+                !dirty ||
+                saveState === 'stale' ||
+                saveState === 'blocked'
+              }
               onClick={save}
             >
               Save draft
@@ -717,11 +724,20 @@ function Editor({
           </div>
           <Button
             variant="primary"
-            disabled={busy || saveState === 'stale'}
+            disabled={
+              busy ||
+              !store ||
+              !credentialsMatch ||
+              !base ||
+              saveState === 'stale' ||
+              saveState === 'blocked'
+            }
             onClick={() => {
               if (!validFor('publish')) return;
               if (!store || !credentialsMatch || !base) {
-                setError('Connect to the repository first.');
+                setError(
+                  'The repository is unavailable. Retry the connection.',
+                );
                 return;
               }
               if (dirty) {
@@ -730,7 +746,7 @@ function Editor({
               }
               setConfirm({
                 title: 'Publish this draft?',
-                body: `This updates ${publishBranch(repo)} with the saved draft. Your hosting provider will rebuild the website.`,
+                body: `This updates ${publishBranch(repo!)} with the saved draft. Your hosting provider will rebuild the website.`,
                 action: () => void publish(),
               });
             }}
@@ -1314,33 +1330,6 @@ function Editor({
                         )}
                         {tab === 'settings' && (
                           <>
-                            <PanelSection title="Repository">
-                              {draftRepository.owner &&
-                                draftRepository.repo && (
-                                  <p className={styles.muted}>
-                                    {draftRepository.provider === 'gitlab'
-                                      ? `GitLab (${draftRepository.instance || 'https://gitlab.com'})`
-                                      : 'GitHub'}{' '}
-                                    · {draftRepository.owner}/
-                                    {draftRepository.repo}
-                                    <br />
-                                    Draft: {draftRepository.branch} · Publish:{' '}
-                                    {publishBranch(draftRepository)}
-                                  </p>
-                                )}
-                              <p className={styles.muted}>
-                                Connect to your GitHub or GitLab repository to
-                                save drafts and publish your site. Browser edits
-                                do not update local project files. Saved status
-                                reflects the last loaded or saved draft; newer
-                                changes are checked when you save.
-                              </p>
-                              <div className={styles.row}>
-                                <Button onClick={() => setModal('connection')}>
-                                  Connection
-                                </Button>
-                              </div>
-                            </PanelSection>
                             <PanelSection title="Appearance">
                               <Switch
                                 label="Dark mode"
@@ -1528,7 +1517,7 @@ function Editor({
                     navigation: 'Navigation',
                     page: 'Add page',
                     blocks: 'Add block',
-                    connection: 'Repository connection',
+                    recovered: 'Recovered edits need attention',
                     stale: 'A newer version is available',
                   }[modal] ??
                   ''}
@@ -1553,13 +1542,14 @@ function Editor({
               </>
             ) : (
               <>
-                {modal === 'stale' && (
+                {(modal === 'stale' || modal === 'recovered') && (
                   <>
                     <Dialog.Description>
-                      Your changes weren’t saved. They’re still here—keep a
-                      backup before loading the latest version. Then reapply the
-                      changes you want to keep. Importing a backup replaces
-                      content; it does not merge your changes.
+                      {modal === 'recovered'
+                        ? 'Your browser edits are not based on the configured repository draft. They have been preserved. Export a backup before loading the latest version, then reapply the changes you want to keep.'
+                        : 'Your changes weren’t saved. They’re still here—keep a backup before loading the latest version. Then reapply the changes you want to keep.'}{' '}
+                      Importing a backup replaces content; it does not merge
+                      your changes.
                     </Dialog.Description>
                     <div className={styles.dialogActions}>
                       <Dialog.Close render={<Button disabled={busy} />}>
@@ -1577,8 +1567,11 @@ function Editor({
                           Load latest version
                         </Button>
                       ) : (
-                        <Button onClick={() => setModal('connection')}>
-                          Reconnect
+                        <Button
+                          disabled={busy}
+                          onClick={() => void reconnect()}
+                        >
+                          Retry connection
                         </Button>
                       )}
                     </div>
@@ -1626,139 +1619,6 @@ function Editor({
                         setModal('');
                       }}
                     />
-                  </>
-                )}
-                {modal === 'connection' && (
-                  <>
-                    <div className={styles.field}>
-                      <Label>Git provider</Label>
-                      <Select
-                        aria-label="Git provider"
-                        value={repo.provider ?? 'github'}
-                        renderValue={(value) =>
-                          value === 'gitlab' ? 'GitLab' : 'GitHub'
-                        }
-                        onValueChange={(value) =>
-                          changeRepository({
-                            provider: value as 'github' | 'gitlab',
-                          })
-                        }
-                      >
-                        <Select.Option value="github">GitHub</Select.Option>
-                        <Select.Option value="gitlab">GitLab</Select.Option>
-                      </Select>
-                    </div>
-                    {repo.provider === 'gitlab' && (
-                      <div className={styles.field}>
-                        <Label>
-                          GitLab instance URL
-                          <Input
-                            aria-label="GitLab instance URL"
-                            placeholder="https://gitlab.com"
-                            value={repo.instance ?? 'https://gitlab.com'}
-                            onChange={(e) =>
-                              changeRepository({ instance: e.target.value })
-                            }
-                          />
-                        </Label>
-                      </div>
-                    )}
-                    <p className={styles.muted}>
-                      {repo.provider === 'gitlab'
-                        ? 'Use a GitLab token with api scope and access to this project. The project needs fast-forward merges with squashing optional or disabled.'
-                        : 'Use a GitHub token with repository contents read and write access.'}{' '}
-                      Drafts are fetched directly from the selected provider.
-                    </p>
-                    {(
-                      [
-                        {
-                          key: 'owner',
-                          label:
-                            repo.provider === 'gitlab'
-                              ? 'Namespace (including subgroups)'
-                              : 'Owner',
-                          placeholder:
-                            repo.provider === 'gitlab'
-                              ? 'my-team/my-subgroup'
-                              : 'my-username-or-org',
-                        },
-                        {
-                          key: 'repo',
-                          label: 'Repository',
-                          placeholder: 'my-site',
-                        },
-                        {
-                          key: 'branch',
-                          label: 'Draft branch',
-                          placeholder: 'draft',
-                        },
-                        {
-                          key: 'publishBranch',
-                          label: 'Publish branch',
-                          placeholder: 'main',
-                        },
-                      ] as const
-                    ).map(({ key, label, placeholder }) => (
-                      <div className={styles.field} key={key}>
-                        <Label>
-                          {label}
-                          <Input
-                            aria-label={label}
-                            placeholder={placeholder}
-                            autoComplete="off"
-                            value={
-                              key === 'publishBranch'
-                                ? publishBranch(repo)
-                                : repo[key]
-                            }
-                            onChange={(e) =>
-                              changeRepository({ [key]: e.target.value })
-                            }
-                          />
-                        </Label>
-                      </div>
-                    ))}
-                    <div className={styles.field}>
-                      <Label>
-                        Access token
-                        <Input
-                          aria-label="Access token"
-                          placeholder={
-                            repo.provider === 'gitlab'
-                              ? 'glpat-…'
-                              : 'github_pat_…'
-                          }
-                          type="password"
-                          autoComplete="off"
-                          value={token}
-                          onChange={(e) => {
-                            setStore(null);
-                            setToken(e.target.value);
-                          }}
-                        />
-                      </Label>
-                    </div>
-                    <p className={styles.muted}>
-                      {config.encryptedAdmin
-                        ? 'Credentials remain in this browser tab until you lock the editor or close the tab. Repository permissions control saving and publishing.'
-                        : 'Credentials remain in this browser tab until you close the tab. Repository permissions control writing.'}
-                    </p>
-                    <div className={styles.row}>
-                      <Button disabled={busy || !store} onClick={reloadDraft}>
-                        Load latest version
-                      </Button>
-                      <Button onClick={backup}>Export backup</Button>
-                    </div>
-                    <div className={styles.dialogActions}>
-                      <Dialog.Close render={<Button />}>Close</Dialog.Close>
-                      <Button
-                        variant="primary"
-                        disabled={busy}
-                        onClick={reconnect}
-                      >
-                        Connect
-                      </Button>
-                    </div>
                   </>
                 )}
               </>

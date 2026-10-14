@@ -27,7 +27,8 @@ pnpm preview
 
 Development `/admin/` uses `admin@example.com` / `asdf1234`. Production builds
 require `ADMIN_EMAIL` and `ADMIN_PASSWORD` from the site's ignored `.env` or build
-environment. Git tokens are entered in the editor. Optional R2 uploads use the
+environment. Git connection details/token use `GIT_*` build variables and connect
+automatically after login; see [repository setup](docs/wiki/features/publishing.md#build-environment-setup). Optional R2 uploads use the
 site's `R2_*` build environment values; the settings are carried only inside the
 encrypted admin payload, with no setup controls in the portal. Keep a commented
 `.env.example` in each site; see [media setup](docs/wiki/features/media.md#build-environment-setup).

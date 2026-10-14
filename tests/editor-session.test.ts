@@ -10,9 +10,7 @@ import { adminThemeKey } from '../src/editor/AdminTheme';
 
 vi.mock('../src/editor/Island', () => ({ default: () => null }));
 const config: Config = {
-  owner: '',
-  repo: '',
-  branch: 'draft',
+  git: null,
   encryptedAdmin: false,
   r2: null,
 };

@@ -4,14 +4,20 @@ import { act, createElement } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import App from '../src/editor/App';
 import type { Content } from '../src/core/types';
+import { filesFor } from '../src/core/content';
+import { connect } from '../src/integrations/git';
 import { retain } from '../src/editor/recovery';
 
 // Preview adapters have separate lifecycle tests; this covers real Kumo controls/portals.
 vi.mock('../src/editor/Island', () => ({ default: () => null }));
+vi.mock('../src/integrations/git', async (original) => ({
+  ...(await original<typeof import('../src/integrations/git')>()),
+  connect: vi.fn(),
+}));
+const repository = { owner: 'test', repo: 'site', branch: 'draft' };
+const save = vi.fn();
 const config = {
-  owner: '',
-  repo: '',
-  branch: 'draft',
+  git: { repository, token: 'test-token' },
   encryptedAdmin: false,
   r2: null,
 };
@@ -67,7 +73,27 @@ async function mount(recovered: Content) {
     addEventListener() {},
     removeEventListener() {},
   });
-  retain({ version: 1, repository: config, base: null, content: recovered });
+  const base = {
+    sha: 'base',
+    treeSha: 'tree-base',
+    content,
+    files: filesFor(content),
+    blobs: {},
+    sourceFiles: {},
+  };
+  save.mockReset();
+  save.mockResolvedValue({
+    ...base,
+    content: recovered,
+    files: filesFor(recovered),
+  });
+  vi.mocked(connect).mockResolvedValue({
+    repository,
+    load: async () => base,
+    save,
+    publish: vi.fn(),
+  });
+  retain({ version: 1, repository, base, content: recovered });
   host = document.createElement('div');
   document.body.append(host);
   root = createRoot(host);
@@ -103,8 +129,8 @@ it('recovers silently and puts submission errors inside the styled portal', asyn
   expect(host.textContent).toContain('Page title is required.');
   expect(host.querySelector('[aria-modal="true"]')).toBeNull();
   await click('Save draft');
-  // Incomplete fields are legal in a draft; Save reaches the connection check.
-  expect(host.textContent).toContain('Connect to the repository first.');
+  // Incomplete fields are legal in a draft and reach the provider.
+  expect(save).toHaveBeenCalledOnce();
   expect(host.textContent).not.toContain('Cannot save yet');
 });
 
@@ -122,5 +148,5 @@ it('blocks a structurally invalid save with a toast before contacting a provider
   await mount(recovered);
   await click('Save draft');
   expect(host.textContent).toContain('Cannot save yet');
-  expect(host.textContent).not.toContain('Connect to the repository first.');
+  expect(save).not.toHaveBeenCalled();
 });

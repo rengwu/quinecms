@@ -97,9 +97,19 @@ it('builds an independent site, encrypts its admin, and keeps static routes free
       variantWidths: [640],
       quality: 0.7,
     };
+    const git = {
+      repository: {
+        provider: 'github',
+        owner: 'fixture-private-owner',
+        repo: 'fixture-private-repo',
+        branch: 'editing',
+        publishBranch: 'production',
+      },
+      token: 'fixture-git-secret-do-not-publish',
+    };
     const configuredEnv =
       (await readFile(join(directory, '.env'), 'utf8')) +
-      `R2_ACCOUNT_ID=${storage.accountId}\nR2_BUCKET=${storage.bucket}\nR2_PUBLIC_URL=${storage.publicURL}\nR2_ACCESS_KEY_ID=${storage.accessKeyId}\nR2_SECRET_ACCESS_KEY=${storage.secretAccessKey}\nR2_MAX_MB=12\nR2_IMAGE_WIDTHS=640\nR2_IMAGE_QUALITY=0.7\n`;
+      `GIT_NAMESPACE=${git.repository.owner}\nGIT_REPO=${git.repository.repo}\nGIT_ACCESS_TOKEN=${git.token}\nGIT_DRAFT_BRANCH=editing\nGIT_PUBLISH_BRANCH=production\nR2_ACCOUNT_ID=${storage.accountId}\nR2_BUCKET=${storage.bucket}\nR2_PUBLIC_URL=${storage.publicURL}\nR2_ACCESS_KEY_ID=${storage.accessKeyId}\nR2_SECRET_ACCESS_KEY=${storage.secretAccessKey}\nR2_MAX_MB=12\nR2_IMAGE_WIDTHS=640\nR2_IMAGE_QUALITY=0.7\n`;
     await writeFile(join(directory, '.env'), configuredEnv);
     const build = async () => {
       await command(directory, [cli, 'validate']);
@@ -107,6 +117,7 @@ it('builds an independent site, encrypts its admin, and keeps static routes free
       expect(buildResult.stdout + buildResult.stderr).not.toContain(
         storage.secretAccessKey,
       );
+      expect(buildResult.stdout + buildResult.stderr).not.toContain(git.token);
       const html = await readFile(
         join(directory, 'dist/admin/index.html'),
         'utf8',
@@ -131,6 +142,9 @@ it('builds an independent site, encrypts its admin, and keeps static routes free
       const admin = JSON.parse(gunzipSync(decrypted).toString());
       expect(admin.props.config.encryptedAdmin).toBe(true);
       expect(admin.props.config.r2).toEqual(storage);
+      expect(admin.props.config.git).toEqual(git);
+      expect(admin.code).not.toContain('Repository connection');
+      expect(admin.code).not.toContain('Access token');
       expect(admin.props.config).not.toHaveProperty('passwordHash');
       expect(admin.code).not.toContain('Storage settings');
       expect(admin.code).not.toContain('Test connection');
@@ -147,10 +161,13 @@ it('builds an independent site, encrypts its admin, and keeps static routes free
           storage.accessKeyId,
           storage.secretAccessKey,
           storage.bucket,
+          git.token,
+          git.repository.owner,
+          git.repository.repo,
         ])
           expect(
             published.includes(Buffer.from(value)),
-            `Plaintext R2 setting in ${file.name}`,
+            `Plaintext credential setting in ${file.name}`,
           ).toBe(false);
       }
       const result = await command(directory, [cli, 'check-build']);
@@ -167,6 +184,17 @@ it('builds an independent site, encrypts its admin, and keeps static routes free
     await expect(command(directory, [cli, 'build'])).rejects.toMatchObject({
       code: 1,
       stderr: expect.stringContaining('R2 uploads require'),
+    });
+    expect(await readFile(join(directory, 'dist/admin/index.html'))).toEqual(
+      previousOutput,
+    );
+    await writeFile(
+      join(directory, '.env'),
+      'ADMIN_EMAIL=fixture@example.com\nADMIN_PASSWORD=fixture-password\nGIT_ACCESS_TOKEN=fixture-git-secret-do-not-publish\n',
+    );
+    await expect(command(directory, [cli, 'build'])).rejects.toMatchObject({
+      code: 1,
+      stderr: expect.stringContaining('Git connection requires'),
     });
     expect(await readFile(join(directory, 'dist/admin/index.html'))).toEqual(
       previousOutput,

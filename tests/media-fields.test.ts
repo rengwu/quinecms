@@ -20,9 +20,7 @@ vi.mock('../src/editor/Island', () => ({
     }),
 }));
 const config = {
-  owner: '',
-  repo: '',
-  branch: 'draft',
+  git: null,
   encryptedAdmin: false,
   r2: null,
 };

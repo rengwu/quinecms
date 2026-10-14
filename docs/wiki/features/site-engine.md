@@ -34,7 +34,7 @@ and library maintenance; that is not a library override delivery workflow.
 Library names must also be dependencies in the site's package.json. Their dependency
 specifiers select the source and revision, and the lockfile resolves installation.
 Environment variables cannot select or override libraries. They supply credentials
-and deployment connection defaults only. Never commit provider tokens or `.env`.
+and build/deployment credentials only. Never commit provider tokens or `.env`.
 
 Shared package scripts are deliberately thin:
 
