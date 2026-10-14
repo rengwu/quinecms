@@ -38,7 +38,6 @@ proposal was cancelled and is not implemented.
 | Recovery | Stale, unbased and different-repository edits retain content and original metadata; only confirmed loading replaces work; cancellation/failure preserve it | Passed | `tests/editor-save.test.ts`; [browser stale dialog](../../evidence/2026-10-14-git-environment/stale-recovery.png) |
 | Token isolation | Legacy tab credentials cannot override build configuration; token absent from recovery/backup/new session storage; GitLab instance/namespaces use configured target | Passed | `tests/editor-save.test.ts` |
 | Unconfigured site | Local editing/recovery/backup remain; Save and Publish disabled and no connection form | Passed | `tests/editor-navigation.test.ts` |
-
 | Independent pilot | Clean public checkout with final pinned dependency passes install, frozen install, content validation, 163-file typecheck with zero errors/warnings, nine-route build and artifact checks | Passed | [Install](../../evidence/2026-10-14-git-environment/pilot-install.log), [verification](../../evidence/2026-10-14-git-environment/pilot-verify.log) |
 
 The pilot check used test admin credentials and a dummy Git token, with R2 disabled;
