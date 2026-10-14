@@ -2,7 +2,7 @@ import { expect, it } from 'vitest';
 import { gitFromEnv } from '../src/admin/git';
 
 const env = {
-  GIT_NAMESPACE: ' team ',
+  GIT_OWNER: ' team ',
   GIT_REPO: ' site ',
   GIT_ACCESS_TOKEN: ' secret-token ',
 };
@@ -13,7 +13,7 @@ it('disables Git when connection values are absent, even with optional defaults'
     gitFromEnv({
       GIT_PROVIDER: 'github',
       GIT_DRAFT_BRANCH: 'draft',
-      GIT_NAMESPACE: ' ',
+      GIT_OWNER: ' ',
       GIT_ACCESS_TOKEN: '',
     }),
   ).toBeNull();
@@ -37,7 +37,7 @@ it('supports GitLab subgroups, self-managed instances and explicit branches', ()
     gitFromEnv({
       ...env,
       GIT_PROVIDER: 'gitlab',
-      GIT_NAMESPACE: 'team/subgroup',
+      GIT_OWNER: 'team/subgroup',
       GITLAB_URL: 'https://git.example.test/gitlab/',
       GIT_DRAFT_BRANCH: 'editing',
       GIT_PUBLISH_BRANCH: 'release/live',
@@ -58,7 +58,7 @@ it('supports GitLab subgroups, self-managed instances and explicit branches', ()
   ).toBe('https://gitlab.com');
 });
 
-it.each(['GIT_NAMESPACE', 'GIT_REPO', 'GIT_ACCESS_TOKEN'])(
+it.each(['GIT_OWNER', 'GIT_REPO', 'GIT_ACCESS_TOKEN'])(
   'rejects partial configuration missing %s without exposing credentials',
   (key) => {
     expect(() => gitFromEnv({ ...env, [key]: '' })).toThrow(key);

@@ -10,7 +10,7 @@ export interface GitConfig {
 export function gitFromEnv(
   env: Record<string, string | undefined>,
 ): GitConfig | null {
-  const required = ['GIT_NAMESPACE', 'GIT_REPO', 'GIT_ACCESS_TOKEN'] as const;
+  const required = ['GIT_OWNER', 'GIT_REPO', 'GIT_ACCESS_TOKEN'] as const;
   if (required.every((key) => !env[key]?.trim())) return null;
   const missing = required.filter((key) => !env[key]?.trim());
   if (missing.length)
@@ -22,7 +22,7 @@ export function gitFromEnv(
     throw Error('GIT_PROVIDER must be github or gitlab.');
   const repository: Repository = {
     provider,
-    owner: env.GIT_NAMESPACE!.trim(),
+    owner: env.GIT_OWNER!.trim(),
     repo: env.GIT_REPO!.trim(),
     branch: env.GIT_DRAFT_BRANCH?.trim() || 'draft',
     publishBranch: env.GIT_PUBLISH_BRANCH?.trim() || 'main',

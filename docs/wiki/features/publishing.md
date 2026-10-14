@@ -20,13 +20,16 @@ immediately after unlocking; there is no repository setup form.
 
 | Variable | Meaning / default |
 | --- | --- |
-| `GIT_NAMESPACE` | Required GitHub owner or GitLab group/subgroups when enabled |
+| `GIT_OWNER` | Required GitHub owner or GitLab group/subgroups when enabled |
 | `GIT_REPO` | Required site repository/project name |
 | `GIT_ACCESS_TOKEN` | Required provider token; never use a `PUBLIC_` prefix |
 | `GIT_PROVIDER` | `github` (default) or `gitlab` |
 | `GIT_DRAFT_BRANCH` | `draft` |
 | `GIT_PUBLISH_BRANCH` | `main`; must differ from the draft branch |
 | `GITLAB_URL` | `https://gitlab.com`; HTTPS self-managed installations may include a subpath |
+
+`GIT_OWNER` also covers GitLab groups/subgroups. The name deliberately avoids
+[Git’s own `GIT_NAMESPACE` setting](https://git-scm.com/docs/gitnamespaces).
 
 All three required values blank disables Git and leaves a local preview with
 backup/export and tab recovery; Save and Publish are disabled. Partial or invalid

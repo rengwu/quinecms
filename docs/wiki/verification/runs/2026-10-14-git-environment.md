@@ -43,6 +43,11 @@ and comparisons against unmigrated legacy fixture content. Assertions now reflec
 the environment-only connection and existing layout normalization. A temporary
 browser runner initially referenced an unexported Astro CLI path; correcting the
 runner allowed the production fixture build to pass, without an engine change.
+Final review caught that `GIT_NAMESPACE` is a native Git environment variable;
+the engine/template use `GIT_OWNER` for the owner or group instead. The complete
+suite was rerun after this correction. Browser behavior is unchanged. The final `pnpm verify` completed all 259 tests,
+then detected a stale wiki because its linked evidence log had changed. Rebuilding
+the reader and running `node docs/wiki/_build.mjs --check` afterward passed.
 Browser warning/error logs are empty in the completed journeys.
 
 These checks do not establish live GitHub/GitLab permissions, token validity,

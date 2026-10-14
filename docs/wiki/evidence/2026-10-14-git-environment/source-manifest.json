@@ -1,15 +1,15 @@
 {
   "base": "f948d7e7c9e6abb0bbfce827534fd8e012a5c8f8",
   "sha256": {
-    "src/admin/git.ts": "d37453785172b9f4b5e3918ed4c7c10fda3d2a91cebdb7788d06c09fcb3e12f1",
+    "src/admin/git.ts": "cc2ebd796a23d34d7a554b7c661e7984657696ce3200fb920317214c34b3f1c2",
     "src/editor/App.tsx": "fd271040d018e648dbdb2d1844ac8222abf79444f475f6ca503e666fff50cc20",
-    "src/pages/admin/index.astro": "331f7fe29cc01061b7d9ce1bb65677a765d36780b30a95c2d1f3c5bcfd3c576a",
+    "src/pages/admin/index.astro": "b8fd03446b640c5e531ce42a50c656db6651f7d61b23d4b319bf4be91bb4ad41",
     "tests/editor-navigation.test.ts": "28addf7c36f6b2d672b3b88bec3e7491f2ee1e2fa91204954529c0eeab398b44",
     "tests/editor-save.test.ts": "9db789994b1d752a3c7ccf4942d120bc5919cde0d97b24e52325040402012f12",
     "tests/editor-session.test.ts": "c48404548a872d3e460c33ff510dbfdac9f03cb52f77979562ca3a0ea114ff6f",
     "tests/editor-submission.test.ts": "090c002f73baca23c664c9e9a1b88b24381bd85c30f0305320fb20d9eae331ca",
-    "tests/git-config.test.ts": "40e36ac5936b501f6abe81e190895a6a397e65dd854bcd59c761cac8c3a0e616",
-    "tests/local-authoring.test.ts": "b40b8c0fea403218a75fd33aef5506aafd7a0ae23658ca7f755c434ac4eb7c74",
+    "tests/git-config.test.ts": "53a561691433850ec327bd719ca185757b0381e675bee0d987779c77089fb663",
+    "tests/local-authoring.test.ts": "dc23f94b3fe418eccd9275cb1b667b6bfbbc609fdb11c201ecb570462a0799da",
     "tests/media-fields.test.ts": "092d67d7ee17b6423214ef626af5ee988a10ea18c426fe369cab27411f55f193"
   }
 }

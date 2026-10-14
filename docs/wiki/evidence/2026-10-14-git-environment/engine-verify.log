@@ -12,11 +12,13 @@
 
  Test Files  31 passed (31)
       Tests  259 passed (259)
-   Start at  16:18:56
-   Duration  76.06s (tests 68%, import 22%, environment 7%, transform 2%)
+   Start at  16:28:15
+   Duration  62.12s (tests 62%, import 25%, environment 9%, transform 3%)
 
 
 > quinecms@0.2.0 wiki:check /Users/rengwu/Desktop/Projects/quinecms
 > node docs/wiki/_build.mjs --check
 
-Checked 188 pages and internal links; index.html is current.
+index.html is missing or stale; run this script without --check.
+ ELIFECYCLE  Command failed with exit code 1.
+ ELIFECYCLE  Command failed with exit code 1.

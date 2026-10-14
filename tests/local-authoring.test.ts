@@ -109,7 +109,7 @@ it('builds an independent site, encrypts its admin, and keeps static routes free
     };
     const configuredEnv =
       (await readFile(join(directory, '.env'), 'utf8')) +
-      `GIT_NAMESPACE=${git.repository.owner}\nGIT_REPO=${git.repository.repo}\nGIT_ACCESS_TOKEN=${git.token}\nGIT_DRAFT_BRANCH=editing\nGIT_PUBLISH_BRANCH=production\nR2_ACCOUNT_ID=${storage.accountId}\nR2_BUCKET=${storage.bucket}\nR2_PUBLIC_URL=${storage.publicURL}\nR2_ACCESS_KEY_ID=${storage.accessKeyId}\nR2_SECRET_ACCESS_KEY=${storage.secretAccessKey}\nR2_MAX_MB=12\nR2_IMAGE_WIDTHS=640\nR2_IMAGE_QUALITY=0.7\n`;
+      `GIT_OWNER=${git.repository.owner}\nGIT_REPO=${git.repository.repo}\nGIT_ACCESS_TOKEN=${git.token}\nGIT_DRAFT_BRANCH=editing\nGIT_PUBLISH_BRANCH=production\nR2_ACCOUNT_ID=${storage.accountId}\nR2_BUCKET=${storage.bucket}\nR2_PUBLIC_URL=${storage.publicURL}\nR2_ACCESS_KEY_ID=${storage.accessKeyId}\nR2_SECRET_ACCESS_KEY=${storage.secretAccessKey}\nR2_MAX_MB=12\nR2_IMAGE_WIDTHS=640\nR2_IMAGE_QUALITY=0.7\n`;
     await writeFile(join(directory, '.env'), configuredEnv);
     const build = async () => {
       await command(directory, [cli, 'validate']);
