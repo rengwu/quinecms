@@ -1,6 +1,6 @@
 ---
 title: Encrypted static admin
-updated: 2026-10-13
+updated: 2026-10-14
 ---
 # Encrypted static admin
 
@@ -34,13 +34,16 @@ wrong password and failed ciphertext authentication produce the same login error
 ## Build and deployment
 
 `src/pages/admin/index.astro` validates the credentials, loads the initial content
-and public repository defaults, and requests a standalone editor bundle from
+and public repository defaults, validates optional R2 environment settings, and requests a standalone editor bundle from
 `scripts/admin-build.ts`. That Vite build includes the editor, styles, provider
 clients, layouts and preview renderers. It writes no files, inlines dynamic
 imports and assets, and refuses unexpected external chunk/asset dependencies.
 The resulting JS/CSS and initial props are serialized, gzip-compressed and
 encrypted in memory. Astro writes a small login page with the encrypted envelope.
 No plaintext admin island or editor bundle enters the public client graph.
+DEC-185 includes configured R2 upload settings/keys in the encrypted props. An
+unlocked editor can read those keys for direct uploads; they are not isolated
+from people with the admin login. See the [media credential boundary](media.md#credential-boundary).
 
 Public pages still build normally. Runtime sharing is retained within each
 independent bundle graph; the encrypted editor has its own bundled runtimes.
@@ -115,8 +118,9 @@ reload an already-open page to discard old module URLs. See the
 - Encryption protects the deployed admin bundle and its initial props. It does
   not make public pages, public block assets, R2 media, public repository contents
   or public hydration context private.
-- Existing tab draft recovery and runtime Git/R2 credentials still use session
-  storage. This change does not encrypt browser storage or defend an already
+- Existing tab draft recovery and runtime Git credentials still use session
+  storage. Build-configured R2 credentials stay in decrypted memory; old tab R2
+  settings are ignored and cleared on lock. This change does not encrypt browser storage or defend an already
   compromised device, same-origin script, extension, repository or hosting account.
   Installed blocks/layouts execute as trusted code after unlock.
 
@@ -141,3 +145,10 @@ an independent security review.
 ## Engine separation verification — 2026-10-14
 
 [Independent engine and public pilot verification](../verification/runs/2026-10-14-engine-separation.md): engine/library/clean-build/browser/live-GitHub checks pass; the maintainer subsequently deployed to Netlify (DEC-184). The [hosted smoke check](../verification/runs/2026-10-14-netlify-pilot.md) passes for public routes, assets, mobile navigation and the login page; the maintainer subsequently [confirmed the full hosted connection, edit, draft save, publish and live deployment flow](../journal/2026-10-14-pilot-acceptance.md). This final signed-in evidence is user-reported; pilot delivery is accepted.
+
+
+## R2 environment configuration — 2026-10-14
+
+[Verification](../verification/runs/2026-10-14-r2-environment.md) covers environment
+validation, encrypted credential delivery, absence of storage setup controls,
+configured/unconfigured uploads and existing media behavior. Live R2 is not claimed.

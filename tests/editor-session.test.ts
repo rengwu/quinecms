@@ -14,7 +14,7 @@ const config: Config = {
   repo: '',
   branch: 'draft',
   encryptedAdmin: false,
-  r2: { accountId: '', bucket: '', publicURL: '' },
+  r2: null,
 };
 let root: Root, host: HTMLDivElement;
 afterEach(async () => {

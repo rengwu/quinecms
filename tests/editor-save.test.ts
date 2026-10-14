@@ -27,7 +27,7 @@ const config = {
   repo: 'site',
   branch: 'draft',
   publishBranch: 'main',
-  r2: { accountId: '', bucket: '', publicURL: '' },
+  r2: null,
 };
 const snapshot = (sha: string, content = fixture()): Snapshot => ({
   sha,

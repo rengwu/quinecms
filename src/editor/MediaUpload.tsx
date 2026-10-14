@@ -5,7 +5,7 @@ import styles from './editor.module.css';
 
 export const MediaUploadContext = createContext<{
   busy: boolean;
-  ensureStorage(): boolean;
+  available: boolean;
   upload(
     file: File,
     onProgress: (message: string) => void,
@@ -29,7 +29,7 @@ export default function MediaUpload({
   const input = useRef<HTMLInputElement>(null);
   const [status, setStatus] = useState('');
   const [error, setError] = useState('');
-  if (!uploads) return null;
+  if (!uploads?.available) return null;
   return (
     <div className={styles.mediaUpload}>
       <Button
@@ -39,7 +39,7 @@ export default function MediaUpload({
         onClick={() => {
           setError('');
           setStatus('');
-          if (uploads.ensureStorage()) input.current?.click();
+          input.current?.click();
         }}
       >
         {label}

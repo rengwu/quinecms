@@ -5,6 +5,12 @@ status: Accepted
 ---
 # QuineCMS
 
+Latest change: [R2 environment configuration](features/media.md#build-environment-setup)
+(DEC-185). The portal has no storage setup controls; sites configure optional
+uploads through documented `R2_*` variables in `.env.example`. Credentials travel
+inside the encrypted admin payload and become available to the unlocked editor.
+[249-test and production-browser verification](verification/runs/2026-10-14-r2-environment.md).
+
 Implemented: [multiple site layouts](features/site-layouts.md), following the
 [completed scoped interview](discussions/multiple-site-layouts.md) and subsequent
 work-until-grill authorization. DEC-165–DEC-171 cover the table, independent
@@ -46,7 +52,7 @@ detail template. Run `pnpm example:archline`; root content remains intact.
 [Verification](verification/runs/2026-10-13-archline-theme.md) covers 231 tests,
 production builds and representative Chrome desktop/mobile/editor checks.
 
-Latest setup improvement: [simplified R2 storage](features/media.md#connect-a-bucket).
+Historical setup improvement, superseded by DEC-185: [simplified R2 storage](features/media.md#build-environment-setup).
 Paste the S3 API URL, follow the public URL/credential guidance, and copy CORS for
 the current editor. Advanced upload options are collapsed; Save validates settings
 and Cancel discards edits. **Test connection** now checks upload, public read and
@@ -174,7 +180,7 @@ The editor login is a convenience gate. Each editor supplies their own GitHub to
 
 GitHub tokens persist for the tab session. Collections support developer-defined schemas and portal field editing. Shared drafts use stale-save protection with plain-language recovery. Media lives in Cloudflare R2, with URLs in Git. Blocks own their styling and may follow optional global settings such as dark/light mode.
 
-R2 credentials are entered at runtime. The collection editor supports basic fields and safe changes, with explicit static indexes and optional generic entry templates. Image uploads generate simple resized and lightly compressed variants; media URLs may be public before page publication. The interview is complete; the initial implementation is recorded in the feature map.
+R2 credentials now come from the encrypted build configuration (DEC-185). The collection editor supports basic fields and safe changes, with explicit static indexes and optional generic entry templates. Image uploads generate simple resized and lightly compressed variants; media URLs may be public before page publication. The interview is complete; the initial implementation is recorded in the feature map.
 
 - [Persistent admin sidebar](verification/runs/2026-10-05T1725Z-admin-navigation.md)
 - [Shared content width and development reloads](verification/runs/2026-10-05T1735Z-content-width.md)

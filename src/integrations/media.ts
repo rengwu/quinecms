@@ -40,7 +40,7 @@ export function parseR2Account(value: string): {
   );
 }
 
-/** Shared by setup and uploads; saving validates values, not the live connection. */
+/** Shared by build-time configuration and uploads; does not contact storage. */
 export function validateStorageConfig(input: StorageConfig): StorageConfig {
   const account = parseR2Account(input.accountId);
   const config = {
@@ -79,7 +79,7 @@ export function validateStorageConfig(input: StorageConfig): StorageConfig {
       'Enter the Access Key ID and Secret Access Key from an R2 API token with Object Read & Write permission.',
     );
   if (!Number.isFinite(config.maxMB) || config.maxMB <= 0)
-    throw Error('Use an upload limit greater than 0 MB in Advanced.');
+    throw Error('R2_MAX_MB must be greater than 0.');
   if (
     !config.variantWidths.every(
       (w) => Number.isInteger(w) && w >= 64 && w <= 4096,
@@ -87,7 +87,7 @@ export function validateStorageConfig(input: StorageConfig): StorageConfig {
     !(config.quality >= 0.1 && config.quality <= 1)
   )
     throw Error(
-      'In Advanced, use image widths between 64 and 4096 and quality between 0.1 and 1.',
+      'R2_IMAGE_WIDTHS must contain integer widths between 64 and 4096; R2_IMAGE_QUALITY must be between 0.1 and 1.',
     );
   return config;
 }
@@ -102,58 +102,6 @@ function r2ClientOptions(config: StorageConfig) {
     },
     requestChecksumCalculation: 'WHEN_REQUIRED' as const,
   };
-}
-
-export async function testStorageConnection(
-  config: StorageConfig,
-): Promise<void> {
-  config = validateStorageConfig(config);
-  const { S3Client, PutObjectCommand, DeleteObjectCommand } =
-    await import('@aws-sdk/client-s3');
-  const client = new S3Client({ ...r2ClientOptions(config), maxAttempts: 1 });
-  const key = `connection-test/${crypto.randomUUID()}.txt`;
-  const body = `QuineCMS connection test: ${crypto.randomUUID()}`;
-  let uploaded = false;
-  let problem = '';
-  try {
-    await client.send(
-      new PutObjectCommand({
-        Bucket: config.bucket,
-        Key: key,
-        Body: new TextEncoder().encode(body),
-        ContentType: 'text/plain',
-        CacheControl: 'no-store',
-      }),
-      { abortSignal: AbortSignal.timeout(15_000) },
-    );
-    uploaded = true;
-    const response = await fetch(`${config.publicURL}/${key}`, {
-      credentials: 'omit',
-      cache: 'no-store',
-      signal: AbortSignal.timeout(15_000),
-    });
-    if (!response.ok || (await response.text()) !== body)
-      throw Error('Public read failed.');
-  } catch {
-    problem = uploaded
-      ? 'Upload worked, but the public media URL could not read the test file. Check the URL, public access and CORS policy.'
-      : 'Could not upload the test file. Check the account, bucket, credentials and CORS policy.';
-  } finally {
-    // A failed PUT may have reached R2 before its response was lost.
-    try {
-      await client.send(
-        new DeleteObjectCommand({ Bucket: config.bucket, Key: key }),
-        {
-          abortSignal: AbortSignal.timeout(15_000),
-        },
-      );
-    } catch {
-      problem += `${problem ? ' ' : ''}Could not confirm cleanup of ${key}. Check DELETE permission and CORS; remove this test file from the bucket if it remains.`;
-    } finally {
-      client.destroy();
-    }
-  }
-  if (problem) throw Error(problem);
 }
 
 export async function upload(

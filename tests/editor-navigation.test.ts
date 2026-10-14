@@ -22,7 +22,7 @@ const config = {
   repo: '',
   branch: 'draft',
   encryptedAdmin: false,
-  r2: { accountId: '', bucket: '', publicURL: '' },
+  r2: null,
 };
 const content: Content = {
   site: {
@@ -754,7 +754,10 @@ it('starts at Pages and keeps navigation available outside the nested editing si
   await click('Media');
   expectAdminView();
   expect(button('Media').getAttribute('aria-current')).toBe('page');
-  expect(editorPanel().textContent).toContain('Storage settings');
+  expect(editorPanel().textContent).not.toContain('Storage settings');
+  expect(editorPanel().textContent).toContain(
+    'Uploads are unavailable for this site.',
+  );
   expect(editorPanel().querySelector('[aria-label="Editor areas"]')).toBeNull();
   await click('Settings');
   expectAdminView();

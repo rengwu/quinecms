@@ -93,7 +93,7 @@ activate its block controls, so this run did not establish visual scrolling.
 
 Schema rich-text fields and Text blocks provide visual headings, paragraphs, bold/italic, links, and lists with Markdown storage. Uploaded-image references and YouTube embeds round-trip in the visual editor. Unsupported Markdown remains available as source text. Custom React widgets and shared pure validators support compound block fields. Content browses collections → entry lists → schema-defined entry values only. Schemas browses Collections / Objects → definitions → individual fields, with label/key/type/required/options/default controls. Schema editing protects populated keys/types/options. Entries remain in Content and never appear in the Pages table. Add entry is confined to entry lists; Add collection belongs to the schema list. All Add actions (page, block, entry, collection, field and link) use the same blue Kumo primary variant, base size and plus icon. Add block remains aligned right beside Blocks, outside the draggable list. Main navigation preserves all local content edits. Site Layouts lists named configurations with activation switches. Individual layouts delegate title, appearance and navigation to their design settings; Settings owns Repository connection, admin Appearance, Backups, Session and Factory reset; content spacing belongs to Site Layout.
 
-Local content and its base/repository identity survive reloads silently in tab storage. Unreadable recovery data is preserved for download and requires explicit discard before it can be overwritten. This includes unfinished schema edits that cannot yet be saved. Export/import backups contain content, not credentials or binary uploads. Storage failure is visible. Lock clears Git provider/R2 credentials and returns to the gate. Connection selects GitHub or GitLab, including an HTTPS GitLab instance and nested namespace when needed. Changing the destination clears the access token; retained Git credentials are bound to provider, instance, repository, draft branch and publish branch. See [publishing](publishing.md).
+Local content and its base/repository identity survive reloads silently in tab storage. Unreadable recovery data is preserved for download and requires explicit discard before it can be overwritten. This includes unfinished schema edits that cannot yet be saved. Export/import backups contain content, not credentials or binary uploads. Storage failure is visible. Lock clears Git and legacy R2 tab credentials, discards decrypted R2 build configuration and returns to the gate. R2 setup lives in the build environment (DEC-185); there is no storage settings dialog. Connection selects GitHub or GitLab, including an HTTPS GitLab instance and nested namespace when needed. Changing the destination clears the access token; retained Git credentials are bound to provider, instance, repository, draft branch and publish branch. See [publishing](publishing.md).
 
 QuineCMS uses `quinecms:recovery:v2` for tab recovery and `quinecms-backup` for
 new version-1 backups (DEC-164). The previous project identifiers remain readable.
@@ -216,3 +216,10 @@ The initial run observed core interactions on an intermediate build. The startup
 - [Site typography and page gutter](../verification/runs/2026-10-05T1810Z-site-design.md).
 
 - [Block library and repeated fields](../verification/runs/2026-10-06T1320Z-block-library.md).
+
+
+## R2 environment configuration — 2026-10-14
+
+[Verification](../verification/runs/2026-10-14-r2-environment.md) covers environment
+validation, encrypted credential delivery, absence of storage setup controls,
+configured/unconfigured uploads and existing media behavior. Live R2 is not claimed.

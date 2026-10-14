@@ -24,7 +24,7 @@ const config = {
   repo: '',
   branch: 'draft',
   encryptedAdmin: false,
-  r2: { accountId: '', bucket: '', publicURL: '' },
+  r2: null,
 };
 const storage = {
   accountId: 'a'.repeat(32),
@@ -128,14 +128,16 @@ async function mount(initial = content, configured = true) {
     addEventListener() {},
     removeEventListener() {},
   });
-  if (configured) sessionStorage.setItem('lean:r2', JSON.stringify(storage));
   vi.mocked(upload).mockResolvedValue(uploaded);
   host = document.createElement('div');
   document.body.append(host);
   root = createRoot(host);
   await act(async () =>
     root!.render(
-      createElement(App, { initial: structuredClone(initial), config }),
+      createElement(App, {
+        initial: structuredClone(initial),
+        config: { ...config, r2: configured ? storage : null },
+      }),
     ),
   );
 }
@@ -212,6 +214,9 @@ it('selects the uploaded file, updates its preview, and keeps it in Media after 
   await openBlock();
   await chooseFile();
   expect(upload).toHaveBeenCalledTimes(1);
+  expect(vi.mocked(upload).mock.calls[0][1]).toEqual(storage);
+  expect(sessionStorage.getItem('lean:r2')).toBeNull();
+  expect(JSON.stringify(readRecovery())).not.toContain(storage.secretAccessKey);
   expect(draft().pages[0].blocks[0].props.file).toEqual({
     mediaId: uploaded.id,
     alt: '',
@@ -260,44 +265,44 @@ it('shows progress, holds editing/navigation during upload, and restores the fie
   expect(panel().querySelector('[role="alert"]')).toBeNull();
 });
 
-it('opens existing storage settings without losing field edits, then uploads on the next attempt', async () => {
+it('hides upload and storage controls when the build has no storage, while preserving existing media and edits', async () => {
+  // Old tab settings cannot enable uploads or override build configuration.
+  sessionStorage.setItem('lean:r2', JSON.stringify(storage));
   await mount(content, false);
   await openBlock();
   await fill('Caption', 'Keep this caption');
-  await click('Upload for File');
-  expect(host.textContent).toContain('R2 storage');
-  expect(upload).not.toHaveBeenCalled();
-  await click('Cancel', host.querySelector('[role="dialog"]')!);
+  expect(panel().querySelector('input[type="file"]')).toBeNull();
+  expect(panel().querySelector('[aria-label="Upload for File"]')).toBeNull();
+  expect(panel().querySelector('img[alt="Old image"]')).not.toBeNull();
   expect(
     (panel().querySelector('[aria-label="Caption"]') as HTMLInputElement).value,
   ).toBe('Keep this caption');
-  await click('Upload for File');
-  for (const [key, value] of Object.entries({
-    account: storage.accountId,
-    bucket: storage.bucket,
-    public: storage.publicURL,
-    access: storage.accessKeyId,
-    secret: storage.secretAccessKey,
-  })) {
-    const input = host.querySelector<HTMLInputElement>(`#r2-${key}`);
-    if (!input || typeof value !== 'string') continue;
-    await act(async () => {
-      Object.getOwnPropertyDescriptor(
-        HTMLInputElement.prototype,
-        'value',
-      )!.set!.call(input, value);
-      input.dispatchEvent(new Event('input', { bubbles: true }));
-    });
-  }
-  await click('Save settings');
-  expect(host.querySelector('#r2-account')).toBeNull();
-  expect(JSON.parse(sessionStorage.getItem('lean:r2')!)).toMatchObject(storage);
   expect(upload).not.toHaveBeenCalled();
-  await chooseFile();
-  expect(draft().pages[0].blocks[0].props).toMatchObject({
-    caption: 'Keep this caption',
-    file: { mediaId: uploaded.id },
-  });
+  await click('Cancel block changes');
+  await click('Media');
+  expect(host.textContent).toContain('Uploads are unavailable for this site.');
+  expect(host.textContent).not.toContain('Storage settings');
+  expect(host.textContent).not.toContain('R2 storage');
+  expect(host.querySelector('input[type="file"]')).toBeNull();
+  expect(draft().media).toEqual([oldMedia]);
+});
+
+it('uses encrypted build settings instead of stale session settings without exposing setup controls', async () => {
+  sessionStorage.setItem(
+    'lean:r2',
+    JSON.stringify({
+      ...storage,
+      bucket: 'stale-bucket',
+      secretAccessKey: 'stale-secret',
+    }),
+  );
+  await mount();
+  await click('Media');
+  expect(host.textContent).not.toContain('Storage settings');
+  expect(host.textContent).not.toContain('R2 storage');
+  expect(host.textContent).not.toContain(storage.secretAccessKey);
+  await chooseFile('File to upload');
+  expect(vi.mocked(upload).mock.calls[0][1]).toEqual(storage);
 });
 
 it('updates a nested list image without changing other rows', async () => {

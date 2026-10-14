@@ -8,7 +8,6 @@ import BlockCreation from './BlockCreation';
 import LayoutSurface, { PageBlocks } from './LayoutSurface';
 import SiteLayouts from './SiteLayouts';
 import LayoutChoice from './LayoutChoice';
-import StorageSettings from './StorageSettings';
 import MediaUpload, { MediaUploadContext } from './MediaUpload';
 import {
   migrateSite,
@@ -68,10 +67,7 @@ const resetLayoutLabel =
 import { connect, repositoryKey } from '../integrations/git';
 import type { Repository, RepositoryStore } from '../integrations/repository';
 import { Conflict, publishBranch } from '../integrations/repository';
-import {
-  validateStorageConfig,
-  type StorageConfig,
-} from '../integrations/media';
+import type { StorageConfig } from '../integrations/media';
 import {
   download,
   readRecovery,
@@ -92,7 +88,7 @@ import {
 } from './AdminTheme';
 export interface Config extends Repository {
   encryptedAdmin?: boolean;
-  r2: Pick<StorageConfig, 'accountId' | 'bucket' | 'publicURL'>;
+  r2: StorageConfig | null;
 }
 function stored<T>(key: string, fallback: T): T {
   try {
@@ -193,16 +189,7 @@ function Editor({
     );
     return saved?.repository === repositoryKey(repo) ? saved.token : '';
   });
-  const [r2, setR2] = useState<StorageConfig>(() =>
-    stored('lean:r2', {
-      ...config.r2,
-      accessKeyId: '',
-      secretAccessKey: '',
-      maxMB: 30,
-      variantWidths: [480, 960, 1600],
-      quality: 0.8,
-    }),
-  );
+  const r2 = config.r2;
   const [store, setStore] = useState<RepositoryStore | null>(null);
   const [busy, setBusy] = useState(false);
   const [saveState, setSaveState] = useState<
@@ -376,20 +363,12 @@ function Editor({
       setBusy(false);
     }
   }
-  function ensureStorage() {
-    try {
-      validateStorageConfig(r2);
-      return true;
-    } catch {
-      setModal('storage');
-      return false;
-    }
-  }
   async function uploadMedia(
     file: File,
     onProgress: (message: string) => void,
     onUploaded?: (media: Media) => void,
   ) {
+    if (!r2) throw Error('Uploads are unavailable for this site.');
     setBusy(true);
     try {
       const { upload } = await import('../integrations/media');
@@ -683,7 +662,7 @@ function Editor({
   }
   return createElement(
     MediaUploadContext.Provider,
-    { value: { busy, ensureStorage, upload: uploadMedia } },
+    { value: { busy, available: r2 !== null, upload: uploadMedia } },
     <ModelContext.Provider value={content}>
       <div className={styles.app}>
         <header className={`kumo-ui ${styles.topbar}`} data-mode={mode}>
@@ -1298,23 +1277,13 @@ function Editor({
                           />
                         )}
                         {tab === 'media' && (
-                          <PanelSection
-                            title="Media"
-                            action={
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={() => setModal('storage')}
-                              >
-                                Storage settings
-                              </Button>
-                            }
-                          >
+                          <PanelSection title="Media">
                             <div className={styles.formStack}>
                               <MediaUpload label="Upload file" />
                               <p className={styles.muted}>
-                                Uploads go to R2 and may be public before
-                                publishing.
+                                {r2
+                                  ? 'Uploaded files may be public before publishing.'
+                                  : 'Uploads are unavailable for this site. Existing media can still be used.'}
                               </p>
                             </div>
                             <div className={styles.formStack}>
@@ -1561,7 +1530,6 @@ function Editor({
                     blocks: 'Add block',
                     connection: 'Repository connection',
                     stale: 'A newer version is available',
-                    storage: 'R2 storage',
                   }[modal] ??
                   ''}
               </Dialog.Title>
@@ -1792,24 +1760,6 @@ function Editor({
                       </Button>
                     </div>
                   </>
-                )}
-                {modal === 'storage' && (
-                  <StorageSettings
-                    config={r2}
-                    onCancel={() => setModal('')}
-                    onSave={(next) => {
-                      try {
-                        stash('lean:r2', next);
-                      } catch {
-                        throw Error(
-                          'Could not save settings for this tab. Allow browser session storage and try again.',
-                        );
-                      }
-                      setR2(next);
-                      setModal('');
-                      setMessage('Storage settings saved for this tab.');
-                    }}
-                  />
                 )}
               </>
             )}

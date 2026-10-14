@@ -13,7 +13,7 @@ const config = {
   repo: '',
   branch: 'draft',
   encryptedAdmin: false,
-  r2: { accountId: '', bucket: '', publicURL: '' },
+  r2: null,
 };
 const content: Content = {
   site: {

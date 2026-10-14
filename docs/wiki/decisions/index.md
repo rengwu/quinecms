@@ -638,3 +638,9 @@ engineering work; none of these decisions records implementation or verification
 | ID | Decision | Basis and rationale |
 | --- | --- | --- |
 | DEC-184 | The maintainer will deploy the Archline pilot to Netlify manually and report the result; provide a simple deployment guide. | [Q15 notes](../journal/2026-10-13-grill-2918a555-e230-4816-971e-5dab8013cba9.md) explicitly select Netlify and maintainer-owned deployment, resolving the broader selected option. This is a pilot hosting choice, not an engine dependency or a claim that live deployment passed. DEC-142's provider-agnostic build contract remains unchanged. |
+
+## R2 environment configuration — direct request, 2026-10-14
+
+| ID | Decision | Basis and rationale |
+| --- | --- | --- |
+| DEC-185 | Configure R2 connection, credentials and upload defaults in the site's build environment, remove all admin storage setup controls, and maintain a commented `.env.example`. | Direct user request after the pilot upload screen. Supersedes DEC-161's setup-dialog fallback and prior runtime-entered R2 settings. The implementation reuses the encrypted admin payload and direct browser uploads; authorized editors can recover credentials after unlock. All connection values blank disables uploads while existing media works; partial/invalid settings fail the build. Git token entry stays unchanged. See the [media contract](../features/media.md). |

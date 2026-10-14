@@ -5,6 +5,13 @@ status: Independent pilot accepted; no engine-separation questions remain
 ---
 # Open questions
 
+## R2 configuration — environment only
+
+The user requests build-environment R2 connection/settings with no admin setup UI,
+and a maintained, commented `.env.example` (DEC-185). The existing encrypted admin
+payload carries upload credentials to the unlocked browser; authorized editors
+can recover them. There is no new backend. See the [media contract](../features/media.md).
+
 ## Multiple site layouts — implemented locally
 
 DEC-165–DEC-166 settle the Pages-style table, separate configurations of the same
@@ -64,8 +71,9 @@ repeat the signed-in workflow.
 ## Upload from media fields — delivered locally
 
 DEC-160–DEC-162 select Upload plus a small thumbnail beside the existing selector,
-the existing storage dialog opened in place, and retaining uploads in Media when
-block changes are cancelled. The [implemented behavior](../features/media.md#upload-from-media-fields)
+the original setup-dialog fallback, and retaining uploads in Media when
+block changes are cancelled. DEC-185 subsequently replaces that setup dialog with
+developer-owned environment configuration; unconfigured uploads are hidden. The [implemented behavior](../features/media.md#upload-from-media-fields)
 reuses the existing upload path. No unresolved scope question remains.
 [Local checks](../verification/runs/2026-10-13-media-fields.md) pass; live R2
 upload execution remains unverified.

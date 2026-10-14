@@ -1,7 +1,15 @@
 import { expect, it } from 'vitest';
 import { execFile, spawn } from 'node:child_process';
 import { promisify } from 'node:util';
-import { cp, mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
+import {
+  cp,
+  mkdir,
+  mkdtemp,
+  readFile,
+  readdir,
+  rm,
+  writeFile,
+} from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { fixtureDirectory } from './support/fixture';
@@ -79,9 +87,26 @@ it('validates unfinished drafts and baseline schema changes without modifying co
 it('builds an independent site, encrypts its admin, and keeps static routes free of browser JavaScript', async () => {
   const directory = await projectFixture();
   try {
+    const storage = {
+      accountId: 'a'.repeat(32),
+      bucket: 'fixture-private-config-bucket',
+      publicURL: 'https://fixture-media.example.test',
+      accessKeyId: 'fixture-r2-access-do-not-publish',
+      secretAccessKey: 'fixture-r2-secret-do-not-publish',
+      maxMB: 12,
+      variantWidths: [640],
+      quality: 0.7,
+    };
+    const configuredEnv =
+      (await readFile(join(directory, '.env'), 'utf8')) +
+      `R2_ACCOUNT_ID=${storage.accountId}\nR2_BUCKET=${storage.bucket}\nR2_PUBLIC_URL=${storage.publicURL}\nR2_ACCESS_KEY_ID=${storage.accessKeyId}\nR2_SECRET_ACCESS_KEY=${storage.secretAccessKey}\nR2_MAX_MB=12\nR2_IMAGE_WIDTHS=640\nR2_IMAGE_QUALITY=0.7\n`;
+    await writeFile(join(directory, '.env'), configuredEnv);
     const build = async () => {
       await command(directory, [cli, 'validate']);
-      await command(directory, [cli, 'build']);
+      const buildResult = await command(directory, [cli, 'build']);
+      expect(buildResult.stdout + buildResult.stderr).not.toContain(
+        storage.secretAccessKey,
+      );
       const html = await readFile(
         join(directory, 'dist/admin/index.html'),
         'utf8',
@@ -105,14 +130,48 @@ it('builds an independent site, encrypts its admin, and keeps static routes free
       );
       const admin = JSON.parse(gunzipSync(decrypted).toString());
       expect(admin.props.config.encryptedAdmin).toBe(true);
+      expect(admin.props.config.r2).toEqual(storage);
       expect(admin.props.config).not.toHaveProperty('passwordHash');
+      expect(admin.code).not.toContain('Storage settings');
+      expect(admin.code).not.toContain('Test connection');
       expect(admin.code).toContain('Lock editor');
       expect(admin.code).toContain('quinecms:recovery:v2');
       expect(admin.css.length).toBeGreaterThan(0);
+      for (const file of await readdir(join(directory, 'dist'), {
+        recursive: true,
+        withFileTypes: true,
+      })) {
+        if (!file.isFile()) continue;
+        const published = await readFile(join(file.parentPath, file.name));
+        for (const value of [
+          storage.accessKeyId,
+          storage.secretAccessKey,
+          storage.bucket,
+        ])
+          expect(
+            published.includes(Buffer.from(value)),
+            `Plaintext R2 setting in ${file.name}`,
+          ).toBe(false);
+      }
       const result = await command(directory, [cli, 'check-build']);
       return JSON.parse(result.stdout);
     };
     const demo = await build();
+    const previousOutput = await readFile(
+      join(directory, 'dist/admin/index.html'),
+    );
+    await writeFile(
+      join(directory, '.env'),
+      'ADMIN_EMAIL=fixture@example.com\nADMIN_PASSWORD=fixture-password\nR2_BUCKET=incomplete\n',
+    );
+    await expect(command(directory, [cli, 'build'])).rejects.toMatchObject({
+      code: 1,
+      stderr: expect.stringContaining('R2 uploads require'),
+    });
+    expect(await readFile(join(directory, 'dist/admin/index.html'))).toEqual(
+      previousOutput,
+    );
+    await writeFile(join(directory, '.env'), configuredEnv);
     for (const path of [
       'journal/index.html',
       'journal/a-slower-way-to-build/index.html',

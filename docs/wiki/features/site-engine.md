@@ -176,3 +176,10 @@ results must not be described as proving those integrations.
 ## Engine separation verification — 2026-10-14
 
 [Independent engine and public pilot verification](../verification/runs/2026-10-14-engine-separation.md): engine/library/clean-build/browser/live-GitHub checks pass; the maintainer subsequently deployed to Netlify (DEC-184). The [hosted smoke check](../verification/runs/2026-10-14-netlify-pilot.md) passes for public routes, assets, mobile navigation and the login page; the maintainer subsequently [confirmed the full hosted connection, edit, draft save, publish and live deployment flow](../journal/2026-10-14-pilot-acceptance.md). This final signed-in evidence is user-reported; pilot delivery is accepted.
+
+
+## R2 environment configuration — 2026-10-14
+
+[Verification](../verification/runs/2026-10-14-r2-environment.md) covers environment
+validation, encrypted credential delivery, absence of storage setup controls,
+configured/unconfigured uploads and existing media behavior. Live R2 is not claimed.

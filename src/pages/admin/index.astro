@@ -3,6 +3,7 @@ import { gzipSync } from 'node:zlib';
 import { loadContent } from '../../core/load';
 import { adminBundle } from '../../../scripts/admin-build';
 import { credentials, encryptAdmin } from '../../admin/crypto';
+import { storageFromEnv } from '../../admin/storage';
 // One shared credential pair. Dev uses fixed credentials regardless of .env;
 // static builds still require the configured production pair.
 const email = import.meta.env.LEAN_DEV_SERVER
@@ -28,11 +29,16 @@ const config = {
     (provider === 'github' ? (import.meta.env.PUBLIC_GITHUB_REPO ?? '') : ''),
   branch: import.meta.env.PUBLIC_DRAFT_BRANCH ?? 'draft',
   publishBranch: import.meta.env.PUBLIC_PUBLISH_BRANCH ?? 'main',
-  r2: {
-    accountId: import.meta.env.PUBLIC_R2_ACCOUNT_ID ?? '',
-    bucket: import.meta.env.PUBLIC_R2_BUCKET ?? '',
-    publicURL: import.meta.env.PUBLIC_R2_PUBLIC_URL ?? '',
-  },
+  r2: storageFromEnv({
+    R2_ACCOUNT_ID: import.meta.env.R2_ACCOUNT_ID,
+    R2_BUCKET: import.meta.env.R2_BUCKET,
+    R2_PUBLIC_URL: import.meta.env.R2_PUBLIC_URL,
+    R2_ACCESS_KEY_ID: import.meta.env.R2_ACCESS_KEY_ID,
+    R2_SECRET_ACCESS_KEY: import.meta.env.R2_SECRET_ACCESS_KEY,
+    R2_MAX_MB: import.meta.env.R2_MAX_MB,
+    R2_IMAGE_WIDTHS: import.meta.env.R2_IMAGE_WIDTHS,
+    R2_IMAGE_QUALITY: import.meta.env.R2_IMAGE_QUALITY,
+  }),
 };
 const bundle = await adminBundle(import.meta.env.LEAN_DEV_SERVER);
 const payload = gzipSync(

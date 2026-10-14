@@ -1,0 +1,26 @@
+{
+  "checkedAt": "2026-10-14T07:11:37.103Z",
+  "origin": "http://127.0.0.1:63982",
+  "build": "production fixture with dummy credentials",
+  "configured": {
+    "mediaUpload": true,
+    "fieldUpload": true,
+    "storageSettings": false,
+    "mobileViewport": {
+      "width": 390,
+      "height": 844
+    },
+    "consoleErrors": []
+  },
+  "unconfigured": {
+    "mediaUpload": false,
+    "fieldUpload": false,
+    "storageSettings": false,
+    "existingImageSelected": true,
+    "pickerCanClear": true,
+    "cancelRestoresSelectionAndCleanState": true,
+    "consoleErrors": []
+  },
+  "liveR2Upload": false,
+  "cleanup": "Viewport restored; no Git or object storage writes; temporary browser edits cancelled."
+}
