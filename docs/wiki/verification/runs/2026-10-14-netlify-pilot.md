@@ -61,3 +61,11 @@ not the hosted product itself.
 The wiki build and link check pass for 186 pages. The report metadata checker
 accepts this run; its repository-wide result still flags the same seven historical
 reports with nonstandard result labels noted in the earlier implementation run.
+
+## Subsequent maintainer verification — 2026-10-14
+
+The maintainer subsequently confirmed connecting GitHub, editing content, saving
+the draft, publishing, watching deployment and seeing the changes on the live
+site. See the [verbatim report and pilot acceptance](../../journal/2026-10-14-pilot-acceptance.md).
+This closes the signed-in delivery follow-up through user-reported evidence;
+the assistant's independently exercised scope above remains unchanged.

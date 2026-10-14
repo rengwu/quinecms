@@ -16,7 +16,7 @@ checks, mixed-design public builds and browser observations.
 Implemented: [separate sites, engine and libraries](features/site-engine.md).
 The product interview selected Archline as the independent pilot, Archline + Intr
 as the first shared library, and manual engine/library pins. The engine now has an
-extensions-only build interface. Engine tests, library tests, clean builds, browser checks and live GitHub save/publication passed. Public repositories and the [live Archline pilot](https://glowing-dodol-a3ed49.netlify.app/) are available. The maintainer deployed to Netlify (DEC-184); [public pages, mobile navigation, assets and the admin login page pass live checks](verification/runs/2026-10-14-netlify-pilot.md). Hosted admin unlock and Save/Publish remain unverified.
+extensions-only build interface. Engine tests, library tests, clean builds, browser checks and live GitHub save/publication passed. Public repositories and the [live Archline pilot](https://glowing-dodol-a3ed49.netlify.app/) are available. The maintainer deployed to Netlify (DEC-184); [public pages, mobile navigation, assets and the admin login page pass live checks](verification/runs/2026-10-14-netlify-pilot.md). [The maintainer confirms the complete hosted GitHub connection, edit, draft save, publish and live redeployment flow](journal/2026-10-14-pilot-acceptance.md). The selected pilot is accepted; this final signed-in evidence is user-reported.
 The [discussion](discussions/site-engine-separation.md) retains accepted decisions
 and the preimplementation study. [Implementation verification](verification/runs/2026-10-14-engine-separation.md).
 

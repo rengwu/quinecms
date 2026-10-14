@@ -1,7 +1,7 @@
 ---
 title: Open questions
 updated: 2026-10-14
-status: Independent pilot deployed; hosted signed-in checks remain unverified
+status: Independent pilot accepted; no engine-separation questions remain
 ---
 # Open questions
 
@@ -22,7 +22,7 @@ question remains in the [selected scope](multiple-site-layouts.md). The user
 subsequently authorized work-until-grill; multiple configurations are now
 implemented. See [verification](../verification/runs/2026-10-13-multiple-site-layouts.md).
 
-## Separate site repositories and engine — pilot product interview complete
+## Separate site repositories and engine — pilot accepted
 
 After source study, the user explicitly discarded the form and continued in chat.
 DEC-172–DEC-174 select a core/admin-only engine, manual pinned engine upgrades with
@@ -55,9 +55,11 @@ is ready. The maintainer subsequently supplied the
 [live pilot](https://glowing-dodol-a3ed49.netlify.app/). Its public routes, mobile
 menu, referenced assets and admin login page pass the
 [hosted smoke check](../verification/runs/2026-10-14-netlify-pilot.md). No delivery
-choice remains open. Production admin unlock and hosted Save/Publish require a
-signed-in check and remain unverified; this is a coverage limit, not a new product
-question or an observed failure.
+choice remains open. The maintainer subsequently [confirmed the complete hosted
+GitHub connection, edit, draft save, publish and redeployment flow](../journal/2026-10-14-pilot-acceptance.md),
+including the visible content change on the live site. This user-reported evidence
+closes the selected pilot's delivery acceptance. The assistant did not independently
+repeat the signed-in workflow.
 
 ## Upload from media fields — delivered locally
 

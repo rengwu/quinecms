@@ -103,3 +103,9 @@ The maintainer deployed the pilot and provided its public URL. The
 mobile navigation, referenced assets and the admin login page. The original run
 result above is preserved as recorded; the follow-up identifies its live output
 with response hashes and explicitly excludes hosted admin unlock and Save/Publish.
+
+The maintainer then [confirmed the complete hosted edit, draft save, publish and
+deployment flow](../../journal/2026-10-14-pilot-acceptance.md), including the live
+content change. Pilot delivery is accepted using that user-reported evidence
+together with the independently exercised checks; the original run result is
+preserved rather than retroactively claiming assistant-observed hosted writes.

@@ -11,7 +11,7 @@ library changes and the Archline/Intr library. Archline is the public pilot.
 The [engineering plan](../discussions/site-engine-separation.md#proposed-engineering-plan)
 was implemented after work-until-grill authorization. Engine/library, clean build,
 browser and live GitHub checks pass. DEC-184 assigns the pilot's Netlify deployment
-to the maintainer. The [public pilot smoke check](../verification/runs/2026-10-14-netlify-pilot.md) passes; hosted signed-in behavior remains unverified.
+to the maintainer. The [public pilot smoke check](../verification/runs/2026-10-14-netlify-pilot.md) passes, and the [maintainer confirms the full hosted publishing flow](../journal/2026-10-14-pilot-acceptance.md). The selected pilot is accepted.
 
 Multiple site layouts: DEC-165–DEC-171 record the user's requirements and completed
 grill answers. The [scoped design](../discussions/multiple-site-layouts.md) is
