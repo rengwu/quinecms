@@ -1,0 +1,43 @@
+Progress: resolved 0, reused 1, downloaded 0, added 0
+Progress: resolved 1, reused 1, downloaded 0, added 0
+Packages are cloned from the content-addressable store to the virtual store.
+  Content-addressable store is at: /Users/rengwu/Library/pnpm/store/v10
+  Virtual store is at:             node_modules/.pnpm
+Progress: resolved 1, reused 1, downloaded 1, added 0
+Progress: resolved 77, reused 76, downloaded 1, added 0
+Progress: resolved 162, reused 160, downloaded 1, added 0
+Progress: resolved 252, reused 226, downloaded 1, added 0
+Progress: resolved 386, reused 313, downloaded 1, added 0
+Progress: resolved 478, reused 388, downloaded 1, added 0
+Progress: resolved 571, reused 481, downloaded 1, added 0
+Progress: resolved 596, reused 506, downloaded 1, added 0
+Packages: +504
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+Progress: resolved 598, reused 508, downloaded 1, added 130
+Progress: resolved 598, reused 508, downloaded 1, added 229
+Progress: resolved 598, reused 508, downloaded 1, added 500
+Progress: resolved 598, reused 508, downloaded 1, added 504, done
+
+dependencies:
++ quinecms 0.2.0
++ quinecms-library 0.1.0
+
+╭ Warning ─────────────────────────────────────────────────────────────────────╮
+│                                                                              │
+│   Ignored build scripts: esbuild@0.28.2.                                     │
+│   Run "pnpm approve-builds" to pick which dependencies should be allowed     │
+│   to run scripts.                                                            │
+│                                                                              │
+╰──────────────────────────────────────────────────────────────────────────────╯
+Done in 16.7s using pnpm v10.34.1
+Lockfile is up to date, resolution step is skipped
+Already up to date
+
+╭ Warning ─────────────────────────────────────────────────────────────────────╮
+│                                                                              │
+│   Ignored build scripts: esbuild@0.28.2.                                     │
+│   Run "pnpm approve-builds" to pick which dependencies should be allowed     │
+│   to run scripts.                                                            │
+│                                                                              │
+╰──────────────────────────────────────────────────────────────────────────────╯
+Done in 458ms using pnpm v10.34.1

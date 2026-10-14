@@ -14,6 +14,9 @@ environment template. R2 connection and upload defaults now come from build-time
 
 - Engine base `e5276e8`, with the implementation identified by this
   [source manifest](../../evidence/2026-10-14-r2-environment/source-manifest.json).
+- Published engine implementation: `d830c7b2467b44174208fa47d17900ac4c6f5b06`.
+  Pilot upgrade: `d89481d`, preserving the maintainer's published content at
+  `fddbd4802b10a58569b6e9e17b6d52efbf38e61a` and the existing library pin.
 - Node 22.19.0 / pnpm 10.34.1, macOS, Chrome. Engine tests create isolated sites.
 - Browser checks used a disposable original-extension site, production static
   builds served on loopback port 63982, a test admin login and dummy R2 keys.
@@ -32,6 +35,7 @@ environment template. R2 connection and upload defaults now come from build-time
 | Configured portal | Media and media fields show Upload, existing selections and previews; no storage, credential, CORS, test-connection or advanced setup controls | Passed | [Media](../../evidence/2026-10-14-r2-environment/media-configured.png), [field](../../evidence/2026-10-14-r2-environment/field-configured.png), [mobile](../../evidence/2026-10-14-r2-environment/field-configured-mobile.png) |
 | Unconfigured portal | Media explains upload unavailability; no upload or setup controls; existing media remains visible/selectable | Passed | [Media](../../evidence/2026-10-14-r2-environment/media-unconfigured.png), [field](../../evidence/2026-10-14-r2-environment/field-unconfigured.png) |
 | Upload and draft behavior | Mocked uploads use the build configuration despite stale tab settings; selection, preview, cancellation, errors and failed-batch cleanup retain their existing behavior; no keys in recovery or new R2 session entry | Passed | `tests/media-fields.test.ts`, `tests/media.test.ts` |
+| Independent pilot upgrade | Fresh public clone with the candidate upgrade installs the published engine, passes a frozen-lockfile install, content validation, 162-file typecheck with zero errors/warnings, production build and artifact checks | Passed | [Install](../../evidence/2026-10-14-r2-environment/pilot-install.log), [verification](../../evidence/2026-10-14-r2-environment/pilot-verify.log) |
 
 ## Repairs and limits
 
@@ -49,6 +53,10 @@ payload. There is no server-side secret isolation. Production requires bucket-sc
 credentials in the build environment and the bucket's public/CORS configuration.
 Changing these values requires rebuilding. Old credentials must be revoked at R2
 if already downloaded/deployed copies should stop working.
+
+The clean pilot build used test admin credentials with R2 disabled. The previously
+accepted hosted editing/publishing journey predates this upgrade; this run does
+not claim a new signed-in hosted check or live R2 acceptance.
 
 The root and pilot `.env.example` files share documented admin, repository, R2 and
 upload sections; the pilot retains its own repository defaults. No real keys are

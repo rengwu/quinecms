@@ -1,0 +1,116 @@
+
+> quinecms-site-archline@ verify /private/var/folders/00/h_k67s0j5dq0qvg6ylqysk2w0000gn/T/quinecms-r2-pilot-0xptz3t5/site
+> pnpm validate:content && pnpm check && pnpm build && pnpm check:build
+
+
+> quinecms-site-archline@ validate:content /private/var/folders/00/h_k67s0j5dq0qvg6ylqysk2w0000gn/T/quinecms-r2-pilot-0xptz3t5/site
+> quinecms validate
+
+Registered 29 block versions.
+Registered 2 layout versions.
+Content is valid for publication.
+
+> quinecms-site-archline@ check /private/var/folders/00/h_k67s0j5dq0qvg6ylqysk2w0000gn/T/quinecms-r2-pilot-0xptz3t5/site
+> quinecms check
+
+Registered 29 block versions.
+Registered 2 layout versions.
+15:14:18 [types] Generated 210ms
+15:14:18 [check] Getting diagnostics for Astro files in /private/var/folders/00/h_k67s0j5dq0qvg6ylqysk2w0000gn/T/quinecms-r2-pilot-0xptz3t5/site/.quinecms/workspace...
+Result (162 files): 
+- 0 errors
+- 0 warnings
+- 0 hints
+
+
+> quinecms-site-archline@ build /private/var/folders/00/h_k67s0j5dq0qvg6ylqysk2w0000gn/T/quinecms-r2-pilot-0xptz3t5/site
+> quinecms build
+
+Registered 29 block versions.
+Registered 2 layout versions.
+15:14:30 [types] Generated 144ms
+15:14:30 [build] output: "static"
+15:14:30 [build] mode: "static"
+15:14:30 [build] directory: /private/var/folders/00/h_k67s0j5dq0qvg6ylqysk2w0000gn/T/quinecms-r2-pilot-0xptz3t5/site/.quinecms/workspace/dist/
+15:14:30 [build] Collecting build info...
+15:14:30 [build] ✓ Completed in 242ms.
+15:14:30 [build] Building static entrypoints...
+15:14:31 [vite] ✓ built in 196ms
+15:14:31 [vite] ✓ built in 197ms
+15:14:31 [build] Rearranging server assets...
+
+ generating static routes 
+15:14:31   ├─ /admin/index.html (+966ms) 
+15:14:32   ├─ /projects/armonia-pavilion/index.html (+39ms) 
+15:14:32   ├─ /projects/atelier-19-residence/index.html (+19ms) 
+15:14:32   ├─ /projects/luma-garden-loft/index.html (+13ms) 
+15:14:32   ├─ /projects/sereno-villas/index.html (+12ms) 
+15:14:32   ├─ /projects/terra-nova-residence/index.html (+13ms) 
+15:14:32   ├─ /projects/the-verra-house/index.html (+11ms) 
+15:14:32   ├─ /projects/index.html (+11ms) 
+15:14:32   ├─ /index.html (+18ms) 
+15:14:32 ✓ Completed in 1.18s.
+
+15:14:32 [build] ✓ Completed in 1.63s.
+15:14:32 [build] 9 page(s) built in 1.87s
+15:14:32 [build] Complete!
+
+> quinecms-site-archline@ check:build /private/var/folders/00/h_k67s0j5dq0qvg6ylqysk2w0000gn/T/quinecms-r2-pilot-0xptz3t5/site
+> quinecms check-build
+
+{
+  "runtimeCopies": {
+    "react-dom": 1,
+    "@vue/runtime-core": 1,
+    "@vue/runtime-dom": 1,
+    "svelte": 1,
+    "react": 1
+  },
+  "pages": [
+    {
+      "page": "admin/index.html",
+      "javascriptModules": 1,
+      "gzipJavaScriptBytes": 1662
+    },
+    {
+      "page": "index.html",
+      "javascriptModules": 5,
+      "gzipJavaScriptBytes": 86269
+    },
+    {
+      "page": "projects/armonia-pavilion/index.html",
+      "javascriptModules": 4,
+      "gzipJavaScriptBytes": 86198
+    },
+    {
+      "page": "projects/atelier-19-residence/index.html",
+      "javascriptModules": 4,
+      "gzipJavaScriptBytes": 86198
+    },
+    {
+      "page": "projects/index.html",
+      "javascriptModules": 4,
+      "gzipJavaScriptBytes": 86198
+    },
+    {
+      "page": "projects/luma-garden-loft/index.html",
+      "javascriptModules": 4,
+      "gzipJavaScriptBytes": 86198
+    },
+    {
+      "page": "projects/sereno-villas/index.html",
+      "javascriptModules": 4,
+      "gzipJavaScriptBytes": 86198
+    },
+    {
+      "page": "projects/terra-nova-residence/index.html",
+      "javascriptModules": 4,
+      "gzipJavaScriptBytes": 86198
+    },
+    {
+      "page": "projects/the-verra-house/index.html",
+      "javascriptModules": 4,
+      "gzipJavaScriptBytes": 86198
+    }
+  ]
+}
