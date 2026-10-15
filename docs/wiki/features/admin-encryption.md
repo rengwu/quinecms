@@ -1,6 +1,6 @@
 ---
 title: Encrypted static admin
-updated: 2026-10-14
+updated: 2026-10-16
 ---
 # Encrypted static admin
 
@@ -9,9 +9,10 @@ updated: 2026-10-14
 ## Contract
 
 DEC-141 replaces the optional SHA-256 browser convenience gate with an encrypted
-dashboard. Both `ADMIN_EMAIL` and `ADMIN_PASSWORD` are required for production
-builds. DEC-152 makes development use one fixed pair: `admin@example.com` /
-`asdf1234`, regardless of configured or absent environment credentials. Email is trimmed and lowercased; password characters, case and
+dashboard. Both `ADMIN_EMAIL` and `ADMIN_PASSWORD` are required in development
+and production. DEC-187 supersedes DEC-152: the engine has no default login or
+development override. The separate `quinecms-dev-site` owns its testing pair in
+its own environment configuration. Email is trimmed and lowercased; password characters, case and
 whitespace are preserved. The pair is encoded as a versioned JSON array before
 key derivation, avoiding ambiguous concatenation. This is one shared credential
 pair, not email ownership verification, a user directory, or two-factor login.
@@ -92,14 +93,12 @@ decrypted module. The existing draft recovery remains intact. Provider permissio
 checks still authorize loading private repositories, saving, publishing and media
 uploads.
 
-Local development uses the same encrypted page with `admin@example.com` /
-`asdf1234`. This replaces the configured pair in dev; it is not an additional
-account. There is one shared dashboard and one set of content, with no per-user
-data. Production builds (including output served by `pnpm preview`) use only the
-configured pair and have no automatic development-login fallback. The Astro
-configuration defines `LEAN_DEV_SERVER` from `command === 'dev'`, so `NODE_ENV`
-or `--mode` cannot enable the fixed login in a static build. Refresh the
-page to rebuild the standalone editor after source changes.
+Local development uses the same encrypted page and the site's configured pair.
+Missing or partial credentials fail the admin response; there is no fallback.
+There is one shared dashboard and one set of content, with no per-user data.
+Production builds (including output served by `pnpm preview`) also require the
+configured pair. `LEAN_DEV_SERVER` controls development editor behavior, never
+credentials. Refresh the page to rebuild the standalone editor after source changes.
 The development server exposes source modules and is not a security boundary.
 Use `pnpm build` and a static preview for deployment-security checks.
 
@@ -131,9 +130,9 @@ exact password preservation, independent Node AES-GCM decryption, random salts/
 nonces, wrong credentials, tampering and unsupported KDF parameters.
 `tests/local-authoring.test.ts` builds isolated sites, decrypts their real admin
 payloads, checks artifacts and verifies missing-credential failure. It also starts
-isolated development servers with absent and different environment credentials,
-checks that the fixed dev pair decrypts their actual responses, rejects the other
-pair, and verifies the dev pair cannot decrypt production fixture output.
+isolated development servers with missing, partial and configured credentials.
+Missing/partial credentials fail the admin response; the configured pair decrypts
+the actual response, while the former fixed pair fails in development and production.
 `tests/editor-session.test.ts` covers credential clearing and retained drafts at
 the editor-to-loader lock boundary.
 

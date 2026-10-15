@@ -1,6 +1,6 @@
 ---
 title: Direct media uploads
-updated: 2026-10-14
+updated: 2026-10-16
 ---
 # Direct media uploads
 
@@ -13,6 +13,17 @@ environment values. The admin exposes media selection/upload only, with no stora
 settings, credentials form, connection test or CORS controls. The existing direct
 browser uploader, originals, browser-generated variants and IDs in content remain.
 No upload server or media transcoding service is added.
+
+## Media library display
+
+Media uses a responsive card grid with 16px gaps and a 220px target minimum card
+width, shrinking to fit narrower containers. Images use a consistent 140px preview
+height with `object-fit: contain`; names, file details and original links remain.
+
+Local Safari verification on 2026-10-16: three columns at 867px available width,
+two at 600px, and one at 280px and 200px, without horizontal overflow. Desktop
+appearance was checked in the dev site; narrow checks temporarily constrained the
+grid container and restored it afterward. No live uploads were exercised.
 
 ## Upload from media fields
 
@@ -99,8 +110,8 @@ storage entries. Unlocking decrypts the configuration in memory for direct S3
 uploads. **Anyone who can unlock the editor can recover its upload credentials.**
 Hiding configuration in the UI does not provide server-side credential isolation.
 
-Use bucket-scoped keys and trusted build contexts. The local development login is
-fixed and publicly documented, so use test-bucket credentials in development.
+Use bucket-scoped keys and trusted build contexts. Use test-bucket credentials
+for development testing, especially in the shared dev site.
 Rotating environment keys requires rebuilding; revoke the old key in Cloudflare
 if old downloaded/deployed encrypted copies must lose access. Lock reloads the
 page and discards the in-memory configuration; it also clears legacy tab credentials.

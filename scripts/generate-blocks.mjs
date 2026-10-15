@@ -159,7 +159,7 @@ for (const { path, page, entry } of publicRoutes(content)) {
       const i = defs.findIndex(
         (d) => d.type === b.type && d.version === b.version,
       );
-      return `<Block${i} props={blocks[${j}].props} context={contextFor(content,blocks[${j}].id)}/>`;
+      return `<Block${i} props={blocks[${j}].props} context={contextFor(content,blocks[${j}].id,definitions[${i}])}/>`;
     })
     .join('\n');
   await writeFile(
@@ -171,6 +171,7 @@ import PageHead from '../LayoutHead${layoutIndex}.astro';
 import {contentForPage} from '../../core/layout-state';
 import {loadContent} from '../../core/load';
 import {contextFor} from '../../core/content';
+import {definitions} from '../definitions';
 ${entry ? "import {resolveBlock} from '../../core/bindings';" : ''}
 ${imports}
 const fullContent=await loadContent();

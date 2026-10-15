@@ -1,0 +1,23 @@
+
+> quinecms-dev-site@ verify /Users/rengwu/Desktop/Projects/quinecms-dev-site
+> pnpm validate:content && pnpm check
+
+
+> quinecms-dev-site@ validate:content /Users/rengwu/Desktop/Projects/quinecms-dev-site
+> quinecms validate
+
+Registered 45 block versions.
+Registered 3 layout versions.
+Content is valid for publication.
+
+> quinecms-dev-site@ check /Users/rengwu/Desktop/Projects/quinecms-dev-site
+> quinecms check
+
+Registered 45 block versions.
+Registered 3 layout versions.
+05:57:13 [types] Generated 480ms
+05:57:13 [check] Getting diagnostics for Astro files in /Users/rengwu/Desktop/Projects/quinecms-dev-site/.quinecms/workspace...
+Result (254 files):
+- 0 errors
+- 0 warnings
+- 0 hints

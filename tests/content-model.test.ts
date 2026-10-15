@@ -324,3 +324,120 @@ it('protects references and shared values held in schema defaults', () => {
     schemaChanges(c, next).some((i) => i.path.includes('.default.seo.title')),
   ).toBe(true);
 });
+
+it('projects declared collection fields with arbitrary selector names and keeps collections separate', () => {
+  const c = modelFixture();
+  const block = c.pages
+    .flatMap((p) => p.blocks)
+    .find((b) => b.props.collection === c.collections[0].id)!;
+  const definition = {
+    ...definitions.find(
+      (d) => d.type === block.type && d.version === block.version,
+    )!,
+    fields: [
+      { key: 'articles', label: 'Articles', type: 'collection' as const },
+      { key: 'people', label: 'People', type: 'collection' as const },
+      {
+        key: 'byline',
+        label: 'Byline',
+        type: 'text' as const,
+        collectionField: { collectionKey: 'articles', types: ['text'] },
+      },
+      {
+        key: 'personLabel',
+        label: 'Person label',
+        type: 'text' as const,
+        collectionField: { collectionKey: 'people', types: ['text'] },
+      },
+    ],
+  };
+  block.props = {
+    articles: c.collections[0].id,
+    people: 'authors',
+    byline: 'author.name',
+    personLabel: 'name',
+  };
+  const result = contextFor(c, block.id, definition);
+  expect(result.collections?.[0].entries[0].values).toEqual({
+    'author.name': 'Ada',
+  });
+  expect(
+    result.collections?.find((col) => col.id === 'authors')?.entries[0].values,
+  ).toEqual({ name: 'Ada' });
+  expect(
+    validate(
+      c,
+      definitions.map((d) =>
+        d.type === definition.type && d.version === definition.version
+          ? definition
+          : d,
+      ),
+    ),
+  ).toEqual([]);
+  block.props.byline = 'author.mentor.name';
+  expect(
+    contextFor(c, block.id, definition).collections?.[0].entries[0].values,
+  ).toEqual({ 'author.mentor.name': 'Grace' });
+  block.props.byline = '';
+  expect(
+    contextFor(c, block.id, definition).collections?.[0].entries[0].values,
+  ).toBeUndefined();
+  block.props.byline = 'missing';
+  expect(
+    contextFor(c, block.id, definition).collections?.[0].entries[0].values,
+  ).toBeUndefined();
+  expect(
+    validate(
+      c,
+      definitions.map((d) =>
+        d.type === definition.type && d.version === definition.version
+          ? definition
+          : d,
+      ),
+    ),
+  ).toContainEqual(
+    expect.objectContaining({
+      message: 'Byline: choose a compatible collection field.',
+      phase: 'publish',
+    }),
+  );
+  block.props.byline = 'author'; // Reference is not an allowed text selection.
+  expect(
+    contextFor(c, block.id, definition).collections?.[0].entries[0].values,
+  ).toBeUndefined();
+});
+it('keeps legacy collection projections equivalent and preserves missing optional values', () => {
+  const c = modelFixture();
+  const block = c.pages
+    .flatMap((p) => p.blocks)
+    .find((b) => b.props.collection === c.collections[0].id)!;
+  const definition = definitions.find(
+    (d) => d.type === block.type && d.version === block.version,
+  )!;
+  expect(contextFor(c, block.id, definition)).toEqual(contextFor(c, block.id));
+  c.collections[0].fields.push({
+    key: 'optionalLabel',
+    label: 'Optional label',
+    type: 'text',
+  });
+  const extended = {
+    ...definition,
+    fields: [
+      ...definition.fields,
+      {
+        key: 'caption',
+        label: 'Caption',
+        type: 'text' as const,
+        collectionField: { collectionKey: 'collection', types: ['text'] },
+      },
+    ],
+  };
+  block.props.caption = 'optionalLabel';
+  expect(
+    contextFor(c, block.id, extended).collections?.[0].entries[0].values
+      ?.optionalLabel,
+  ).toBeNull();
+  expect(
+    contextFor(c, block.id, extended).collections?.[0].entries[0].values,
+  ).not.toHaveProperty('author');
+});

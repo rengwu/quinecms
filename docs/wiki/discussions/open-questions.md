@@ -1,9 +1,17 @@
 ---
 title: Open questions
-updated: 2026-10-14
-status: Independent pilot accepted; no engine-separation questions remain
+updated: 2026-10-16
+status: Tessera scope implemented locally; independent pilot accepted
 ---
 # Open questions
+
+## Tessera collection rendering — implemented locally
+
+The user approved the general declared-field rendering contract after discussion
+and authorized work-until-grill. DEC-188 and the
+[accepted scope](tessera-collection-context.md) supersede the initial proposal.
+Tessera uses separate blog/release blocks. No consequential choice remains in the
+selected recreation scope; remote release/deployment is outside this local task.
 
 ## Git configuration — environment only
 
@@ -111,10 +119,9 @@ These are not accepted extensions to the CMS.
 
 ## Development login — resolved
 
-DEC-152 directly requests one fixed dev login (`admin@example.com` / `asdf1234`)
-for the existing shared dashboard and content. It replaces environment credentials
-in dev; production retains one configured pair. No account system or separate data
-is added. See the [admin contract](../features/admin-encryption.md).
+DEC-187 supersedes DEC-152: development and production use the site-owned
+environment credentials. The engine has no default pair. The testing login belongs
+only to the separate `quinecms-dev-site` configuration. No account system is added. See the [admin contract](../features/admin-encryption.md).
 
 ## Content ownership and handoff — selected increment settled
 

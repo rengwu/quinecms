@@ -142,6 +142,7 @@ export interface Definition {
   dependencies: Record<string, string>;
   component: string;
   theme?: string;
+  /** Content or purpose descriptors; never repeat the theme name. */
   tags?: string[];
   description?: string;
   placement?: 'page' | 'footer';

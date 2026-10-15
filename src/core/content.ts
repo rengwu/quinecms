@@ -165,7 +165,11 @@ export function resolveLink(c: Content, ref: Link): string | undefined {
     ? path + (ref.fragment ? '#' + encodeURIComponent(ref.fragment) : '')
     : undefined;
 }
-export function contextFor(c: Content, instanceId: string): Context {
+export function contextFor(
+  c: Content,
+  instanceId: string,
+  definition?: Definition,
+): Context {
   const owner = c.pages.find((page) =>
     page.blocks.some((block) => block.id === instanceId),
   );
@@ -173,15 +177,47 @@ export function contextFor(c: Content, instanceId: string): Context {
   const block =
     c.pages.flatMap((p) => p.blocks).find((b) => b.id === instanceId) ??
     (c.site.footer?.id === instanceId ? c.site.footer : undefined);
-  const mappedKeys = [
-    'titleField',
-    'summaryField',
-    'imageField',
-    'dateField',
-    'urlField',
-  ].flatMap((key) =>
-    typeof block?.props[key] === 'string' ? [String(block.props[key])] : [],
-  );
+  const selections = new Map<string, Set<string>>();
+  const fields =
+    definition?.type === block?.type && definition?.version === block?.version
+      ? definition?.fields.filter((field) => field.collectionField)
+      : undefined;
+  if (block && fields?.length) {
+    for (const field of fields) {
+      const mapping = field.collectionField!;
+      const collectionId = block.props[mapping.collectionKey];
+      const path = block.props[field.key];
+      if (typeof collectionId !== 'string' || typeof path !== 'string' || !path)
+        continue;
+      const collection = c.collections.find((item) => item.id === collectionId);
+      const source =
+        collection &&
+        resolvePath(path, { fields: collection.fields, values: {} }, c)?.field;
+      if (!source || !mapping.types.includes(source.type)) continue;
+      if (!selections.has(collectionId))
+        selections.set(collectionId, new Set());
+      selections.get(collectionId)!.add(path);
+    }
+  } else if (typeof block?.props.collection === 'string') {
+    // Preserve the original interface for callers without a definition and
+    // retained blocks that use the conventional card mappings.
+    selections.set(
+      block.props.collection,
+      new Set(
+        [
+          'titleField',
+          'summaryField',
+          'imageField',
+          'dateField',
+          'urlField',
+        ].flatMap((key) =>
+          typeof block.props[key] === 'string'
+            ? [String(block.props[key])]
+            : [],
+        ),
+      ),
+    );
+  }
   return {
     instanceId,
     globals: layoutGlobals(c.site),
@@ -194,10 +230,10 @@ export function contextFor(c: Content, instanceId: string): Context {
         .map((e) => ({
           id: e.id,
           title: entryLabel(e, c),
-          ...(block?.props.collection === col.id
+          ...(selections.has(col.id)
             ? {
                 values: Object.fromEntries(
-                  mappedKeys.map((key) => [
+                  [...selections.get(col.id)!].map((key) => [
                     key,
                     resolvePath(
                       key,

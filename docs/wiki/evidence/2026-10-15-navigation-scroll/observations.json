@@ -1,0 +1,27 @@
+{
+  "base": "59d6dd6fd113bc2c95e47567a1162bd868822097",
+  "appSha256": "97a895595765180f47c31ca15f1cb5bde8a99099666ab0c6085ce9000f08cc43",
+  "fixture": "Disposable production site, 38 page records and 35 PDF media records; Git and R2 disabled",
+  "desktopBefore": {
+    "pagesScrollTop": 844,
+    "mediaScrollTop": 844,
+    "mediaHeadingTop": -744
+  },
+  "desktopAfter": {
+    "pagesScrollTop": 824,
+    "mediaScrollTop": 0,
+    "mediaHeadingTop": 100,
+    "returnToPagesScrollTop": 0
+  },
+  "mobileAfter": {
+    "viewport": [
+      390,
+      844
+    ],
+    "pagesScrollTop": 780.5,
+    "mediaScrollTop": 0,
+    "mediaScrollTopAfterMenuClosed": 0
+  },
+  "schemasDisclosure": "Did not reset the current Media scroll position",
+  "consoleWarningsOrErrors": []
+}

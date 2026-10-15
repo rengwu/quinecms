@@ -23,7 +23,14 @@ import { Input } from '@cloudflare/kumo/components/input';
 import { Select } from '@cloudflare/kumo/components/select';
 import { Switch } from '@cloudflare/kumo/components/switch';
 import { Label } from '@cloudflare/kumo/components/label';
-import { createElement, useEffect, useMemo, useRef, useState } from 'react';
+import {
+  createElement,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { Dialog } from '@cloudflare/kumo/components/dialog';
 import { CaretRightIcon, PlusIcon } from '@phosphor-icons/react';
 import Schemas from './Schemas';
@@ -207,6 +214,14 @@ function Editor({
     } | null>(null),
     [size, setSize] = useState('desktop');
   const importRef = useRef<HTMLInputElement>(null);
+  useLayoutEffect(() => {
+    // Main sections share one document, but must not inherit its scroll position.
+    document.scrollingElement?.scrollTo({
+      top: 0,
+      left: 0,
+      behavior: 'instant',
+    });
+  }, [tab]);
   const [layoutId, setLayoutId] = useState('');
   const [pendingDocument, setPendingDocument] = useState<Page | Entry | null>(
     null,
@@ -1302,7 +1317,7 @@ function Editor({
                                   : 'Uploads are unavailable for this site. Existing media can still be used.'}
                               </p>
                             </div>
-                            <div className={styles.formStack}>
+                            <div className={styles.mediaGrid}>
                               {content.media.map((m) => (
                                 <div className={styles.mediaCard} key={m.id}>
                                   {m.original.mime.startsWith('image/') && (

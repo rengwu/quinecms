@@ -159,12 +159,20 @@ alternative model: ordered shared project cards and one explicitly authored deta
 page. Historical Quine/chartr examples remain at engine commit `bfbb522`; they are
 not installed designs in the new engine.
 
-For custom static collection blocks, `contextFor` exposes the conventional
-`titleField`, `summaryField`, `imageField`, `dateField` and `urlField` mappings from
-block props. Declare their `collectionField` selectors in the block manifest;
-this is a limited existing card-data adapter, not arbitrary schema access or
-automatic generic-page binding. Check the returned `Context` before implementing
-the renderer. Intr adds the missing URL mapping and covers shared edits in tests.
+For collection blocks, declare each top-level selector with `collectionField`
+(`collectionKey` plus compatible `types`). Public rendering and live preview pass
+its definition to `contextFor(content, instanceId, definition)`, which supplies
+only those selected paths in `entries[].values`, keyed by path. Selector property
+names are arbitrary; supported nested paths use the existing resolver. Blank
+optional selections add nothing, while a selected optional field with no value is
+null. Publication validation catches invalid nonempty selections.
+
+The old five mappings (`titleField`, `summaryField`, `imageField`, `dateField`,
+`urlField`) remain the fallback for callers without a definition or definitions
+without declared mappings. New libraries should declare their selectors and a
+compatible engine requirement (this capability starts at 0.3.0). This does not
+change generic-page bindings or add a query API. See the
+[accepted contract](../discussions/tessera-collection-context.md).
 
 Several details are easy to miss during implementation:
 
@@ -284,6 +292,8 @@ A block version has a `definition.json` and renderer under an extension's `src/b
 Register it in `quinecms.library.json` as described in the [extension contract](site-engine.md#extension-manifest). Definitions describe `type`, `version`,
 `label`, `framework`, `activation`, `component`, `fields`, `defaults` and dependency
 ranges. Optional metadata includes `kind`, theme/tags/description and footer placement.
+Use tags for content or purpose, never the theme name itself; `theme` already
+provides that classification and its own catalog filter.
 The manifest is a good place to make a custom block discoverable in the catalog.
 
 React/Svelte/Vue components receive `{ props, context }`. Vanilla implementations

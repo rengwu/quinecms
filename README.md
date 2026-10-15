@@ -25,9 +25,8 @@ pnpm check:build
 pnpm preview
 ```
 
-Development `/admin/` uses `admin@example.com` / `asdf1234`. Production builds
-require `ADMIN_EMAIL` and `ADMIN_PASSWORD` from the site's ignored `.env` or build
-environment. Git connection details/token use `GIT_*` build variables and connect
+Development and production `/admin/` require `ADMIN_EMAIL` and `ADMIN_PASSWORD`
+from the site's ignored `.env` or build environment. Git connection details/token use `GIT_*` build variables and connect
 automatically after login; see [repository setup](docs/wiki/features/publishing.md#build-environment-setup). Optional R2 uploads use the
 site's `R2_*` build environment values; the settings are carried only inside the
 encrypted admin payload, with no setup controls in the portal. Keep a commented
@@ -52,6 +51,10 @@ pnpm install --frozen-lockfile
 pnpm test       # core/editor tests and independent fixture typecheck/build/dev checks
 pnpm verify     # tests plus generated wiki consistency
 ```
+
+For a persistent local playground, use the sibling `../quinecms-dev-site` repository.
+It links this engine checkout and owns its testing login in its own `.env`; see
+that repository’s README for setup. The engine supplies no default credentials.
 
 The integration suite creates disposable sites with test-owned extensions. It
 checks React, Svelte, Vue and vanilla rendering, encrypted admin output, runtime

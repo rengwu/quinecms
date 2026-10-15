@@ -5,14 +5,9 @@ import { adminBundle } from '../../../scripts/admin-build';
 import { credentials, encryptAdmin } from '../../admin/crypto';
 import { storageFromEnv } from '../../admin/storage';
 import { gitFromEnv } from '../../admin/git';
-// One shared credential pair. Dev uses fixed credentials regardless of .env;
-// static builds still require the configured production pair.
-const email = import.meta.env.LEAN_DEV_SERVER
-  ? 'admin@example.com'
-  : (import.meta.env.ADMIN_EMAIL ?? '');
-const password = import.meta.env.LEAN_DEV_SERVER
-  ? 'asdf1234'
-  : (import.meta.env.ADMIN_PASSWORD ?? '');
+// Each site supplies its own shared credential pair in every environment.
+const email = import.meta.env.ADMIN_EMAIL ?? '';
+const password = import.meta.env.ADMIN_PASSWORD ?? '';
 credentials(email, password);
 const initial = await loadContent();
 const config = {

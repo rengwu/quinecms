@@ -275,13 +275,15 @@ it('fails the static build without both admin credentials', async () => {
 
 it.each([
   ['absent', 'ADMIN_EMAIL=\nADMIN_PASSWORD=\n'],
+  ['email only', 'ADMIN_EMAIL=fixture@example.com\nADMIN_PASSWORD=\n'],
+  ['password only', 'ADMIN_EMAIL=\nADMIN_PASSWORD=fixture-password\n'],
   [
-    'different',
+    'configured',
     'ADMIN_EMAIL=fixture@example.com\nADMIN_PASSWORD=fixture-password\n',
   ],
 ])(
-  'uses the single fixed dev login with %s configured credentials',
-  async (_, env) => {
+  'requires site-owned dev credentials: %s',
+  async (scenario, env) => {
     const directory = await projectFixture();
     try {
       await writeFile(join(directory, '.env'), env);
@@ -297,18 +299,35 @@ it.each([
         const server = await dev({ root: process.cwd(), server: { host: '127.0.0.1', port: 0 }, logLevel: 'error' });
       try {
         const response = await fetch('http://127.0.0.1:' + server.address.port + '/admin/');
-        if (!response.ok) throw Error('Admin returned HTTP ' + response.status);
+        await writeFile('dev-status.json', JSON.stringify(response.status));
         await writeFile('dev-admin.html', await response.text());
       } finally {
         await server.stop();
       }
     `,
       );
-      await command(join(directory, '.quinecms/workspace'), ['check-dev.mjs']);
+      const devResult = await command(join(directory, '.quinecms/workspace'), [
+        'check-dev.mjs',
+      ]);
+      const status = JSON.parse(
+        await readFile(
+          join(directory, '.quinecms/workspace/dev-status.json'),
+          'utf8',
+        ),
+      );
       const html = await readFile(
         join(directory, '.quinecms/workspace/dev-admin.html'),
         'utf8',
       );
+      if (scenario !== 'configured') {
+        expect(status).toBe(500);
+        expect(html).not.toContain('id="admin-payload"');
+        expect(devResult.stdout + devResult.stderr).toContain(
+          'ADMIN_EMAIL and ADMIN_PASSWORD',
+        );
+        return;
+      }
+      expect(status).toBe(200);
       const envelope = JSON.parse(
         html.match(
           /<script\b[^>]*id="admin-payload"[^>]*>([\s\S]*?)<\/script>/,
@@ -316,14 +335,14 @@ it.each([
       );
       const decrypted = await decryptAdmin(
         envelope,
-        'admin@example.com',
-        'asdf1234',
+        'fixture@example.com',
+        'fixture-password',
       );
       const admin = JSON.parse(gunzipSync(decrypted).toString());
       expect(admin.props.config.encryptedAdmin).toBe(true);
       expect(admin.props.initial.pages.length).toBeGreaterThan(0);
       await expect(
-        decryptAdmin(envelope, 'fixture@example.com', 'fixture-password').then(
+        decryptAdmin(envelope, 'admin@example.com', 'asdf1234').then(
           () => 'unlocked',
         ),
       ).rejects.toThrow();

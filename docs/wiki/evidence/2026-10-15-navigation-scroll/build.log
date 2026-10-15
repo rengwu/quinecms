@@ -1,0 +1,58 @@
+Registered 5 block versions.
+Registered 2 layout versions.
+01:43:52 [types] Generated 45ms
+01:43:52 [build] output: "static"
+01:43:52 [build] mode: "static"
+01:43:52 [build] directory: /private/var/folders/00/h_k67s0j5dq0qvg6ylqysk2w0000gn/T/quinecms-site-test-OHQ2xD/.quinecms/workspace/dist/
+01:43:52 [build] Collecting build info...
+01:43:52 [build] ✓ Completed in 111ms.
+01:43:52 [build] Building static entrypoints...
+01:43:52 [vite] ✓ built in 177ms
+01:43:53 [vite] ✓ built in 112ms
+01:43:53 [build] Rearranging server assets...
+
+ generating static routes
+01:43:53   ├─ /admin/index.html (+1.09s)
+01:43:54   ├─ /example-1/index.html (+17ms)
+01:43:54   ├─ /example-10/index.html (+13ms)
+01:43:54   ├─ /example-11/index.html (+9ms)
+01:43:54   ├─ /example-12/index.html (+8ms)
+01:43:54   ├─ /example-13/index.html (+10ms)
+01:43:54   ├─ /example-14/index.html (+8ms)
+01:43:54   ├─ /example-15/index.html (+7ms)
+01:43:54   ├─ /example-16/index.html (+9ms)
+01:43:54   ├─ /example-17/index.html (+26ms)
+01:43:54   ├─ /example-18/index.html (+8ms)
+01:43:54   ├─ /example-19/index.html (+13ms)
+01:43:54   ├─ /example-2/index.html (+9ms)
+01:43:54   ├─ /example-20/index.html (+9ms)
+01:43:54   ├─ /example-21/index.html (+22ms)
+01:43:54   ├─ /example-22/index.html (+10ms)
+01:43:54   ├─ /example-23/index.html (+13ms)
+01:43:54   ├─ /example-24/index.html (+9ms)
+01:43:54   ├─ /example-25/index.html (+8ms)
+01:43:54   ├─ /example-26/index.html (+9ms)
+01:43:54   ├─ /example-27/index.html (+9ms)
+01:43:54   ├─ /example-28/index.html (+7ms)
+01:43:54   ├─ /example-29/index.html (+9ms)
+01:43:54   ├─ /example-3/index.html (+9ms)
+01:43:54   ├─ /example-30/index.html (+10ms)
+01:43:54   ├─ /example-31/index.html (+8ms)
+01:43:54   ├─ /example-32/index.html (+9ms)
+01:43:54   ├─ /example-33/index.html (+7ms)
+01:43:54   ├─ /example-34/index.html (+9ms)
+01:43:54   ├─ /example-35/index.html (+10ms)
+01:43:54   ├─ /example-4/index.html (+9ms)
+01:43:54   ├─ /example-5/index.html (+8ms)
+01:43:54   ├─ /example-6/index.html (+8ms)
+01:43:54   ├─ /example-7/index.html (+8ms)
+01:43:54   ├─ /example-8/index.html (+10ms)
+01:43:54   ├─ /example-9/index.html (+8ms)
+01:43:54   ├─ /journal/a-slower-way-to-build/index.html (+8ms)
+01:43:54   ├─ /journal/index.html (+8ms)
+01:43:54   ├─ /index.html (+10ms)
+01:43:54 ✓ Completed in 1.55s.
+
+01:43:54 [build] ✓ Completed in 1.89s.
+01:43:54 [build] 39 page(s) built in 2.01s
+01:43:54 [build] Complete!

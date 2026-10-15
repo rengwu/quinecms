@@ -1,6 +1,6 @@
 ---
 title: Decisions
-updated: 2026-10-14
+updated: 2026-10-16
 status: Accepted
 ---
 # Decisions
@@ -523,7 +523,7 @@ and is recorded in the [save UX journal](../journal/2026-10-12-git-save-ux.md).
 
 | ID | Decision | Basis |
 | --- | --- | --- |
-| DEC-152 | Development always uses `admin@example.com` / `asdf1234` as the single shared login. Production retains its configured credential pair. | Direct user request and clarification: one account guards one dashboard and one set of content. The dev pair replaces environment credentials in dev; it is not a second account or a separate data store. See [admin contract](../features/admin-encryption.md). |
+| DEC-152 | Superseded by DEC-187. Development originally always used `admin@example.com` / `asdf1234` as the single shared login. Production retains its configured credential pair. | Direct user request and clarification: one account guards one dashboard and one set of content. The dev pair replaces environment credentials in dev; it is not a second account or a separate data store. See [admin contract](../features/admin-encryption.md). |
 
 ## Intr Studio recreation trial — interview, 2026-10-13
 
@@ -650,3 +650,17 @@ engineering work; none of these decisions records implementation or verification
 | ID | Decision | Basis and rationale |
 | --- | --- | --- |
 | DEC-186 | Configure Git provider, repository, branches, instance and access token in the site's build environment; connect automatically after admin login and remove repository setup/details from Settings. | Direct user request to apply the R2 pattern, cancelling the key-file login idea. Supersedes runtime token entry/session retention and editable connection forms from DEC-011/DEC-016 and subsequent connection UI decisions. The existing encrypted payload carries a shared site token to authorized editors. `.env.example` documents non-public variable names, defaults, disabled/partial configuration and token rotation. Preserve draft recovery, source/concurrency guards, backup and confirmed load-latest actions; no authentication backend or key-file feature. See the [publishing contract](../features/publishing.md). |
+
+
+## Site-owned development login — direct request, 2026-10-16
+
+| ID | Decision | Basis and rationale |
+| --- | --- | --- |
+| DEC-187 | Remove the engine’s fixed development login; require site-owned `ADMIN_EMAIL` and `ADMIN_PASSWORD` in development and production. Keep the familiar testing pair only in `quinecms-dev-site` configuration. | Direct user request to run the existing development site and move its testing credentials out of the engine. Supersedes DEC-152. Historical evidence remains historical; negative regression tests retain the old pair to prove it no longer unlocks other sites. No site overrides of engine files. |
+
+
+## Declared collection fields — chat approval, 2026-10-16
+
+| ID | Decision | Basis and rationale |
+| --- | --- | --- |
+| DEC-188 | Make public rendering and admin preview honor a block's existing top-level `collectionField` declarations; retain the legacy five-field fallback. | User approved after discussing purpose, admin behavior, engine changes and compatibility, then authorized work-until-grill. Complete one general contract without a query language, new admin screen or Tessera-specific engine code. Tessera uses separate blog/release blocks; detailed animation and unsupported services are omitted. See the [accepted scope](../discussions/tessera-collection-context.md). |

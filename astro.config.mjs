@@ -31,7 +31,7 @@ export default defineConfig({
           updateConfig({
             vite: {
               cacheDir: `.astro/vite/${command}`,
-              // NODE_ENV / --mode must never enable the dev login in a build.
+              // Keep development-only editor behavior tied to the Astro command.
               define: {
                 'import.meta.env.LEAN_DEV_SERVER': JSON.stringify(
                   command === 'dev',

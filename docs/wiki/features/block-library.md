@@ -1,6 +1,6 @@
 ---
 title: Searchable block library
-updated: 2026-10-13
+updated: 2026-10-16
 ---
 # Searchable block library
 
@@ -11,6 +11,16 @@ is preserved at engine commit `bfbb522`. The current engine ships no designs;
 [configured extensions](site-engine.md) supply the catalog. The initial shared
 library contains Archline and Intr. Historical test counts and recipes below apply
 to their recorded revisions, not the new pilot.
+
+## Current declared collection fields
+
+Engine 0.3.0 renders top-level `collectionField` declarations using the same
+selected collection/path/type contract as the editor and validation. Renderers
+read selected paths in `context.collections[].entries[].values`; undeclared
+entry fields are not added by this projection. Public and live-preview callers
+provide the definition. The prior five conventional mappings remain a fallback.
+See [local authoring](local-authoring.md) and the
+[accepted change](../discussions/tessera-collection-context.md).
 
 ## Intent and basis
 
@@ -25,6 +35,12 @@ Pages → open a static or generic page → Add block. Site Layout → Starter �
 All installed block themes are available in the main `/admin/` dashboard,
 independently of the selected site layout (DEC-163). **All themes** is the default;
 theme filters are optional browsing aids. No example launcher is required.
+
+Block tags describe content or purpose (for example, architecture, editorial or
+portfolio); never repeat the block's theme name as a tag. The catalog omits tags
+matching their block's theme, ignoring case and surrounding whitespace, including
+those supplied by older libraries. Themes remain searchable and selectable through
+the separate theme filter.
 
 - A large Kumo dialog searches names, themes and tags. Theme and multiple tag filters combine; Reset restores all compatible choices. Clicking a card opens an uncommitted New block (or New footer) form; only Create inserts it. Cancel discards the candidate. This follows the sitewide [creation contract](editor.md#creation-forms-dec-129). A separate catalog preview supports desktop/mobile widths. During page-block creation, the right-hand page preview also renders the candidate and its current field values (DEC-147). Thumbnails render actual defaults. Samples are prepared on first visibility in the dialog, sharing one resolved site context. A single visibility observer and grid size observer serve the thumbnails. Visited thumbnails remain mounted while scrolling; CSS skips offscreen rendering within their fixed aspect ratio. Filtering a card out, opening a full preview, or closing the dialog releases it. Returning to the grid starts lazy loading again. Without observer APIs, thumbnails render with resize-event sizing.
 - The catalog has a visible **Add block** title aligned with the accessible × in a fixed header row; the footer picker uses **Choose a footer**. This restores the visible title following direct screenshot feedback on 2026-10-08, superseding the title removal on 2026-10-06. There is no bottom Close action. Filters, tags, count and cards share one vertical scroll area below the header. Tags stay on one horizontally scrollable line with the scrollbar hidden; small left/right buttons at its ends scroll by up to 240px, disable at the corresponding edge and honor reduced motion. Reset filters stays visible, sizes to its text and disables when no filter is set. Cards cap at 270px wide. Preview uses the same scroll area and starts at the top when opened or exited.

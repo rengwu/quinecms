@@ -29,8 +29,8 @@ Regression tests read `tests/fixtures/content/`, independently of the client sit
 
 Record `git rev-parse HEAD` and dirty status. Hash application files, tests, content, configuration, and lockfile for a dirty build; the initial report links its manifest. `pnpm build` produces `.quinecms/workspace/.astro/client-graph.json`; `pnpm check:build` verifies output references/sharing and reports gzip module sizes. These sizes exclude the encrypted admin envelope embedded in HTML and runtime-fetched content; they are not a full page transfer measurement.
 
-Use a fresh browser tab for local fixtures. Development uses `admin@example.com` / `asdf1234`. Production build/preview requires
-the configured ADMIN_EMAIL and ADMIN_PASSWORD pair. Provider configuration is optional for local editing. Session recovery survives reload; Settings → Discard edits resets to the loaded baseline. Browser-only changes do not alter local content files. Do not reuse the user's unrelated tabs or data as fixtures.
+Use a fresh browser tab for local fixtures. Development and production build/preview require
+the site’s configured ADMIN_EMAIL and ADMIN_PASSWORD pair. The separate `quinecms-dev-site` owns its testing login; the engine supplies no default. Provider configuration is optional for local editing. Session recovery survives reload; Settings → Discard edits resets to the loaded baseline. Browser-only changes do not alter local content files. Do not reuse the user's unrelated tabs or data as fixtures.
 
 ## Available drivers and fixtures
 

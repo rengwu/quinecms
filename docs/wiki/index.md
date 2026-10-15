@@ -1,11 +1,34 @@
 ---
 title: QuineCMS
-updated: 2026-10-14
+updated: 2026-10-16
 status: Accepted
 ---
 # QuineCMS
 
-Latest change: [Git environment configuration](features/publishing.md#build-environment-setup)
+Latest implementation: [declared collection field rendering and Tessera](discussions/tessera-collection-context.md)
+(DEC-188). The engine now uses the existing field declarations in public rendering
+and admin preview, with legacy compatibility. Tessera lives in the library and
+independent dev site; [verification](verification/runs/2026-10-16-tessera.md)
+records the 59-page recreation, checks and local-only delivery boundary. The
+[visual fidelity pass](verification/runs/2026-10-16-tessera-fidelity.md) restores
+the reference testimonial cards, developer ticker, five feature panels and animated
+CTA, with shared typography and interaction refinements.
+
+Latest repair: [admin preview overlap](verification/runs/2026-10-16-admin-sizing.md).
+Admin containers include their padding and borders in declared dimensions;
+Archline’s preview no longer sits underneath the drawer or header.
+
+Latest change: development credentials are site-owned (DEC-187). The engine no
+longer overrides login credentials. The sibling `quinecms-dev-site` configures
+its testing login locally and runs at `http://127.0.0.1:4322/`.
+[Verification](verification/runs/2026-10-16-site-owned-login.md): 261 tests,
+site validation/typecheck and Safari login/homepage checks pass.
+
+Latest fix: [dashboard navigation scroll](verification/runs/2026-10-15-navigation-scroll.md).
+Switching main sections opens the destination at the top on desktop and mobile,
+without carrying over the previous section's document scroll.
+
+Previous change: [Git environment configuration](features/publishing.md#build-environment-setup)
 (DEC-186). Sites configure the repository and shared access token in the build
 environment; login connects automatically, with no repository setup in Settings.
 Recovery retains pending edits and provides retry/confirmed loading.
@@ -82,9 +105,9 @@ small fixes and instruction improvements from CMS follow-up proposals.
 [Verification](verification/runs/2026-10-13-intr-rebuild.md): 207 tests, production
 builds and representative Chrome public/editor checks pass.
 
-Development login is now `admin@example.com` / `asdf1234`, regardless of `.env`
-(DEC-152). One shared login guards one dashboard and its existing content;
-production retains its configured pair. See [admin behavior](features/admin-encryption.md).
+Historical development-login override (DEC-152) is superseded by DEC-187.
+Development and production now require site-owned environment credentials;
+the separate `quinecms-dev-site` owns the testing login. See [admin behavior](features/admin-encryption.md).
 
 Latest editor change: [Git save status and recovery](journal/2026-10-12-git-save-ux.md)
 (DEC-148–DEC-151). A small status sits beside Save; stale saves preserve edits and

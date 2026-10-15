@@ -12,6 +12,10 @@
   --editor-space-4: 16px;
   --editor-space-6: 24px;
 }
+.workspace :global(.kumo-ui) {
+  /* Kumo's scoped reset covers descendants, not these admin containers. */
+  box-sizing: border-box;
+}
 .adminCanvas {
   position: fixed;
   inset: 0;
@@ -639,6 +643,11 @@
   text-align: center;
   color: #637068;
 }
+.mediaGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 220px), 1fr));
+  gap: var(--editor-space-4);
+}
 .mediaCard {
   border: 1px solid var(--color-kumo-line);
   padding: var(--editor-space-4);
@@ -651,7 +660,7 @@
 }
 .mediaCard img {
   width: 100%;
-  max-height: 140px;
+  height: 140px;
   object-fit: contain;
   background: var(--color-kumo-recessed);
 }

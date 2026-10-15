@@ -12,6 +12,7 @@ import type { LayoutProps } from '../core/layout-contract';
 import { activeLayout, layoutKey } from '../core/layouts';
 import { layoutRenderers } from '../generated/layout-browser';
 import { contextFor } from '../core/content';
+import { definitions } from '../generated/definitions';
 import { bindingPlaceholders } from '../core/bindings';
 import Island from './Island';
 
@@ -114,7 +115,13 @@ export function PageBlocks({
           <Island
             block={b}
             context={{
-              ...contextFor(content, b.id),
+              ...contextFor(
+                content,
+                b.id,
+                definitions.find(
+                  (d) => d.type === b.type && d.version === b.version,
+                ),
+              ),
               preview: true,
               ...(page.kind === 'generic'
                 ? { bindingPlaceholders: bindingPlaceholders(b) }

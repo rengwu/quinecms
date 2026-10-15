@@ -1,9 +1,12 @@
-import { mkdir, mkdtemp, symlink, writeFile } from 'node:fs/promises';
+import { mkdir, mkdtemp, symlink, writeFile, readFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 
 /** A real, small site using original extensions, with no bundled designs. */
 export async function projectFixture() {
+  const engineVersion = JSON.parse(
+    await readFile(new URL('../../package.json', import.meta.url), 'utf8'),
+  ).version;
   const directory = await mkdtemp(join(tmpdir(), 'quinecms-site-test-'));
   const put = async (name: string, value: unknown) => {
     const path = join(directory, name);
@@ -20,7 +23,9 @@ export async function projectFixture() {
   await put('package.json', {
     name: 'fixture-site',
     type: 'module',
-    dependencies: { quinecms: '0.2.0' },
+    dependencies: {
+      quinecms: engineVersion,
+    },
   });
   await put('pnpm-lock.yaml', 'lockfileVersion: "9.0"\n');
   await put('quinecms.config.json', {
@@ -119,7 +124,7 @@ export async function projectFixture() {
   }
   await put('extensions/local/quinecms.library.json', {
     id: 'local',
-    engine: '^0.2.0',
+    engine: `^${engineVersion}`,
     blocks: blocks.map((d) => `src/blocks/${d.type}`),
     layouts: ['src/layouts/alpha', 'src/layouts/beta'],
   });

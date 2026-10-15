@@ -1,6 +1,6 @@
 ---
 title: Git draft saves and publishing
-updated: 2026-10-14
+updated: 2026-10-16
 ---
 # Git draft saves and publishing
 
@@ -53,7 +53,7 @@ Git settings and the token are serialized only inside the existing encrypted
 admin payload. Everyone with the admin login receives the configured repository
 access and can recover the token. Scope it to the intended site. This is a shared
 credential, not individual Git identities, and adds no secret-holding backend.
-Use a disposable repository/token in development: the development login is fixed.
+Use a disposable repository/token for development testing, especially in the shared dev site.
 Never commit `.env` or real tokens. See [encrypted admin](admin-encryption.md).
 
 Tokens stay in decrypted memory; they are not copied into session/local storage,

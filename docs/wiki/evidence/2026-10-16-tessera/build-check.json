@@ -1,0 +1,311 @@
+{
+  "runtimeCopies": {
+    "@vue/runtime-core": 1,
+    "@vue/runtime-dom": 1,
+    "react-dom": 1,
+    "svelte": 1,
+    "react": 1
+  },
+  "pages": [
+    {
+      "page": "admin/index.html",
+      "javascriptModules": 1,
+      "gzipJavaScriptBytes": 1662
+    },
+    {
+      "page": "api-reference/create-preview-branch/index.html",
+      "javascriptModules": 5,
+      "gzipJavaScriptBytes": 90053
+    },
+    {
+      "page": "api-reference/create-project/index.html",
+      "javascriptModules": 5,
+      "gzipJavaScriptBytes": 90053
+    },
+    {
+      "page": "api-reference/create-row/index.html",
+      "javascriptModules": 5,
+      "gzipJavaScriptBytes": 90053
+    },
+    {
+      "page": "api-reference/create-token/index.html",
+      "javascriptModules": 5,
+      "gzipJavaScriptBytes": 90053
+    },
+    {
+      "page": "api-reference/create-webhook/index.html",
+      "javascriptModules": 5,
+      "gzipJavaScriptBytes": 90053
+    },
+    {
+      "page": "api-reference/delete-project/index.html",
+      "javascriptModules": 5,
+      "gzipJavaScriptBytes": 90053
+    },
+    {
+      "page": "api-reference/delete-row/index.html",
+      "javascriptModules": 5,
+      "gzipJavaScriptBytes": 90053
+    },
+    {
+      "page": "api-reference/delete-webhook/index.html",
+      "javascriptModules": 5,
+      "gzipJavaScriptBytes": 90053
+    },
+    {
+      "page": "api-reference/index.html",
+      "javascriptModules": 5,
+      "gzipJavaScriptBytes": 90053
+    },
+    {
+      "page": "api-reference/invoke-function/index.html",
+      "javascriptModules": 5,
+      "gzipJavaScriptBytes": 90053
+    },
+    {
+      "page": "api-reference/list-environments/index.html",
+      "javascriptModules": 5,
+      "gzipJavaScriptBytes": 90053
+    },
+    {
+      "page": "api-reference/list-function-runs/index.html",
+      "javascriptModules": 5,
+      "gzipJavaScriptBytes": 90053
+    },
+    {
+      "page": "api-reference/list-projects/index.html",
+      "javascriptModules": 5,
+      "gzipJavaScriptBytes": 90053
+    },
+    {
+      "page": "api-reference/list-rows/index.html",
+      "javascriptModules": 5,
+      "gzipJavaScriptBytes": 90053
+    },
+    {
+      "page": "api-reference/list-webhooks/index.html",
+      "javascriptModules": 5,
+      "gzipJavaScriptBytes": 90053
+    },
+    {
+      "page": "api-reference/promote-environment/index.html",
+      "javascriptModules": 5,
+      "gzipJavaScriptBytes": 90053
+    },
+    {
+      "page": "api-reference/refresh-token/index.html",
+      "javascriptModules": 5,
+      "gzipJavaScriptBytes": 90053
+    },
+    {
+      "page": "api-reference/retrieve-project/index.html",
+      "javascriptModules": 5,
+      "gzipJavaScriptBytes": 90053
+    },
+    {
+      "page": "api-reference/retrieve-row/index.html",
+      "javascriptModules": 5,
+      "gzipJavaScriptBytes": 90053
+    },
+    {
+      "page": "api-reference/revoke-session/index.html",
+      "javascriptModules": 5,
+      "gzipJavaScriptBytes": 90053
+    },
+    {
+      "page": "api-reference/update-row/index.html",
+      "javascriptModules": 5,
+      "gzipJavaScriptBytes": 90053
+    },
+    {
+      "page": "blog/how-branching-databases-work/index.html",
+      "javascriptModules": 5,
+      "gzipJavaScriptBytes": 90053
+    },
+    {
+      "page": "blog/index.html",
+      "javascriptModules": 6,
+      "gzipJavaScriptBytes": 90134
+    },
+    {
+      "page": "blog/introducing-typed-realtime-queries/index.html",
+      "javascriptModules": 5,
+      "gzipJavaScriptBytes": 90053
+    },
+    {
+      "page": "blog/migrating-from-firebase-in-an-afternoon/index.html",
+      "javascriptModules": 5,
+      "gzipJavaScriptBytes": 90053
+    },
+    {
+      "page": "blog/multi-tenant-apps-with-row-level-rules/index.html",
+      "javascriptModules": 5,
+      "gzipJavaScriptBytes": 90053
+    },
+    {
+      "page": "blog/tessera-2-0-what-changed-and-why/index.html",
+      "javascriptModules": 5,
+      "gzipJavaScriptBytes": 90053
+    },
+    {
+      "page": "blog/why-we-generate-types-from-schemas-not-the-other-way-around/index.html",
+      "javascriptModules": 5,
+      "gzipJavaScriptBytes": 90053
+    },
+    {
+      "page": "changelog/index.html",
+      "javascriptModules": 5,
+      "gzipJavaScriptBytes": 90053
+    },
+    {
+      "page": "customers/fieldnote/index.html",
+      "javascriptModules": 5,
+      "gzipJavaScriptBytes": 90053
+    },
+    {
+      "page": "customers/index.html",
+      "javascriptModules": 6,
+      "gzipJavaScriptBytes": 90134
+    },
+    {
+      "page": "customers/loop-co/index.html",
+      "javascriptModules": 5,
+      "gzipJavaScriptBytes": 90053
+    },
+    {
+      "page": "customers/northwind-labs/index.html",
+      "javascriptModules": 5,
+      "gzipJavaScriptBytes": 90053
+    },
+    {
+      "page": "docs/environments/index.html",
+      "javascriptModules": 5,
+      "gzipJavaScriptBytes": 90053
+    },
+    {
+      "page": "docs/index.html",
+      "javascriptModules": 5,
+      "gzipJavaScriptBytes": 90053
+    },
+    {
+      "page": "docs/indexes/index.html",
+      "javascriptModules": 5,
+      "gzipJavaScriptBytes": 90053
+    },
+    {
+      "page": "docs/installation/index.html",
+      "javascriptModules": 5,
+      "gzipJavaScriptBytes": 90053
+    },
+    {
+      "page": "docs/limits/index.html",
+      "javascriptModules": 5,
+      "gzipJavaScriptBytes": 90053
+    },
+    {
+      "page": "docs/migrations/index.html",
+      "javascriptModules": 5,
+      "gzipJavaScriptBytes": 90053
+    },
+    {
+      "page": "docs/observability/index.html",
+      "javascriptModules": 5,
+      "gzipJavaScriptBytes": 90053
+    },
+    {
+      "page": "docs/permissions/index.html",
+      "javascriptModules": 5,
+      "gzipJavaScriptBytes": 90053
+    },
+    {
+      "page": "docs/presence/index.html",
+      "javascriptModules": 5,
+      "gzipJavaScriptBytes": 90053
+    },
+    {
+      "page": "docs/preview-branches/index.html",
+      "javascriptModules": 5,
+      "gzipJavaScriptBytes": 90053
+    },
+    {
+      "page": "docs/project-structure/index.html",
+      "javascriptModules": 5,
+      "gzipJavaScriptBytes": 90053
+    },
+    {
+      "page": "docs/providers/index.html",
+      "javascriptModules": 5,
+      "gzipJavaScriptBytes": 90053
+    },
+    {
+      "page": "docs/queries/index.html",
+      "javascriptModules": 5,
+      "gzipJavaScriptBytes": 90053
+    },
+    {
+      "page": "docs/quickstart/index.html",
+      "javascriptModules": 5,
+      "gzipJavaScriptBytes": 90053
+    },
+    {
+      "page": "docs/relations/index.html",
+      "javascriptModules": 5,
+      "gzipJavaScriptBytes": 90053
+    },
+    {
+      "page": "docs/row-level-rules/index.html",
+      "javascriptModules": 5,
+      "gzipJavaScriptBytes": 90053
+    },
+    {
+      "page": "docs/schema/index.html",
+      "javascriptModules": 5,
+      "gzipJavaScriptBytes": 90053
+    },
+    {
+      "page": "docs/secrets/index.html",
+      "javascriptModules": 5,
+      "gzipJavaScriptBytes": 90053
+    },
+    {
+      "page": "docs/sessions/index.html",
+      "javascriptModules": 5,
+      "gzipJavaScriptBytes": 90053
+    },
+    {
+      "page": "docs/subscriptions/index.html",
+      "javascriptModules": 5,
+      "gzipJavaScriptBytes": 90053
+    },
+    {
+      "page": "docs/transactions/index.html",
+      "javascriptModules": 5,
+      "gzipJavaScriptBytes": 90053
+    },
+    {
+      "page": "docs/triggers-and-schedules/index.html",
+      "javascriptModules": 5,
+      "gzipJavaScriptBytes": 90053
+    },
+    {
+      "page": "docs/writing-functions/index.html",
+      "javascriptModules": 5,
+      "gzipJavaScriptBytes": 90053
+    },
+    {
+      "page": "index.html",
+      "javascriptModules": 8,
+      "gzipJavaScriptBytes": 90296
+    },
+    {
+      "page": "pricing/index.html",
+      "javascriptModules": 6,
+      "gzipJavaScriptBytes": 90134
+    },
+    {
+      "page": "product/index.html",
+      "javascriptModules": 7,
+      "gzipJavaScriptBytes": 90215
+    }
+  ]
+}

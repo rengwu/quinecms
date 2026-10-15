@@ -1,6 +1,9 @@
 import type { Definition } from '../core/types';
 export const themeOf = (d: Definition) => d.theme || 'Uncategorized';
-export const tagsOf = (d: Definition) => d.tags ?? [d.label.toLowerCase()];
+export const tagsOf = (d: Definition) =>
+  (d.tags ?? [d.label.toLowerCase()]).filter(
+    (tag) => tag.trim().toLowerCase() !== themeOf(d).trim().toLowerCase(),
+  );
 export function catalogDefinitions(
   definitions: Definition[],
   kind: 'static' | 'generic',

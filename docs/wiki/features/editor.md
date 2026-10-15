@@ -1,6 +1,6 @@
 ---
 title: Visual editing and recovery
-updated: 2026-10-14
+updated: 2026-10-16
 ---
 # Visual editing and recovery
 
@@ -57,6 +57,19 @@ The [accepted design](../discussions/agreed-design.md) requires a side drawer al
 
 DEC-052–DEC-054 established the Add block header action and separate Content and Collection schemas areas. DEC-074 replaces the standalone Home menu with persistent main navigation in a separate left sidebar. The current area stays highlighted even in nested editors; Pages opens by default. At widths up to 800px, Menu opens the same destinations in a Kumo dialog.
 
+Admin surface roots explicitly use `box-sizing: border-box`, so their declared
+widths and heights include padding and borders. This rule belongs to the engine
+and stays outside site previews; it must not depend on a theme's reset.
+[Preview overlap verification](../verification/runs/2026-10-16-admin-sizing.md).
+
+Main sections are selected by React state and conditionally rendered within one
+browser document, without separate URLs. Switching between Pages, Content,
+Collections, Objects, Media, Site Layouts and Settings resets document scrolling
+to the top before paint. This applies to both the sidebar and mobile menu.
+Editing within a section or expanding Schemas does not trigger that reset; nested
+field drill-down retains its existing parent-form show/hide behavior.
+[Scroll verification](../verification/runs/2026-10-15-navigation-scroll.md).
+
 DEC-132 makes non-leaf sidebar items disclosures without routes. Schemas expands/collapses Collections and Objects without navigating or resetting the current editor. Each child opens its list directly, with no intermediate Schemas screen and no Back button on either list. Nested schema editors retain Back. Only the active leaf has `aria-current`; the parent exposes its expanded state and a caret. The compact navigation dialog uses the same hierarchy, staying open for disclosure changes and closing after a leaf selection. Opening the menu on a schema destination reveals its active child.
 
 DEC-055 requires consistent form and action layout. The [editor layout contract](../journal/2026-10-05-editor-layout.md) defines 8px label/control gaps, 16px field gaps, 24px section spacing/padding, grouped navigation fields and separate terminal actions. Custom widgets follow the same contract as built-in fields.
@@ -71,7 +84,7 @@ Pages and the other admin section headings share 18px, weight 600, line-height 1
 
 ## Entry points and prerequisites
 
-Open `/admin/` using [setup](../verification/setup.md). Development uses `admin@example.com` / `asdf1234`; production uses the configured email and password to decrypt the dashboard. See [encrypted admin](admin-encryption.md). Repository credentials are needed only for remote loading/saving. The main sidebar provides Pages, Content, Schemas, Media, Site Layouts and Settings. Schemas separates Collections and Objects; the [content-model contract](content-model.md) describes shared definitions, nested values, references and single entries. Area switching preserves local content; existing-item editors use ← Back to return to their parent screen; creation forms use Cancel and Create instead.
+Open `/admin/` using [setup](../verification/setup.md). Development and production use the site’s configured `ADMIN_EMAIL` and `ADMIN_PASSWORD` to decrypt the dashboard; the engine has no default login (DEC-187). See [encrypted admin](admin-encryption.md). Repository credentials are needed only for remote loading/saving. The main sidebar provides Pages, Content, Schemas, Media, Site Layouts and Settings. Schemas separates Collections and Objects; the [content-model contract](content-model.md) describes shared definitions, nested values, references and single entries. Area switching preserves local content; existing-item editors use ← Back to return to their parent screen; creation forms use Cancel and Create instead.
 
 ## Expected outcomes
 
