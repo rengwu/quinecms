@@ -5,6 +5,12 @@ status: Accepted
 ---
 # QuineCMS
 
+Latest implementation: [live entry preview](discussions/entry-preview.md)
+(DEC-189–DEC-192). Routed entries now reuse the split editor with live bound
+content, pending-entry previews and shared-template access. Data-only entries retain
+the full-width editor. [Verification](verification/runs/2026-10-16-entry-preview.md)
+records automated checks and local Tessera browser journeys.
+
 Latest implementation: [declared collection field rendering and Tessera](discussions/tessera-collection-context.md)
 (DEC-188). The engine now uses the existing field declarations in public rendering
 and admin preview, with legacy compatibility. Tessera lives in the library and

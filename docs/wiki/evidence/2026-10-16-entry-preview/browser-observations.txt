@@ -1,0 +1,49 @@
+2026-10-16 — manual observation record from native browser automation.
+This is a written record, not an exported screenshot or console transcript.
+
+DEV / Helium / 127.0.0.1:4337
+- Unlocked disposable local admin and observed mounted Pages table/sidebar.
+- Content > Tessera Posts > How branching databases work: schema fields left;
+  actual title, metadata, summary, rich-text body, marketing header/footer right.
+- Changed Title to Live entry preview verified. Input, editor heading and preview
+  H1 changed immediately, without saving.
+- Toggle preview width produced a narrow centered preview with collapsed menu;
+  fields stayed visible. Toggled back to desktop.
+- Edit shared template opened Pages > Blog article and its block controls with
+  prior generic template preview context. Returning to Content retained edited title.
+- Add entry: fields and preview visible, shared-template button disabled.
+  Entered Pending entry preview, cleared URL slug: preview still rendered title.
+- Clicked Product in preview: remained in New entry with pending fields intact.
+- Entered rich-text Body: This body updates before Create. It appeared in editor
+  and preview accessibility output.
+- Cancel returned to six original entries; pending title absent.
+- Content > Tessera Documentation > Environments: docs sidebar/layout rendered.
+  Clicking Migrations in sidebar selected Migrations fields and preview together.
+
+PRODUCTION / Helium / 127.0.0.1:4338
+- Unlocked built encrypted admin, observed mounted Pages table/sidebar.
+- Opened same Tessera Posts entry: actual title/body and marketing chrome rendered.
+- Changed title to Production preview verified. Editor field/heading and preview
+  H1 changed; Unsaved changes visible.
+- Restored original title: Local preview status returned.
+- Closed owned test tab; unrelated user tabs retained.
+
+ADDITIONAL SAFARI ATTEMPT / production port 4338
+- Opened disposable test tab and attempted unlock. It remained at Unlocking;
+  did not establish mounted editor or execute entry-preview scenario.
+- Background-tab scheduling/tooling was a possible explanation, not a diagnosis.
+  No confirmed cause or entry-preview-specific failure was established.
+- Closed developer tools and test tab; declined credential-save prompt.
+
+CLI
+- Final pnpm verify: 31 files, 271 tests passed; output preserved separately.
+- Isolated site check: 256 files, 0 errors, 0 warnings, 0 hints observed in command
+  output. A separate raw typecheck log was not saved.
+- Production build: 60 pages including admin. check-build runtime copies each 1.
+- Source Prettier check and git diff --check passed.
+
+ISOLATION
+- Browser edits never wrote local content. Before cleanup, SHA-256 manifest of
+  isolated content matched the independent dev site's content exactly.
+- Evidence preserved before removing the owned temporary site and stopping servers.
+- No Git/R2/hosting operations were performed. Existing dev server 4322 untouched.

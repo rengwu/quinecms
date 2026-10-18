@@ -88,6 +88,14 @@ Open `/admin/` using [setup](../verification/setup.md). Development and producti
 
 ## Expected outcomes
 
+**Live entry preview (DEC-189–DEC-192):** Content entries with an assigned generic
+page now reuse the page editor's split view. Schema fields stay on the left;
+current entry values render through the shared template and its layout on the
+right. Creation previews pending values until Create/Cancel, and data-only entries
+keep the full-width editor. The shared-template shortcut preserves draft edits.
+See the [entry-preview contract](generic-pages.md)
+and [verification](../verification/runs/2026-10-16-entry-preview.md).
+
 Incoming references appear as **Used in N places** above the deletion action, with plain-language instructions to remove or change the links first. Rows show recognizable editor locations, record names, field labels and list-item names; storage paths and IDs stay out of the summary. **Open** goes to the owning page/block, entry, collection/object schema or Site Layout. Self-references do not appear as deletion blockers. Object definitions use the same rows to explain where edits will apply. See the [reference-summary verification](../verification/runs/2026-10-08-readable-usage.md).
 
 The mobile live preview is horizontally centered in the workspace remaining beside the navigation and editing drawer. Its 390px width shrinks to the available desktop space; the narrow-window overflow behavior remains in place.

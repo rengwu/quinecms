@@ -5,16 +5,20 @@ import { createRoot, type Root } from 'react-dom/client';
 import App from '../src/editor/App';
 import { modelFixture } from './support/content-model';
 import { entryPath } from '../src/core/routes';
-import type { Block, Content } from '../src/core/types';
-import { readRecovery, retain } from '../src/editor/recovery';
+import type { Block, Content, Context } from '../src/core/types';
+import { readRecovery, retain, recoveryText } from '../src/editor/recovery';
 import { layoutDefinitions, selectLayout } from '../src/core/layouts';
 import { adminThemeKey } from '../src/editor/AdminTheme';
 vi.mock('../src/editor/Island', () => ({
-  default: ({ block }: { block: Block }) =>
-    createElement('div', {
+  default: ({ block, context }: { block: Block; context: Context }) => {
+    if (block.props.title === 'Throw preview fixture')
+      throw Error('Fixture rendering error');
+    return createElement('div', {
       'data-preview-island': block.id,
       'data-preview-props': JSON.stringify(block.props),
-    }),
+      'data-preview-context': JSON.stringify(context),
+    });
+  },
 }));
 const config = {
   git: null,
@@ -1726,4 +1730,265 @@ it('keeps the last active layout when no pages exist and recovers multiple layou
   ).toContain('Reset layout settings?');
   await click('Cancel', host.querySelector('[role="dialog"][data-open]')!);
   expect(readRecovery()!.content).toEqual(saved);
+});
+
+function entryPreviewFixture() {
+  const initial = modelFixture();
+  const template = initial.pages.find(
+    (p) => p.id === initial.collections[0].genericPageId,
+  )!;
+  template.blocks.push({
+    id: 'entry_details',
+    type: 'structured-details',
+    version: 1,
+    props: { heading: 'Fallback heading', author: '', groups: [] },
+    bindings: {
+      heading: 'seo.title',
+      author: 'author.name',
+      groups: {
+        source: 'groups',
+        fields: {
+          title: 'name',
+          items: {
+            source: 'rows',
+            fields: { label: 'detail.label', value: 'detail.owner.name' },
+          },
+        },
+      },
+    },
+  });
+  return initial;
+}
+function previewValue(id: string, attribute = 'props') {
+  return JSON.parse(
+    host
+      .querySelector(`[data-preview-island="${id}"]`)!
+      .getAttribute(`data-preview-${attribute}`)!,
+  );
+}
+async function openRoutedEntry(initial: Content) {
+  const collection = initial.collections[0],
+    entry = initial.entries[0];
+  await click('Content');
+  await click(collection.name);
+  if (collection.mode === 'many')
+    await click(
+      String(entry.values[collection.titleField]) +
+        entryPath(collection, entry),
+    );
+}
+
+it('previews live entry bindings, nested references and media through the shared page, retaining edits when opening its template', async () => {
+  const initial = entryPreviewFixture();
+  initial.entries[0].values.image = { mediaId: 'cover', alt: 'Cover image' };
+  initial.media.push({
+    formatVersion: 1,
+    id: 'cover',
+    name: 'Cover',
+    original: {
+      key: 'cover.webp',
+      url: '/cover.webp',
+      mime: 'image/webp',
+      bytes: 10,
+    },
+    variants: [],
+  });
+  await mount(initial);
+  await openRoutedEntry(initial);
+  expect(host.querySelector('aside[aria-label="Site builder"]')).not.toBeNull();
+  expect(previewValue('block_entry_heading').title).toBe(
+    initial.entries[0].values.title,
+  );
+  expect(previewValue('block_entry_body').body).toBe(
+    initial.entries[0].values.body,
+  );
+  expect(previewValue('block_entry_media').file).toEqual(
+    initial.entries[0].values.image,
+  );
+  expect(previewValue('block_entry_media', 'context').media).toEqual(
+    initial.media,
+  );
+  expect(
+    previewValue('block_entry_heading', 'context').bindingPlaceholders,
+  ).toBeUndefined();
+  expect(previewValue('entry_details')).toMatchObject({
+    heading: 'Search title',
+    author: 'Ada',
+    groups: [
+      { title: 'Specifications', items: [{ label: 'Weight', value: 'Ada' }] },
+    ],
+  });
+  await input('Title', 'Unsaved preview title');
+  expect(previewValue('block_entry_heading').title).toBe(
+    'Unsaved preview title',
+  );
+  await click('Edit SEO');
+  await input('SEO title', 'Nested live heading');
+  expect(previewValue('entry_details').heading).toBe('Nested live heading');
+  expect(host.querySelector('[aria-label="Live preview"]')).not.toBeNull();
+  await click('← Back');
+  await click('Ada');
+  await click('Grace');
+  expect(previewValue('entry_details').author).toBe('Grace');
+  await act(async () =>
+    host
+      .querySelector<HTMLButtonElement>('[aria-label="Toggle preview width"]')!
+      .click(),
+  );
+  expect(
+    host
+      .querySelector('[aria-label="Live preview"]')
+      ?.getAttribute('data-size'),
+  ).toBe('mobile');
+  await click('Edit shared template');
+  expect(
+    editorPanel().querySelector('[aria-label="Page title"]'),
+  ).not.toBeNull();
+  expect(
+    previewValue('block_entry_heading', 'context').bindingPlaceholders.title,
+  ).toBe('{{title}}');
+  expect(readRecovery()!.content.entries[0].values.title).toBe(
+    'Unsaved preview title',
+  );
+});
+
+it('previews pending entries without persisting them and guards navigation until Create or Cancel', async () => {
+  const initial = entryPreviewFixture();
+  await mount(initial);
+  await click('Content');
+  await click(initial.collections[0].name);
+  const before = readRecovery()!.content;
+  await click('Add entry');
+  expect(host.querySelector('[aria-label="Live preview"]')).not.toBeNull();
+  expect(button('Edit shared template').disabled).toBe(true);
+  await input('Title', 'Pending live title');
+  expect(previewValue('block_entry_heading').title).toBe('Pending live title');
+  expect(readRecovery()!.content).toEqual(before);
+  const link = host.querySelector<HTMLAnchorElement>(
+    '[aria-label="Live preview"] a',
+  );
+  expect(link).not.toBeNull();
+  await act(async () => link!.click());
+  expect(button('Create entry')).toBeDefined();
+  expect(previewValue('block_entry_heading').title).toBe('Pending live title');
+  await click('Cancel');
+  expectAdminView();
+  expect(readRecovery()!.content).toEqual(before);
+  await click('Add entry');
+  await input('Title', 'Created live title');
+  await click('Create entry');
+  expect(previewValue('block_entry_heading').title).toBe('Created live title');
+  expect(button('Edit shared template').disabled).toBe(false);
+  expect(readRecovery()!.content.entries).toHaveLength(
+    before.entries.length + 1,
+  );
+  expect(readRecovery()!.content.pages).toEqual(before.pages);
+});
+
+it('previews routed singleton values without a slug and reuses navigation to another document', async () => {
+  const initial = entryPreviewFixture();
+  initial.collections[0].mode = 'single';
+  initial.collections[0].path = '/profile';
+  initial.entries = [
+    initial.entries[0],
+    ...initial.entries.filter(
+      (e) => e.collectionId !== initial.collections[0].id,
+    ),
+  ];
+  await mount(initial);
+  await openRoutedEntry(initial);
+  expect(editorPanel().querySelector('[aria-label="URL slug"]')).toBeNull();
+  expect(previewValue('block_entry_heading').title).toBe(
+    initial.entries[0].values.title,
+  );
+  await input('Title', 'Updated singleton');
+  const link = host.querySelector<HTMLAnchorElement>(
+    '[aria-label="Live preview"] a',
+  );
+  expect(link).not.toBeNull();
+  await act(async () => link!.click());
+  expect(
+    editorPanel().querySelector('[aria-label="Page title"]'),
+  ).not.toBeNull();
+  expect(readRecovery()!.content.entries[0].values.title).toBe(
+    'Updated singleton',
+  );
+});
+
+it.each([
+  'missing template',
+  'wrong page kind',
+  'missing layout',
+  'missing layout implementation',
+])(
+  'keeps entry fields usable with %s and allows data-only navigation',
+  async (failure) => {
+    const initial = entryPreviewFixture();
+    const template = initial.pages.find(
+      (p) => p.id === initial.collections[0].genericPageId,
+    )!;
+    if (failure === 'missing template')
+      initial.pages = initial.pages.filter((p) => p !== template);
+    if (failure === 'wrong page kind') template.kind = 'static';
+    if (failure === 'missing layout') template.layoutId = 'absent';
+    if (failure === 'missing layout implementation')
+      initial.site.layout!.id = 'absent';
+    await mount(initial);
+    await click('Content');
+    await click(initial.collections[0].name);
+    const row = editorPanel().querySelector<HTMLButtonElement>(
+      '[aria-label="Entries"] button',
+    )!;
+    await act(async () => row.click());
+    expect(
+      host.querySelector('[aria-label="Live preview"] [role="alert"]'),
+    ).not.toBeNull();
+    await input('Title', 'Editable despite broken preview');
+    expect(JSON.parse(recoveryText()!).content.entries[0].values.title).toBe(
+      'Editable despite broken preview',
+    );
+    if (failure === 'missing layout') {
+      await click('Edit shared template');
+      await chooseOption('Site layout', 'Main layout');
+      await openRoutedEntry({
+        ...initial,
+        entries: [
+          {
+            ...initial.entries[0],
+            values: {
+              ...initial.entries[0].values,
+              title: 'Editable despite broken preview',
+            },
+          },
+        ],
+      });
+      expect(previewValue('block_entry_heading').title).toBe(
+        'Editable despite broken preview',
+      );
+      expect(readRecovery()!.content.entries[0].values.title).toBe(
+        'Editable despite broken preview',
+      );
+    }
+    await click('Content');
+    await click('Authors');
+    await click('AdaData only');
+    expectAdminView();
+  },
+);
+
+it('recovers a failed preview after correcting entry values without losing the fields', async () => {
+  vi.spyOn(console, 'error').mockImplementation(() => {});
+  const initial = entryPreviewFixture();
+  await mount(initial);
+  await openRoutedEntry(initial);
+  await input('Title', 'Throw preview fixture');
+  expect(
+    host.querySelector('[aria-label="Live preview"] [role="alert"]')
+      ?.textContent,
+  ).toContain('Fixture rendering error');
+  await input('Title', 'Repaired preview');
+  expect(
+    host.querySelector('[aria-label="Live preview"] [role="alert"]'),
+  ).toBeNull();
+  expect(previewValue('block_entry_heading').title).toBe('Repaired preview');
 });

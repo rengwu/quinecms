@@ -1,7 +1,7 @@
 import { Input } from '@cloudflare/kumo/components/input';
 import { Label } from '@cloudflare/kumo/components/label';
 import type { Content, Entry, Page } from '../core/types';
-import Fields from './Fields';
+import EntryFields from './EntryFields';
 import LayoutChoice from './LayoutChoice';
 import FormScreen from './FormScreen';
 import styles from './editor.module.css';
@@ -20,8 +20,6 @@ export default function DocumentCreation({
   onCancel(): void;
 }) {
   const page = 'kind' in document;
-  const collection =
-    !page && content.collections.find((c) => c.id === document.collectionId);
   return (
     <FormScreen
       title={
@@ -65,30 +63,7 @@ export default function DocumentCreation({
           )}
         </>
       ) : (
-        <>
-          {collection &&
-            collection.genericPageId &&
-            collection.mode === 'many' && (
-              <div className={styles.field}>
-                <Label htmlFor="new-entry-slug">URL slug</Label>
-                <Input
-                  id="new-entry-slug"
-                  aria-label="URL slug"
-                  value={document.slug ?? ''}
-                  onChange={(e) =>
-                    onChange({ ...document, slug: e.target.value })
-                  }
-                />
-              </div>
-            )}
-          <Fields
-            fields={collection ? collection.fields : []}
-            values={document.values}
-            collections={content.collections}
-            media={content.media}
-            onChange={(values) => onChange({ ...document, values })}
-          />
-        </>
+        <EntryFields entry={document} content={content} onChange={onChange} />
       )}
     </FormScreen>
   );

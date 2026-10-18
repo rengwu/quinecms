@@ -1,9 +1,19 @@
 ---
 title: Open questions
 updated: 2026-10-16
-status: Tessera scope implemented locally; independent pilot accepted
+status: Entry preview implemented locally
 ---
 # Open questions
+
+## Live entry preview — implemented locally
+
+The [submitted answers](../journal/2026-10-16-grill-e90ee7a7-4a3f-4933-82e6-d588426c739e.md)
+complete the [entry-preview interview](entry-preview.md). DEC-189–DEC-192 select
+the reused split view, full-width data-only editing, shared-template shortcut and
+existing preview navigation. No consequential product question remains in this
+increment. Work-until-grill subsequently authorized delivery; the
+[verification](../verification/runs/2026-10-16-entry-preview.md) records local
+implementation and its limits.
 
 ## Tessera collection rendering — implemented locally
 

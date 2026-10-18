@@ -1,0 +1,79 @@
+Registered 45 block versions.
+Registered 3 layout versions.
+19:37:06 [types] Generated 148ms
+19:37:06 [build] output: "static"
+19:37:06 [build] mode: "static"
+19:37:06 [build] directory: /private/var/folders/00/h_k67s0j5dq0qvg6ylqysk2w0000gn/T/quinecms-entry-preview-i84ql3db/.quinecms/workspace/dist/
+19:37:06 [build] Collecting build info...
+19:37:06 [build] ✓ Completed in 217ms.
+19:37:06 [build] Building static entrypoints...
+19:37:07 [vite] ✓ built in 217ms
+19:37:07 [vite] ✓ built in 148ms
+19:37:07 [build] Rearranging server assets...
+
+ generating static routes
+19:37:07   ├─ /admin/index.html (+862ms)
+19:37:08   ├─ /api-reference/create-preview-branch/index.html (+43ms)
+19:37:08   ├─ /api-reference/create-project/index.html (+33ms)
+19:37:08   ├─ /api-reference/create-row/index.html (+29ms)
+19:37:08   ├─ /api-reference/create-token/index.html (+26ms)
+19:37:08   ├─ /api-reference/create-webhook/index.html (+24ms)
+19:37:08   ├─ /api-reference/delete-project/index.html (+25ms)
+19:37:08   ├─ /api-reference/delete-row/index.html (+24ms)
+19:37:08   ├─ /api-reference/delete-webhook/index.html (+26ms)
+19:37:08   ├─ /api-reference/invoke-function/index.html (+23ms)
+19:37:08   ├─ /api-reference/list-environments/index.html (+24ms)
+19:37:08   ├─ /api-reference/list-function-runs/index.html (+22ms)
+19:37:08   ├─ /api-reference/list-projects/index.html (+23ms)
+19:37:08   ├─ /api-reference/list-rows/index.html (+24ms)
+19:37:08   ├─ /api-reference/list-webhooks/index.html (+24ms)
+19:37:08   ├─ /api-reference/promote-environment/index.html (+23ms)
+19:37:08   ├─ /api-reference/refresh-token/index.html (+24ms)
+19:37:08   ├─ /api-reference/retrieve-project/index.html (+24ms)
+19:37:08   ├─ /api-reference/retrieve-row/index.html (+22ms)
+19:37:08   ├─ /api-reference/revoke-session/index.html (+24ms)
+19:37:08   ├─ /api-reference/update-row/index.html (+23ms)
+19:37:08   ├─ /api-reference/index.html (+25ms)
+19:37:08   ├─ /blog/how-branching-databases-work/index.html (+23ms)
+19:37:08   ├─ /blog/introducing-typed-realtime-queries/index.html (+24ms)
+19:37:08   ├─ /blog/migrating-from-firebase-in-an-afternoon/index.html (+22ms)
+19:37:08   ├─ /blog/multi-tenant-apps-with-row-level-rules/index.html (+23ms)
+19:37:08   ├─ /blog/tessera-2-0-what-changed-and-why/index.html (+23ms)
+19:37:08   ├─ /blog/why-we-generate-types-from-schemas-not-the-other-way-around/index.html (+23ms)
+19:37:08   ├─ /blog/index.html (+29ms)
+19:37:08   ├─ /changelog/index.html (+26ms)
+19:37:08   ├─ /customers/fieldnote/index.html (+25ms)
+19:37:08   ├─ /customers/loop-co/index.html (+23ms)
+19:37:08   ├─ /customers/northwind-labs/index.html (+23ms)
+19:37:09   ├─ /customers/index.html (+26ms)
+19:37:09   ├─ /docs/environments/index.html (+26ms)
+19:37:09   ├─ /docs/indexes/index.html (+25ms)
+19:37:09   ├─ /docs/installation/index.html (+23ms)
+19:37:09   ├─ /docs/limits/index.html (+22ms)
+19:37:09   ├─ /docs/migrations/index.html (+23ms)
+19:37:09   ├─ /docs/observability/index.html (+23ms)
+19:37:09   ├─ /docs/permissions/index.html (+22ms)
+19:37:09   ├─ /docs/presence/index.html (+23ms)
+19:37:09   ├─ /docs/preview-branches/index.html (+24ms)
+19:37:09   ├─ /docs/project-structure/index.html (+23ms)
+19:37:09   ├─ /docs/providers/index.html (+24ms)
+19:37:09   ├─ /docs/queries/index.html (+23ms)
+19:37:09   ├─ /docs/quickstart/index.html (+24ms)
+19:37:09   ├─ /docs/relations/index.html (+23ms)
+19:37:09   ├─ /docs/row-level-rules/index.html (+23ms)
+19:37:09   ├─ /docs/schema/index.html (+25ms)
+19:37:09   ├─ /docs/secrets/index.html (+24ms)
+19:37:09   ├─ /docs/sessions/index.html (+23ms)
+19:37:09   ├─ /docs/subscriptions/index.html (+23ms)
+19:37:09   ├─ /docs/transactions/index.html (+24ms)
+19:37:09   ├─ /docs/triggers-and-schedules/index.html (+22ms)
+19:37:09   ├─ /docs/writing-functions/index.html (+24ms)
+19:37:09   ├─ /docs/index.html (+23ms)
+19:37:09   ├─ /pricing/index.html (+27ms)
+19:37:09   ├─ /product/index.html (+32ms)
+19:37:09   ├─ /index.html (+31ms)
+19:37:09 ✓ Completed in 2.39s.
+
+19:37:09 [build] ✓ Completed in 2.81s.
+19:37:09 [build] 60 page(s) built in 3.03s
+19:37:09 [build] Complete!

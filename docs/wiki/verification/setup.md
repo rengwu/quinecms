@@ -1,6 +1,6 @@
 ---
 title: Verification setup
-updated: 2026-10-13
+updated: 2026-10-16
 ---
 # Verification setup
 
@@ -42,6 +42,16 @@ the site’s configured ADMIN_EMAIL and ADMIN_PASSWORD pair. The separate `quine
 The optional bundled public fixtures are Home, Block examples, the nine-block chartr page, an explicit static Journal index, and two entries rendered through the Journal entry generic page. To review the full recreation, select chartr in Site Layout and choose chartr as Preview page; the committed site keeps Starter selected. Generic pages are editable under Pages but have no standalone public route. Main and draft content live in Git once connected; the local demo is read-only at the filesystem boundary.
 
 ## Evidence and cleanup
+
+For isolated entry-preview checks, copy the site's `content/`, configuration,
+package/lockfile and optional `public/` into an owned temporary directory. Reuse
+installed dependencies when checking local engine changes, and record that this
+does not verify registry installation. Supply disposable local admin credentials
+without copying provider secrets. Run the engine CLI's `dev --port <free-port>`;
+stop it before running `check` or `build` because these commands assemble the same
+workspace. Serve the resulting `dist/` on a separate owned port for production
+browser checks. Hash tested inputs/output and compare content before cleanup.
+The [entry-preview run](runs/2026-10-16-entry-preview.md) records an executed example.
 
 For the independent pilot's public hosting check, use the maintainer-supplied
 `https://glowing-dodol-a3ed49.netlify.app/` in a fresh browser tab. Follow a homepage

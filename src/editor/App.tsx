@@ -4,6 +4,7 @@ import { fieldDefaults } from '../core/lists';
 import BlockCatalog from './BlockCatalog';
 import CatalogHeader from './CatalogHeader';
 import DocumentCreation from './DocumentCreation';
+import EntryFields from './EntryFields';
 import BlockCreation from './BlockCreation';
 import LayoutSurface, { PageBlocks } from './LayoutSurface';
 import SiteLayouts from './SiteLayouts';
@@ -84,7 +85,6 @@ import {
   discardRecovery,
   recoveryText,
 } from './recovery';
-import Fields from './Fields';
 import BlockFields from './BlockFields';
 import styles from './editor.module.css';
 import {
@@ -250,27 +250,55 @@ function Editor({
   );
   const editingBlock = editingDocument && Boolean(selectedBlock);
   const listingPages = tab === 'pages' && !editingDocument && !pendingDocument;
-  const showPreview = !pendingDocument && tab === 'pages' && editingDocument;
+  const previewEntry =
+    tab === 'content'
+      ? pendingDocument && 'values' in pendingDocument
+        ? pendingDocument
+        : editingDocument && doc && 'values' in doc
+          ? doc
+          : undefined
+      : undefined;
+  const templateId = previewEntry && collection?.genericPageId;
+  const showPreview = Boolean(
+    (!pendingDocument && tab === 'pages' && editingDocument) || templateId,
+  );
   // Creation stays outside content/recovery until Create, but renders through
   // the same page and context as a committed block.
   const previewContent = useMemo(
     () =>
-      pendingBlock && page
-        ? {
-            ...content,
-            pages: content.pages.map((p) =>
-              p.id === page.id
-                ? { ...p, blocks: [...p.blocks, pendingBlock] }
-                : p,
-            ),
-          }
-        : content,
-    [content, page, pendingBlock],
+      pendingDocument && previewEntry
+        ? { ...content, entries: [...content.entries, previewEntry] }
+        : pendingBlock && page
+          ? {
+              ...content,
+              pages: content.pages.map((p) =>
+                p.id === page.id
+                  ? { ...p, blocks: [...p.blocks, pendingBlock] }
+                  : p,
+              ),
+            }
+          : content,
+    [content, page, pendingBlock, pendingDocument, previewEntry],
   );
-  const previewPage = previewContent.pages.find((p) => p.id === page?.id);
-  const renderContent = previewPage
-    ? contentForPage(previewContent, previewPage)
-    : previewContent;
+  const previewPage = previewContent.pages.find((p) =>
+    previewEntry
+      ? p.id === templateId && p.kind === 'generic'
+      : p.id === page?.id,
+  );
+  let renderContent = previewContent;
+  let previewError = '';
+  if (showPreview) {
+    if (!previewPage)
+      previewError =
+        'The shared template is unavailable. Choose a generic page in the collection schema.';
+    else {
+      try {
+        renderContent = contentForPage(previewContent, previewPage);
+      } catch (error) {
+        previewError = error instanceof Error ? error.message : String(error);
+      }
+    }
+  }
   const EditorSurface = showPreview ? 'aside' : 'main';
   function openArea(area: EditorArea) {
     setSchemaId('');
@@ -1071,41 +1099,17 @@ function Editor({
                                         )}
                                       </>
                                     ) : (
-                                      <>
-                                        {collection?.genericPageId &&
-                                          collection.mode === 'many' && (
-                                            <div className={styles.field}>
-                                              <Label htmlFor="slug">
-                                                URL slug
-                                              </Label>
-                                              <Input
-                                                aria-label="URL slug"
-                                                id="slug"
-                                                value={doc.slug ?? ''}
-                                                onChange={(e) =>
-                                                  changeDoc({
-                                                    ...doc,
-                                                    slug: e.target.value,
-                                                  })
-                                                }
-                                              />
-                                            </div>
-                                          )}
-                                        <Fields
-                                          collections={content.collections}
-                                          fields={
-                                            content.collections.find(
-                                              (c) => c.id === doc.collectionId,
-                                            )?.fields ?? []
-                                          }
-                                          values={doc.values}
-                                          onChange={(values) =>
-                                            changeDoc({ ...doc, values })
-                                          }
-                                          media={content.media}
-                                          readOnly={busy}
-                                        />
-                                      </>
+                                      <EntryFields
+                                        entry={doc}
+                                        content={content}
+                                        onChange={changeDoc}
+                                        readOnly={busy}
+                                        onEditTemplate={
+                                          previewPage
+                                            ? () => openDocument(previewPage.id)
+                                            : undefined
+                                        }
+                                      />
                                     )}
                                     {'kind' in doc && (
                                       <>
@@ -1476,33 +1480,49 @@ function Editor({
                 className={styles.preview}
                 data-size={size}
                 aria-label="Live preview"
+                onClickCapture={(event) => {
+                  if (
+                    pendingDocument &&
+                    (event.target as Element).closest('a')
+                  ) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                  }
+                }}
               >
-                <LayoutSurface
-                  content={renderContent}
-                  onNavigate={(url, documentId) => {
-                    if (busy) return;
-                    if (documentId) openDocument(documentId);
-                    else {
-                      const id = Object.entries(
-                        contextFor(renderContent, 'navigation').links,
-                      ).find(([, path]) => path === url)?.[0];
-                      if (id) openDocument(id);
-                    }
-                  }}
-                >
-                  <PageBlocks
+                {previewError ? (
+                  <p role="alert">{previewError}</p>
+                ) : (
+                  <LayoutSurface
                     content={renderContent}
-                    page={previewPage}
-                    selectedId={pendingBlock?.id ?? blockId}
-                    revealId={pendingBlock?.id ?? blockId}
-                    className={styles.previewBlock}
-                  />
-                  {!previewPage?.blocks.length && (
-                    <div className={styles.empty}>
-                      Add a block to start building.
-                    </div>
-                  )}
-                </LayoutSurface>
+                    onNavigate={(url, documentId) => {
+                      if (busy || pendingDocument) return;
+                      if (documentId) openDocument(documentId);
+                      else {
+                        const id = Object.entries(
+                          contextFor(renderContent, 'navigation').links,
+                        ).find(([, path]) => path === url)?.[0];
+                        if (id) openDocument(id);
+                      }
+                    }}
+                  >
+                    <PageBlocks
+                      content={renderContent}
+                      page={previewPage}
+                      entry={previewEntry}
+                      selectedId={pendingBlock?.id ?? blockId}
+                      revealId={pendingBlock?.id ?? blockId}
+                      className={styles.previewBlock}
+                    />
+                    {!previewPage?.blocks.length && (
+                      <div className={styles.empty}>
+                        {previewEntry
+                          ? 'The shared template has no blocks yet.'
+                          : 'Add a block to start building.'}
+                      </div>
+                    )}
+                  </LayoutSurface>
+                )}
               </main>
             )}
           </>

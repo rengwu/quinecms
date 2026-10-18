@@ -5,6 +5,10 @@ status: Accepted
 ---
 # Decisions
 
+Entry preview: DEC-189–DEC-192 settle the [live entry preview scope](../discussions/entry-preview.md).
+Implemented locally following work-until-grill authorization; see the
+[verification](../verification/runs/2026-10-16-entry-preview.md).
+
 Engine separation: DEC-172–DEC-183 settle the pilot's product behavior, including
 manual pinned engine/library upgrades, extensions-only customization, upstream-only
 library changes and the Archline/Intr library. Archline is the public pilot.
@@ -664,3 +668,16 @@ engineering work; none of these decisions records implementation or verification
 | ID | Decision | Basis and rationale |
 | --- | --- | --- |
 | DEC-188 | Make public rendering and admin preview honor a block's existing top-level `collectionField` declarations; retain the legacy five-field fallback. | User approved after discussing purpose, admin behavior, engine changes and compatibility, then authorized work-until-grill. Complete one general contract without a query language, new admin screen or Tessera-specific engine code. Tessera uses separate blog/release blocks; detailed animation and unsupported services are omitted. See the [accepted scope](../discussions/tessera-collection-context.md). |
+
+## Entry preview — chat scope and submitted answers, 2026-10-16
+
+These requirements were subsequently implemented under work-until-grill. See the
+[scope and engineering approach](../discussions/entry-preview.md) and
+[submitted answers](../journal/2026-10-16-grill-e90ee7a7-4a3f-4933-82e6-d588426c739e.md).
+
+| ID | Decision | Basis and rationale |
+| --- | --- | --- |
+| DEC-189 | Add a fields-left/live-preview-right entry editor for collections assigned a generic page, including pending creation and single-entry collections. Render current values through the shared template and its layout; reuse existing preview controls, fields and binding logic. | Direct user proposal and acceptance of the baseline, with explicit rule-lean/maximum-reuse constraint. Incomplete values should still preview; errors must leave fields editable. This changes the prior field-only entry experience once implemented. |
+| DEC-190 | Keep data-only entries in the existing full-width field editor. | Q1 selects this boundary; no inferred usage preview or page picker. |
+| DEC-191 | Show the template name with an Edit shared template link in the entry editor. | Q2 selects the link over the recommended label-only approach. Explain its shared effect and use existing template ownership/navigation. |
+| DEC-192 | Reuse page-preview navigation for existing entries and retain their unsaved edits. Keep pending creation in place until Create or Cancel. | Q3 selects reuse; its stated creation boundary prevents preview navigation from abandoning a pending entry. |

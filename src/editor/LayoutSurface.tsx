@@ -7,13 +7,13 @@ import {
   type ComponentType,
   type ReactNode,
 } from 'react';
-import type { Content, Page } from '../core/types';
+import type { Content, Entry, Page } from '../core/types';
 import type { LayoutProps } from '../core/layout-contract';
 import { activeLayout, layoutKey } from '../core/layouts';
 import { layoutRenderers } from '../generated/layout-browser';
 import { contextFor } from '../core/content';
 import { definitions } from '../generated/definitions';
-import { bindingPlaceholders } from '../core/bindings';
+import { bindingPlaceholders, resolveBlock } from '../core/bindings';
 import Island from './Island';
 
 const renderers = Object.fromEntries(
@@ -23,12 +23,18 @@ const renderers = Object.fromEntries(
   ]),
 );
 class LayoutError extends Component<
-  { children: ReactNode },
+  { children: ReactNode; content: Content },
   { error: string }
 > {
   state = { error: '' };
   static getDerivedStateFromError(error: Error) {
     return { error: error.message };
+  }
+  componentDidUpdate(
+    previous: Readonly<{ children: ReactNode; content: Content }>,
+  ) {
+    if (this.state.error && previous.content !== this.props.content)
+      this.setState({ error: '' });
   }
   render() {
     return this.state.error ? (
@@ -52,7 +58,7 @@ export default function LayoutSurface({
   const Layout = renderers[key];
   return (
     <div data-layout-surface style={{ display: 'contents' }}>
-      <LayoutError key={key}>
+      <LayoutError key={key} content={content}>
         <Suspense fallback={<p>Loading layout…</p>}>
           {Layout ? (
             <Layout
@@ -74,16 +80,21 @@ export default function LayoutSurface({
 export function PageBlocks({
   content,
   page,
+  entry,
   selectedId,
   revealId,
   className,
 }: {
   content: Content;
   page?: Page;
+  entry?: Entry;
   selectedId?: string;
   revealId?: string;
   className?: string;
 }) {
+  const fields = content.collections.find(
+    (c) => c.id === entry?.collectionId,
+  )?.fields;
   const revealed = useRef<HTMLElement>(null);
   useEffect(() => {
     const element = revealed.current;
@@ -113,7 +124,7 @@ export function PageBlocks({
           data-selected={selectedId === b.id}
         >
           <Island
-            block={b}
+            block={entry ? resolveBlock(b, entry.values, content, fields) : b}
             context={{
               ...contextFor(
                 content,
@@ -123,7 +134,7 @@ export function PageBlocks({
                 ),
               ),
               preview: true,
-              ...(page.kind === 'generic'
+              ...(page.kind === 'generic' && !entry
                 ? { bindingPlaceholders: bindingPlaceholders(b) }
                 : {}),
             }}

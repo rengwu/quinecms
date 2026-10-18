@@ -1,0 +1,42 @@
+2026-10-18 — precommit verification of the local entry-preview implementation.
+Written observation record; not an exported browser screenshot or console log.
+
+AUTOMATED
+- pnpm verify: 31 test files, 271 tests passed in 90.59s.
+- Wiki check: 199 pages/internal links passed; generated index was current.
+- Prettier: App.tsx, DocumentCreation.tsx, EntryFields.tsx, LayoutSurface.tsx and
+  editor-navigation.test.ts passed.
+- git diff --check passed.
+- All 151 nongenerated, non-.DS_Store engine source/test hashes in the original
+  source manifest matched the current checkout. No code changes were needed.
+- Fresh isolated Tessera copy: validate, check, build and check-build passed.
+  Typecheck: 256 files, zero errors/warnings/hints. Production: 60 pages.
+- HTTP GET /admin/ returned 200 on the owned static server.
+
+SAFARI / PRODUCTION / 127.0.0.1:59361
+- Brought the owned Safari window forward and unlocked disposable local admin.
+  Pages table and main navigation mounted successfully.
+- Content > Tessera Posts > How branching databases work displayed fields left
+  and the real title/body inside the marketing layout right.
+- Changed Title to Safari entry preview verified. The input, editor heading and
+  live preview H1 updated immediately; Unsaved changes appeared.
+- Toggled mobile preview. Visual inspection confirmed a narrow centered preview,
+  collapsed website navigation and visible editing fields. Returned to desktop.
+- Edit shared template opened Blog article under Pages with block controls.
+  Returning to Tessera Posts retained Safari entry preview verified in the list
+  and reopened entry fields/preview.
+- Restored How branching databases work. Input, editor heading and preview H1
+  returned to the original value and Local preview status returned.
+- Closed the owned test tab and declined password saving. Existing tabs retained.
+
+LIMITS AND CLEANUP
+- This recheck closes the earlier Safari existing-entry coverage gap. It does not
+  diagnose the previous incomplete unlock attempt or repeat all earlier browser
+  scenarios. New-entry/data-only/error cases remain covered by the full suite and
+  the earlier recorded browser checks where applicable.
+- Local installed engine/library dependencies were reused. This is not a clean
+  package installation, deployed-site check or live Git/R2 verification.
+- Content hashes in the isolated copy matched the original dev site. No provider
+  configuration was copied and no site content or existing server was modified.
+- Preserved build logs and source/input/admin hashes before removing the owned
+  temporary copy and stopping the owned static server.

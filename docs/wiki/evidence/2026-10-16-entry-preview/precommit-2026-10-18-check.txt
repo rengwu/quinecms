@@ -1,0 +1,8 @@
+Registered 45 block versions.
+Registered 3 layout versions.
+15:43:38 [types] Generated 198ms
+15:43:38 [check] Getting diagnostics for Astro files in <isolated-site>/.quinecms/workspace...
+Result (256 files):
+- 0 errors
+- 0 warnings
+- 0 hints
