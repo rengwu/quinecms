@@ -84,6 +84,7 @@ export function PageBlocks({
   selectedId,
   revealId,
   className,
+  fallback,
 }: {
   content: Content;
   page?: Page;
@@ -91,6 +92,8 @@ export function PageBlocks({
   selectedId?: string;
   revealId?: string;
   className?: string;
+  /** Names the main language when this content stands in for a missing copy. */
+  fallback?: string;
 }) {
   const fields = content.collections.find(
     (c) => c.id === entry?.collectionId,
@@ -122,6 +125,7 @@ export function PageBlocks({
           key={b.id}
           ref={b.id === revealId ? revealed : undefined}
           data-selected={selectedId === b.id}
+          data-fallback={fallback}
         >
           <Island
             block={entry ? resolveBlock(b, entry.values, content, fields) : b}

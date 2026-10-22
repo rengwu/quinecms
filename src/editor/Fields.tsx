@@ -2,7 +2,9 @@ import ObjectField from './ObjectField';
 import MediaField from './MediaField';
 import ReferenceField from './ReferenceField';
 import { useModel } from './ModelContext';
-import { fieldPaths } from '../core/schema';
+import { fieldPaths, rowFields } from '../core/schema';
+import { localized } from '../core/languages';
+import { SharedBadge } from './Languages';
 import ListField from './ListField';
 import { PanelNavigation, usePanelNavigation } from './PanelNavigation';
 import { Input } from '@cloudflare/kumo/components/input';
@@ -39,6 +41,11 @@ export default function Fields({
   const collections = suppliedCollections ?? model.collections;
   const prefix = useId();
   const navigation = usePanelNavigation();
+  // Shared values change every language (DEC-218); containers hold both kinds.
+  const shared = (f: Field) =>
+    !localized(f) &&
+    f.type !== 'object' &&
+    !rowFields(f, model) && <SharedBadge image={f.type === 'media'} />;
   if (!navigation)
     return (
       <PanelNavigation>
@@ -77,6 +84,7 @@ export default function Fields({
               <legend>
                 {f.label}
                 {f.required ? ' *' : ''}
+                {shared(f)}
               </legend>
               <Suspense fallback={<p>Loading editor…</p>}>
                 <Widget
@@ -95,6 +103,7 @@ export default function Fields({
             <Label htmlFor={f.type === 'toggle' ? undefined : inputId}>
               {f.label}
               {f.required ? ' *' : ''}
+              {shared(f)}
             </Label>
             {f.type === 'object' ? (
               <ObjectField

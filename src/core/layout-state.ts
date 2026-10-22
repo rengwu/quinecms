@@ -29,6 +29,7 @@ export function migrateSite(content: Content): Content {
       id: content.site.id,
       globals: {},
       layouts,
+      ...(content.site.i18n ? { i18n: content.site.i18n } : {}),
     },
     pages: content.pages.map((page) => ({
       ...page,

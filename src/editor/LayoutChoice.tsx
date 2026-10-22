@@ -3,6 +3,7 @@ import { Label } from '@cloudflare/kumo/components/label';
 import type { Content } from '../core/types';
 import { siteLayouts } from '../core/layout-state';
 import styles from './editor.module.css';
+import { SharedBadge } from './Languages';
 
 export default function LayoutChoice({
   content,
@@ -16,7 +17,10 @@ export default function LayoutChoice({
   const layouts = siteLayouts(content.site).filter((layout) => layout.active);
   return (
     <div className={styles.field}>
-      <Label htmlFor="page-layout">Site layout</Label>
+      <Label htmlFor="page-layout">
+        Site layout
+        <SharedBadge />
+      </Label>
       <Select
         id="page-layout"
         aria-label="Site layout"

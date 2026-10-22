@@ -8,6 +8,7 @@ import Fields from './Fields';
 import { PanelLevel } from './PanelNavigation';
 import { rowFields } from '../core/schema';
 import { useModel } from './ModelContext';
+import { useLanguage } from './Languages';
 import styles from './editor.module.css';
 
 export default function ListField({
@@ -30,6 +31,8 @@ export default function ListField({
   const [selected, select] = useState('');
   const [pending, setPending] = useState<Values | null>(null);
   const model = useModel();
+  // Rows are shared: add, remove and reorder them in the main language (DEC-228).
+  const { secondary: fixed } = useLanguage();
   const fields = rowFields(field, model) ?? [];
   if (depth >= 3)
     return <p role="alert">This list exceeds the three-level nesting limit.</p>;
@@ -98,30 +101,35 @@ export default function ListField({
             onChange(identified.map((r) => (r._rowId === selected ? next : r)))
           }
         />
-        <Button
-          disabled={
-            readOnly || (field.max !== undefined && rows.length >= field.max)
-          }
-          onClick={() => {
-            const copy = (
-              normalizeLists(field, [row], model, depth) as Values[]
-            )[0];
-            save([...identified, copy]);
-            select(String(copy._rowId));
-          }}
-        >
-          Duplicate item
-        </Button>
-        <Button
-          variant="secondary-destructive"
-          disabled={readOnly}
-          onClick={() => {
-            save(identified.filter((r) => r._rowId !== selected));
-            select('');
-          }}
-        >
-          Remove item
-        </Button>
+        {!fixed && (
+          <>
+            <Button
+              disabled={
+                readOnly ||
+                (field.max !== undefined && rows.length >= field.max)
+              }
+              onClick={() => {
+                const copy = (
+                  normalizeLists(field, [row], model, depth) as Values[]
+                )[0];
+                save([...identified, copy]);
+                select(String(copy._rowId));
+              }}
+            >
+              Duplicate item
+            </Button>
+            <Button
+              variant="secondary-destructive"
+              disabled={readOnly}
+              onClick={() => {
+                save(identified.filter((r) => r._rowId !== selected));
+                select('');
+              }}
+            >
+              Remove item
+            </Button>
+          </>
+        )}
       </PanelLevel>
     );
   const blocks = identified.map((r) => ({
@@ -148,28 +156,32 @@ export default function ListField({
           }))}
           disabled={readOnly}
           onSelect={select}
-          onChange={(next) => save(next.map((b) => b.props))}
+          onChange={
+            fixed ? undefined : (next) => save(next.map((b) => b.props))
+          }
           label={field.label}
           showVersion={false}
         />
       )}
       {!rows.length && <p className={styles.muted}>No items yet.</p>}
-      <Button
-        variant="primary"
-        icon={<PlusIcon />}
-        disabled={
-          readOnly || (field.max !== undefined && rows.length >= field.max)
-        }
-        onClick={() => {
-          const item = {
-            ...fieldDefaults(fields, model, depth + 1),
-            _rowId: rowId(),
-          };
-          setPending(item);
-        }}
-      >
-        Add item
-      </Button>
+      {!fixed && (
+        <Button
+          variant="primary"
+          icon={<PlusIcon />}
+          disabled={
+            readOnly || (field.max !== undefined && rows.length >= field.max)
+          }
+          onClick={() => {
+            const item = {
+              ...fieldDefaults(fields, model, depth + 1),
+              _rowId: rowId(),
+            };
+            setPending(item);
+          }}
+        >
+          Add item
+        </Button>
+      )}
     </div>
   );
 }

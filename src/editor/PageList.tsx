@@ -1,6 +1,7 @@
 import { Button } from '@cloudflare/kumo/components/button';
 import { Table } from '@cloudflare/kumo/components/table';
 import { PlusIcon } from '@phosphor-icons/react';
+import type { ReactNode } from 'react';
 import type { Page, SiteLayout } from '../core/types';
 import styles from './editor.module.css';
 import { useAdminTheme } from './AdminTheme';
@@ -11,12 +12,15 @@ export default function PageList({
   busy,
   onAdd,
   onOpen,
+  status,
 }: {
   pages: Page[];
   layouts: SiteLayout[];
   busy: boolean;
   onAdd(): void;
   onOpen(id: string): void;
+  /** The selected language's copy status, outside the main language. */
+  status?(page: Page): ReactNode;
 }) {
   const { mode } = useAdminTheme();
   return (
@@ -66,6 +70,7 @@ export default function PageList({
                     >
                       {page.title || 'Untitled page'}
                     </Button>
+                    {status?.(page)}
                   </Table.Cell>
                   <Table.Cell>
                     {page.kind === 'generic' ? 'Generic' : 'Static'}

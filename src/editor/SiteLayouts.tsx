@@ -27,6 +27,9 @@ import FormScreen from './FormScreen';
 import LayoutCatalog from './LayoutCatalog';
 import LayoutSettings from './LayoutSettings';
 import LayoutSurface, { PageBlocks } from './LayoutSurface';
+import { replaceRecord, useCopy, useLanguage } from './Languages';
+import { languageName, localize, pruneCopies } from '../core/languages';
+import { definitions } from '../generated/definitions';
 import UsageList from './UsageList';
 import styles from './editor.module.css';
 
@@ -74,8 +77,18 @@ export default function SiteLayouts({
   };
   function change(next: SiteLayout) {
     if (creating) setPending(next);
-    else onChange(replaceLayout(content, next));
+    else
+      onChange(replaceLayout(content, pruneCopies(content, next, definitions)));
   }
+  // Layout settings are edited per language like pages and entries (DEC-202).
+  const { language, secondary } = useLanguage();
+  const copy = useCopy(
+    content,
+    language,
+    creating ? undefined : layout,
+    change,
+  );
+  const edited = copy.view ?? (copy.start ? undefined : layout);
   function choose(definition: LayoutDefinition) {
     setCatalog(false);
     if (layout) {
@@ -97,7 +110,19 @@ export default function SiteLayouts({
       setError('');
     }
   }
-  const view = layout ? contentForLayout(content, layout.design) : content;
+  const shown = secondary
+    ? localize(
+        copy.creation ? replaceRecord(content, copy.creation.record) : content,
+        language,
+        definitions,
+        'draft',
+      ).content
+    : content;
+  const shownLayout =
+    shown.site.layouts?.find((l) => l.id === layout?.id) ?? layout;
+  const view = shownLayout
+    ? contentForLayout(shown, shownLayout.design)
+    : content;
   return (
     <>
       {!layout ? (
@@ -210,33 +235,36 @@ export default function SiteLayouts({
               <PanelNavigation key={`${layout.id}:${layoutKey(layout.design)}`}>
                 <FormScreen
                   title={
-                    creating ? 'New layout' : layout.name || 'Untitled layout'
+                    copy.creation?.title ??
+                    (creating ? 'New layout' : layout.name || 'Untitled layout')
                   }
-                  onBack={back}
+                  onBack={copy.creation?.cancel ?? back}
                   creation={
-                    creating
-                      ? {
-                          label: 'Create layout',
-                          onCreate: () => {
-                            if (!layout.name.trim()) {
-                              setError('Enter a layout name.');
-                              return;
-                            }
-                            onChange({
-                              ...content,
-                              site: {
-                                ...content.site,
-                                layouts: [
-                                  ...layouts,
-                                  { ...layout, name: layout.name.trim() },
-                                ],
-                              },
-                            });
-                            setPending(undefined);
-                            setError('');
-                          },
-                        }
-                      : undefined
+                    copy.creation
+                      ? { label: 'Create', onCreate: copy.creation.create }
+                      : creating
+                        ? {
+                            label: 'Create layout',
+                            onCreate: () => {
+                              if (!layout.name.trim()) {
+                                setError('Enter a layout name.');
+                                return;
+                              }
+                              onChange({
+                                ...content,
+                                site: {
+                                  ...content.site,
+                                  layouts: [
+                                    ...layouts,
+                                    { ...layout, name: layout.name.trim() },
+                                  ],
+                                },
+                              });
+                              setPending(undefined);
+                              setError('');
+                            },
+                          }
+                        : undefined
                   }
                 >
                   <div className={styles.field}>
@@ -251,16 +279,28 @@ export default function SiteLayouts({
                     />
                   </div>
                   {error && <p role="alert">{error}</p>}
-                  <LayoutSettings
-                    content={content}
-                    selection={layout.design}
-                    previewPage={page}
-                    onPreviewPage={setPreviewId}
-                    onChange={(design) => change({ ...layout, design })}
-                    onDesign={() => setCatalog(true)}
-                    onVersion={choose}
-                  />
-                  {!creating && (
+                  {copy.status}
+                  {copy.start && (
+                    <Button
+                      variant="primary"
+                      className={styles.alignStart}
+                      onClick={copy.start}
+                    >
+                      Add {languageName(language)} copy
+                    </Button>
+                  )}
+                  {edited && (
+                    <LayoutSettings
+                      content={content}
+                      selection={edited.design}
+                      previewPage={page}
+                      onPreviewPage={setPreviewId}
+                      onChange={(design) => copy.change({ ...edited, design })}
+                      onDesign={() => setCatalog(true)}
+                      onVersion={choose}
+                    />
+                  )}
+                  {!creating && !copy.creation && !secondary && (
                     <>
                       <UsageList
                         content={content}
@@ -311,7 +351,7 @@ export default function SiteLayouts({
             >
               <PageBlocks
                 content={view}
-                page={page}
+                page={view.pages.find((p) => p.id === page?.id)}
                 className={styles.previewBlock}
               />
               {!page?.blocks.length && (

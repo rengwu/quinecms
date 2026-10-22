@@ -11,7 +11,7 @@ import type {
   Values,
 } from './types';
 import { isRecord, objectFields, rowFields, type Model } from './schema';
-import { listRows } from './lists';
+import { listRows, rowId } from './lists';
 import { languagePath } from './routes';
 export { languagePath };
 import { layoutDefinitions } from './layouts';
@@ -100,7 +100,8 @@ export function mergeCopy(
       const children = rowFields(f, model);
       if (children && Array.isArray(main))
         view[f.key] = listRows(main).map((row) => {
-          const rowCopy = isRecord(own) ? own[String(row._rowId)] : undefined;
+          const rowCopy =
+            isRecord(own) && row._rowId ? own[String(row._rowId)] : undefined;
           return mergeCopy(
             children,
             row,
@@ -336,6 +337,75 @@ export function pruneCopies<T extends Translatable>(
   );
 }
 
+// Rows need stable IDs before a copy can refer to them.
+function identifyRows(
+  fields: Field[],
+  values: Values,
+  model: Model,
+  depth = 0,
+): Values {
+  const next: Values = { ...values };
+  if (depth > 3) return next;
+  for (const f of fields) {
+    const value = values[f.key];
+    if (f.type === 'object' && isRecord(value))
+      next[f.key] = identifyRows(
+        objectFields(f, model),
+        value,
+        model,
+        depth + 1,
+      );
+    const children = rowFields(f, model);
+    if (children && Array.isArray(value))
+      next[f.key] = listRows(value).map((row) => ({
+        ...identifyRows(children, row, model, depth + 1),
+        _rowId: row._rowId || rowId(),
+      }));
+  }
+  return next;
+}
+
+/** Adds an empty copy (DEC-224); main-language values are never copied into it. */
+export function startCopy<T extends Translatable>(
+  content: Model,
+  record: T,
+  language: string,
+  definitions: Definition[],
+): T {
+  const copies = { ...record.copies, [language]: {} };
+  if ('design' in record)
+    return {
+      ...record,
+      design: {
+        ...record.design,
+        settings: identifyRows(
+          layoutFields(record),
+          record.design.settings,
+          content,
+        ),
+      },
+      copies,
+    };
+  if ('values' in record)
+    return {
+      ...record,
+      values: identifyRows(
+        entryFields(content, record),
+        record.values,
+        content,
+      ),
+      copies,
+    };
+  return {
+    ...record,
+    blocks: record.blocks.map((b) => ({
+      ...b,
+      props: identifyRows(blockFields(b, definitions), b.props, content),
+    })),
+    copies,
+  } as T;
+}
+
 const withoutCopies = <T extends { copies?: unknown }>({
   copies: _,
   ...rest
@@ -488,4 +558,87 @@ export function languageIssues(
     }
   }
   return issues;
+}
+
+export const countCopies = (content: Content, language: string) =>
+  translatableRecords(content).filter(([, r]) => hasCopy(r, language)).length;
+
+/** The record without its copy in one language. */
+export function dropCopy<T extends Translatable>(
+  record: T,
+  language: string,
+): T {
+  if (!hasCopy(record, language)) return record;
+  const { [language]: _, ...copies } = record.copies as Record<string, unknown>;
+  const { copies: __, ...rest } = record;
+  return (Object.keys(copies).length ? { ...rest, copies } : rest) as T;
+}
+
+/** Deletes one language's copies from every record (DEC-226). */
+export function removeCopies(content: Content, language: string): Content {
+  const drop = <T extends Translatable>(record: T) =>
+    dropCopy(record, language);
+  return {
+    ...content,
+    site: content.site.layouts
+      ? { ...content.site, layouts: content.site.layouts.map(drop) }
+      : content.site,
+    pages: content.pages.map(drop),
+    entries: content.entries.map(drop),
+  };
+}
+
+/** Names an issue's field with its block, row or object, e.g. "Key ingredients › Name". */
+export function issueLabel(
+  content: Content,
+  path: string,
+  definitions: Definition[],
+): string | undefined {
+  const [first, ...rest] = path.split('.');
+  const entry = content.entries.find((e) => e.id === first);
+  const page = content.pages.find((p) => p.id === first);
+  const labels: string[] = [];
+  let fields: Field[] = [];
+  let keys = rest;
+  if (entry) fields = entryFields(content, entry);
+  else if (page) {
+    if (!rest.length) return 'Page title';
+    const block = page.blocks.find((b) => b.id === rest[0]);
+    if (!block) return;
+    const definition = definitions.find(
+      (d) => d.type === block.type && d.version === block.version,
+    );
+    if (definition) labels.push(definition.label);
+    fields = blockFields(block, definitions);
+    keys = rest.slice(1);
+  } else if (first === 'site') {
+    const layout = content.site.layouts?.[Number(/\d+/.exec(rest[0])?.[0])];
+    fields = layout ? layoutFields(layout) : [];
+    keys = rest.slice(3);
+  }
+  for (let i = 0; i < keys.length; i++) {
+    const f = fields.find((x) => x.key === keys[i]);
+    if (!f) break;
+    labels.push(f.label);
+    fields =
+      (f.type === 'object'
+        ? objectFields(f, content)
+        : rowFields(f, content)) ?? [];
+    if (/^\d+$/.test(keys[i + 1] ?? '')) i++;
+  }
+  return labels.join(' › ') || undefined;
+}
+
+export type CopyState = 'eligible' | 'incomplete' | 'none';
+/** Undefined when the record looks the same in every language. */
+export function copyState(
+  content: Content,
+  record: Translatable,
+  language: string,
+  issues: Map<string, Issue[]>,
+  definitions: Definition[],
+): CopyState | undefined {
+  if (!needsCopy(content, record, definitions)) return undefined;
+  if (!hasCopy(record, language)) return 'none';
+  return issues.get(record.id)?.length ? 'incomplete' : 'eligible';
 }

@@ -42,7 +42,8 @@ export default function BlockList({
   definitions: Pick<Definition, 'type' | 'version' | 'label'>[];
   disabled: boolean;
   onSelect(id: string): void;
-  onChange(blocks: Block[]): void;
+  /** Omit to keep the order fixed, for example outside the main language. */
+  onChange?(blocks: Block[]): void;
 }) {
   const help = useId();
   const source = useRef<{
@@ -101,7 +102,7 @@ export default function BlockList({
     setDraft(next);
   }
   function commit(next: Block[], from: string) {
-    if (disabled || sameOrder(blocks, next)) return;
+    if (disabled || !onChange || sameOrder(blocks, next)) return;
     capture();
     onChange(next);
     announce(
@@ -202,7 +203,9 @@ export default function BlockList({
             <span className={styles.muted}>v{block.version}</span>
           )}
         </span>
-        <DotsSixVerticalIcon aria-hidden size={16} className={styles.muted} />
+        {onChange && (
+          <DotsSixVerticalIcon aria-hidden size={16} className={styles.muted} />
+        )}
       </>
     );
   }
@@ -210,10 +213,12 @@ export default function BlockList({
   const heldBlock = displayed.find((block) => block.id === dragging);
   return (
     <>
-      <span id={help} className={styles.srOnly}>
-        Drag to reorder. With a block focused, use Alt and the up or down arrow
-        key to move it.
-      </span>
+      {onChange && (
+        <span id={help} className={styles.srOnly}>
+          Drag to reorder. With a block focused, use Alt and the up or down
+          arrow key to move it.
+        </span>
+      )}
       <ol
         ref={list}
         className={styles.blockList}
@@ -266,9 +271,15 @@ export default function BlockList({
               className={styles.blockButton}
               variant="outline"
               disabled={disabled}
-              aria-describedby={help}
+              aria-describedby={onChange ? help : undefined}
               onPointerDown={(event) => {
-                if (disabled || event.button !== 0 || !event.isPrimary) return;
+                if (
+                  disabled ||
+                  !onChange ||
+                  event.button !== 0 ||
+                  !event.isPrimary
+                )
+                  return;
                 suppressClick.current = false;
                 const rect =
                   event.currentTarget.parentElement!.getBoundingClientRect();

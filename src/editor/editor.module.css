@@ -351,6 +351,12 @@
   min-width: 0;
   overflow-wrap: anywhere;
 }
+.recordEnd {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--editor-space-2);
+  flex-shrink: 0;
+}
 .recordLabel {
   display: flex;
   flex-direction: column;
@@ -550,6 +556,33 @@
   outline: 2px solid #91b673;
   outline-offset: -2px;
 }
+/* Main-language content standing in for a missing or unusable copy. */
+.previewBlock[data-fallback] {
+  outline: 2px dashed #c47f17;
+  outline-offset: -2px;
+}
+.previewBlock[data-fallback]:first-of-type::before {
+  content: attr(data-fallback);
+  position: absolute;
+  z-index: 1;
+  top: 6px;
+  left: 6px;
+  padding: 0 6px;
+  border-radius: 4px;
+  background: #c47f17;
+  color: #fff;
+  font:
+    600 11px/18px Inter,
+    system-ui,
+    sans-serif;
+}
+.previewModes {
+  display: flex;
+  justify-content: flex-end;
+  padding: 8px 16px;
+  background: var(--color-kumo-base);
+  border-bottom: 1px solid var(--color-kumo-line);
+}
 .previewNav {
   max-width: var(--site-content-max-width);
   margin-inline: auto;
@@ -715,6 +748,27 @@
 .full {
   width: 100%;
 }
+.languageSelect {
+  width: 150px;
+}
+.narrowOnly {
+  display: none;
+}
+.fieldBadge {
+  margin-left: 6px;
+  vertical-align: middle;
+}
+.copyStatus {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 6px 8px;
+  font-size: 13px;
+  color: var(--text-color-kumo-subtle);
+}
+.alignStart {
+  align-self: flex-start;
+}
 @media (max-width: 800px) {
   .workspace {
     --navigation-width: 0px;
@@ -794,6 +848,15 @@
 @media (max-width: 600px) {
   .brand {
     display: none;
+  }
+  .languageSelect {
+    width: auto;
+  }
+  .wideOnly {
+    display: none;
+  }
+  .narrowOnly {
+    display: inline;
   }
   .navigationToggle {
     margin-right: auto;

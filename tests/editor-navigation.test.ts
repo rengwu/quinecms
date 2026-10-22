@@ -286,6 +286,13 @@ function expectAdminView() {
   expect(host.querySelector('[data-preview-island]')).toBeNull();
 }
 
+const darkModeSwitch = () =>
+  [...editorPanel().querySelectorAll('section')]
+    .find(
+      (section) => section.querySelector('h2')?.textContent === 'Appearance',
+    )!
+    .querySelector<HTMLButtonElement>('[role="switch"]')!;
+
 it('persists the admin theme across navigation and reload without changing site content or preview theme', async () => {
   await mount();
   const adminSurfaces = () => [...host.querySelectorAll('.kumo-ui')];
@@ -295,8 +302,7 @@ it('persists the admin theme across navigation and reload without changing site 
   await click('Settings');
   const snapshot = structuredClone(readRecovery()!.content);
   const saveWasDisabled = button('Save draft').disabled;
-  const toggle = () =>
-    editorPanel().querySelector<HTMLButtonElement>('[role="switch"]')!;
+  const toggle = () => darkModeSwitch();
   expect(toggle().getAttribute('aria-checked')).toBe('true');
   await act(async () => toggle().click());
   expect(toggle().getAttribute('aria-checked')).toBe('false');
@@ -345,8 +351,7 @@ it('falls back from an invalid admin preference and can toggle when persistence 
   localStorage.setItem(adminThemeKey, 'invalid');
   await mount();
   await click('Settings');
-  const toggle =
-    editorPanel().querySelector<HTMLButtonElement>('[role="switch"]')!;
+  const toggle = darkModeSwitch();
   expect(toggle.getAttribute('aria-checked')).toBe('true');
   const setItem = Storage.prototype.setItem;
   vi.spyOn(Storage.prototype, 'setItem').mockImplementation(function (

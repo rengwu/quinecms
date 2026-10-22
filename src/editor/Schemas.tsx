@@ -10,8 +10,21 @@ import type {
   Entry,
   Field,
 } from '../core/types';
-import { id, schemaChanges } from '../core/content';
-import { definitionUses, walkValues, schemaIssues } from '../core/schema';
+import { id, schemaChanges, serialize } from '../core/content';
+import {
+  definitionUses,
+  entryLabel,
+  walkValues,
+  schemaIssues,
+} from '../core/schema';
+import {
+  copyIssues,
+  extraLanguages,
+  hasCopy,
+  languageName,
+  pruneCopies,
+} from '../core/languages';
+import { definitions } from '../generated/definitions';
 import { fieldDefaults } from '../core/lists';
 import SchemaFieldEditor from './SchemaFieldEditor';
 import CollectionSchema from './CollectionSchema';
@@ -36,6 +49,7 @@ export default function Schemas({
   onOpenUsage(target: UsageTarget): void;
 }) {
   const [error, setError] = useState('');
+  const [notice, setNotice] = useState('');
   const [pending, setPending] = useState<Collection | ObjectDefinition | null>(
     null,
   );
@@ -61,10 +75,10 @@ export default function Schemas({
     select('');
     setError('');
   };
-  function change(next: Content): boolean {
+  function change(proposed: Content): boolean {
     const errors = [
-      ...schemaChanges(content, next),
-      ...schemaIssues(next).filter((i) =>
+      ...schemaChanges(content, proposed),
+      ...schemaIssues(proposed).filter((i) =>
         /three owned|Recursive object/.test(i.message),
       ),
     ];
@@ -73,6 +87,38 @@ export default function Schemas({
       return false;
     }
     setError('');
+    // Copies are never filled in; list the ones this change affects (DEC-223).
+    const next = {
+      ...proposed,
+      entries: proposed.entries.map((e) =>
+        pruneCopies(proposed, e, definitions),
+      ),
+    };
+    const affected = (label: string, pick: (code: string) => Entry[]) => {
+      const names = extraLanguages(next.site).flatMap((code) =>
+        pick(code).map((e) => `${entryLabel(e, next)} (${languageName(code)})`),
+      );
+      return names.length ? [`${label}: ${names.join(', ')}`] : [];
+    };
+    setNotice(
+      [
+        ...affected('Now incomplete', (code) => {
+          const before = copyIssues(content, code, definitions);
+          const after = copyIssues(next, code, definitions);
+          return next.entries.filter(
+            (e) => hasCopy(e, code) && after.has(e.id) && !before.has(e.id),
+          );
+        }),
+        ...affected('Translations removed', (code) =>
+          next.entries.filter(
+            (e, i) =>
+              hasCopy(e, code) &&
+              serialize(e.copies?.[code]) !==
+                serialize(proposed.entries[i].copies?.[code]),
+          ),
+        ),
+      ].join('\n'),
+    );
     onChange(next);
     return true;
   }
@@ -115,6 +161,11 @@ export default function Schemas({
       {error && (
         <p role="alert" style={{ whiteSpace: 'pre-wrap' }}>
           {error}
+        </p>
+      )}
+      {notice && (
+        <p role="status" style={{ whiteSpace: 'pre-wrap' }}>
+          {notice}
         </p>
       )}
       {collection ? (

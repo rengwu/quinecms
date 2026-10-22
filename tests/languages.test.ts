@@ -6,9 +6,13 @@ import { publicRoutes } from '../src/core/routes';
 import {
   applyView,
   copyIssues,
+  countCopies,
+  issueLabel,
   localize,
   pruneCopies,
   recordView,
+  removeCopies,
+  startCopy,
 } from '../src/core/languages';
 import { definitions as installed } from '../src/generated/definitions';
 import type {
@@ -268,5 +272,31 @@ describe('language copies', () => {
     expect(pruneCopies(c, page, definitions).copies).toEqual({
       id: { title: 'Beranda', blocks: { block_3: { question: 'Bagaimana?' } } },
     });
+  });
+
+  it('starts empty copies with row IDs, names missing fields and removes a language', () => {
+    const c = site();
+    const e = entry(c);
+    e.values.steps = [{ name: 'Plan', amount: '1' }];
+    const started = startCopy(c, e, 'id', definitions);
+    expect(started.copies).toEqual({ id: {} });
+    expect((started.values.steps as any)[0]._rowId).toMatch(/^row_/);
+    c.entries = c.entries.map((x) => (x.id === e.id ? started : x));
+    const issues = copyIssues(c, 'id', definitions).get(e.id)!;
+    expect(
+      issues.map((i) => issueLabel(c, i.path, definitions)).sort(),
+    ).toEqual(['Body', 'Steps › Name', 'Title']);
+    home(c).copies = { id: { title: '' } };
+    expect(
+      copyIssues(c, 'id', definitions)
+        .get('page_home')!
+        .map((i) => issueLabel(c, i.path, definitions)),
+    ).toEqual(expect.arrayContaining(['Page title', 'Accordion › Question']));
+    expect(countCopies(c, 'id')).toBe(2);
+    const removed = removeCopies(c, 'id');
+    expect(countCopies(removed, 'id')).toBe(0);
+    expect(removed.entries.find((x) => x.id === e.id)).not.toHaveProperty(
+      'copies',
+    );
   });
 });

@@ -8,6 +8,7 @@ import { Label } from '@cloudflare/kumo/components/label';
 import type { Field, Media, ObjectShape } from '../core/types';
 import { hasValue, isRecord } from '../core/schema';
 import { useModel } from './ModelContext';
+import { useLanguage } from './Languages';
 import { PanelLevel } from './PanelNavigation';
 import Fields from './Fields';
 import styles from './editor.module.css';
@@ -35,6 +36,7 @@ export default function SchemaFieldEditor({
   onCreate?(): void;
 }) {
   const model = useModel();
+  const { enabled: languages } = useLanguage();
   const [childIndex, selectChild] = useState<number | null>(null),
     [editingDefault, setEditingDefault] = useState(false);
   const [pendingChild, setPendingChild] = useState<Field | null>(null);
@@ -377,6 +379,19 @@ export default function SchemaFieldEditor({
         checked={!!field.required}
         onCheckedChange={(required) => onChange({ ...field, required })}
       />
+      {languages &&
+        field.type !== 'object' &&
+        !(field.type === 'array' && field.of?.type === 'object') && (
+          <Checkbox
+            label={
+              field.type === 'media' ? 'Per-language image' : 'Per language'
+            }
+            checked={field.localized === true}
+            onCheckedChange={(on) =>
+              onChange({ ...field, localized: on ? true : undefined })
+            }
+          />
+        )}
       <Button onClick={() => setEditingDefault(true)}>
         Edit default value
       </Button>

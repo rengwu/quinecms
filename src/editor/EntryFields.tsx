@@ -4,6 +4,7 @@ import { Label } from '@cloudflare/kumo/components/label';
 import type { Content, Entry } from '../core/types';
 import Fields from './Fields';
 import styles from './editor.module.css';
+import { SharedBadge } from './Languages';
 
 /** Shared by pending creation and existing entry editing. */
 export default function EntryFields({
@@ -50,7 +51,10 @@ export default function EntryFields({
       )}
       {collection?.genericPageId && collection.mode === 'many' && (
         <div className={styles.field}>
-          <Label htmlFor="entry-slug">URL slug</Label>
+          <Label htmlFor="entry-slug">
+            URL slug
+            <SharedBadge />
+          </Label>
           <Input
             id="entry-slug"
             aria-label="URL slug"
