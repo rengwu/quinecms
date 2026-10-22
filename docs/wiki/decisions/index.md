@@ -1,6 +1,6 @@
 ---
 title: Decisions
-updated: 2026-10-22
+updated: 2026-10-23
 status: Accepted
 ---
 # Decisions
@@ -19,10 +19,11 @@ schema order, draft-first preview and per-language alt text. DEC-226–DEC-231
 settle retention, adding languages, shared rows, `noindex` fallback pages and no
 browser redirect, and ask for an
 [engineering design](../discussions/internationalization-engineering-design.md)
-before code.
+before code. DEC-232 approves it and authorizes the engine-only implementation,
+now [implemented locally](../features/internationalization.md).
 See the [scope update](../journal/2026-10-19-kahf-scope.md) and
 [internationalization discussion](../discussions/optional-internationalization.md).
-Production feature/site implementation remains unauthorized.
+The Kahf site and library changes remain unauthorized.
 
 Entry preview: DEC-189–DEC-192 settle the [live entry preview scope](../discussions/entry-preview.md).
 Implemented locally following work-until-grill authorization; see the
@@ -806,3 +807,9 @@ guide a later implementation; they do not authorize it.
 | DEC-229 | Mark fallback pages in additional languages `noindex`. | Q33 selects option 1. No canonical links, sitemap or site address setting are added. |
 | DEC-230 | Do not redirect by browser language. Visitors choose with the layout's language switch, and each URL always serves the same language. | Q34 selects option 1. |
 | DEC-231 | Write the engineering design in the wiki for review before any implementation code. | Q35 selects option 1. See the [engineering design](../discussions/internationalization-engineering-design.md). Implementation remains unauthorized. |
+
+## Internationalization implementation — chat direction, 2026-10-23
+
+| ID | Decision | Basis and rationale |
+| --- | --- | --- |
+| DEC-232 | Implement internationalization in the engine repository only (core, build, editor and docs), approving the [engineering design](../discussions/internationalization-engineering-design.md) as written. Stop before marking library fields and before the Kahf site. Commit as work progresses. | The user replied “lets work-until-grill. commit as you go” to the recommended engine-only scope, and asked to apply rule-lean. Library and Kahf site work remain separately unauthorized. |

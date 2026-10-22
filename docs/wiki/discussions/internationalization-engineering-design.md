@@ -1,16 +1,18 @@
 ---
 title: Internationalization engineering design
-updated: 2026-10-22
-status: Proposed for review — implementation not authorized
+updated: 2026-10-23
+status: Implemented locally in the engine (steps 1–4); library and Kahf work pending
 ---
 # Internationalization engineering design
 
-DEC-231 asks for this design before any code. It fits the accepted behavior
+DEC-231 asked for this design before any code. It fits the accepted behavior
 (DEC-194–DEC-206) and presentation (DEC-217–DEC-230) of
 [optional internationalization](optional-internationalization.md) into the
-existing engine. Everything below is a proposal for review, not an accepted
-decision, and nothing is implemented. [Review points](#review-points) lists the
-choices most worth checking.
+existing engine. The user then approved it as written and authorized engine-only
+implementation through work-until-grill (2026-10-23). The engine work is done;
+[Implementation notes](#implementation-notes) lists where it differs from the
+text below, and the [feature page](../features/internationalization.md) is the
+current contract.
 
 ## Summary
 
@@ -91,11 +93,9 @@ so adding, removing or reordering rows in the main language needs no copy edits.
   },
   "copies": {
     "id": {
-      "values": {
-        "name": "Serum Pelindung Mawar",
-        "photo": { "alt": "Botol serum" },
-        "ingredients": { "row_a1": { "name": "Skualana" } }
-      }
+      "name": "Serum Pelindung Mawar",
+      "photo": { "alt": "Botol serum" },
+      "ingredients": { "row_a1": { "name": "Skualana" } }
     }
   }
 }
@@ -103,8 +103,8 @@ so adding, removing or reordering rows in the main language needs no copy edits.
 
 - Pages: `"copies": { "id": { "title": "Beranda", "blocks": { "block_hero": { "heading": "…" } } } }`,
   keyed by block ID. Block order and bindings stay shared (DEC-196).
-- Site Layout configurations: `SiteLayout.copies.id.settings`, the same overlay
-  over `design.settings`.
+- Site Layout configurations: `SiteLayout.copies.id`, the same overlay over
+  `design.settings`.
 - A copy exists when its key exists, even if empty. Only Create in the New copy
   form adds one (DEC-224); it also gives rows without `_rowId` an ID.
 - Entries and layout configurations with no localized fields have no copies and
@@ -240,5 +240,30 @@ The main language uses `content` as-is, so single-language sites keep today's pa
    single-language sites in another language.
 
 The `spikes/i18n-ui/` prototype predates DEC-226: it still labels retention as an
-Assumption and keeps copies when a language is removed. It was not changed,
-because DEC-231 asks for no code.
+Assumption and keeps copies when a language is removed. It was not changed.
+
+## Implementation notes
+
+Steps 1–4 are implemented and [verified locally](../verification/runs/2026-10-23-internationalization.md).
+The review points above were implemented as written. Differences and additions:
+
+- Entry and layout copies are the value overlay itself, without a `values` or
+  `settings` wrapper (examples above updated).
+- `localized` is a field flag accepted only as `true` on single-value fields;
+  schema validation rejects it on objects and object arrays.
+- Pages and entries gain **Remove {language} copy** in place of Delete while
+  editing a copy, matching the spike. Layout copies are removed only with their
+  language, and Site Layouts preview the draft without a Visitor toggle.
+- The status line appears at page/entry level, not inside block or row levels.
+  Missing fields are named with their block, row or object, e.g. “Key
+  ingredients › Name”.
+- New pages, entries and blocks are created with main-language values even
+  while another language is selected.
+- Settings offers a list of common languages; other BCP 47 codes can be set in
+  `site.json`.
+- The preview-width toggle becomes icon-only below 600px so the language select
+  fits the 390px top bar.
+- `migrateSite` now keeps `i18n` when converting legacy single-layout sites.
+
+Step 5 (library fields, Kahf language switch and search) remains outside the
+authorized scope.

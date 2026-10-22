@@ -1,10 +1,13 @@
 ---
 title: Visual editing and recovery
-updated: 2026-10-16
+updated: 2026-10-23
 ---
 # Visual editing and recovery
 
 **ID:** FEAT-editor
+
+Sites with additional languages add a top-bar editing language, per-copy status
+and Draft/Visitor previews; see [optional internationalization](internationalization.md#editor).
 
 ## Git save status and recovery
 

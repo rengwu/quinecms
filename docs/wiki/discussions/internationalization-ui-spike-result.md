@@ -1,7 +1,7 @@
 ---
 title: Internationalization UI spike result
 updated: 2026-10-22
-status: Presentation selected (DEC-217–DEC-225) — implementation not authorized
+status: Presentation selected (DEC-217–DEC-225); engine implemented (DEC-232)
 ---
 # Internationalization UI spike result
 

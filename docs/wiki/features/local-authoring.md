@@ -286,6 +286,12 @@ For example `public/photos/team.jpg` uses `/photos/team.jpg`. Supply the normal
 both sources. Local validation checks metadata, not file existence; verify local
 asset URLs in the built site. [Media contract](media.md#locally-authored-media).
 
+Sites with additional languages keep `i18n` in `site.json` and per-language
+`copies` on pages, entries and layout configurations; fields vary only with
+`"localized": true`. Copies refer to rows by `_rowId`, so give translated rows
+IDs. See [optional internationalization](internationalization.md) for the record
+shapes and fallback rules.
+
 ## Custom blocks and layouts
 
 A block version has a `definition.json` and renderer under an extension's `src/blocks/<name>/vN/`.
@@ -302,6 +308,8 @@ returning `{ update, destroy }` for browser use. Public activation is `never`, `
 `idle` or `load`; preview mounts immediately. The same source renders both contexts.
 Preview props may be incomplete; graceful blanks/placeholders usually help authoring.
 Root package pins and manifest dependency ranges are checked during generation.
+Mark block and layout fields `"localized": true` when their text should be
+translated; fields are shared across languages otherwise.
 
 `context` provides instance identity, resolved globals, media, links, preview/binding
 placeholders and collection summaries. Collection-card field mappings expose their

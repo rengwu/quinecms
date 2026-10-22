@@ -1,7 +1,7 @@
 ---
 title: Open questions
-updated: 2026-10-22
-status: Kahf scope and i18n product choices settled; i18n engineering design in review — implementation not authorized
+updated: 2026-10-23
+status: Kahf scope settled; i18n engine implemented locally — library and Kahf work not authorized
 ---
 # Open questions
 
@@ -45,14 +45,14 @@ outside this proof; no hosting selection is pending.
 The [remaining-choices round](../journal/2026-10-21-grill-00807883-1ffc-42ea-96fc-bd306a8acb12.md)
 accepts every recommendation (DEC-226–DEC-231): keep copies when i18n is off,
 delete them when a language is removed, no extra state for adding a language,
-shared list rows, `noindex` fallback pages and no browser redirect. The
-[engineering design](internationalization-engineering-design.md) is proposed for
-review: inline copy overlays, one `localize()` resolver, eligibility from existing
-validation, per-language routes and the editor changes. Its review points are
-engineering choices, not open product questions. No i18n product question remains open.
+shared list rows, `noindex` fallback pages and no browser redirect. DEC-232
+approved the [engineering design](internationalization-engineering-design.md)
+and the engine-only implementation, now [implemented locally](../features/internationalization.md).
+No i18n product question remains open. Library fields and language switches,
+Kahf search and the Kahf site need separate authorization.
 Concrete sample/route selection and other engine additions remain future
 work. No form is pending. DEC-216 authorizes the handed-off prototype work, not
-production feature/site implementation or deployment.
+Kahf site implementation or deployment.
 
 ## Live entry preview — implemented locally
 

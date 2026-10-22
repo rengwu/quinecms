@@ -1,6 +1,6 @@
 ---
 title: Feature map
-updated: 2026-10-11
+updated: 2026-10-23
 ---
 # Feature map
 
@@ -20,5 +20,6 @@ Start with [Building sites with local agents](local-authoring.md) for local auth
 - [Encrypted static admin](admin-encryption.md) — FEAT-admin-encryption.
 - [GitHub/GitLab draft saves and publishing](publishing.md) — FEAT-publishing.
 - [Direct media uploads](media.md) — FEAT-media.
+- [Optional internationalization](internationalization.md) — FEAT-internationalization.
 
 Use [verification setup](../verification/setup.md). The [initial run](../verification/runs/2026-10-05T0819Z-implementation.md) covers automated checks and records browser observations, unavailable browser follow-up, and untested live providers.

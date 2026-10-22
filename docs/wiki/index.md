@@ -1,6 +1,6 @@
 ---
 title: QuineCMS
-updated: 2026-10-22
+updated: 2026-10-23
 status: Accepted
 ---
 # QuineCMS
@@ -26,12 +26,20 @@ shared fields in schema order, draft-first preview, per-language alt text, a
 status line only and minimal UI text. DEC-226–DEC-231 settle the remaining
 product choices (retention, adding languages, shared rows, `noindex` fallback
 pages, no browser redirect). The
-[engineering design](discussions/internationalization-engineering-design.md) is
-proposed for review before any code.
-Production implementation remains outside this handoff, and hosted delivery is
-outside this proof's acceptance scope.
+[engineering design](discussions/internationalization-engineering-design.md) was
+approved, and DEC-232 authorized the engine implementation only (see below). The
+Kahf site remains unauthorized, and hosted delivery is outside this proof's
+acceptance scope.
 
-Latest implementation: [live entry preview](discussions/entry-preview.md)
+Latest implementation: [optional internationalization](features/internationalization.md)
+in the engine (DEC-232). Sites can enable additional languages in Settings; copies
+are sparse overlays on pages, entries and layouts; fallback routes build under
+`/id/…` with `noindex`; editors translate from a top-bar language select with
+Draft/Visitor previews. [Verification](verification/runs/2026-10-23-internationalization.md)
+covers 281 tests, an isolated site build and Chrome editor checks. Library designs
+and the Kahf site are not updated.
+
+Previous implementation: [live entry preview](discussions/entry-preview.md)
 (DEC-189–DEC-192). Routed entries now reuse the split editor with live bound
 content, pending-entry previews and shared-template access. Data-only entries retain
 the full-width editor. [Verification](verification/runs/2026-10-16-entry-preview.md)

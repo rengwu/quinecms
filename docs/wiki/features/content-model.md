@@ -30,7 +30,7 @@ The importable `examples/content-model.json` backup demonstrates two collections
 | Reference | `type: 'reference', collectionId`; stores a target entry ID or null. |
 | Reference array | `type: 'array', of: { type: 'reference', collectionId }`; stores ordered unique entry IDs. |
 
-Existing scalar content fields remain available. Block/layout definitions retain their `list` interface; collection/object schemas use `array`. Scalar arrays, mixed item variants, direct arrays of arrays and polymorphic references are outside this increment.
+Fields can vary by language with `"localized": true`; see [optional internationalization](internationalization.md). Existing scalar content fields remain available. Block/layout definitions retain their `list` interface; collection/object schemas use `array`. Scalar arrays, mixed item variants, direct arrays of arrays and polymorphic references are outside this increment.
 
 Objects and object arrays each count one owned level. An array's row wrapper and a named definition add no extra level. Entry references and reference arrays add no owned depth. Schema validation expands named definitions at every use site, rejects a fourth level and reports direct/indirect ownership cycles. Reuse in independent branches is valid; cycles between independently managed entries are valid.
 

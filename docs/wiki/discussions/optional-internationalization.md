@@ -1,7 +1,7 @@
 ---
 title: Optional internationalization
-updated: 2026-10-22
-status: Product choices settled (DEC-194–DEC-231); engineering design proposed for review; implementation not authorized
+updated: 2026-10-23
+status: Engine implemented locally (DEC-232); library and Kahf work not authorized
 ---
 # Optional internationalization
 
@@ -156,9 +156,12 @@ accepted every recommendation (DEC-226–DEC-231):
 - No browser-language redirect; visitors use the layout's language switch.
 - Write the engineering design before any code.
 
-The [engineering design](internationalization-engineering-design.md) is now
-proposed for review. It answers the four areas below and lists its own review
-points. Implementation needs separate authorization.
+The [engineering design](internationalization-engineering-design.md) answers
+the four areas below. DEC-232 approved it and authorized the engine-only
+implementation, which is [implemented locally](../features/internationalization.md)
+and [verified](../verification/runs/2026-10-23-internationalization.md). Marking
+library fields, a library language switch, Kahf search and the Kahf site remain
+unauthorized.
 
 ## Remaining implementation design
 
@@ -191,7 +194,7 @@ subsequently selects thirteen logical pages including search, partially bilingua
 sample content and local-only build/editor verification (DEC-208–DEC-215).
 No hosting choice is required for that proof. The i18n UI spike was
 [handed off](internationalization-ui-spike-handoff.md), delivered and its
-presentation selected; production implementation remains unauthorized.
+presentation selected. DEC-232 later authorized the engine implementation only.
 
 ## Eventual proof, not executed
 
