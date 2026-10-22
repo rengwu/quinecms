@@ -2,6 +2,7 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import { parseFiles, validate } from './content';
 import { migrateSite } from './layout-state';
+import { localize } from './languages';
 import { definitions } from '../generated/definitions';
 export async function readContentFiles() {
   const files: Record<string, string> = {};
@@ -23,4 +24,8 @@ export async function loadContent() {
   if (issues.length)
     throw new Error(issues.map((i) => i.path + ': ' + i.message).join('\n'));
   return migrateSite(content);
+}
+/** One additional language as visitors receive it (DEC-195, DEC-200). */
+export async function loadLanguage(language: string) {
+  return localize(await loadContent(), language, definitions);
 }

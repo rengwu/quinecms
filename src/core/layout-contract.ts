@@ -8,6 +8,8 @@ export interface LayoutProps {
   children?: ReactNode;
   preview?: boolean;
   onNavigate?(url: string, documentId?: string): void;
+  /** This page in each built language, for a language switch. */
+  languages?: { code: string; path: string; current: boolean }[];
 }
 export interface LayoutSettingsProps {
   settings: Values;

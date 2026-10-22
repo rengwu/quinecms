@@ -85,10 +85,10 @@ const { content } = Astro.props;
       `---
 import Layout from ${JSON.stringify(selected.sources.component)};
 import { activeLayout } from '../core/layouts';
-const { content } = Astro.props;
+const { content, languages } = Astro.props;
 const { settings } = activeLayout(content.site);
 ---
-<Layout {content} {settings} ${selected.definition.activation === 'never' ? '' : 'client:load'}><slot /></Layout>
+<Layout {content} {settings} {languages} ${selected.definition.activation === 'never' ? '' : 'client:load'}><slot /></Layout>
 `,
     );
   }

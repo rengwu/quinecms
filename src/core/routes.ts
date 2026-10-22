@@ -9,6 +9,10 @@ export function entryPath(collection: Collection, entry: Entry) {
       : undefined;
 }
 
+/** Additional languages share paths and add only their code as a prefix. */
+export const languagePath = (path: string, language: string) =>
+  `/${language}${path === '/' ? '' : path}`;
+
 // Used by static generation and tests. Collections never own an index route.
 export function publicRoutes(
   content: Pick<Content, 'pages' | 'collections' | 'entries'>,

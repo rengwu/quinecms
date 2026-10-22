@@ -4,16 +4,25 @@ import { layoutTitle } from '../core/layouts';
 interface Props {
   content: Content;
   title: string;
+  lang?: string;
+  /** Fallback pages repeat main-language content under another prefix (DEC-229). */
+  noindex?: boolean;
 }
-const { content, title } = Astro.props;
+const {
+  content,
+  title,
+  lang = content.site.i18n?.main ?? 'en',
+  noindex = false,
+} = Astro.props;
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang={lang}>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width" />
     <meta name="generator" content={Astro.generator} />
+    {noindex && <meta name="robots" content="noindex" />}
     <title>{[title, layoutTitle(content.site)].filter(Boolean).join(' · ')}</title>
     <slot name="head" />
   </head>

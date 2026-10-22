@@ -12,6 +12,8 @@ import type {
 } from './types';
 import { isRecord, objectFields, rowFields, type Model } from './schema';
 import { listRows } from './lists';
+import { languagePath } from './routes';
+export { languagePath };
 import { layoutDefinitions } from './layouts';
 import { validate } from './content';
 
@@ -33,8 +35,6 @@ export function languageName(code: string) {
     return code;
   }
 }
-export const languagePath = (path: string, language: string) =>
-  `/${language}${path === '/' ? '' : path}`;
 export const validLanguage = (code: unknown): code is string => {
   if (typeof code !== 'string' || !/^[a-z]{2,3}(?:-[a-z0-9]{2,8})*$/.test(code))
     return false;

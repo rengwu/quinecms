@@ -8,7 +8,7 @@ import {
 import { resolve, relative } from 'node:path';
 import semver from 'semver';
 import blocks from '../blocks.config.mjs';
-import { publicRoutes } from '../src/core/routes.ts';
+import { languagePath, publicRoutes } from '../src/core/routes.ts';
 import { pageLayout } from '../src/core/layout-state.ts';
 import { generateLayouts } from './generate-layouts.mjs';
 // Keep unchanged files in place so a running dev server never sees an empty registry.
@@ -127,54 +127,77 @@ await walk('content/pages', 'pages');
 await walk('content/collections', 'collections');
 await walk('content/entries', 'entries');
 await mkdir('src/generated/pages', { recursive: true });
+const main = site.i18n?.main ?? 'en';
+const extra = site.i18n?.enabled ? site.i18n.languages : [];
 const routes = [];
-for (const { path, page, entry } of publicRoutes(content)) {
-  const record = entry ?? page;
-  const design = pageLayout(content, page).design;
-  const layoutIndex = installedLayouts.findIndex(
-    (d) => d.id === design.id && d.version === design.version,
-  );
-  if (layoutIndex < 0)
-    throw Error(`Missing installed layout ${design.id}@${design.version}`);
-  if (
-    !/^\/(?:[a-zA-Z0-9_-]+\/)*[a-zA-Z0-9_-]*$/.test(path) ||
-    /^\/(admin|_astro|assets)(\/|$)/.test(path) ||
-    routes.some((r) => r.pattern.replace(/\/$/, '') === path.replace(/\/$/, ''))
-  )
-    throw Error('Invalid or duplicate route ' + path);
-  const selected = [
-    ...new Set(
-      page.blocks.map((b) =>
-        defs.findIndex((d) => d.type === b.type && d.version === b.version),
+for (const language of [main, ...extra])
+  for (const route of publicRoutes(content)) {
+    const { page, entry } = route;
+    const record = entry ?? page;
+    const path =
+      language === main ? route.path : languagePath(route.path, language);
+    const languages = extra.length
+      ? [main, ...extra].map((code) => ({
+          code,
+          path: code === main ? route.path : languagePath(route.path, code),
+          current: code === language,
+        }))
+      : undefined;
+    const design = pageLayout(content, page).design;
+    const layoutIndex = installedLayouts.findIndex(
+      (d) => d.id === design.id && d.version === design.version,
+    );
+    if (layoutIndex < 0)
+      throw Error(`Missing installed layout ${design.id}@${design.version}`);
+    if (
+      !/^\/(?:[a-zA-Z0-9_-]+\/)*[a-zA-Z0-9_-]*$/.test(path) ||
+      /^\/(admin|_astro|assets)(\/|$)/.test(path) ||
+      routes.some(
+        (r) => r.pattern.replace(/\/$/, '') === path.replace(/\/$/, ''),
+      )
+    )
+      throw Error('Invalid or duplicate route ' + path);
+    const selected = [
+      ...new Set(
+        page.blocks.map((b) =>
+          defs.findIndex((d) => d.type === b.type && d.version === b.version),
+        ),
       ),
-    ),
-  ];
-  if (selected.includes(-1))
-    throw Error('Missing installed block in ' + page.id);
-  const imports = selected
-    .map((i) => `import Block${i} from '../Block${i}.astro';`)
-    .join('\n');
-  const markup = page.blocks
-    .map((b, j) => {
-      const i = defs.findIndex(
-        (d) => d.type === b.type && d.version === b.version,
-      );
-      return `<Block${i} props={blocks[${j}].props} context={contextFor(content,blocks[${j}].id,definitions[${i}])}/>`;
-    })
-    .join('\n');
-  await writeFile(
-    `src/generated/pages/${record.id}.astro`,
-    `---
+    ];
+    if (selected.includes(-1))
+      throw Error('Missing installed block in ' + page.id);
+    const imports = selected
+      .map((i) => `import Block${i} from '../Block${i}.astro';`)
+      .join('\n');
+    let markup = page.blocks
+      .map((b, j) => {
+        const i = defs.findIndex(
+          (d) => d.type === b.type && d.version === b.version,
+        );
+        return `<Block${i} props={blocks[${j}].props} context={contextFor(content,blocks[${j}].id,definitions[${i}])}/>`;
+      })
+      .join('\n');
+    // Mark a fallback item's main-language content inside the requested language (DEC-221).
+    if (language !== main)
+      markup = `<div lang={fallback.has(${JSON.stringify(record.id)}) ? ${JSON.stringify(main)} : ${JSON.stringify(language)}} style="display: contents">${markup}</div>`;
+    const file = (language === main ? '' : language + '.') + record.id;
+    await writeFile(
+      `src/generated/pages/${file}.astro`,
+      `---
 import Public from '../../layouts/Public.astro';
 import PageLayout from '../Layout${layoutIndex}.astro';
 import PageHead from '../LayoutHead${layoutIndex}.astro';
 import {contentForPage} from '../../core/layout-state';
-import {loadContent} from '../../core/load';
+import {${language === main ? 'loadContent' : 'loadLanguage'}} from '../../core/load';
 import {contextFor} from '../../core/content';
 import {definitions} from '../definitions';
 ${entry ? "import {resolveBlock} from '../../core/bindings';" : ''}
 ${imports}
-const fullContent=await loadContent();
+${
+  language === main
+    ? 'const fullContent=await loadContent();'
+    : `const {content:fullContent,fallback}=await loadLanguage(${JSON.stringify(language)});`
+}
 const page=fullContent.pages.find(p=>p.id===${JSON.stringify(page.id)})!;
 const content=contentForPage(fullContent,page);
 ${
@@ -187,14 +210,14 @@ const blocks=page.blocks.map(b=>resolveBlock(b,entry.values,content,collection.f
 const blocks=page.blocks;`
 }
 ---
-<Public content={content} title={title}><PageHead slot="head" content={content}/><PageLayout content={content}>${markup}</PageLayout></Public>
+<Public content={content} title={title}${language === main ? '' : ` lang=${JSON.stringify(language)} noindex={fallback.has(${JSON.stringify(record.id)})}`}><PageHead slot="head" content={content}/><PageLayout content={content}${languages ? ` languages={${JSON.stringify(languages)}}` : ''}>${markup}</PageLayout></Public>
 `,
-  );
-  routes.push({
-    pattern: path,
-    entrypoint: `./src/generated/pages/${record.id}.astro`,
-  });
-}
+    );
+    routes.push({
+      pattern: path,
+      entrypoint: `./src/generated/pages/${file}.astro`,
+    });
+  }
 await writeFile('src/generated/routes.json', JSON.stringify(routes, null, 2));
 
 const sources = JSON.parse(await readFile('build-inputs.json', 'utf8'));
