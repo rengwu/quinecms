@@ -1,9 +1,28 @@
 ---
 title: Decisions
-updated: 2026-10-16
+updated: 2026-10-22
 status: Accepted
 ---
 # Decisions
+
+Kahf proof: DEC-193 reduces the recreation to a small sample; DEC-194 selects
+optional internationalization. DEC-195–DEC-206 settle both behavior rounds,
+including automatic translation eligibility and no source-change tracking.
+DEC-207 requires an i18n UI presentation prototype/spike before implementation.
+DEC-208–DEC-215 select thirteen logical pages including search, a partially
+bilingual sample, full content-maintenance coverage and local-only verification.
+DEC-216 hands the isolated UI spike to another agent; production implementation
+remains outside the authorized scope. DEC-217–DEC-225 select the i18n editing
+presentation from the [spike](../discussions/internationalization-ui-spike-result.md):
+one language at a time, a portal-wide top-bar language selector, shared fields in
+schema order, draft-first preview and per-language alt text. DEC-226–DEC-231
+settle retention, adding languages, shared rows, `noindex` fallback pages and no
+browser redirect, and ask for an
+[engineering design](../discussions/internationalization-engineering-design.md)
+before code.
+See the [scope update](../journal/2026-10-19-kahf-scope.md) and
+[internationalization discussion](../discussions/optional-internationalization.md).
+Production feature/site implementation remains unauthorized.
 
 Entry preview: DEC-189–DEC-192 settle the [live entry preview scope](../discussions/entry-preview.md).
 Implemented locally following work-until-grill authorization; see the
@@ -681,3 +700,109 @@ These requirements were subsequently implemented under work-until-grill. See the
 | DEC-190 | Keep data-only entries in the existing full-width field editor. | Q1 selects this boundary; no inferred usage preview or page picker. |
 | DEC-191 | Show the template name with an Edit shared template link in the entry editor. | Q2 selects the link over the recommended label-only approach. Explain its shared effect and use existing template ownership/navigation. |
 | DEC-192 | Reuse page-preview navigation for existing entries and retain their unsaved edits. Keep pending creation in place until Create or Cancel. | Q3 selects reuse; its stated creation boundary prevents preview navigation from abandoning a pending entry. |
+
+## Kahf proof and internationalization — chat direction, 2026-10-19
+
+| ID | Decision | Basis and rationale |
+| --- | --- | --- |
+| DEC-193 | Limit the Kahf proof to a couple of entries per retained type; permit omitting less important entries, peripheral routes and less reachable links, and simplifying the site. | Direct user correction: 964 URLs are excessive for the proof. Supersedes the assistant's full-corpus recommendation, not a prior user decision. Exact retained routes are open. |
+| DEC-194 | Design optional engine internationalization with enable/disable, a designated main language, optional language copies, fallback to main content and a configurable all-languages-required policy. | Direct user proposal accepted as the planning direction. Subsequent DEC-195–DEC-206 refine fallback, composition, validation, routing and authoring; see [discussion](../discussions/optional-internationalization.md). Other matters are deferred and implementation is not yet authorized. |
+
+## Optional internationalization — submitted first round, 2026-10-19
+
+The [submitted answers](../journal/2026-10-18-grill-ebf226eb-bcab-4ca7-ba96-11c09d4ecee9.md)
+select all five recommendations. The transcript filename reflects UTC form
+creation; project decision dates use local time. These choices refine DEC-194
+without authorizing implementation.
+
+| ID | Decision | Basis and rationale |
+| --- | --- | --- |
+| DEC-195 | Use whole-item fallback when a language copy is unavailable. | Q1 selects a complete main-language item instead of field-by-field fallback. Readiness was left open in this round; DEC-200 subsequently selects automatic eligibility from validation. |
+| DEC-196 | Share page sections, section order and templates across languages while localizing content values. | Q2 selects one maintained composition instead of independently composed translated pages. |
+| DEC-197 | Permit incomplete translation drafts; enforce strict completeness at Publish and production build. | Q3 permits work in progress while preventing incomplete strict-mode releases. Structural draft validation remains. |
+| DEC-198 | Serve the main language at unprefixed paths and additional languages under locale prefixes. | Q4 preserves the main-language URL shape. DEC-204 subsequently selects shared paths/slugs; aliases were not independently selected. |
+| DEC-199 | Use English as the main language and Indonesian as the second for the Kahf proof. | Q5 selects this pilot configuration; the engine is not restricted to these languages or to two languages. |
+
+## Optional internationalization — submitted second round, 2026-10-19
+
+The [submitted answers](../journal/2026-10-19-grill-f85ebc7f-a355-4637-bbad-e6e30ca052d9.md)
+select automatic eligibility and no source-change tracking instead of the
+recommended Ready control and review warnings. Q7 explicitly requests the
+simplest solution under jstack's rule-lean guidance. Implementation remains
+unauthorized; see the [design discussion](../discussions/optional-internationalization.md).
+
+| ID | Decision | Basis and rationale |
+| --- | --- | --- |
+| DEC-200 | A language copy becomes eligible automatically when its required fields are valid; no explicit Ready control. | Q6 selects option 2. Structural validation and the existing publication boundary remain; eligibility does not immediately publish edits. |
+| DEC-201 | Main-language text edits leave valid translations eligible without source-change tracking or freshness/review warnings. | Q7 selects option 3 and explicitly invokes rule-lean. This does not exempt structurally invalid content or schema changes from validation. |
+| DEC-202 | Include pages/blocks, entries, shared layout/navigation copy and visitor-facing metadata wherever those fields exist in the first i18n release. | Q8 selects option 1. Admin-interface translation and a separate expanded metadata system are not implied. |
+| DEC-203 | Make localization a field setting; fields are shared by default. | Q9 selects option 1. Schema and block/layout definitions choose which values may vary. Shared values are not per-field fallback, and shared page composition remains required. |
+| DEC-204 | Share paths/slugs across languages and add only the locale prefix in the first release. | Q10 selects option 1. Localized paths/slugs are deferred. |
+| DEC-205 | Manage enabled languages, main language, i18n enablement and strict/fallback policy in portal Settings, saved and published with site content. | Q11 selects option 1 over developer-only configuration. |
+| DEC-206 | Fix the main language once translations exist; defer main-language migration support. | Q12 selects option 1 to avoid adding content promotion and URL migration to the first release. |
+
+## Internationalization UI exploration — chat direction, 2026-10-19
+
+| ID | Decision | Basis and rationale |
+| --- | --- | --- |
+| DEC-207 | Prototype/spike the internationalization UI presentation methods before implementing the feature. | Direct user instruction to record this prerequisite now and move on to the next interview. Presentation methods are not selected yet; this does not authorize starting the prototype or implementation now. |
+
+## Kahf scope and proof criteria — submitted round, 2026-10-20
+
+The [submitted answers](../journal/2026-10-19-grill-a3d80ba9-a41c-43d0-9a3c-c8238c5f474e.md)
+select the first option for Q13–Q19 and local-only verification for Q20, with no
+notes. The transcript filename reflects form creation on 2026-10-19; these
+decisions are recorded on the local collection date, 2026-10-20. This settles
+planning scope, not authorization to prototype, implement or deploy.
+
+| ID | Decision | Basis and rationale |
+| --- | --- | --- |
+| DEC-208 | Retain the proposed twelve logical pages: home, story, one shop listing, two products, one blog listing, two articles, ingredient listing, one ingredient detail and two concern details. | Q13 selects the representative set. Counts precede language variants; specific product/article/concern examples remain to be selected. Search is added separately by DEC-211. |
+| DEC-209 | Closely match retained pages on desktop and mobile while simplifying decorative motion. | Q14 selects close layout, typography, imagery and spacing. Necessary navigation/gallery/accordion behavior is distinct from decorative animation. |
+| DEC-210 | Omit account, funding-application and campaign-service routes and their entry points. | Q15 excludes service-backed flows and calls for coherent navigation/CTAs within the retained sample. The off-origin skin analyzer remains outside scope; ordinary marketplace links may remain outbound navigation. No cart or checkout is added. |
+| DEC-211 | Include simple working client-side search over retained content. | Q16 adds one logical route, making thirteen logical pages before language variants. This does not select a search server or a generalized engine query language. |
+| DEC-212 | Remove obvious reference placeholders and flag questionable substantive copy. | Q17 selects cleanup without silently rewriting uncertain brand/product claims. Prefer intact source examples. |
+| DEC-213 | Use a partially bilingual sample with deliberate missing translations. | Q18 selects translated examples across retained families plus missing copies to exercise fallback. Strict rejection and incomplete-copy behavior also need local proof; no automatic translation service is implied. |
+| DEC-214 | Exercise a complete content-maintenance walkthrough with existing blocks and schemas. | Q19 includes creating/editing entries, translations, media replacement, page composition, shared layout/navigation copy, preview, save and publish. DEC-215 limits verification to local behavior; this is not a requirement to exercise live providers. |
+| DEC-215 | Require local build and editor verification only for this proof. | Q20 selects option 2 instead of the recommended hosted cycle. Live Git saves, hosting rebuilds, deployment and production uploads are outside this proof's acceptance requirements; local or mocked checks must not be described as live-provider evidence. |
+
+## UI spike handoff — chat direction, 2026-10-20
+
+| ID | Decision | Basis and rationale |
+| --- | --- | --- |
+| DEC-216 | Hand off the isolated internationalization UI spike to another agent. The receiving agent may build reviewable prototypes; production i18n and the Kahf site remain outside this handoff. | Direct user request: “handoff, i want another agent to do the UI spike.” See the [handoff brief](../discussions/internationalization-ui-spike-handoff.md). No spike was executed in the planning session. |
+
+## Internationalization UI presentation — submitted round, 2026-10-20
+
+The [submitted answers](../journal/2026-10-20-grill-95ba214e-a1cc-46d8-b4ff-926fdb6d958a.md)
+settle Q21–Q29 of the [UI spike](../discussions/internationalization-ui-spike-result.md).
+The user asks for rule-lean and rule-plain-ui: keep the presentation simple and
+UI text to what supports understanding or action. These choices guide a later
+implementation; they do not authorize it.
+
+| ID | Decision | Basis and rationale |
+| --- | --- | --- |
+| DEC-217 | Edit one language at a time, without main-language reference text beside or above translated fields. Switching language keeps the editor's scroll position. | Q21 selects option 2 (A) over the recommended adaptive layout. The note asks for minimal UI text and no scroll reset; its sticky in-form selector idea is replaced by DEC-219. |
+| DEC-218 | Keep shared fields in schema order with a Shared badge, editable in every language. | Q22 selects option 2: “don't move them around”. |
+| DEC-219 | Select the editing language with one top-bar selector kept across portal navigation, instead of per-item tabs. | Q23 selects option 3. The prototype fits it at 390px by showing the language code; the production narrow top bar still has to be fitted during implementation. |
+| DEC-220 | The live preview shows the draft copy by default, with a Visitor toggle. | Q24 selects option 1. |
+| DEC-221 | On a fallback page, layout and template text use the requested language; only the fallback item's own content is in the main language. | Q25 selects option 1. Public language metadata for the fallback region remains engineering design. |
+| DEC-222 | Media alt text is always per language when i18n is on; the field's shared/per-language setting applies to the image. | Q26 selects option 2; no third media setting. A blank translated alt text is not filled from the main language (DEC-195). |
+| DEC-223 | Allow schema or structure changes that make copies incomplete; show the affected copies where the change is made and never copy main-language values into them. | Q27 selects option 1: “keep it simple please”. |
+| DEC-224 | Start a language copy from an explicit New copy form with blank translated fields and Create/Cancel. | Q28 selects option 1, matching DEC-129 creation. |
+| DEC-225 | Show a secondary-language copy's status and missing required values in one status line; add no inline field notes. | Q29 selects option 2. Main-language editing keeps the current convention, as the question stated. |
+
+## Internationalization remaining choices — submitted round, 2026-10-22
+
+The [submitted answers](../journal/2026-10-21-grill-00807883-1ffc-42ea-96fc-bd306a8acb12.md)
+settle Q30–Q35. Every recommendation was accepted, without notes. These choices
+guide a later implementation; they do not authorize it.
+
+| ID | Decision | Basis and rationale |
+| --- | --- | --- |
+| DEC-226 | Turning internationalization off keeps stored language copies for re-enabling. Removing a language deletes its copies after a confirmation that shows the count. | Q30 selects option 1, replacing the proposed keep-on-remove default. Kept copies become eligible again automatically when re-enabled (DEC-200); deleted copies remain in Git history. |
+| DEC-227 | Adding a language to a live site needs no extra state. Under fallback, its routes publish with main-language items until translated; under strict, Publish waits until every copy is complete. Editors translate under fallback and switch to strict when done. | Q31 selects option 1. A per-language “Visible to visitors” switch is deferred until a live site needs to prepare a language before launch. |
+| DEC-228 | Owned list and array rows are shared across languages; only fields inside rows can be per language. Rows are added, removed and reordered in the main language. | Q32 selects option 1, matching shared page sections (DEC-196). A reference list is one value and follows its own field setting. |
+| DEC-229 | Mark fallback pages in additional languages `noindex`. | Q33 selects option 1. No canonical links, sitemap or site address setting are added. |
+| DEC-230 | Do not redirect by browser language. Visitors choose with the layout's language switch, and each URL always serves the same language. | Q34 selects option 1. |
+| DEC-231 | Write the engineering design in the wiki for review before any implementation code. | Q35 selects option 1. See the [engineering design](../discussions/internationalization-engineering-design.md). Implementation remains unauthorized. |

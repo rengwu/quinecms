@@ -1,9 +1,35 @@
 ---
 title: QuineCMS
-updated: 2026-10-16
+updated: 2026-10-22
 status: Accepted
 ---
 # QuineCMS
+
+Current discussion: [Kahf recreation readiness study](discussions/kahf-recreation.md).
+The accepted sample is thirteen logical pages: the twelve-page editorial/catalog
+set plus search. DEC-208–DEC-215 select close desktop/mobile fidelity with simpler
+decorative motion, omitted service flows, partial bilingual content, a complete
+content-maintenance walkthrough and local-only build/editor verification.
+[Optional internationalization](discussions/optional-internationalization.md)
+now has two accepted behavior rounds (DEC-194–DEC-206): whole-item fallback,
+shared composition, strict checks at publication/build, English-main/Indonesian-
+secondary routes, automatic eligibility from valid fields and no source-change
+tracking. Fields are shared unless explicitly localizable; settings belong in
+the portal; paths/slugs stay shared and the main language is fixed once translations
+exist. DEC-207 requires a prototype/spike of i18n UI presentation methods before
+implementation. DEC-216 hands the isolated spike to another agent via the
+[UI spike handoff](discussions/internationalization-ui-spike-handoff.md). The
+[spike result](discussions/internationalization-ui-spike-result.md) compares three
+presentations in the isolated `spikes/i18n-ui/` prototype, and DEC-217–DEC-225
+select the simplest: one language at a time with a portal-wide top-bar selector,
+shared fields in schema order, draft-first preview, per-language alt text, a
+status line only and minimal UI text. DEC-226–DEC-231 settle the remaining
+product choices (retention, adding languages, shared rows, `noindex` fallback
+pages, no browser redirect). The
+[engineering design](discussions/internationalization-engineering-design.md) is
+proposed for review before any code.
+Production implementation remains outside this handoff, and hosted delivery is
+outside this proof's acceptance scope.
 
 Latest implementation: [live entry preview](discussions/entry-preview.md)
 (DEC-189–DEC-192). Routed entries now reuse the split editor with live bound

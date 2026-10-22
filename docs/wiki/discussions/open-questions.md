@@ -1,9 +1,58 @@
 ---
 title: Open questions
-updated: 2026-10-16
-status: Entry preview implemented locally
+updated: 2026-10-22
+status: Kahf scope and i18n product choices settled; i18n engineering design in review — implementation not authorized
 ---
 # Open questions
+
+## Kahf recreation — planning only
+
+DEC-193 settles a small sample: a couple of entries per retained type, with
+peripheral routes/content omitted as useful. The [readiness study](kahf-recreation.md)
+retains the full reference inventory without treating it as the delivery scope.
+
+DEC-194 selects [optional internationalization](optional-internationalization.md).
+The [first submitted round](../journal/2026-10-18-grill-ebf226eb-bcab-4ca7-ba96-11c09d4ecee9.md)
+settles whole-item fallback, shared composition, publication/build enforcement,
+an unprefixed main language and prefixed additional languages, and English-main/
+Indonesian-secondary for the pilot (DEC-195–DEC-199). Do not re-ask these choices.
+
+The [second submitted round](../journal/2026-10-19-grill-f85ebc7f-a355-4637-bbad-e6e30ca052d9.md)
+settles automatic eligibility from valid required fields, no source-change
+tracking, all visitor-facing content, per-field localization with shared defaults,
+shared paths/slugs, portal-owned settings and a fixed main language once
+translations exist (DEC-200–DEC-206). An explicit Ready switch and source-change
+review warnings were not selected; apply the user's rule-lean constraint.
+
+DEC-207 requires an i18n UI presentation prototype/spike before implementation.
+DEC-216 hands the isolated spike to another agent using the
+[handoff brief](internationalization-ui-spike-handoff.md). The
+[spike result](internationalization-ui-spike-result.md) compares three
+presentations, and the [presentation round](../journal/2026-10-20-grill-95ba214e-a1cc-46d8-b4ff-926fdb6d958a.md)
+selects DEC-217–DEC-225: one language at a time, a portal-wide top-bar selector,
+shared fields in schema order, draft-first preview, per-language alt text,
+listed (not copied) schema effects, blank explicit copy creation and a status
+line only, with minimal UI text. Do not re-ask these choices.
+
+The [Kahf scope round](../journal/2026-10-19-grill-a3d80ba9-a41c-43d0-9a3c-c8238c5f474e.md)
+selects the twelve-page set plus working search (thirteen logical pages before
+language variants), close desktop/mobile fidelity with simpler decorative motion,
+omission of service-backed routes/entry points, obvious-placeholder cleanup,
+partially bilingual content, full content-maintenance coverage and local-only
+build/editor verification (DEC-208–DEC-215). Live Git/hosting/R2 verification is
+outside this proof; no hosting selection is pending.
+
+The [remaining-choices round](../journal/2026-10-21-grill-00807883-1ffc-42ea-96fc-bd306a8acb12.md)
+accepts every recommendation (DEC-226–DEC-231): keep copies when i18n is off,
+delete them when a language is removed, no extra state for adding a language,
+shared list rows, `noindex` fallback pages and no browser redirect. The
+[engineering design](internationalization-engineering-design.md) is proposed for
+review: inline copy overlays, one `localize()` resolver, eligibility from existing
+validation, per-language routes and the editor changes. Its review points are
+engineering choices, not open product questions. No i18n product question remains open.
+Concrete sample/route selection and other engine additions remain future
+work. No form is pending. DEC-216 authorizes the handed-off prototype work, not
+production feature/site implementation or deployment.
 
 ## Live entry preview — implemented locally
 
