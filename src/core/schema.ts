@@ -108,6 +108,13 @@ export function schemaIssues(model: Model): Issue[] {
       if (f.required !== undefined && typeof f.required !== 'boolean')
         add(path, 'Required must be true or false.');
       if (
+        f.localized !== undefined &&
+        (f.localized !== true ||
+          f.type === 'object' ||
+          (f.type === 'array' && f.of?.type === 'object'))
+      )
+        add(path, 'Only single-value fields can vary by language.');
+      if (
         ![
           'text',
           'url',

@@ -33,6 +33,7 @@ import {
   type Model,
 } from './schema';
 import { embedDestination, embeddedDestinations } from './embeds';
+import { extraLanguages, languageIssues, languageName } from './languages';
 import { customValidators } from './custom-fields';
 import { validContentMaxWidth, validPageGutter } from './site-style';
 import type {
@@ -537,8 +538,15 @@ export function validate(content: Content, definitions: Definition[]): Issue[] {
       add(where, 'Choose a valid public path.', 'publish');
     else {
       const normalized = p.replace(/\/$/, '') || '/';
+      const prefix = normalized.split('/')[1];
       if (routes.has(normalized))
         add(where, 'This URL is already used.', 'publish');
+      else if (extraLanguages(content.site).includes(prefix))
+        add(
+          where,
+          `This URL is reserved for ${languageName(prefix)}.`,
+          'publish',
+        );
       routes.add(normalized);
     }
   };
@@ -951,6 +959,7 @@ export function validate(content: Content, definitions: Definition[]): Issue[] {
   }
   if (!content.pages.some((p) => p.kind === 'static' && p.path === '/'))
     add('pages', 'Create a home page at /.', 'publish');
+  issues.push(...languageIssues(content, definitions));
   return issues;
 }
 export function schemaChanges(before: Content, after: Content): Issue[] {

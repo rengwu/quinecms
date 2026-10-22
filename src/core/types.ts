@@ -21,16 +21,26 @@ export interface Page extends Envelope {
   /** Required in sites with saved layout configurations. */
   layoutId?: string;
   blocks: Block[];
+  /** Per-language values keyed by language code; see `languages.ts`. */
+  copies?: Record<string, PageCopy>;
+}
+export interface PageCopy {
+  title?: string;
+  /** Localized block props keyed by block ID. */
+  blocks?: Record<string, Values>;
 }
 export interface Entry extends Envelope {
   collectionId: string;
   slug?: string;
   values: Values;
+  copies?: Record<string, Values>;
 }
 export type Field = {
   key: string;
   label: string;
   required?: boolean;
+  /** Varies by language when internationalization is on; shared by default. */
+  localized?: boolean;
   default?: Json;
   widget?: string;
   format?: 'form-endpoint';
@@ -84,8 +94,16 @@ export interface Media extends Envelope {
   original: MediaFile;
   variants: MediaFile[];
 }
+export interface Languages {
+  enabled: boolean;
+  main: string;
+  /** Additional languages, in switcher order. Codes are also URL prefixes. */
+  languages: string[];
+  missing: 'fallback' | 'strict';
+}
 export interface Site extends Envelope {
   globals: Values;
+  i18n?: Languages;
   layouts?: SiteLayout[];
   /** Previous single-layout format; also used in an ephemeral render context. */
   layout?: LayoutSelection;
@@ -105,6 +123,8 @@ export interface SiteLayout {
   name: string;
   active: boolean;
   design: LayoutSelection;
+  /** Localized settings keyed by language code. */
+  copies?: Record<string, Values>;
 }
 export interface LayoutDefinition {
   id: string;
