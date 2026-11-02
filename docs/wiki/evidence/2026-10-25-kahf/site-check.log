@@ -1,0 +1,12 @@
+
+> quinecms-site-kahf@ check /Users/rengwu/Desktop/Projects/quinecms-site-kahf
+> quinecms check
+
+Registered 55 block versions.
+Registered 4 layout versions.
+19:23:28 [types] Generated 67ms
+19:23:28 [check] Getting diagnostics for Astro files in /Users/rengwu/Desktop/Projects/quinecms-site-kahf/.quinecms/workspace...
+Result (254 files):
+- 0 errors
+- 0 warnings
+- 0 hints

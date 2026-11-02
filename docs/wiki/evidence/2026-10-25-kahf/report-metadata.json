@@ -1,0 +1,41 @@
+{
+  "reports": 61,
+  "errors": [
+    {
+      "file": "verification/runs/2026-10-08-gitlab.md",
+      "error": "Report result must be Passed, Failed, or Untested."
+    },
+    {
+      "file": "verification/runs/2026-10-08-local-authoring.md",
+      "error": "Report result must be Passed, Failed, or Untested."
+    },
+    {
+      "file": "verification/runs/2026-10-11-quine-rebuild.md",
+      "error": "Report result must be Passed, Failed, or Untested."
+    },
+    {
+      "file": "verification/runs/2026-10-13-archline-theme.md",
+      "error": "Report result must be Passed, Failed, or Untested."
+    },
+    {
+      "file": "verification/runs/2026-10-13-intr-rebuild.md",
+      "error": "Report result must be Passed, Failed, or Untested."
+    },
+    {
+      "file": "verification/runs/2026-10-13-quinecms-rename.md",
+      "error": "Report result must be Passed, Failed, or Untested."
+    },
+    {
+      "file": "verification/runs/2026-10-13-unified-dashboard.md",
+      "error": "Report result must be Passed, Failed, or Untested."
+    },
+    {
+      "file": "verification/runs/2026-10-16-tessera-fidelity.md",
+      "error": "Report result must be Passed, Failed, or Untested."
+    },
+    {
+      "file": "verification/runs/2026-10-16-tessera.md",
+      "error": "Report result must be Passed, Failed, or Untested."
+    }
+  ]
+}

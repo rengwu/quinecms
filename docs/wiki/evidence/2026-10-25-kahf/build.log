@@ -1,0 +1,216 @@
+Registered 55 block versions.
+Registered 4 layout versions.
+Content is valid for publication.
+Registered 55 block versions.
+Registered 4 layout versions.
+19:23:28 [types] Generated 200ms
+19:23:28 [check] Getting diagnostics for Astro files in /Users/rengwu/Desktop/Projects/quinecms-library/.quinecms/kahf-proof/.quinecms/workspace...
+Result (254 files):
+- 0 errors
+- 0 warnings
+- 0 hints
+
+Registered 55 block versions.
+Registered 4 layout versions.
+19:23:42 [types] Generated 139ms
+19:23:42 [build] output: "static"
+19:23:42 [build] mode: "static"
+19:23:42 [build] directory: /Users/rengwu/Desktop/Projects/quinecms-library/.quinecms/kahf-proof/.quinecms/workspace/dist/
+19:23:42 [build] Collecting build info...
+19:23:42 [build] ✓ Completed in 205ms.
+19:23:42 [build] Building static entrypoints...
+19:23:43 [vite] ✓ built in 188ms
+19:23:43 [vite] ✓ built in 178ms
+19:23:43 [build] Rearranging server assets...
+
+ generating static routes
+19:23:43   ├─ /admin/index.html (+920ms)
+19:23:44   ├─ /blog/langkah-berdampak-jembatan-berkahf/index.html (+37ms)
+19:23:44   ├─ /blog/langkah-berdampak-masjid-al-kahf-ntt/index.html (+21ms)
+19:23:44   ├─ /blog/index.html (+22ms)
+19:23:44   ├─ /id/blog/langkah-berdampak-jembatan-berkahf/index.html (+19ms)
+19:23:44   ├─ /id/blog/langkah-berdampak-masjid-al-kahf-ntt/index.html (+19ms)
+19:23:44   ├─ /id/blog/index.html (+21ms)
+19:23:44   ├─ /id/ingredients-glossary/hydrobalance-1/index.html (+16ms)
+19:23:44   ├─ /id/ingredients-glossary/index.html (+19ms)
+19:23:44   ├─ /id/our-story/index.html (+27ms)
+19:23:44   ├─ /id/product/kahf-extra-dry-antiperspirant-deodorant/index.html (+17ms)
+19:23:44   ├─ /id/product/kahf-skin-energizing-and-brightening-face-wash/index.html (+18ms)
+19:23:44   ├─ /id/search/index.html (+16ms)
+19:23:44   ├─ /id/shop/index.html (+17ms)
+19:23:44   ├─ /id/skin-concern/acne-prone-skin/index.html (+18ms)
+19:23:44   ├─ /id/skin-concern/oily-skin/index.html (+19ms)
+19:23:44   ├─ /id/index.html (+21ms)
+19:23:44   ├─ /ingredients-glossary/hydrobalance-1/index.html (+13ms)
+19:23:44   ├─ /ingredients-glossary/index.html (+17ms)
+19:23:44   ├─ /our-story/index.html (+25ms)
+19:23:44   ├─ /product/kahf-extra-dry-antiperspirant-deodorant/index.html (+14ms)
+19:23:44   ├─ /product/kahf-skin-energizing-and-brightening-face-wash/index.html (+18ms)
+19:23:44   ├─ /search/index.html (+13ms)
+19:23:44   ├─ /shop/index.html (+17ms)
+19:23:44   ├─ /skin-concern/acne-prone-skin/index.html (+15ms)
+19:23:44   ├─ /skin-concern/oily-skin/index.html (+17ms)
+19:23:44   ├─ /index.html (+21ms)
+19:23:44 ✓ Completed in 1.49s.
+
+19:23:44 [build] ✓ Completed in 1.90s.
+19:23:44 [build] 27 page(s) built in 2.11s
+19:23:44 [build] Complete!
+{
+  "runtimeCopies": {
+    "@vue/runtime-core": 1,
+    "@vue/runtime-dom": 1,
+    "react-dom": 1,
+    "svelte": 1,
+    "react": 1
+  },
+  "pages": [
+    {
+      "page": "admin/index.html",
+      "javascriptModules": 1,
+      "gzipJavaScriptBytes": 1662
+    },
+    {
+      "page": "blog/index.html",
+      "javascriptModules": 7,
+      "gzipJavaScriptBytes": 87920
+    },
+    {
+      "page": "blog/langkah-berdampak-jembatan-berkahf/index.html",
+      "javascriptModules": 7,
+      "gzipJavaScriptBytes": 87920
+    },
+    {
+      "page": "blog/langkah-berdampak-masjid-al-kahf-ntt/index.html",
+      "javascriptModules": 7,
+      "gzipJavaScriptBytes": 87920
+    },
+    {
+      "page": "id/blog/index.html",
+      "javascriptModules": 7,
+      "gzipJavaScriptBytes": 87920
+    },
+    {
+      "page": "id/blog/langkah-berdampak-jembatan-berkahf/index.html",
+      "javascriptModules": 7,
+      "gzipJavaScriptBytes": 87920
+    },
+    {
+      "page": "id/blog/langkah-berdampak-masjid-al-kahf-ntt/index.html",
+      "javascriptModules": 7,
+      "gzipJavaScriptBytes": 87920
+    },
+    {
+      "page": "id/index.html",
+      "javascriptModules": 9,
+      "gzipJavaScriptBytes": 88082
+    },
+    {
+      "page": "id/ingredients-glossary/hydrobalance-1/index.html",
+      "javascriptModules": 6,
+      "gzipJavaScriptBytes": 87839
+    },
+    {
+      "page": "id/ingredients-glossary/index.html",
+      "javascriptModules": 7,
+      "gzipJavaScriptBytes": 87920
+    },
+    {
+      "page": "id/our-story/index.html",
+      "javascriptModules": 9,
+      "gzipJavaScriptBytes": 88082
+    },
+    {
+      "page": "id/product/kahf-extra-dry-antiperspirant-deodorant/index.html",
+      "javascriptModules": 7,
+      "gzipJavaScriptBytes": 87920
+    },
+    {
+      "page": "id/product/kahf-skin-energizing-and-brightening-face-wash/index.html",
+      "javascriptModules": 7,
+      "gzipJavaScriptBytes": 87920
+    },
+    {
+      "page": "id/search/index.html",
+      "javascriptModules": 6,
+      "gzipJavaScriptBytes": 87839
+    },
+    {
+      "page": "id/shop/index.html",
+      "javascriptModules": 7,
+      "gzipJavaScriptBytes": 87920
+    },
+    {
+      "page": "id/skin-concern/acne-prone-skin/index.html",
+      "javascriptModules": 7,
+      "gzipJavaScriptBytes": 87920
+    },
+    {
+      "page": "id/skin-concern/oily-skin/index.html",
+      "javascriptModules": 7,
+      "gzipJavaScriptBytes": 87920
+    },
+    {
+      "page": "index.html",
+      "javascriptModules": 9,
+      "gzipJavaScriptBytes": 88082
+    },
+    {
+      "page": "ingredients-glossary/hydrobalance-1/index.html",
+      "javascriptModules": 6,
+      "gzipJavaScriptBytes": 87839
+    },
+    {
+      "page": "ingredients-glossary/index.html",
+      "javascriptModules": 7,
+      "gzipJavaScriptBytes": 87920
+    },
+    {
+      "page": "our-story/index.html",
+      "javascriptModules": 9,
+      "gzipJavaScriptBytes": 88082
+    },
+    {
+      "page": "product/kahf-extra-dry-antiperspirant-deodorant/index.html",
+      "javascriptModules": 7,
+      "gzipJavaScriptBytes": 87920
+    },
+    {
+      "page": "product/kahf-skin-energizing-and-brightening-face-wash/index.html",
+      "javascriptModules": 7,
+      "gzipJavaScriptBytes": 87920
+    },
+    {
+      "page": "search/index.html",
+      "javascriptModules": 6,
+      "gzipJavaScriptBytes": 87839
+    },
+    {
+      "page": "shop/index.html",
+      "javascriptModules": 7,
+      "gzipJavaScriptBytes": 87920
+    },
+    {
+      "page": "skin-concern/acne-prone-skin/index.html",
+      "javascriptModules": 7,
+      "gzipJavaScriptBytes": 87920
+    },
+    {
+      "page": "skin-concern/oily-skin/index.html",
+      "javascriptModules": 7,
+      "gzipJavaScriptBytes": 87920
+    }
+  ]
+}
+{
+  "publicRoutes": 26,
+  "checkedLinks": 602,
+  "checkedAssets": 184,
+  "fallbackRoutes": [
+    "/id/our-story",
+    "/id/product/kahf-extra-dry-antiperspirant-deodorant",
+    "/id/blog/langkah-berdampak-masjid-al-kahf-ntt",
+    "/id/skin-concern/oily-skin"
+  ]
+}
+Kahf local artifacts: /Users/rengwu/Desktop/Projects/quinecms-library/.quinecms/kahf-proof/dist

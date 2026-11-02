@@ -1,0 +1,169 @@
+{
+  "publicRoutes": 26,
+  "checkedLinks": 602,
+  "checkedAssets": 184,
+  "fallbackRoutes": [
+    "/id/our-story",
+    "/id/product/kahf-extra-dry-antiperspirant-deodorant",
+    "/id/blog/langkah-berdampak-masjid-al-kahf-ntt",
+    "/id/skin-concern/oily-skin"
+  ],
+  "pages": [
+    {
+      "path": "/blog",
+      "fallback": false,
+      "htmlBytes": 222480,
+      "gzipHtmlBytes": 24476
+    },
+    {
+      "path": "/blog/langkah-berdampak-jembatan-berkahf",
+      "fallback": false,
+      "htmlBytes": 199098,
+      "gzipHtmlBytes": 25107
+    },
+    {
+      "path": "/blog/langkah-berdampak-masjid-al-kahf-ntt",
+      "fallback": false,
+      "htmlBytes": 201762,
+      "gzipHtmlBytes": 26176
+    },
+    {
+      "path": "/id/blog",
+      "fallback": false,
+      "htmlBytes": 198755,
+      "gzipHtmlBytes": 20894
+    },
+    {
+      "path": "/id/blog/langkah-berdampak-jembatan-berkahf",
+      "fallback": false,
+      "htmlBytes": 175849,
+      "gzipHtmlBytes": 21747
+    },
+    {
+      "path": "/id/blog/langkah-berdampak-masjid-al-kahf-ntt",
+      "fallback": true,
+      "htmlBytes": 177948,
+      "gzipHtmlBytes": 22724
+    },
+    {
+      "path": "/id",
+      "fallback": false,
+      "htmlBytes": 283358,
+      "gzipHtmlBytes": 23566
+    },
+    {
+      "path": "/id/ingredients-glossary/hydrobalance-1",
+      "fallback": false,
+      "htmlBytes": 144074,
+      "gzipHtmlBytes": 20005
+    },
+    {
+      "path": "/id/ingredients-glossary",
+      "fallback": false,
+      "htmlBytes": 167798,
+      "gzipHtmlBytes": 20193
+    },
+    {
+      "path": "/id/our-story",
+      "fallback": true,
+      "htmlBytes": 338290,
+      "gzipHtmlBytes": 24689
+    },
+    {
+      "path": "/id/product/kahf-extra-dry-antiperspirant-deodorant",
+      "fallback": true,
+      "htmlBytes": 173857,
+      "gzipHtmlBytes": 20844
+    },
+    {
+      "path": "/id/product/kahf-skin-energizing-and-brightening-face-wash",
+      "fallback": false,
+      "htmlBytes": 174494,
+      "gzipHtmlBytes": 20510
+    },
+    {
+      "path": "/id/search",
+      "fallback": false,
+      "htmlBytes": 139254,
+      "gzipHtmlBytes": 18956
+    },
+    {
+      "path": "/id/shop",
+      "fallback": false,
+      "htmlBytes": 198492,
+      "gzipHtmlBytes": 21100
+    },
+    {
+      "path": "/id/skin-concern/acne-prone-skin",
+      "fallback": false,
+      "htmlBytes": 172070,
+      "gzipHtmlBytes": 20713
+    },
+    {
+      "path": "/id/skin-concern/oily-skin",
+      "fallback": true,
+      "htmlBytes": 172070,
+      "gzipHtmlBytes": 20741
+    },
+    {
+      "path": "/",
+      "fallback": false,
+      "htmlBytes": 306755,
+      "gzipHtmlBytes": 27014
+    },
+    {
+      "path": "/ingredients-glossary/hydrobalance-1",
+      "fallback": false,
+      "htmlBytes": 167654,
+      "gzipHtmlBytes": 23546
+    },
+    {
+      "path": "/ingredients-glossary",
+      "fallback": false,
+      "htmlBytes": 191688,
+      "gzipHtmlBytes": 23773
+    },
+    {
+      "path": "/our-story",
+      "fallback": false,
+      "htmlBytes": 361722,
+      "gzipHtmlBytes": 27782
+    },
+    {
+      "path": "/product/kahf-extra-dry-antiperspirant-deodorant",
+      "fallback": false,
+      "htmlBytes": 197626,
+      "gzipHtmlBytes": 24356
+    },
+    {
+      "path": "/product/kahf-skin-energizing-and-brightening-face-wash",
+      "fallback": false,
+      "htmlBytes": 198287,
+      "gzipHtmlBytes": 24098
+    },
+    {
+      "path": "/search",
+      "fallback": false,
+      "htmlBytes": 163157,
+      "gzipHtmlBytes": 22538
+    },
+    {
+      "path": "/shop",
+      "fallback": false,
+      "htmlBytes": 222308,
+      "gzipHtmlBytes": 24641
+    },
+    {
+      "path": "/skin-concern/acne-prone-skin",
+      "fallback": false,
+      "htmlBytes": 195896,
+      "gzipHtmlBytes": 24257
+    },
+    {
+      "path": "/skin-concern/oily-skin",
+      "fallback": false,
+      "htmlBytes": 195888,
+      "gzipHtmlBytes": 24259
+    }
+  ]
+}

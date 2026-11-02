@@ -1,0 +1,18 @@
+{
+  "pendingIslands": 0,
+  "reducedMotion": true,
+  "videos": [
+    {
+      "controls": "Play video",
+      "paused": true
+    },
+    {
+      "controls": "Play video",
+      "paused": true
+    },
+    {
+      "controls": "Play video",
+      "paused": true
+    }
+  ]
+}

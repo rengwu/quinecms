@@ -1,0 +1,15 @@
+
+> quinecms-library@0.2.0 test /Users/rengwu/Desktop/Projects/quinecms-library
+> node scripts/prepare-tests.mjs && vitest run
+
+Registered 55 block versions.
+Registered 4 layout versions.
+Content is valid for publication.
+
+ RUN  v5.0.3 /Users/rengwu/Desktop/Projects/quinecms-library
+
+
+ Test Files  5 passed (5)
+      Tests  16 passed (16)
+   Start at  19:23:26
+   Duration  4.14s (import 43%, transform 24%, tests 18%, environment 14%)

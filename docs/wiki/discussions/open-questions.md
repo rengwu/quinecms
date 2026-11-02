@@ -1,11 +1,11 @@
 ---
 title: Open questions
-updated: 2026-10-23
-status: Kahf scope settled; i18n engine implemented locally — library and Kahf work not authorized
+updated: 2026-10-25
+status: Local Kahf proof complete; no blocking product decision
 ---
 # Open questions
 
-## Kahf recreation — planning only
+## Kahf recreation — implementation
 
 DEC-193 settles a small sample: a couple of entries per retained type, with
 peripheral routes/content omitted as useful. The [readiness study](kahf-recreation.md)
@@ -48,11 +48,14 @@ delete them when a language is removed, no extra state for adding a language,
 shared list rows, `noindex` fallback pages and no browser redirect. DEC-232
 approved the [engineering design](internationalization-engineering-design.md)
 and the engine-only implementation, now [implemented locally](../features/internationalization.md).
-No i18n product question remains open. Library fields and language switches,
-Kahf search and the Kahf site need separate authorization.
-Concrete sample/route selection and other engine additions remain future
-work. No form is pending. DEC-216 authorizes the handed-off prototype work, not
-Kahf site implementation or deployment.
+No i18n product question remains open. DEC-233 now authorizes the library and
+Kahf implementation using work-until-grill and rule-lean. Concrete samples are
+recorded in the [readiness study](kahf-recreation.md). The [local proof passes](../verification/runs/2026-10-25-kahf.md). No blocking product choice
+or interview form remains. No hosting deployment is requested. A portable pinned
+install still requires publishing reviewed engine/library commits and a clean
+frozen install; this is delivery work outside the accepted local-only proof.
+Raw internal URLs keep their existing literal behavior; a locale-aware picker and
+SEO/sitemap work remain possible later scope, not prerequisites for this sample.
 
 ## Live entry preview — implemented locally
 

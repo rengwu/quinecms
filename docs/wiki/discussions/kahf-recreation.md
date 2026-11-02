@@ -1,16 +1,15 @@
 ---
 title: Kahf recreation readiness study
-updated: 2026-10-20
-status: Scope accepted — i18n UI spike handed off
+updated: 2026-10-25
+status: Local implementation verified; portable release remains outside this proof
 ---
 # Kahf recreation readiness study
 
 ## Request and boundaries
 
 The user proposes recreating [Kahf](https://www.kahfeveryday.com/en/) as an
-independent QuineCMS static site to exercise real project readiness. The recreation
-remains in research and design; DEC-216 separately hands an isolated i18n UI spike
-to another agent. Consider routes on the exact
+independent QuineCMS static site to exercise real project readiness. DEC-233 authorizes local implementation of the accepted sample after the
+i18n UI spike and engine work. Consider routes on the exact
 `https://www.kahfeveryday.com` origin; subdomains and other origins are not
 recreation targets. Outbound links and embedded services are boundary items.
 Use the existing jstack interview/plan record and grill-form for decisions.
@@ -18,6 +17,38 @@ Use the existing jstack interview/plan record and grill-form for decisions.
 Everything below marked proposed remains a recommendation, not an accepted
 feature or permission to implement. Existing engine/library/site ownership
 decisions remain applicable.
+
+## Current implementation — 2026-10-25
+
+The i18n spike and engine work are complete. DEC-233 starts the Kahf library
+design, explicit preset and independent `quinecms-site-kahf`. The implementation
+uses one layout design with two configurations and ten blocks (including static/generic variants of collection
+listing). Six static pages and seven entries produce thirteen routes per language.
+The original proposals below remain historical where this section supersedes them.
+
+Concrete samples: Skin Energizing and Brightening Face Wash; Extra Dry
+Antiperspirant Deodorant; Jembatan Berkahf and Masjid Al-Kahf NTT articles;
+Hydrobalance; Acne Prone Skin and Oily Skin. Story, deodorant, mosque article and
+oily-skin copies deliberately fall back. The bridge's English text is an editorial
+translation of the complete Indonesian source; the mosque article retains its
+original Indonesian body with explicit language markup. Other translated sample
+copy is recorded in the preset, including where the source's Indonesian route
+still contained English.
+
+The [local implementation](../features/kahf.md) is complete and the
+[verification run](../verification/runs/2026-10-25-kahf.md) passes: 16 library tests,
+validation/typecheck, 26 public routes plus admin, 602 local links/184 rendered
+asset references, representative desktop/mobile comparisons, public interactions,
+real authoring/translation/recovery, and built-admin mounting. Save/Publish controls
+are exercised with mocked Git transport; real preview rendering is checked in the
+browser. No further engine source change was needed. Source files, assets and
+built output have recorded fingerprints. The remaining proposal tables are
+historical options, not an authorized backlog.
+
+The library and site use local engine links for development. Engine commit
+`7f7a47ba8409dc1bb9cdb44777869ca7c5930328` was unavailable from its GitHub archive
+on this date (404), so a portable pinned install is not established. No commits
+have been pushed and no site deployed by this phase.
 
 ## Scope revision — 2026-10-19
 

@@ -813,3 +813,9 @@ guide a later implementation; they do not authorize it.
 | ID | Decision | Basis and rationale |
 | --- | --- | --- |
 | DEC-232 | Implement internationalization in the engine repository only (core, build, editor and docs), approving the [engineering design](../discussions/internationalization-engineering-design.md) as written. Stop before marking library fields and before the Kahf site. Commit as work progresses. | The user replied “lets work-until-grill. commit as you go” to the recommended engine-only scope, and asked to apply rule-lean. Library and Kahf site work remain separately unauthorized. |
+
+## Kahf implementation — chat direction, 2026-10-25
+
+| ID | Decision | Basis and rationale |
+| --- | --- | --- |
+| DEC-233 | Proceed with the accepted Kahf sample in the library and a separate site, working autonomously until completion or a consequential unresolved decision, using rule-lean. Preserve DEC-208–DEC-215's local-only acceptance boundary. | The user asked what comes next, then directed “lets work-until-grill while following rule-lean.” This supersedes the earlier engine-only stopping point for local Kahf implementation; it does not request hosting deployment. |

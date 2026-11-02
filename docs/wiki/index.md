@@ -1,6 +1,6 @@
 ---
 title: QuineCMS
-updated: 2026-10-23
+updated: 2026-10-25
 status: Accepted
 ---
 # QuineCMS
@@ -28,16 +28,23 @@ product choices (retention, adding languages, shared rows, `noindex` fallback
 pages, no browser redirect). The
 [engineering design](discussions/internationalization-engineering-design.md) was
 approved, and DEC-232 authorized the engine implementation only (see below). The
-Kahf site remains unauthorized, and hosted delivery is outside this proof's
-acceptance scope.
+Kahf implementation is complete locally under DEC-233 in the library and
+independent site. Hosted delivery remains outside the proof’s acceptance scope.
 
-Latest implementation: [optional internationalization](features/internationalization.md)
+Latest implementation: [Kahf recreation](features/kahf.md): thirteen logical pages,
+26 English/Indonesian routes, a versioned library design and explicit starter in an
+independent site. [Local verification](verification/runs/2026-10-25-kahf.md) covers
+16 tests, the static build/link audit, responsive/public interactions, authoring,
+translations and encrypted-admin mounting. No further engine source change was
+needed. Remote exact pins and live providers are outside this local proof.
+
+Previous implementation: [optional internationalization](features/internationalization.md)
 in the engine (DEC-232). Sites can enable additional languages in Settings; copies
 are sparse overlays on pages, entries and layouts; fallback routes build under
 `/id/…` with `noindex`; editors translate from a top-bar language select with
 Draft/Visitor previews. [Verification](verification/runs/2026-10-23-internationalization.md)
-covers 281 tests, an isolated site build and Chrome editor checks. Library designs
-and the Kahf site are not updated.
+covers 281 tests, an isolated site build and Chrome editor checks. Kahf now
+exercises the contract in a real library design; other designs remain unchanged.
 
 Previous implementation: [live entry preview](discussions/entry-preview.md)
 (DEC-189–DEC-192). Routed entries now reuse the split editor with live bound

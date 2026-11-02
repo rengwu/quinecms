@@ -1,6 +1,6 @@
 ---
 title: Verification setup
-updated: 2026-10-16
+updated: 2026-10-25
 ---
 # Verification setup
 
@@ -80,3 +80,40 @@ aggregate hash is retained as historical evidence; it cannot be recomputed from
 the redacted manifest alone because the original filename was part of its input.
 
 Astro 7 starts this preview in the background. Check `pnpm exec astro preview status`, then stop the owned instance with `pnpm exec astro preview stop`; verify status reports no running preview. Do not rely on closing its launcher terminal. Close/reset test tabs when the browser tool is available; if it is not, record remaining browser-only fixture edits instead of manipulating another session. Remove any exported test backups only when their identity is known. There are no polling collectors or background provider workers.
+
+## Kahf local proof
+
+Use separate sibling `quinecms`, `quinecms-library` and `quinecms-site-kahf`
+checkouts. The site owns port 4323 and disposable login values in its ignored
+`.env`; no provider secrets are needed. Do not use `quinecms-dev-site` for these
+mutating checks because it has a real Git connection. The new Kahf site starts
+with two products and no browser-only temporary entry.
+
+In the library run `pnpm install --frozen-lockfile`, `pnpm test`, and
+`node scripts/verify-kahf.mjs`. The latter recreates only its owned
+`.quinecms/kahf-proof`, with sibling installed packages, fixture credentials and
+explicit starter records. It runs validate/check/build/check-build and
+`scripts/audit-kahf.mjs`, which writes `.quinecms/kahf-audit.json`. The fixture is
+not a remote dependency-install check. Local linked manifests intentionally do
+not pass the ordinary production pin guard.
+
+In the independent Kahf site run `pnpm install --frozen-lockfile`,
+`pnpm validate:content`, `pnpm check`, then `pnpm dev`. Stop dev before check/build
+and restart it after upstream library changes. Use the editor recipe in
+[FEAT-kahf](../features/kahf.md). The provider-free browser disables Save/Publish;
+the library's two jsdom editor tests exercise those controls with a mocked Git
+transport and mocked preview islands. Browser tests cover the actual preview.
+
+For built-browser smoke checks, run `node ../../../quinecms/bin/quinecms.mjs preview --port 4324` from the library fixture root only after a successful build
+(use the actual engine absolute path if the sibling path differs). The fixture's
+static `/admin/` uses its disposable fixture credentials, not the dev site's.
+The preview advertises `http://localhost:4324` (IPv6 on this machine). Check the
+editor actually mounts and public links/interactions work. Before rebuilding,
+stop the owned preview from its generated workspace with
+`node <engine-root>/node_modules/astro/bin/astro.mjs preview stop`; the same command
+with `status` confirms no server is running. The fixture has no local Astro bin. Leave the requested independent dev preview on 4323 running.
+
+Hash the library source/preset/assets/configuration, site records/configuration,
+lockfiles and built output; exclude `.env`, generated workspaces and browser
+recovery. Settings → Discard edits restores disposable browser checks. The run
+report records the input/output manifests and screenshots.

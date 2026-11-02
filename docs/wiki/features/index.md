@@ -1,6 +1,6 @@
 ---
 title: Feature map
-updated: 2026-10-23
+updated: 2026-10-25
 ---
 # Feature map
 
@@ -12,6 +12,7 @@ Start with [Building sites with local agents](local-authoring.md) for local auth
 
 - [Collections, objects and references](content-model.md) — FEAT-content-model.
 - [Site Layout library](site-layouts.md) — FEAT-site-layouts.
+- [Kahf recreation](kahf.md) — FEAT-kahf.
 - [Historical chartr layout and blocks](chartr.md) — FEAT-chartr.
 - [Searchable block library](block-library.md) — FEAT-block-library.
 - [Static pages and registered blocks](static-blocks.md) — FEAT-static-blocks.

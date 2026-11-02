@@ -1,6 +1,6 @@
 ---
 title: Optional internationalization
-updated: 2026-10-23
+updated: 2026-10-25
 ---
 # Optional internationalization
 
@@ -12,8 +12,9 @@ Sites can publish an item in additional languages. The behavior follows
 DEC-194–DEC-206 and DEC-217–DEC-231 in
 [optional internationalization](../discussions/optional-internationalization.md);
 the [engineering design](../discussions/internationalization-engineering-design.md)
-records how it fits the engine. The engine is implemented locally; library blocks,
-layouts and the Kahf site do not mark translatable fields yet.
+records how it fits the engine. The engine is implemented locally, and the
+[Kahf recreation](kahf.md) now exercises marked library fields, translated layouts
+and partial real content.
 
 ## Settings
 
@@ -130,13 +131,15 @@ Each additional language gets every route under its prefix. On `/id/…`:
 
 ## Coverage and limitations
 
-Library blocks and layouts need `localized` fields and a language switch before
-real designs translate block or layout text. Kahf search indexing is library
-work. Site Layouts preview the draft only, and layout copies are removed only with
+Library blocks and layouts need `localized` fields and a language switch. Kahf
+now implements both, including client title search with localized collection
+URLs; other library designs are not automatically translated. Site Layouts preview the draft only, and layout copies are removed only with
 their language. Preview outlines cover whole blocks, not individual cards.
 New pages, entries and blocks are created with main-language values. Live Git
 saves and publishing were not exercised.
 
 ## Verification history
+
+- [2026-10-25 Kahf library/site proof](../verification/runs/2026-10-25-kahf.md) — real library copies, fallback routes and local editor workflows.
 
 - [2026-10-23 engine implementation](../verification/runs/2026-10-23-internationalization.md) — Passed locally.
