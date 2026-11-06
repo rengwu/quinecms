@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 import { spawn } from 'node:child_process';
-import { watch } from 'node:fs';
 import { cp, rm } from 'node:fs/promises';
 import { join, resolve, dirname } from 'node:path';
 import { createRequire } from 'node:module';
-import { prepareSite, engineRoot } from '../scripts/site-workspace.mjs';
+import { engineRoot } from '../scripts/site-workspace.mjs';
+import { generateSite } from '../scripts/site-generation.mjs';
 
 const [command = 'help', ...args] = process.argv.slice(2);
 if (command === 'help' || command === '--help') {
@@ -47,65 +47,15 @@ function run(script, options = []) {
 }
 let workspace = join(siteRoot, '.quinecms/workspace');
 async function prepare() {
-  ({ workspace } = await prepareSite(siteRoot, {
+  ({ workspace } = await generateSite(siteRoot, {
     development: command !== 'build',
+    registryOnly: command === 'validate',
   }));
-  await new Promise((accept, reject) => {
-    const generator = spawn(
-      process.execPath,
-      [
-        '--import',
-        require.resolve('tsx/esm'),
-        join(workspace, 'scripts/generate-blocks.mjs'),
-        ...(command === 'validate' ? ['--registry-only'] : []),
-      ],
-      { cwd: workspace, stdio: 'inherit' },
-    );
-    generator.on('error', reject);
-    generator.on('exit', (code) =>
-      code === 0 ? accept() : reject(Error('Site generation failed.')),
-    );
-  });
 }
 try {
   if (command !== 'check-build' && command !== 'preview') await prepare();
   if (command === 'dev') {
-    let timer,
-      busy = false,
-      again = false;
-    const rebuild = async () => {
-      if (busy) {
-        again = true;
-        return;
-      }
-      busy = true;
-      try {
-        await prepare();
-      } catch (error) {
-        console.error(error.message);
-      } finally {
-        busy = false;
-        if (again) {
-          again = false;
-          void rebuild();
-        }
-      }
-    };
-    const watcher = watch(siteRoot, { recursive: true }, (_event, name) => {
-      if (!name || /^(\.quinecms|node_modules|\.git|dist)(\/|$)/.test(name))
-        return;
-      if (
-        !/^(content\/|src\/|extensions\/|public\/|scripts\/|quinecms\.config\.json$)/.test(
-          name,
-        )
-      )
-        return;
-      clearTimeout(timer);
-      timer = setTimeout(rebuild, 120);
-    });
     const cleanup = () => {
-      clearTimeout(timer);
-      watcher.close();
       child?.kill('SIGTERM');
     };
     process.once('SIGINT', cleanup);
@@ -113,7 +63,8 @@ try {
     try {
       await run(join(engineRoot, 'scripts/dev-server.mjs'));
     } finally {
-      watcher.close();
+      process.off('SIGINT', cleanup);
+      process.off('SIGTERM', cleanup);
     }
   } else if (command === 'validate')
     await run(join(workspace, 'scripts/validate-content.ts'), [

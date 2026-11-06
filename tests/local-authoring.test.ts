@@ -7,6 +7,7 @@ import {
   mkdtemp,
   readFile,
   readdir,
+  rename,
   rm,
   writeFile,
 } from 'node:fs/promises';
@@ -353,8 +354,19 @@ it.each([
   60000,
 );
 
-it('keeps the dev server and watcher together while local content and routes change', async () => {
+it('reloads local content and survives route changes, atomic saves and invalid JSON', async () => {
   const directory = await projectFixture();
+  // A site's additional dependencies must not be removed/re-added in the
+  // generated package manifest on every content save, restarting Vite.
+  const packagePath = join(directory, 'package.json');
+  const pkg = JSON.parse(await readFile(packagePath, 'utf8'));
+  pkg.dependencies['fixture-extra'] = '1.0.0';
+  await writeFile(packagePath, JSON.stringify(pkg));
+  await mkdir(join(directory, 'node_modules/fixture-extra'));
+  await writeFile(
+    join(directory, 'node_modules/fixture-extra/package.json'),
+    JSON.stringify({ name: 'fixture-extra', version: '1.0.0' }),
+  );
   const env = { ...process.env };
   delete env.VITEST;
   const child = spawn(process.execPath, [cli, 'dev', '--port', '0'], {
@@ -362,6 +374,7 @@ it('keeps the dev server and watcher together while local content and routes cha
     env,
   });
   let output = '';
+  let socket: WebSocket | undefined;
   child.stderr.on('data', (data) => (output += data));
   const exited = new Promise((resolve) => child.once('exit', resolve));
   try {
@@ -383,29 +396,138 @@ it('keeps the dev server and watcher together while local content and routes cha
         reject(Error(`Dev exited ${code}: ${output}`));
       });
     });
+    const waitFor = async (
+      check: () => Promise<boolean> | boolean,
+      description: string,
+    ) => {
+      for (let attempt = 0; attempt < 150; attempt++) {
+        if (await check()) return;
+        expect(child.exitCode, output).toBeNull();
+        await new Promise((resolve) => setTimeout(resolve, 100));
+      }
+      throw Error(`Dev did not ${description}: ${output}`);
+    };
+    const waitForText = (path: string, expected: string) =>
+      waitFor(async () => {
+        // Astro can briefly reconnect while its injected route table changes.
+        const response = await fetch(url + path).catch(() => null);
+        return !!response?.ok && (await response.text()).includes(expected);
+      }, `render ${expected}`);
+    await waitForText('/', 'Own content');
+
+    // Connect using the same public endpoint and token as Vite's browser client.
+    const client = await (await fetch(url + '/@vite/client')).text();
+    const token = client.match(/const wsToken = "([^"]+)"/)?.[1];
+    expect(token).toBeTruthy();
+    const messages: { type: string }[] = [];
+    socket = new WebSocket(
+      url.replace('http:', 'ws:') + '/?token=' + token,
+      'vite-hmr',
+    );
+    socket.addEventListener('message', (event) =>
+      messages.push(JSON.parse(String(event.data))),
+    );
+    await waitFor(
+      () => messages.some((message) => message.type === 'connected'),
+      'connect its reload client',
+    );
+    const saveAndReload = async (path: string, value: unknown) => {
+      messages.length = 0;
+      await writeFile(path, JSON.stringify(value));
+      await waitFor(
+        () => messages.some((message) => message.type === 'full-reload'),
+        'notify the browser',
+      );
+    };
     const home = join(directory, 'content/pages/page_home.json');
     const page = JSON.parse(await readFile(home, 'utf8'));
     page.title = 'Changed from the original site';
-    await writeFile(home, JSON.stringify(page));
-    const waitForText = async (path: string, expected: string) => {
-      for (let attempt = 0; attempt < 80; attempt++) {
-        const response = await fetch(url + path);
-        if (response.ok && (await response.text()).includes(expected)) return;
-        await new Promise((resolve) => setTimeout(resolve, 100));
-      }
-      throw Error(`Dev did not render ${expected}: ${output}`);
-    };
+    page.blocks[0].props.body = 'Updated JSON block props';
+    await saveAndReload(home, page);
     await waitForText('/', page.title);
-    page.id = 'page_new';
-    page.path = '/new-page';
-    page.blocks = [];
-    await writeFile(
-      join(directory, 'content/pages/page_new.json'),
-      JSON.stringify(page),
+    await waitForText('/', page.blocks[0].props.body);
+    expect(output).not.toContain('Restarting');
+
+    // Composition edits change generated Astro code, not only disk-read props.
+    page.blocks.push({
+      ...page.blocks[0],
+      id: 'block_added',
+      props: { title: 'Inserted block', body: 'New composition' },
+    });
+    await saveAndReload(home, page);
+    await waitForText('/', 'New composition');
+    page.blocks.pop();
+    await saveAndReload(home, page);
+    expect(await (await fetch(url)).text()).not.toContain('New composition');
+
+    const sitePath = join(directory, 'content/site.json');
+    const site = JSON.parse(await readFile(sitePath, 'utf8'));
+    site.layouts[0].design.settings.title = 'Changed layout settings';
+    await saveAndReload(sitePath, site);
+    await waitForText('/', 'Changed layout settings');
+
+    const entryPath = join(
+      directory,
+      'content/entries/collection_journal/entry_first.json',
     );
-    await waitForText('/new-page', page.title);
+    const entry = JSON.parse(await readFile(entryPath, 'utf8'));
+    entry.values.title = 'Changed entry content';
+    await saveAndReload(entryPath, entry);
+    await waitForText(
+      '/journal/a-slower-way-to-build',
+      'Changed entry content',
+    );
+
+    // An editor may save through a temporary file and rename over the original.
+    messages.length = 0;
+    page.blocks[0].props.body = 'Atomic save';
+    await writeFile(home + '.tmp', JSON.stringify(page));
+    await rename(home + '.tmp', home);
+    await waitFor(
+      () => messages.some((message) => message.type === 'full-reload'),
+      'reload an atomic save',
+    );
+    await waitForText('/', 'Atomic save');
+
+    messages.length = 0;
+    await writeFile(home, '{ invalid JSON');
+    await waitFor(
+      () => messages.some((message) => message.type === 'error'),
+      'report invalid JSON',
+    );
+    page.blocks[0].props.body = 'Recovered after invalid JSON';
+    await saveAndReload(home, page);
+    await waitForText('/', 'Recovered after invalid JSON');
+
+    const newPage = { ...page, id: 'page_new', path: '/new-page', blocks: [] };
+    const newPath = join(directory, 'content/pages/page_new.json');
+    await writeFile(newPath, JSON.stringify(newPage));
+    await waitForText('/new-page', newPage.title);
+    newPage.path = '/renamed-page';
+    await writeFile(newPath, JSON.stringify(newPage));
+    await waitForText('/renamed-page', newPage.title);
+    const waitFor404 = (path: string) =>
+      waitFor(
+        async () => (await fetch(url + path).catch(() => null))?.status === 404,
+        `remove ${path}`,
+      );
+    await waitFor404('/new-page');
+    await rm(newPath);
+    await waitFor404('/renamed-page');
+
+    // The source watcher must remain attached after Astro refreshes its routes.
+    page.blocks[0].props.body = 'Still watching after route changes';
+    await writeFile(home, JSON.stringify(page));
+    await waitForText('/', page.blocks[0].props.body);
+    await mkdir(join(directory, 'public'));
+    await writeFile(
+      join(directory, 'public/new-asset.txt'),
+      'New public directory',
+    );
+    await waitForText('/new-asset.txt', 'New public directory');
     expect(child.exitCode).toBeNull();
   } finally {
+    socket?.close();
     child.kill('SIGTERM');
     await exited;
     await rm(directory, { recursive: true, force: true });

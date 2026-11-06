@@ -43,6 +43,31 @@ The optional bundled public fixtures are Home, Block examples, the nine-block ch
 
 ## Evidence and cleanup
 
+### Local file reload regression
+
+From the engine checkout, run `pnpm exec vitest run tests/local-authoring.test.ts
+-t 'reloads local content'`. This creates an isolated site, starts the actual CLI
+on a free port, and checks JSON/composition changes, layout settings, entries,
+atomic replacement, invalid JSON recovery, route addition/rename/deletion and
+creation of a new public directory. It connects to Vite's reload WebSocket as well
+as checking served content. The process and fixture are removed on completion.
+
+For the browser check, provide an existing Playwright installation with Chromium:
+
+```sh
+PLAYWRIGHT_MODULE=/absolute/path/to/playwright node --import tsx \
+  tests/dev-reload.browser.mjs docs/wiki/evidence/<run-id>
+```
+
+The driver starts its own fixture/server and fresh Chromium session. It observes
+automatic main-frame navigation and changed visible content after filesystem
+saves, including error recovery, rapid saves, routes, original extensions and
+public assets. It saves `browser.json`, `browser.png` and `browser-server.log`
+before cleaning up. It does not edit an existing site or connect to Git providers.
+Use its printed results and source fingerprint for the run report; an HTTP-only
+check does not prove an open browser refreshed. See the
+[2026-11-07 run](runs/2026-11-07-dev-reload.md).
+
 For isolated entry-preview checks, copy the site's `content/`, configuration,
 package/lockfile and optional `public/` into an owned temporary directory. Reuse
 installed dependencies when checking local engine changes, and record that this

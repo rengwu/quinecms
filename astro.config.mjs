@@ -68,6 +68,11 @@ export default defineConfig({
           process.env.QUINECMS_SITE_ROOT ?? process.cwd(),
           process.env.QUINECMS_ENGINE_ROOT ?? process.cwd(),
           realpathSync(new URL('./node_modules', import.meta.url)),
+          // Workspace dependency links can resolve outside the engine checkout
+          // (for example in linked worktrees or pnpm's virtual store).
+          ...dependencies.map((name) =>
+            realpathSync(new URL(`./node_modules/${name}`, import.meta.url)),
+          ),
         ],
       },
     },

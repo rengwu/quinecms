@@ -1,6 +1,6 @@
 ---
 title: Separate engine, libraries and sites
-updated: 2026-10-14
+updated: 2026-11-07
 ---
 # Separate engine, libraries and sites
 
@@ -59,11 +59,22 @@ never edit them as source. A successful build copies static output to site `dist
 Failed builds leave committed site inputs and the previous delivered `dist/` intact.
 `check-build` checks the last workspace build without regenerating its inputs.
 
-Development watches site content, original extensions, assets and configuration.
+Development uses Astro/Vite's watcher for site content, original extensions, assets
+and configuration, with native per-file events instead of recursive FSEvents.
+Saves are debounced and generation is serialized; successful generation sends a
+browser reload. Content-only edits keep the server running; route-table changes
+use Astro's normal configuration refresh. The watcher remains attached after that
+refresh. Invalid JSON reports an error and a subsequent valid save recovers.
+The generated package manifest is written only in its resolved form, avoiding
+dependency re-optimization on unchanged site dependencies.
+
 Restart after installing a dependency or changing environment settings. Local
-source edits rebuild the workspace; browser content edits stay in browser recovery
+source edits update the workspace; browser content edits stay in browser recovery
 until exported or saved through Git. There is no direct browser-to-filesystem save.
 Do not run concurrent commands against the same site's disposable workspace.
+
+See [development reload verification](../verification/runs/2026-11-07-dev-reload.md)
+for the regression/browser checks and their platform limits.
 
 ## Extension manifest
 

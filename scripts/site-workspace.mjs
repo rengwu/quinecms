@@ -148,11 +148,6 @@ export async function prepareSite(siteRoot, { development = false } = {}) {
     join(workspace, 'astro.config.mjs'),
     await readFile(join(engineRoot, 'astro.config.mjs')),
   );
-  await writeChanged(
-    join(workspace, 'package.json'),
-    JSON.stringify(enginePackage, null, 2),
-  );
-
   const siteRequire = createRequire(join(siteRoot, 'package.json'));
   const engineRequire = createRequire(join(engineRoot, 'package.json'));
   const dependencies = new Map(

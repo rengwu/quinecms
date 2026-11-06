@@ -1,6 +1,6 @@
 ---
 title: Building sites with local agents
-updated: 2026-10-14
+updated: 2026-11-07
 ---
 # Building sites with local agents
 
@@ -124,8 +124,20 @@ unique `id` and `props`. A useful starting value is the definition's defaults;
 `newBlock()` in `src/core/content.ts` also clones defaults and row identities.
 
 `pnpm dev` assembles the site and watches local content, original extensions, assets
-and configuration. Restart after dependency or environment changes. Do not edit
-`.quinecms/workspace/`: it is disposable generated output.
+and configuration. Keep it running while editing JSON: saving a file updates the
+workspace and automatically refreshes the open browser after generation succeeds.
+Page/entry copy and layout settings do not restart the development server. Adding,
+renaming or removing routes lets Astro refresh its route configuration on the same
+address. Invalid JSON reports an error; correcting and saving the file recovers
+without restarting the command. This is a page refresh, so temporary public-page
+interaction state can reset.
+
+Restart after dependency or environment changes. Do not edit
+`.quinecms/workspace/`: it is disposable generated output. Browser editor drafts
+and recovery remain separate from local files; this watcher does not merge them.
+
+The [development reload verification](../verification/runs/2026-11-07-dev-reload.md)
+covers saved JSON, browser reloads, route changes and recovery.
 
 ## Recreating an existing site
 

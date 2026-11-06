@@ -1,0 +1,12 @@
+
+> quinecms@0.3.0 test <engine-worktree>
+> vitest run
+
+
+ RUN  v5.0.3 <engine-worktree>
+
+
+ Test Files  34 passed (34)
+      Tests  281 passed (281)
+   Start at  04:04:22
+   Duration  104.58s (tests 73%, import 18%, environment 6%, transform 3%)

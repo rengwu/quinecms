@@ -1,0 +1,43 @@
+{
+  "result": "Passed",
+  "browser": "151.0.7922.34",
+  "url": "http://127.0.0.1:51761",
+  "navigations": 16,
+  "results": [
+    {
+      "scenario": "JSON props",
+      "result": "Passed",
+      "observed": "Open Chromium page refreshed automatically and displayed saved props without restarting Astro."
+    },
+    {
+      "scenario": "Atomic file replacement",
+      "result": "Passed"
+    },
+    {
+      "scenario": "Invalid JSON recovery",
+      "result": "Passed",
+      "observed": "Error overlay appeared; correcting the file restored the page automatically."
+    },
+    {
+      "scenario": "Added route and subsequent save",
+      "result": "Passed"
+    },
+    {
+      "scenario": "Renamed and deleted routes",
+      "result": "Passed"
+    },
+    {
+      "scenario": "Rapid saves",
+      "result": "Passed",
+      "observed": "Final saved value rendered."
+    },
+    {
+      "scenario": "Original extension edit",
+      "result": "Passed"
+    },
+    {
+      "scenario": "New public directory and asset add/change/delete",
+      "result": "Passed"
+    }
+  ]
+}

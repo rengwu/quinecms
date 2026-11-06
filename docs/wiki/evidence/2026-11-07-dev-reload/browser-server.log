@@ -1,0 +1,229 @@
+Registered 5 block versions.
+Registered 2 layout versions.
+4:04:45 AM [vite-plugin-svelte] no Svelte config found at <fixture>/.quinecms/workspace - using default configuration.
+04:04:45 [vite] connected.
+04:04:45 [types] Generated 1ms
+04:04:45 [vite] connected.
+04:04:45 [vite] Forced re-optimization of dependencies
+ astro  v7.3.5 ready in 660 ms
+┃ Local    http://127.0.0.1:51761/
+04:04:45 watching for file changes...
+QuineCMS dev: http://127.0.0.1:51761
+
+ update  ▶ New version of Astro available: 7.4.7
+  Run pnpm dlx @astrojs/upgrade to update
+
+04:04:47 [200] / 35ms
+Registered 5 block versions.
+Registered 2 layout versions.
+04:04:48 [vite] program reload
+QuineCMS: site updated.
+04:04:49 [200] / 24ms
+Registered 5 block versions.
+Registered 2 layout versions.
+04:04:49 [vite] program reload
+QuineCMS: site updated.
+04:04:50 [200] / 22ms
+Registered 5 block versions.
+Registered 2 layout versions.
+<anonymous_script>:1
+{ invalid JSON
+  ^
+
+SyntaxError: Expected property name or '}' in JSON at position 2 (line 1 column 3)
+    at JSON.parse (<anonymous>)
+    at walk (file://<fixture>/.quinecms/workspace/scripts/generate-blocks.mjs:122:14)
+    at async file://<fixture>/.quinecms/workspace/scripts/generate-blocks.mjs:126:1
+
+Node.js v22.19.0
+Site generation failed.
+04:04:51 [ERROR] SyntaxError: Expected property name or '}' in JSON at position 2 (line 1 column 3)
+    at JSON.parse (<anonymous>)
+    at parseFiles (<fixture>/.quinecms/workspace/src/core/content.ts:127:20)
+    at loadContent (<fixture>/.quinecms/workspace/src/core/load.ts:22:19)
+    at async eval (<fixture>/.quinecms/workspace/src/generated/pages/page_home.astro:15:1)
+    at async callComponentAsTemplateResultOrResponse (<engine-dependencies>/.pnpm/astro@7.3.5_@types+node@22.20.5_tsx@4.23.15_yaml@2.9.1/node_modules/astro/dist/runtime/server/render/astro/render.js:226:25)
+    at async renderToAsyncIterable (<engine-dependencies>/.pnpm/astro@7.3.5_@types+node@22.20.5_tsx@4.23.15_yaml@2.9.1/node_modules/astro/dist/runtime/server/render/astro/render.js:258:26)
+    at async renderPage (<engine-dependencies>/.pnpm/astro@7.3.5_@types+node@22.20.5_tsx@4.23.15_yaml@2.9.1/node_modules/astro/dist/runtime/server/render/page.js:43:24)
+    at async handlePages (<engine-dependencies>/.pnpm/astro@7.3.5_@types+node@22.20.5_tsx@4.23.15_yaml@2.9.1/node_modules/astro/dist/core/pages/handler.js:32:20)
+    at async callMiddleware (<engine-dependencies>/.pnpm/astro@7.3.5_@types+node@22.20.5_tsx@4.23.15_yaml@2.9.1/node_modules/astro/dist/core/middleware/callMiddleware.js:11:10)
+    at async handleMiddleware (<engine-dependencies>/.pnpm/astro@7.3.5_@types+node@22.20.5_tsx@4.23.15_yaml@2.9.1/node_modules/astro/dist/core/middleware/astro-middleware.js:40:16)
+04:04:51 [ERROR] Expected property name or '}' in JSON at position 2 (line 1 column 3)
+  Stack trace:
+    at JSON.parse (<anonymous>)
+    at loadContent (<fixture>/.quinecms/workspace/src/core/load.ts:10:21)
+    [...] See full stack trace in the browser, or rerun with --verbose.
+Registered 5 block versions.
+Registered 2 layout versions.
+04:04:51 [vite] program reload
+QuineCMS: site updated.
+04:04:52 [200] / 23ms
+04:04:52 [404] /new-page 69ms
+04:04:52 [404] /new-page 0ms
+04:04:53 [404] /new-page 0ms
+04:04:53 [404] /new-page 1ms
+04:04:53 [404] /new-page 1ms
+Registered 5 block versions.
+Registered 2 layout versions.
+QuineCMS: site updated.
+04:04:53 [404] /new-page 0ms
+04:04:53 Configuration file updated. Restarting...
+4:04:53 AM [vite-plugin-svelte] no Svelte config found at <fixture>/.quinecms/workspace - using default configuration.
+4:04:53 AM [vite-plugin-svelte] no Svelte config found at <fixture>/.quinecms/workspace - using default configuration.
+04:04:53 [vite] connected.
+04:04:53 [ERROR] Error: Vite module runner has been closed.
+    at ModuleRunner.getModuleInformation (file://<engine-dependencies>/.pnpm/vite@8.3.2_@types+node@22.20.5_esbuild@0.28.2_tsx@4.23.15_yaml@2.9.1/node_modules/vite/dist/node/module-runner.js:1221:26)
+    at ModuleRunner.cachedModule (file://<engine-dependencies>/.pnpm/vite@8.3.2_@types+node@22.20.5_esbuild@0.28.2_tsx@4.23.15_yaml@2.9.1/node_modules/vite/dist/node/module-runner.js:1203:18)
+    at request (file://<engine-dependencies>/.pnpm/vite@8.3.2_@types+node@22.20.5_esbuild@0.28.2_tsx@4.23.15_yaml@2.9.1/node_modules/vite/dist/node/module-runner.js:1243:94)
+    at dynamicRequest (file://<engine-dependencies>/.pnpm/vite@8.3.2_@types+node@22.20.5_esbuild@0.28.2_tsx@4.23.15_yaml@2.9.1/node_modules/vite/dist/node/module-runner.js:1245:122)
+    at Object.headElements (<engine-dependencies>/.pnpm/astro@7.3.5_@types+node@22.20.5_tsx@4.23.15_yaml@2.9.1/node_modules/astro/dist/vite-plugin-app/environment.js:161:35)
+    at FetchState.createResult (<engine-dependencies>/.pnpm/astro@7.3.5_@types+node@22.20.5_tsx@4.23.15_yaml@2.9.1/node_modules/astro/dist/core/fetch/fetch-state.js:282:50)
+    at handlePages (<engine-dependencies>/.pnpm/astro@7.3.5_@types+node@22.20.5_tsx@4.23.15_yaml@2.9.1/node_modules/astro/dist/core/pages/handler.js:38:34)
+    at async callMiddleware (<engine-dependencies>/.pnpm/astro@7.3.5_@types+node@22.20.5_tsx@4.23.15_yaml@2.9.1/node_modules/astro/dist/core/middleware/callMiddleware.js:16:10)
+    at async handleMiddleware (<engine-dependencies>/.pnpm/astro@7.3.5_@types+node@22.20.5_tsx@4.23.15_yaml@2.9.1/node_modules/astro/dist/core/middleware/astro-middleware.js:54:16)
+    at async render (<engine-dependencies>/.pnpm/astro@7.3.5_@types+node@22.20.5_tsx@4.23.15_yaml@2.9.1/node_modules/astro/dist/core/routing/handler.js:99:18)
+04:04:53 [ERROR] Vite module runner has been closed.
+  Stack trace:
+    at <fixture>/.quinecms/workspace<engine-dependencies>/.pnpm/vite@8.3.2_@types+node@22.20.5_esbuild@0.28.2_tsx@4.23.15_yaml@2.9.1/node_modules/vite/dist/node/module-runner.js:1221:26
+    [...] See full stack trace in the browser, or rerun with --verbose.
+04:04:53 [vite] connected.
+04:04:53 [vite] server restarted.
+04:04:54 [200] /new-page 32ms
+04:04:54 [200] /new-page 5ms
+04:04:54 [200] / 17ms
+Registered 5 block versions.
+Registered 2 layout versions.
+04:04:55 [vite] program reload
+QuineCMS: site updated.
+04:04:55 [200] /new-page 20ms
+04:04:55 [404] /renamed-page 5ms
+04:04:55 [404] /renamed-page 0ms
+04:04:56 [404] /renamed-page 0ms
+04:04:56 [404] /renamed-page 1ms
+04:04:56 [404] /renamed-page 1ms
+04:04:56 [404] /renamed-page 0ms
+Registered 5 block versions.
+Registered 2 layout versions.
+QuineCMS: site updated.
+04:04:56 Configuration file updated. Restarting...
+04:04:56 [404] /renamed-page 10ms
+4:04:56 AM [vite-plugin-svelte] no Svelte config found at <fixture>/.quinecms/workspace - using default configuration.
+4:04:56 AM [vite-plugin-svelte] no Svelte config found at <fixture>/.quinecms/workspace - using default configuration.
+04:04:56 [vite] connected.
+04:04:56 [vite] connected.
+04:04:56 [vite] server restarted.
+04:04:57 [404] /new-page 10ms
+04:04:57 [200] /renamed-page 10ms
+04:04:57 [404] /new-page 0ms
+04:04:57 [200] /renamed-page 4ms
+Registered 5 block versions.
+Registered 2 layout versions.
+04:04:58 [vite] program reload
+QuineCMS: site updated.
+04:04:58 [200] /renamed-page 17ms
+04:04:59 [200] /renamed-page 14ms
+04:04:59 [200] /renamed-page 12ms
+04:04:59 [200] /renamed-page 4ms
+04:04:59 [ERROR] TypeError: Cannot read properties of undefined (reading 'layoutId')
+    at eval (<fixture>/.quinecms/workspace/src/core/layout-state.ts:43:10)
+    at Array.find (<anonymous>)
+    at pageLayout (<fixture>/.quinecms/workspace/src/core/layout-state.ts:42:44)
+    at contentForPage (<fixture>/.quinecms/workspace/src/core/layout-state.ts:62:29)
+    at eval (<fixture>/.quinecms/workspace/src/generated/pages/page_new.astro:13:1)
+    at async callComponentAsTemplateResultOrResponse (<engine-dependencies>/.pnpm/astro@7.3.5_@types+node@22.20.5_tsx@4.23.15_yaml@2.9.1/node_modules/astro/dist/runtime/server/render/astro/render.js:226:25)
+    at async renderToAsyncIterable (<engine-dependencies>/.pnpm/astro@7.3.5_@types+node@22.20.5_tsx@4.23.15_yaml@2.9.1/node_modules/astro/dist/runtime/server/render/astro/render.js:258:26)
+    at async renderPage (<engine-dependencies>/.pnpm/astro@7.3.5_@types+node@22.20.5_tsx@4.23.15_yaml@2.9.1/node_modules/astro/dist/runtime/server/render/page.js:43:24)
+    at async handlePages (<engine-dependencies>/.pnpm/astro@7.3.5_@types+node@22.20.5_tsx@4.23.15_yaml@2.9.1/node_modules/astro/dist/core/pages/handler.js:32:20)
+    at async callMiddleware (<engine-dependencies>/.pnpm/astro@7.3.5_@types+node@22.20.5_tsx@4.23.15_yaml@2.9.1/node_modules/astro/dist/core/middleware/callMiddleware.js:11:10)
+04:04:59 [ERROR] Cannot read properties of undefined (reading 'layoutId')
+  Stack trace:
+    at <fixture>/.quinecms/workspace/src/core/layout-state.ts:37:7
+    at pageLayout (<fixture>/.quinecms/workspace/src/core/layout-state.ts:36:45)
+    at <fixture>/.quinecms/workspace/src/generated/pages/page_new.astro:7:1
+    [...] See full stack trace in the browser, or rerun with --verbose.
+Registered 5 block versions.
+Registered 2 layout versions.
+QuineCMS: site updated.
+04:04:59 [ERROR] TypeError: Cannot read properties of undefined (reading 'layoutId')
+    at eval (<fixture>/.quinecms/workspace/src/core/layout-state.ts:43:10)
+    at Array.find (<anonymous>)
+    at pageLayout (<fixture>/.quinecms/workspace/src/core/layout-state.ts:42:44)
+    at contentForPage (<fixture>/.quinecms/workspace/src/core/layout-state.ts:62:29)
+    at eval (<fixture>/.quinecms/workspace/src/generated/pages/page_new.astro:13:1)
+    at async callComponentAsTemplateResultOrResponse (<engine-dependencies>/.pnpm/astro@7.3.5_@types+node@22.20.5_tsx@4.23.15_yaml@2.9.1/node_modules/astro/dist/runtime/server/render/astro/render.js:226:25)
+    at async renderToAsyncIterable (<engine-dependencies>/.pnpm/astro@7.3.5_@types+node@22.20.5_tsx@4.23.15_yaml@2.9.1/node_modules/astro/dist/runtime/server/render/astro/render.js:258:26)
+    at async renderPage (<engine-dependencies>/.pnpm/astro@7.3.5_@types+node@22.20.5_tsx@4.23.15_yaml@2.9.1/node_modules/astro/dist/runtime/server/render/page.js:43:24)
+    at async handlePages (<engine-dependencies>/.pnpm/astro@7.3.5_@types+node@22.20.5_tsx@4.23.15_yaml@2.9.1/node_modules/astro/dist/core/pages/handler.js:32:20)
+    at async callMiddleware (<engine-dependencies>/.pnpm/astro@7.3.5_@types+node@22.20.5_tsx@4.23.15_yaml@2.9.1/node_modules/astro/dist/core/middleware/callMiddleware.js:11:10)
+04:04:59 [ERROR] Cannot read properties of undefined (reading 'layoutId')
+  Stack trace:
+    at <fixture>/.quinecms/workspace/src/core/layout-state.ts:37:7
+    at pageLayout (<fixture>/.quinecms/workspace/src/core/layout-state.ts:36:45)
+    at <fixture>/.quinecms/workspace/src/generated/pages/page_new.astro:7:1
+    [...] See full stack trace in the browser, or rerun with --verbose.
+04:04:59 Configuration file updated. Restarting...
+04:04:59 [ERROR] [UnhandledRejection] Astro detected an unhandled rejection. Here's the stack trace:
+Error: ENOENT: no such file or directory, open '<fixture>/.quinecms/workspace/src/generated/pages/page_new.astro'
+    at async open (node:internal/fs/promises:641:25)
+    at async Object.readFile (node:internal/fs/promises:1245:14)
+    at async <anonymous> (<engine-dependencies>/.pnpm/astro@7.3.5_@types+node@22.20.5_tsx@4.23.15_yaml@2.9.1/node_modules/astro/dist/core/routing/create-manifest.js:472:23)
+  Hint:
+    Make sure your promises all have an `await` or a `.catch()` handler.
+  Error reference:
+    https://docs.astro.build/en/reference/errors/unhandled-rejection/
+  Stack trace:
+    at async open (node:internal/fs/promises:641:25)
+    [...] See full stack trace in the browser, or rerun with --verbose.
+4:04:59 AM [vite-plugin-svelte] no Svelte config found at <fixture>/.quinecms/workspace - using default configuration.
+4:04:59 AM [vite-plugin-svelte] no Svelte config found at <fixture>/.quinecms/workspace - using default configuration.
+04:04:59 [ERROR] TypeError: Cannot read properties of undefined (reading 'layoutId')
+    at eval (<fixture>/.quinecms/workspace/src/core/layout-state.ts:43:10)
+    at Array.find (<anonymous>)
+    at pageLayout (<fixture>/.quinecms/workspace/src/core/layout-state.ts:42:44)
+    at contentForPage (<fixture>/.quinecms/workspace/src/core/layout-state.ts:62:29)
+    at eval (<fixture>/.quinecms/workspace/src/generated/pages/page_new.astro:13:1)
+    at async callComponentAsTemplateResultOrResponse (<engine-dependencies>/.pnpm/astro@7.3.5_@types+node@22.20.5_tsx@4.23.15_yaml@2.9.1/node_modules/astro/dist/runtime/server/render/astro/render.js:226:25)
+    at async renderToAsyncIterable (<engine-dependencies>/.pnpm/astro@7.3.5_@types+node@22.20.5_tsx@4.23.15_yaml@2.9.1/node_modules/astro/dist/runtime/server/render/astro/render.js:258:26)
+    at async renderPage (<engine-dependencies>/.pnpm/astro@7.3.5_@types+node@22.20.5_tsx@4.23.15_yaml@2.9.1/node_modules/astro/dist/runtime/server/render/page.js:43:24)
+    at async handlePages (<engine-dependencies>/.pnpm/astro@7.3.5_@types+node@22.20.5_tsx@4.23.15_yaml@2.9.1/node_modules/astro/dist/core/pages/handler.js:32:20)
+    at async callMiddleware (<engine-dependencies>/.pnpm/astro@7.3.5_@types+node@22.20.5_tsx@4.23.15_yaml@2.9.1/node_modules/astro/dist/core/middleware/callMiddleware.js:11:10)
+04:04:59 [ERROR] Cannot read properties of undefined (reading 'layoutId')
+  Stack trace:
+    at <fixture>/.quinecms/workspace/src/core/layout-state.ts:37:7
+    at pageLayout (<fixture>/.quinecms/workspace/src/core/layout-state.ts:36:45)
+    at <fixture>/.quinecms/workspace/src/generated/pages/page_new.astro:7:1
+    [...] See full stack trace in the browser, or rerun with --verbose.
+04:04:59 [vite] connected.
+04:04:59 [vite] connected.
+04:04:59 [vite] server restarted.
+04:05:00 [404] /renamed-page 5ms
+04:05:00 [200] / 12ms
+Registered 5 block versions.
+Registered 2 layout versions.
+04:05:01 [vite] program reload
+QuineCMS: site updated.
+04:05:01 [200] / 21ms
+04:05:02 [200] / 11ms
+Registered 5 block versions.
+Registered 2 layout versions.
+04:05:02 [vite] program reload
+QuineCMS: site updated.
+04:05:03 [200] / 26ms
+04:05:03 [404] /reload-probe.txt 9ms
+04:05:03 [404] /reload-probe.txt 0ms
+04:05:03 [404] /reload-probe.txt 0ms
+04:05:03 [404] /reload-probe.txt 0ms
+04:05:03 [404] /reload-probe.txt 0ms
+Registered 5 block versions.
+Registered 2 layout versions.
+04:05:03 [vite] program reload
+QuineCMS: site updated.
+04:05:04 [200] / 18ms
+Registered 5 block versions.
+Registered 2 layout versions.
+QuineCMS: site updated.
+04:05:05 [404] /reload-probe.txt 8ms
+Registered 5 block versions.
+Registered 2 layout versions.
+QuineCMS: site updated.
+QuineCMS dev failed (143).
