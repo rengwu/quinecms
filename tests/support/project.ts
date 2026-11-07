@@ -74,7 +74,12 @@ export async function projectFixture() {
       activation: 'never',
       component: 'View.ts',
       dependencies: {},
-      source: `export const render = (_props:unknown,_context:unknown) => '<p>Static HTML</p>';`,
+      source: `export const render = (_props:unknown,_context:unknown) => '<p>Static HTML</p>';
+export function mount(host:HTMLElement,props:unknown,context:unknown){
+  const update=(props:unknown,context:unknown)=>{host.innerHTML=render(props,context)};
+  update(props,context);
+  return {update,destroy(){host.replaceChildren()}};
+}`,
     },
   ];
   for (const { source, ...d } of blocks) {

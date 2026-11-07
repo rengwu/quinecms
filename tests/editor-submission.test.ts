@@ -124,7 +124,7 @@ it('recovers silently and puts submission errors inside the styled portal', asyn
     (el) => el.textContent === 'Cannot publish yet',
   )!;
   expect(title).toBeDefined();
-  expect(title.closest('.kumo-ui')).not.toBeNull();
+  expect(title.closest('.admin-ui')).not.toBeNull();
   expect(title.closest('[data-mode="dark"]')).not.toBeNull();
   expect(host.textContent).toContain('Page title is required.');
   expect(host.querySelector('[aria-modal="true"]')).toBeNull();

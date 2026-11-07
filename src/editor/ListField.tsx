@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { Button } from '@cloudflare/kumo/components/button';
 import { PlusIcon } from '@phosphor-icons/react';
 import type { Collection, Field, Media, Values } from '../core/types';
 import { fieldDefaults, listRows, rowId, normalizeLists } from '../core/lists';
@@ -10,6 +9,7 @@ import { rowFields } from '../core/schema';
 import { useModel } from './ModelContext';
 import { useLanguage } from './Languages';
 import styles from './editor.module.css';
+import { Button } from './ui';
 
 export default function ListField({
   field,
@@ -89,6 +89,37 @@ export default function ListField({
         title={rowLabel(row, identified.indexOf(row))}
         context={field.label}
         onBack={() => select('')}
+        actions={
+          fixed ? undefined : (
+            <>
+              <Button
+                variant="secondary-destructive"
+                disabled={readOnly}
+                onClick={() => {
+                  save(identified.filter((r) => r._rowId !== selected));
+                  select('');
+                }}
+              >
+                Remove item
+              </Button>
+              <Button
+                disabled={
+                  readOnly ||
+                  (field.max !== undefined && rows.length >= field.max)
+                }
+                onClick={() => {
+                  const copy = (
+                    normalizeLists(field, [row], model, depth) as Values[]
+                  )[0];
+                  save([...identified, copy]);
+                  select(String(copy._rowId));
+                }}
+              >
+                Duplicate item
+              </Button>
+            </>
+          )
+        }
       >
         <Fields
           fields={fields}
@@ -101,35 +132,6 @@ export default function ListField({
             onChange(identified.map((r) => (r._rowId === selected ? next : r)))
           }
         />
-        {!fixed && (
-          <>
-            <Button
-              disabled={
-                readOnly ||
-                (field.max !== undefined && rows.length >= field.max)
-              }
-              onClick={() => {
-                const copy = (
-                  normalizeLists(field, [row], model, depth) as Values[]
-                )[0];
-                save([...identified, copy]);
-                select(String(copy._rowId));
-              }}
-            >
-              Duplicate item
-            </Button>
-            <Button
-              variant="secondary-destructive"
-              disabled={readOnly}
-              onClick={() => {
-                save(identified.filter((r) => r._rowId !== selected));
-                select('');
-              }}
-            >
-              Remove item
-            </Button>
-          </>
-        )}
       </PanelLevel>
     );
   const blocks = identified.map((r) => ({
@@ -161,12 +163,14 @@ export default function ListField({
           }
           label={field.label}
           showVersion={false}
+          summaries={false}
         />
       )}
       {!rows.length && <p className={styles.muted}>No items yet.</p>}
       {!fixed && (
         <Button
-          variant="primary"
+          variant="secondary"
+          className={styles.alignStart}
           icon={<PlusIcon />}
           disabled={
             readOnly || (field.max !== undefined && rows.length >= field.max)

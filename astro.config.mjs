@@ -14,7 +14,6 @@ const alias = Object.fromEntries(
     .map(([key, path]) => ['quinecms/' + key.slice(2), resolve(path)]),
 );
 import { buildAssets } from './scripts/build-assets.mjs';
-import { kumoStyles } from './scripts/kumo-styles.mjs';
 export default defineConfig({
   output: 'static',
   build: { inlineStylesheets: 'never' },
@@ -76,7 +75,7 @@ export default defineConfig({
         ],
       },
     },
-    plugins: [kumoStyles(), ...buildAssets()],
+    plugins: [...buildAssets()],
     resolve: { dedupe: dependencies, alias },
     build: { sourcemap: false },
   },

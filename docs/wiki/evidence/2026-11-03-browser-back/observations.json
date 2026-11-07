@@ -1,0 +1,36 @@
+{
+  "date": "2026-11-03",
+  "browser": "Google Chrome, native macOS UI controls",
+  "development": {
+    "origin": "http://127.0.0.1:4338",
+    "observed": [
+      "Edited text block title to Browser Back retained.",
+      "On final depth-based assembly: native Back returned block to Home with edited preview intact, then native Back returned Home to Pages."
+    ],
+    "qualification": "An earlier single-entry implementation failed consecutive native Back and was replaced. The site was restarted to copy updated engine sources."
+  },
+  "production": {
+    "origin": "http://localhost:4338",
+    "observed": [
+      "Opened public homepage, then /admin/ and unlocked the encrypted editor with fixture credentials.",
+      "Opened Home, opened text v1, changed Title to Production Back retained.",
+      "Native browser Back returned to Home without warning; preview showed Production Back retained and status Unsaved changes.",
+      "Second native browser Back returned to Pages without warning.",
+      "Third native browser Back showed Leave site? Changes you made may not be saved.",
+      "Cancel returned to Pages with Unsaved changes.",
+      "Settings → Discard edits → Continue restored Local preview. Native Back then returned directly to the public homepage without a warning."
+    ],
+    "sourceMatchesGenerated": true,
+    "filesystemTitle": "Fixture",
+    "limits": [
+      "Native check is desktop Chrome only.",
+      "The existing vanilla fixture preview displays c.mount is not a function; navigation and the React text block still worked.",
+      "No live Git, R2 or hosting actions."
+    ]
+  },
+  "cleanup": {
+    "browser": "Fixture edits discarded and owned tab closed",
+    "server": "Owned production preview stopped",
+    "temporaryDirectories": "Removed after saving evidence"
+  }
+}

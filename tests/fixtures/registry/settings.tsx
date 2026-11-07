@@ -1,9 +1,4 @@
 import { useState } from 'react';
-import { Button } from '@cloudflare/kumo/components/button';
-import { Dialog } from '@cloudflare/kumo/components/dialog';
-import { Input } from '@cloudflare/kumo/components/input';
-import { Label } from '@cloudflare/kumo/components/label';
-import { Select } from '@cloudflare/kumo/components/select';
 import type { LayoutSettingsProps } from '../../../src/core/layout-contract';
 import type { Block, Values } from '../../../src/core/types';
 import { newBlock } from '../../../src/core/content';
@@ -18,6 +13,7 @@ import BlockCreation from '../../../src/editor/BlockCreation';
 import styles from '../../../src/editor/editor.module.css';
 import { starterContent, withHeader } from './policy';
 import layoutDefinition from './starter.json';
+import { Button, Dialog, Input, Label, Select } from '../../../src/editor/ui';
 
 export default function Settings({
   settings,

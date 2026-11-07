@@ -88,6 +88,7 @@ afterEach(async () => {
   host?.remove();
   sessionStorage.clear();
   localStorage.removeItem(adminThemeKey);
+  localStorage.removeItem('quinecms:preview-workspace');
   vi.restoreAllMocks();
 });
 async function mount(initial = content) {
@@ -114,18 +115,43 @@ async function mount(initial = content) {
     ),
   );
 }
+const workspace = () => host.querySelector<HTMLElement>('[data-preview]')!;
 const editorPanel = () =>
-  host.querySelector<HTMLElement>(
-    '[aria-label="Site builder"], [aria-label="Admin workspace"]',
-  )!;
+  (host.querySelector(
+    '[aria-label="Site builder"], [aria-label="Admin workspace"], [data-panel-level]',
+  )
+    ? workspace()
+    : null)!;
+async function clickParent(scope: Element = host) {
+  const candidates = [
+    ...scope.querySelectorAll<HTMLButtonElement>('[data-editor-back]'),
+  ].filter((el) => !el.closest('[inert], [hidden]'));
+  const target = candidates.sort(
+    (a, b) => Number(b.dataset.editorBack) - Number(a.dataset.editorBack),
+  )[0];
+  expect(target, 'a visible parent breadcrumb or panel close').toBeDefined();
+  await act(async () => target.click());
+  await act(async () => {
+    await vi.dynamicImportSettled();
+  });
+}
 function button(label: string, scope: Element = host) {
-  const found = [...scope.querySelectorAll('button')].find(
-    (el) => el.textContent?.trim() === label && !el.closest('[hidden]'),
+  const buttons = [
+    ...scope.querySelectorAll<HTMLButtonElement>(
+      '[aria-label="Editor areas"] button',
+    ),
+    ...scope.querySelectorAll<HTMLButtonElement>('button'),
+  ];
+  const found = buttons.find(
+    (el) =>
+      (el.getAttribute('aria-label') === label ||
+        el.textContent?.trim() === label) &&
+      !el.closest('[hidden], [inert]'),
   );
   expect(
     found,
     `button ${label}: ${[...scope.querySelectorAll('button')]
-      .filter((b) => !b.closest('[hidden]'))
+      .filter((b) => !b.closest('[hidden], [inert]'))
       .map((b) => b.textContent)
       .join(' | ')}`,
   ).toBeDefined();
@@ -135,12 +161,12 @@ function button(label: string, scope: Element = host) {
 it('opens layout navigation and footer items in dedicated levels, hiding all parent settings', async () => {
   const chartr = layoutDefinitions.find((d) => d.id === 'chartr')!;
   await mount(selectLayout(structuredClone(content), chartr));
-  await click('Site Layouts');
+  await click('Layouts');
   await click('Main layout');
   await click('Workspace');
   const level = () =>
     editorPanel().querySelector<HTMLElement>(
-      '[data-panel-level]:not([hidden])',
+      '[data-panel-level]:not([inert])',
     )!;
   expect(level().querySelector('h2')?.textContent).toBe('Workspace');
   expect(level().querySelector('[aria-label="Label"]')).not.toBeNull();
@@ -148,18 +174,18 @@ it('opens layout navigation and footer items in dedicated levels, hiding all par
   expect(
     editorPanel()
       .querySelector('[aria-label="Source link label"]')
-      ?.closest('[hidden]'),
+      ?.closest('[hidden], [inert]'),
   ).not.toBeNull();
-  await click('← Back', level());
+  await clickParent(level());
   expect(level()).toBeNull();
   await click('GitHub');
   expect(level().textContent).toContain('Footer links');
   expect(level().querySelector('[aria-label="Copyright"]')).toBeNull();
-  await click('← Back', level());
+  await clickParent(level());
   expect(
     editorPanel()
       .querySelector('[aria-label="Copyright"]')
-      ?.closest('[hidden]'),
+      ?.closest('[hidden], [inert]'),
   ).toBeNull();
   await click('Workspace');
   await click('Settings');
@@ -187,34 +213,36 @@ it('gives nested navigation items their own levels, returning one parent at a ti
     ],
   };
   await mount(initial);
-  await click('Site Layouts');
+  await click('Layouts');
   await click('Main layout');
   await click('Resources');
   const level = () =>
     editorPanel().querySelector<HTMLElement>(
-      '[data-panel-level]:not([hidden])',
+      '[data-panel-level]:not([inert])',
     )!;
   expect(level().querySelector('h2')?.textContent).toBe('Resources');
   expect(
     editorPanel()
       .querySelector('[aria-label="Site title"]')
-      ?.closest('[hidden]'),
+      ?.closest('[hidden], [inert]'),
   ).not.toBeNull();
   await click('Documentation');
   expect(level().querySelector('h2')?.textContent).toBe('Documentation');
   expect(
-    editorPanel().querySelector('[aria-label="Label"]')?.closest('[hidden]'),
+    editorPanel()
+      .querySelector('[aria-label="Label"]')
+      ?.closest('[hidden], [inert]'),
   ).not.toBeNull();
   await input('Description', 'Updated manual');
-  await click('← Back', level());
+  await clickParent(level());
   expect(level().querySelector('h2')?.textContent).toBe('Resources');
   expect(level().textContent).toContain('Documentation');
-  await click('← Back', level());
+  await clickParent(level());
   expect(level()).toBeNull();
   expect(
     editorPanel()
       .querySelector('[aria-label="Site title"]')
-      ?.closest('[hidden]'),
+      ?.closest('[hidden], [inert]'),
   ).toBeNull();
   expect(
     (readRecovery()!.content.site.layouts![0].design.settings.header as any)
@@ -229,6 +257,188 @@ async function click(label: string, scope?: Element) {
     await vi.dynamicImportSettled();
   });
 }
+
+async function browserBack() {
+  await act(async () => {
+    await new Promise<void>((resolve) => {
+      window.addEventListener('popstate', () => resolve(), { once: true });
+      window.history.back();
+    });
+    await new Promise((resolve) => setTimeout(resolve, 30));
+  });
+}
+
+it('uses browser Back for block and page parents without losing draft edits', async () => {
+  const initial = structuredClone(content);
+  initial.pages[0].blocks = [
+    {
+      id: 'hero',
+      type: 'hero',
+      version: 1,
+      props: { title: 'Original', text: '' },
+    },
+  ];
+  await mount(initial);
+  const url = window.location.href;
+  await click('Home');
+  await click('Hero');
+  await input('Heading', 'Keep this heading');
+  await browserBack();
+  expect(
+    editorPanel().querySelector('[aria-label="Page title"]'),
+  ).not.toBeNull();
+  await browserBack();
+  expect(host.querySelector('table[aria-label="Pages"]')).not.toBeNull();
+  expect(window.location.href).toBe(url);
+  expect(readRecovery()!.content.pages[0].blocks[0].props.title).toBe(
+    'Keep this heading',
+  );
+  expect(window.history.state['quinecms:back'].depth).toBe(0);
+});
+
+it('uses browser Back through hidden panel parents and preserves nested values', async () => {
+  const initial = structuredClone(content);
+  initial.site.layout!.settings.header = {
+    brand: 'Site',
+    items: [
+      {
+        _rowId: 'group',
+        label: 'Resources',
+        links: [
+          {
+            _rowId: 'link',
+            label: 'Documentation',
+            url: '/docs',
+            description: 'Manual',
+          },
+        ],
+      },
+    ],
+  };
+  await mount(initial);
+  await click('Layouts');
+  await click('Main layout');
+  await click('Resources');
+  await click('Documentation');
+  await input('Description', 'Retained manual');
+  await browserBack();
+  expect(
+    editorPanel().querySelector('[data-panel-level]:not([inert]) h2')
+      ?.textContent,
+  ).toBe('Resources');
+  await browserBack();
+  expect(editorPanel().querySelector('[data-panel-level]')).toBeNull();
+  expect(
+    editorPanel().querySelector('[aria-label="Site title"]'),
+  ).not.toBeNull();
+  await browserBack();
+  expect(host.querySelector('table[aria-label="Site Layouts"]')).not.toBeNull();
+  expect(
+    (readRecovery()!.content.site.layouts![0].design.settings.header as any)
+      .items[0].links[0].description,
+  ).toBe('Retained manual');
+});
+
+it('uses browser Back through entry and schema editors and cancels pending creation', async () => {
+  await mount();
+  await openEntry();
+  await input('Title', 'Retained entry');
+  await browserBack();
+  expect(editorPanel().querySelector('[aria-label="Entries"]')).not.toBeNull();
+  await browserBack();
+  expect(editorPanel().querySelector('[aria-label="Entries"]')).toBeNull();
+  await click('Collection schemas');
+  await click('Journal · 1 field');
+  await click('Titletext · Required');
+  await input('Label', 'Heading');
+  await browserBack();
+  await click('Add field');
+  await input('Label', 'Uncommitted');
+  await browserBack();
+  expect(editorPanel().textContent).not.toContain('Uncommitted');
+  await browserBack();
+  expect(window.history.state['quinecms:back'].depth).toBe(0);
+  expect(readRecovery()!.content.collections[0].fields).toHaveLength(1);
+  expect(readRecovery()!.content.collections[0].fields[0].label).toBe(
+    'Heading',
+  );
+  expect(readRecovery()!.content.entries[0].values.title).toBe(
+    'Retained entry',
+  );
+});
+
+it('releases browser history after on-screen Back and main section changes', async () => {
+  await mount();
+  const length = window.history.length;
+  await click('Home');
+  await clickParent();
+  await vi.waitFor(() =>
+    expect(window.history.state['quinecms:back'].depth).toBe(0),
+  );
+  await click('Home');
+  await click('Settings');
+  await vi.waitFor(() =>
+    expect(window.history.state['quinecms:back'].depth).toBe(0),
+  );
+  expect(window.history.length).toBeLessThanOrEqual(length + 1);
+  await act(async () => {
+    window.history.forward();
+    await new Promise((resolve) => setTimeout(resolve, 30));
+  });
+  expect(editorPanel().textContent).toContain('Backups');
+  expect(window.history.state['quinecms:back'].depth).toBe(0);
+});
+
+it('returns from a catalog preview before closing the library or its page', async () => {
+  await mount();
+  await click('Home');
+  await click('Add block');
+  await act(async () =>
+    host
+      .querySelector<HTMLButtonElement>('[aria-label="Preview Hero"]')!
+      .click(),
+  );
+  expect(host.querySelector('[role="dialog"]')?.textContent).toContain(
+    'Sample content',
+  );
+  await browserBack();
+  expect(host.querySelector('[aria-label="Search blocks"]')).not.toBeNull();
+  await browserBack();
+  expect(host.querySelector('[role="dialog"]')).toBeNull();
+  expect(
+    editorPanel().querySelector('[aria-label="Page title"]'),
+  ).not.toBeNull();
+  await browserBack();
+  expect(host.querySelector('table[aria-label="Pages"]')).not.toBeNull();
+});
+
+it('leaves normally from a root after mixed on-screen and browser Back actions', async () => {
+  window.history.replaceState(null, '', '/previous');
+  window.history.pushState({ otherState: 'retained' }, '', '/admin/');
+  await mount();
+  await openEntry();
+  await clickParent();
+  await vi.waitFor(() =>
+    expect(window.history.state['quinecms:back'].depth).toBe(1),
+  );
+  await browserBack();
+  expect(window.history.state.otherState).toBe('retained');
+  await browserBack();
+  expect(window.location.pathname).toBe('/previous');
+});
+
+it('does not add history entries for field edits or leave cancelled page drafts behind', async () => {
+  await mount();
+  await click('Add page');
+  await click('Static page');
+  const length = window.history.length;
+  await input('Page title', 'Uncommitted page');
+  await input('URL path', '/uncommitted');
+  expect(window.history.length).toBe(length);
+  await browserBack();
+  expect(host.querySelector('table[aria-label="Pages"]')).not.toBeNull();
+  expect(readRecovery()!.content.pages).toHaveLength(1);
+});
 async function chooseOption(label: string, option: string) {
   await act(async () =>
     editorPanel()
@@ -243,7 +453,7 @@ async function chooseOption(label: string, option: string) {
 }
 function expectCreation(label: string) {
   const buttons = [...editorPanel().querySelectorAll('button')]
-    .filter((b) => !b.closest('[hidden]'))
+    .filter((b) => !b.closest('[hidden], [inert]'))
     .map((b) => b.textContent?.trim());
   expect(buttons).toContain(`Create ${label}`);
   expect(buttons).toContain('Cancel');
@@ -253,9 +463,11 @@ function expectCreation(label: string) {
   );
 }
 async function input(label: string, value: string) {
-  const el = editorPanel().querySelector<HTMLInputElement>(
-    `input[aria-label="${label}"]`,
-  )!;
+  const el = [
+    ...editorPanel().querySelectorAll<HTMLInputElement>(
+      `input[aria-label="${label}"]`,
+    ),
+  ].find((el) => !el.closest('[inert]'))!;
   expect(el).not.toBeNull();
   await act(async () => {
     Object.getOwnPropertyDescriptor(
@@ -265,9 +477,13 @@ async function input(label: string, value: string) {
     el.dispatchEvent(new Event('input', { bubbles: true }));
   });
 }
+async function openCollections() {
+  const disclosure = button('Collections');
+  if (disclosure.getAttribute('aria-expanded') !== 'true')
+    await click('Collections');
+}
 async function openEntry() {
-  await click('Content');
-  expectAdminView();
+  await openCollections();
   await click('Journal');
   expectAdminView();
   await click('First entryData only');
@@ -277,7 +493,7 @@ function expectAdminView() {
   expect(
     host.querySelector('main[aria-label="Admin workspace"]'),
   ).not.toBeNull();
-  expect(host.querySelector('aside[aria-label="Site builder"]')).toBeNull();
+  expect(host.querySelector('[aria-label="Site builder"]')).toBeNull();
   expect(
     host.querySelector('aside[aria-label="Main navigation"]'),
   ).not.toBeNull();
@@ -295,7 +511,7 @@ const darkModeSwitch = () =>
 
 it('persists the admin theme across navigation and reload without changing site content or preview theme', async () => {
   await mount();
-  const adminSurfaces = () => [...host.querySelectorAll('.kumo-ui')];
+  const adminSurfaces = () => [...host.querySelectorAll('.admin-ui')];
   expect(
     adminSurfaces().every((el) => el.getAttribute('data-mode') === 'dark'),
   ).toBe(true);
@@ -327,7 +543,7 @@ it('persists the admin theme across navigation and reload without changing site 
   ).toBe('light');
   await click('Home');
   const preview = host.querySelector('[aria-label="Live preview"]')!;
-  expect(preview.closest('.kumo-ui, [data-mode]')).toBeNull();
+  expect(preview.closest('.admin-ui, [data-mode]')).toBeNull();
   expect(
     preview.querySelector('.starter-layout')?.getAttribute('data-theme'),
   ).toBe('light');
@@ -374,7 +590,7 @@ it('preserves site width across navigation and scopes it to the live preview', a
     editorPanel().querySelector('[aria-label="Content max-width"]'),
   ).toBeNull();
   expect(editorPanel().querySelector('[aria-label="Page gutter"]')).toBeNull();
-  await click('Site Layouts');
+  await click('Layouts');
   await click('Main layout');
   await input('Content max-width', '880');
   expect(
@@ -394,7 +610,7 @@ it('preserves site width across navigation and scopes it to the live preview', a
       .querySelector<HTMLElement>('aside')!
       .style.getPropertyValue('--site-content-max-width'),
   ).toBe('');
-  await click('Site Layouts');
+  await click('Layouts');
   await click('Main layout');
   expect(
     editorPanel().querySelector<HTMLInputElement>(
@@ -411,7 +627,7 @@ it('preserves site width across navigation and scopes it to the live preview', a
 
 it('edits site fonts, size, line height and gutter together, recovers them and clears numeric overrides', async () => {
   await mount();
-  await click('Site Layouts');
+  await click('Layouts');
   await click('Main layout');
   for (const [label, choice] of [
     ['Body font', 'Arial'],
@@ -472,7 +688,7 @@ it('edits site fonts, size, line height and gutter together, recovers them and c
         ?.closest('.site-surface'),
     ).toBeNull();
   }
-  await click('Site Layouts');
+  await click('Layouts');
   await click('Main layout');
   expect(
     editorPanel().querySelector('[aria-label="Body font"]')?.textContent,
@@ -505,10 +721,10 @@ it('keeps field-only entry authoring in Content and restores each parent', async
   expect(host.querySelector('main')?.textContent).toContain('Edited entry');
   expect(editorPanel().textContent).not.toContain('Add block');
   expect(editorPanel().querySelector('[aria-label="Blocks"]')).toBeNull();
-  await click('← Back');
+  await clickParent();
   expect(editorPanel().textContent).toContain('Edited entryData only');
   expect(editorPanel().querySelector('[aria-label="Label"]')).toBeNull();
-  await click('← Back');
+  await clickParent();
   await click('Pages');
   expect(editorPanel()).toBeNull();
   expect(host.querySelector('table[aria-label="Pages"]')).not.toBeNull();
@@ -522,10 +738,9 @@ it('keeps field-only entry authoring in Content and restores each parent', async
 
 it('edits schemas and defaults separately, protects populated fields, and uses defaults for new entries', async () => {
   await mount();
-  await click('Schemas');
-  await click('Collections');
+  await click('Collection schemas');
   expectAdminView();
-  await click('Journal · 1 fields');
+  await click('Journal · 1 field');
   expectAdminView();
   expect(editorPanel().textContent).not.toContain('Add entry');
   expect(editorPanel().querySelector('[aria-label="Title"]')).toBeNull();
@@ -537,15 +752,15 @@ it('edits schemas and defaults separately, protects populated fields, and uses d
   ).toBe(true);
   expect(button('Remove field').disabled).toBe(true);
   await input('Label', 'Heading');
-  await click('← Back');
+  await clickParent();
   await click('Add field');
   await input('Label', 'Summary');
   await click('Edit default value');
   await input('Summary', 'Default summary');
-  await click('← Back');
+  await clickParent();
   await click('Create field');
-  await click('← Back');
-  await click('Content');
+  await clickParent();
+  await openCollections();
   await click('Journal');
   await click('Add entry');
   expect(
@@ -555,7 +770,7 @@ it('edits schemas and defaults separately, protects populated fields, and uses d
   expect(editorPanel().querySelector('[aria-label="Heading"]')).not.toBeNull();
   expect(editorPanel().querySelector('[aria-label="Field key"]')).toBeNull();
   await click('Create entry');
-  await click('← Back');
+  await clickParent();
   expect(
     editorPanel().querySelectorAll('[aria-label="Entries"] > li'),
   ).toHaveLength(2);
@@ -571,11 +786,15 @@ it('opens entries from public preview links in Content and blocks referenced del
   await click('Home');
   await act(async () =>
     host
-      .querySelector<HTMLAnchorElement>('main a[data-document-id="entry_one"]')!
+      .querySelector<HTMLAnchorElement>(
+        '[aria-label="Live preview"] a[data-document-id="entry_one"]',
+      )!
       .click(),
   );
   expectAdminView();
-  expect(editorPanel().textContent).toContain('← Back');
+  expect(
+    host.querySelector('[aria-label="Breadcrumbs"] [data-editor-back]'),
+  ).not.toBeNull();
   expect(button('Delete entry').disabled).toBe(true);
   expect(editorPanel().textContent).toContain('Used in 1 place');
   expect(editorPanel().textContent).toContain('Navigation › Read entry');
@@ -594,28 +813,27 @@ it('deletes unreferenced entries and then their empty collection', async () => {
   await mount(initial);
   await openEntry();
   await click('Delete entry');
-  await click('Continue', host);
+  await click('Delete entry', host.querySelector('[role="dialog"]')!);
   expect(editorPanel().textContent).toContain('No entries yet.');
   expect(editorPanel().textContent).toContain('Add entry');
   expect(editorPanel().querySelector('[aria-label="Field key"]')).toBeNull();
-  await click('← Back');
-  await click('Schemas');
-  await click('Collections');
-  await click('Journal · 1 fields');
+  await clickParent();
+  await click('Collection schemas');
+  await click('Journal · 1 field');
   expect(button('Delete empty collection').disabled).toBe(false);
   await click('Delete empty collection');
   expect(
     editorPanel().querySelectorAll('[aria-label="Collection schemas"] li'),
   ).toHaveLength(0);
-  await click('Content');
-  expect(editorPanel().textContent).toContain('Create a collection in Schemas');
+  expect(
+    host.querySelector('[aria-label="Editor areas"]')?.textContent,
+  ).toContain('No collections');
 });
 
 it('opens readable object usages in the owning collection schema and can return to its list', async () => {
   await mount(modelFixture());
-  await click('Schemas');
   await click('Objects');
-  await click('SEO · 1 fields');
+  await click('SEO · 1 field');
   expect(editorPanel().textContent).toContain('Schemas › Collections › SEO');
   expect(editorPanel().textContent).not.toContain('collection_journal.seo');
   await click('Open', editorPanel());
@@ -623,12 +841,12 @@ it('opens readable object usages in the owning collection schema and can return 
     editorPanel().querySelector<HTMLInputElement>('[aria-label="Name"]')?.value,
   ).toBe('Journal');
   expect(editorPanel().textContent).toContain('Fields');
-  await click('← Back');
+  await clickParent();
   expect(
     editorPanel().querySelector('[aria-label="Collection schemas"]'),
   ).not.toBeNull();
   await click('Objects');
-  await click('SEO · 1 fields');
+  await click('SEO · 1 field');
   await click('Open', editorPanel());
   expect(
     editorPanel().querySelector<HTMLInputElement>('[aria-label="Name"]')?.value,
@@ -651,77 +869,49 @@ it('does not present a self-reference as a deletion blocker', async () => {
   expect(editorPanel().textContent).not.toContain('Used in');
 });
 
-it('expands schema navigation without navigating and opens leaf lists without a Back button', async () => {
+it('expands content collections without leaving the record and opens schema screens directly', async () => {
   await mount();
-  const schemas = button('Schemas');
-  const children = document.getElementById(
-    schemas.getAttribute('aria-controls')!,
-  )!;
-  expect(schemas.getAttribute('aria-expanded')).toBe('false');
-  expect(children.hidden).toBe(true);
+  const disclosure = button('Collections');
+  expect(disclosure.getAttribute('aria-expanded')).toBe('false');
   await click('Home');
   await input('Page title', 'Retained page edit');
-  await click('Schemas');
-  expect(schemas.getAttribute('aria-expanded')).toBe('true');
-  expect(children.hidden).toBe(false);
-  expect(schemas.hasAttribute('aria-current')).toBe(false);
-  expect(button('Pages').getAttribute('aria-current')).toBe('page');
+  await click('Collections');
+  expect(disclosure.getAttribute('aria-expanded')).toBe('true');
   expect(
     editorPanel().querySelector('[aria-label="Page title"]'),
   ).not.toBeNull();
-  await click('Collections');
-  expectAdminView();
-  expect(editorPanel().querySelector('h2')?.textContent).toBe('Collections');
-  expect(editorPanel().textContent).not.toContain('← Back');
-  expect(button('Collections').getAttribute('aria-current')).toBe('page');
-  await click('Journal · 1 fields');
-  await click('← Back');
-  expect(editorPanel().querySelector('h2')?.textContent).toBe('Collections');
+  await click('Journal');
+  expect(editorPanel().querySelector('[aria-label="Entries"]')).not.toBeNull();
+  await click('Collection schemas');
+  await click('Journal · 1 field');
+  await clickParent();
+  expect(
+    editorPanel().querySelector('[aria-label="Collection schemas"]'),
+  ).not.toBeNull();
   await click('Add collection');
   await input('Name', 'Uncommitted collection');
-  await click('Schemas');
-  expect(children.hidden).toBe(true);
-  expect(
-    editorPanel().querySelector<HTMLInputElement>('[aria-label="Name"]')?.value,
-  ).toBe('Uncommitted collection');
-  await click('Schemas');
   await click('Objects');
-  expect(editorPanel().querySelector('h2')?.textContent).toBe('Objects');
-  expect(editorPanel().textContent).not.toContain('← Back');
-  expect(button('Objects').getAttribute('aria-current')).toBe('page');
-  expect(button('Collections').hasAttribute('aria-current')).toBe(false);
-  await click('Add object');
-  await input('Name', 'Uncommitted object');
-  await click('Collections');
-  expect(editorPanel().querySelector('h2')?.textContent).toBe('Collections');
-  expect(editorPanel().textContent).not.toContain('Uncommitted');
   expect(readRecovery()!.content.collections).toHaveLength(1);
-  expect(readRecovery()!.content.objects).toHaveLength(0);
   await click('Pages');
   await click('Retained page edit');
 });
 
-it('keeps the compact navigation open for group toggles and closes it only after choosing a leaf', async () => {
+it('toggles the sidebar and closes it after navigation on narrow screens', async () => {
+  vi.spyOn(window, 'innerWidth', 'get').mockReturnValue(390);
   await mount();
-  await click('Menu');
-  const dialog = host.querySelector('[role="dialog"]')!;
-  await click('Schemas', dialog);
-  expect(host.querySelector('[role="dialog"]')).toBe(dialog);
-  expect(host.querySelector('table[aria-label="Pages"]')).not.toBeNull();
-  await click('Objects', dialog);
-  expect(host.querySelector('[role="dialog"]')).toBeNull();
-  expect(editorPanel().querySelector('h2')?.textContent).toBe('Objects');
-  await click('Menu');
-  const reopened = host.querySelector('[role="dialog"]')!;
-  expect(button('Schemas', reopened).getAttribute('aria-expanded')).toBe(
-    'true',
-  );
-  expect(button('Objects', reopened).getAttribute('aria-current')).toBe('page');
-  await click('Schemas', reopened);
-  expect(button('Schemas', reopened).getAttribute('aria-expanded')).toBe(
+  expect(button('Toggle navigation').getAttribute('aria-expanded')).toBe(
     'false',
   );
-  expect(editorPanel().querySelector('h2')?.textContent).toBe('Objects');
+  await click('Toggle navigation');
+  await click('Collections');
+  expect(button('Toggle navigation').getAttribute('aria-expanded')).toBe(
+    'true',
+  );
+  await click('Journal');
+  expect(button('Toggle navigation').getAttribute('aria-expanded')).toBe(
+    'false',
+  );
+  expect(editorPanel().querySelector('[aria-label="Entries"]')).not.toBeNull();
 });
 
 it('starts at Pages and keeps navigation available outside the nested editing sidebar', async () => {
@@ -730,9 +920,9 @@ it('starts at Pages and keeps navigation available outside the nested editing si
   expect(host.querySelector('[aria-label="Live preview"]')).toBeNull();
   expect(
     [...host.querySelectorAll('[aria-label="Editor areas"] button')].filter(
-      (button) => !button.closest('[hidden]'),
+      (button) => !button.closest('[hidden], [inert]'),
     ),
-  ).toHaveLength(6);
+  ).toHaveLength(7);
   await click('Pages');
   expect(editorPanel()).toBeNull();
   expect(host.querySelector('[aria-label="Live preview"]')).toBeNull();
@@ -741,22 +931,23 @@ it('starts at Pages and keeps navigation available outside the nested editing si
   expect(button('Pages').getAttribute('aria-current')).toBe('page');
   expect(
     [...host.querySelectorAll('[aria-label="Editor areas"] button')].filter(
-      (button) => !button.closest('[hidden]'),
+      (button) => !button.closest('[hidden], [inert]'),
     ),
-  ).toHaveLength(6);
+  ).toHaveLength(7);
   expect(editorPanel().querySelector('[aria-label="Editor areas"]')).toBeNull();
   expect(editorPanel().querySelector('[aria-label="Page"]')).toBeNull();
   await input('Page title', 'Changed page');
-  await click('Content');
+  await openCollections();
+  await click('Journal');
   expectAdminView();
-  expect(button('Content').getAttribute('aria-current')).toBe('page');
+  expect(button('Journal').getAttribute('aria-current')).toBe('page');
   await click('Pages');
   await click('Changed page');
   expect(
     editorPanel().querySelector<HTMLInputElement>('[aria-label="Page title"]')
       ?.value,
   ).toBe('Changed page');
-  await click('← Back');
+  await clickParent();
   await click('Media');
   expectAdminView();
   expect(button('Media').getAttribute('aria-current')).toBe('page');
@@ -807,12 +998,18 @@ it('lists every page and keeps page edits through the table and block hierarchy'
   expect(editorPanel().textContent).not.toContain('← Home');
   await input('Page title', 'Welcome');
   await input('URL path', '/welcome');
-  await click('Quote v1');
+  await click('Quote');
   expect(host.querySelector('[aria-label="Live preview"]')).not.toBeNull();
-  expect(editorPanel().querySelector('[aria-label="Page title"]')).toBeNull();
-  await click('← Back');
-  expect(editorPanel().textContent).toContain('← Back');
-  await click('← Back');
+  expect(
+    editorPanel()
+      .querySelector('[aria-label="Page title"]')
+      ?.closest('[inert]'),
+  ).not.toBeNull();
+  await clickParent();
+  expect(
+    host.querySelector('[aria-label="Breadcrumbs"] [data-editor-back]'),
+  ).not.toBeNull();
+  await clickParent();
   expect(host.querySelector('[data-preview-island]')).toBeNull();
   expect(host.querySelector('table')?.textContent).toContain('/welcome');
   // The row's path cell is also a mouse target; its title button provides keyboard access.
@@ -823,7 +1020,7 @@ it('lists every page and keeps page edits through the table and block hierarchy'
     editorPanel().querySelector<HTMLInputElement>('[aria-label="Page title"]')
       ?.value,
   ).toBe('About');
-  await click('← Back');
+  await clickParent();
   await click('Welcome');
   expect(
     editorPanel().querySelector<HTMLInputElement>('[aria-label="URL path"]')
@@ -845,14 +1042,14 @@ it('creates pages from an empty table and returns deletion to the table', async 
   ).toBe('New page');
   await input('Page title', 'Created page');
   await click('Create page');
-  await click('← Back');
+  await clickParent();
   expect(host.querySelector('table')?.textContent).toContain('Created page');
   await click('Created page');
   await click('Delete page');
   await click('Cancel', host);
   expect(editorPanel().textContent).toContain('Created page');
   await click('Delete page');
-  await click('Continue', host);
+  await click('Delete page', host.querySelector('[role="dialog"]')!);
   expect(editorPanel()).toBeNull();
   expect(host.querySelector('table')?.textContent).toContain('No pages yet.');
   expect(readRecovery()?.content.pages).toEqual([]);
@@ -886,8 +1083,8 @@ it('creates generic pages with their own block catalog and field bindings, and k
   expect(saved.path).toBeUndefined();
   expect(saved.blocks[0].bindings).toEqual({ title: 'title' });
   expect(saved.blocks[0].props.title).toBe('Untitled');
-  await click('← Back');
-  await click('← Back');
+  await clickParent();
+  await clickParent();
   expect(host.querySelector('table')?.textContent).toContain('Generic');
   await click('Home');
   await click('Add block');
@@ -906,9 +1103,8 @@ it('assigns only generic pages to schemas and persists an explicit data-only sel
     blocks: [],
   });
   await mount(initial);
-  await click('Schemas');
-  await click('Collections');
-  await click('Journal · 1 fields');
+  await click('Collection schemas');
+  await click('Journal · 1 field');
   const selector = () =>
     editorPanel().querySelector<HTMLButtonElement>(
       '[aria-label="Generic page"]',
@@ -940,7 +1136,7 @@ it('assigns only generic pages to schemas and persists an explicit data-only sel
 
 it('offers every installed layout in one dashboard, preserves content when switching and keeps previews nonmutating', async () => {
   await mount(content);
-  await click('Site Layouts');
+  await click('Layouts');
   await click('Main layout');
   await input('Content max-width', '880');
   await input('Page gutter', '12');
@@ -1049,7 +1245,6 @@ it('offers every installed layout in one dashboard, preserves content when switc
 
 it('creates reusable object schemas and a single-entry collection, edits owned values and recovers them', async () => {
   await mount();
-  await click('Schemas');
   await click('Objects');
   await click('Add object');
   await input('Name', 'Address');
@@ -1058,8 +1253,8 @@ it('creates reusable object schemas and a single-entry collection, edits owned v
   await input('Field key', 'city');
   await click('Create field');
   await click('Create object');
-  await click('← Back');
-  await click('Collections');
+  await clickParent();
+  await click('Collection schemas');
   await click('Add single-entry collection');
   await input('Name', 'Company');
   expect(editorPanel().textContent).toContain('Single entry');
@@ -1083,7 +1278,7 @@ it('creates reusable object schemas and a single-entry collection, edits owned v
   await choose('Object definition', 'Address');
   await click('Create field');
   await click('Create collection');
-  await click('Content');
+  await openCollections();
   await click('Company');
   expect(editorPanel().querySelector('[aria-label="Entries"]')).toBeNull();
   expect(editorPanel().querySelector('[aria-label="URL slug"]')).toBeNull();
@@ -1091,10 +1286,12 @@ it('creates reusable object schemas and a single-entry collection, edits owned v
   await input('Title', 'Our company');
   await click('Edit Address');
   expect(
-    editorPanel().querySelector('[aria-label="Title"]')?.closest('[hidden]'),
+    editorPanel()
+      .querySelector('[aria-label="Title"]')
+      ?.closest('[hidden], [inert]'),
   ).not.toBeNull();
   await input('City', 'Kuala Lumpur');
-  await click('← Back');
+  await clickParent();
   const saved = readRecovery()!.content;
   expect(saved.objects[0].fields[0].key).toBe('city');
   const company = saved.collections.find((c) => c.name === 'Company')!;
@@ -1107,14 +1304,14 @@ it('creates reusable object schemas and a single-entry collection, edits owned v
   await act(async () => root.unmount());
   host.remove();
   await mount();
-  await click('Content');
+  await openCollections();
   await click('Company');
   await click('Edit Address');
   expect(
     editorPanel().querySelector<HTMLInputElement>('[aria-label="City"]')?.value,
   ).toBe('Kuala Lumpur');
-  await click('← Back');
-  await click('← Back');
+  await clickParent();
+  await clickParent();
   expect(
     editorPanel().querySelector('[aria-label="Content collections"]'),
   ).not.toBeNull();
@@ -1125,12 +1322,12 @@ it('edits three owned levels and selects and reorders references through dedicat
     col = initial.collections[0],
     entry = initial.entries[0];
   await mount(initial);
-  await click('Content');
+  await openCollections();
   await click(col.name);
   await click(String(entry.values[col.titleField]) + entryPath(col, entry));
   await click('Edit SEO');
   await input('SEO title', 'New search title');
-  await click('← Back');
+  await clickParent();
   await click('Specifications');
   await click('Item 1');
   await click('Edit Detail');
@@ -1138,9 +1335,9 @@ it('edits three owned levels and selects and reorders references through dedicat
   await click('Ada');
   await input('Search Owner', 'Grace');
   await click('Grace');
-  await click('← Back');
-  await click('← Back');
-  await click('← Back');
+  await clickParent();
+  await clickParent();
+  await clickParent();
   await click('Ada');
   await input('Search Author', 'Grace');
   await click('Grace');
@@ -1156,7 +1353,7 @@ it('edits three owned levels and selects and reorders references through dedicat
       )!
       .click(),
   );
-  await click('← Back');
+  await clickParent();
   const saved = readRecovery()!.content.entries.find((e) => e.id === entry.id)!;
   expect(saved.values.author).toBe('author_grace');
   expect(saved.values.related).toEqual([entry.id, initial.entries[1].id]);
@@ -1165,7 +1362,7 @@ it('edits three owned levels and selects and reorders references through dedicat
     label: 'Updated specification',
     owner: 'author_grace',
   });
-  await click('Content');
+  await openCollections();
   await click('Authors');
   await click('GraceData only');
   expect(button('Delete entry').disabled).toBe(true);
@@ -1188,7 +1385,7 @@ it('authors nested array projections in dedicated levels and retains the binding
   await mount(initial);
   await click('Pages');
   await click(page.title);
-  await click('Structured details v1');
+  await click('Structured details');
   await input('Bind Heading', 'seo.title');
   await input('Bind Author', 'author.name');
   await input('Bind Groups', 'groups');
@@ -1196,15 +1393,15 @@ it('authors nested array projections in dedicated levels and retains the binding
   expect(
     editorPanel()
       .querySelector('[aria-label="Bind Heading"]')
-      ?.closest('[hidden]'),
+      ?.closest('[hidden], [inert]'),
   ).not.toBeNull();
   await input('Bind Title', 'name');
   await input('Bind Rows', 'rows');
   await click('Map Rows items');
   await input('Bind Label', 'detail.label');
   await input('Bind Value', 'detail.owner.name');
-  await click('← Back');
-  await click('← Back');
+  await clickParent();
+  await clickParent();
   expect(
     readRecovery()!.content.pages.find((p) => p.id === page.id)!.blocks[0]
       .bindings,
@@ -1237,7 +1434,7 @@ it('keeps new pages and entries outside the draft until Create, and discards can
   await click('Add page');
   await click('Generic page', host);
   await input('Page title', 'Abandoned template');
-  await click('Content');
+  await openCollections();
   expect(readRecovery()!.content).toEqual(before);
   await click('Journal');
   await click('Add entry');
@@ -1258,8 +1455,7 @@ it('keeps new pages and entries outside the draft until Create, and discards can
 it('stages collection, object and nested field creation atomically, including single-entry provisioning', async () => {
   await mount();
   const before = readRecovery()!.content;
-  await click('Schemas');
-  await click('Collections');
+  await click('Collection schemas');
   await click('Add single-entry collection');
   expectCreation('collection');
   await input('Name', 'Cancelled company');
@@ -1288,7 +1484,7 @@ it('stages collection, object and nested field creation atomically, including si
   expect(committed.entries.at(-1)?.collectionId).toBe(
     committed.collections.at(-1)?.id,
   );
-  await click('← Back');
+  await clickParent();
   await click('Objects');
   await click('Add object');
   expectCreation('object');
@@ -1374,7 +1570,7 @@ it('confirms factory reset, retains the empty draft across reloads and allows di
   expect(sessionStorage.getItem('lean:r2')).toBe(storage);
   await click('Pages');
   expect(host.textContent).not.toContain(initial.pages[0].title);
-  await click('Site Layouts');
+  await click('Layouts');
   await click('Main layout');
   expect(editorPanel().textContent).toContain('Starter');
   for (const [label, value] of Object.entries({
@@ -1408,29 +1604,28 @@ it('confirms factory reset, retains the empty draft across reloads and allows di
   expect(readRecovery()!.content).toEqual(reset.content);
   await click('Settings');
   await click('Discard edits');
-  await click('Continue', dialog());
+  await click('Discard edits', dialog());
   expect(readRecovery()!.content).toEqual(before.content);
 });
 
 it('cancels new fields in existing schemas and retains creation forms after rejected depth or cycle changes', async () => {
   await mount(modelFixture());
   const before = readRecovery()!.content;
-  await click('Schemas');
-  await click('Collections');
+  await click('Collection schemas');
   const col = before.collections[0];
   await click(`${col.name} · ${col.fields.length} fields`);
   await click('Add field');
   await input('Label', 'Discarded');
   await click('Edit default value');
   await input('Discarded', 'Pending default');
-  await click('← Back');
+  await clickParent();
   expectCreation('field');
   expect(readRecovery()!.content).toEqual(before);
   await click('Cancel');
   expect(readRecovery()!.content).toEqual(before);
-  await click('← Back');
+  await clickParent();
   await click('Objects');
-  await click('SEO · 1 fields');
+  await click('SEO · 1 field');
   await click('Add field');
   await chooseOption('Field type', 'object');
   await chooseOption('Object definition', 'SEO');
@@ -1445,7 +1640,7 @@ it('keeps nested list creation local to its parent until both Create actions, an
   const initial = modelFixture();
   initial.entries[0].values.seo = null;
   await mount(initial);
-  await click('Content');
+  await openCollections();
   await click(initial.collections[0].name);
   const entryButton = [
     ...editorPanel().querySelectorAll<HTMLButtonElement>(
@@ -1540,7 +1735,7 @@ it('previews an appended block on an existing page and discards it when navigati
 
 it('stages footer creation and replacement in dedicated forms without changing the live layout before Create', async () => {
   await mount();
-  await click('Site Layouts');
+  await click('Layouts');
   await click('Main layout');
   const before = readRecovery()!.content;
   await click('Choose footer');
@@ -1549,7 +1744,7 @@ it('stages footer creation and replacement in dedicated forms without changing t
   expect(
     editorPanel()
       .querySelector('[aria-label="Site title"]')
-      ?.closest('[hidden]'),
+      ?.closest('[hidden], [inert]'),
   ).not.toBeNull();
   await input('Brand', 'Pending brand');
   expect(readRecovery()!.content).toEqual(before);
@@ -1572,7 +1767,7 @@ it('stages footer creation and replacement in dedicated forms without changing t
 
 it('creates independent layouts, requires page choices and guards the layout lifecycle', async () => {
   await mount();
-  await click('Site Layouts');
+  await click('Layouts');
   const rows = () => host.querySelectorAll('table tbody tr');
   const active = (name: string) =>
     host.querySelector<HTMLButtonElement>(
@@ -1609,7 +1804,7 @@ it('creates independent layouts, requires page choices and guards the layout lif
     active: true,
   });
   expect(readRecovery()!.content.pages).toEqual(before.pages);
-  await click('← Back');
+  await clickParent();
   expect(rows()).toHaveLength(2);
   expect(active('Compact').disabled).toBe(false);
   await click('Pages');
@@ -1630,7 +1825,7 @@ it('creates independent layouts, requires page choices and guards the layout lif
     readRecovery()!.content.pages.find((page) => page.kind === 'generic')
       ?.layoutId,
   ).toBe(layoutId);
-  await click('Site Layouts');
+  await click('Layouts');
   expect(active('Compact').disabled).toBe(true);
   await click('Compact');
   expect(button('Delete layout').disabled).toBe(true);
@@ -1638,7 +1833,7 @@ it('creates independent layouts, requires page choices and guards the layout lif
   await click('Pages');
   await click('Articles');
   await chooseOption('Site layout', 'Main layout');
-  await click('Site Layouts');
+  await click('Layouts');
   await act(async () => active('Compact').click());
   expect(active('Compact').getAttribute('aria-checked')).toBe('false');
   await click('Pages');
@@ -1662,7 +1857,7 @@ it('creates independent layouts, requires page choices and guards the layout lif
   await act(async () =>
     document.querySelector<HTMLElement>('[role="option"]')!.click(),
   );
-  await click('Site Layouts');
+  await click('Layouts');
   await act(async () => active('Compact').click());
   await click('Pages');
   await click('Home');
@@ -1675,7 +1870,7 @@ it('creates independent layouts, requires page choices and guards the layout lif
       .style.getPropertyValue('--site-content-max-width'),
   ).toBe('760px');
   await chooseOption('Site layout', 'Main layout');
-  await click('Site Layouts');
+  await click('Layouts');
   await click('Compact');
   await click('Delete layout');
   await click('Cancel', host.querySelector('[role="dialog"][data-open]')!);
@@ -1691,7 +1886,7 @@ it('creates independent layouts, requires page choices and guards the layout lif
 
 it('keeps the last active layout when no pages exist and recovers multiple layout settings', async () => {
   await mount({ ...content, pages: [] });
-  await click('Site Layouts');
+  await click('Layouts');
   const first = host.querySelector<HTMLButtonElement>(
     '[role="switch"][aria-label="Active: Main layout"]',
   )!;
@@ -1699,7 +1894,7 @@ it('keeps the last active layout when no pages exist and recovers multiple layou
   await click('Main layout');
   expect(button('Delete layout').disabled).toBe(true);
   expect(editorPanel().textContent).toContain('At least one layout');
-  await click('← Back');
+  await clickParent();
   await click('Add layout');
   await act(async () =>
     host
@@ -1717,7 +1912,7 @@ it('keeps the last active layout when no pages exist and recovers multiple layou
   host.remove();
   await mount();
   expect(readRecovery()!.content).toEqual(saved);
-  await click('Site Layouts');
+  await click('Layouts');
   await click('Journal shell');
   expect(
     editorPanel().querySelector<HTMLInputElement>(
@@ -1774,7 +1969,7 @@ function previewValue(id: string, attribute = 'props') {
 async function openRoutedEntry(initial: Content) {
   const collection = initial.collections[0],
     entry = initial.entries[0];
-  await click('Content');
+  await openCollections();
   await click(collection.name);
   if (collection.mode === 'many')
     await click(
@@ -1800,7 +1995,7 @@ it('previews live entry bindings, nested references and media through the shared
   });
   await mount(initial);
   await openRoutedEntry(initial);
-  expect(host.querySelector('aside[aria-label="Site builder"]')).not.toBeNull();
+  expect(host.querySelector('[aria-label="Site builder"]')).not.toBeNull();
   expect(previewValue('block_entry_heading').title).toBe(
     initial.entries[0].values.title,
   );
@@ -1831,7 +2026,7 @@ it('previews live entry bindings, nested references and media through the shared
   await input('SEO title', 'Nested live heading');
   expect(previewValue('entry_details').heading).toBe('Nested live heading');
   expect(host.querySelector('[aria-label="Live preview"]')).not.toBeNull();
-  await click('← Back');
+  await clickParent();
   await click('Ada');
   await click('Grace');
   expect(previewValue('entry_details').author).toBe('Grace');
@@ -1842,8 +2037,8 @@ it('previews live entry bindings, nested references and media through the shared
   );
   expect(
     host
-      .querySelector('[aria-label="Live preview"]')
-      ?.getAttribute('data-size'),
+      .querySelector('[aria-label="Live preview"] [data-device]')
+      ?.getAttribute('data-device'),
   ).toBe('mobile');
   await click('Edit shared template');
   expect(
@@ -1860,7 +2055,7 @@ it('previews live entry bindings, nested references and media through the shared
 it('previews pending entries without persisting them and guards navigation until Create or Cancel', async () => {
   const initial = entryPreviewFixture();
   await mount(initial);
-  await click('Content');
+  await openCollections();
   await click(initial.collections[0].name);
   const before = readRecovery()!.content;
   await click('Add entry');
@@ -1939,7 +2134,7 @@ it.each([
     if (failure === 'missing layout implementation')
       initial.site.layout!.id = 'absent';
     await mount(initial);
-    await click('Content');
+    await openCollections();
     await click(initial.collections[0].name);
     const row = editorPanel().querySelector<HTMLButtonElement>(
       '[aria-label="Entries"] button',
@@ -1974,7 +2169,7 @@ it.each([
         'Editable despite broken preview',
       );
     }
-    await click('Content');
+    await openCollections();
     await click('Authors');
     await click('AdaData only');
     expectAdminView();
@@ -1996,4 +2191,34 @@ it('recovers a failed preview after correcting entry values without losing the f
     host.querySelector('[aria-label="Live preview"] [role="alert"]'),
   ).toBeNull();
   expect(previewValue('block_entry_heading').title).toBe('Repaired preview');
+});
+
+it('resizes the sidebar within bounds and remembers its width', async () => {
+  await mount();
+  const handle = () =>
+    host.querySelector<HTMLElement>('[aria-label="Resize navigation"]')!;
+  await act(async () =>
+    handle().dispatchEvent(
+      new KeyboardEvent('keydown', { key: 'End', bubbles: true }),
+    ),
+  );
+  expect(handle().getAttribute('aria-valuenow')).toBe('360');
+  await act(async () =>
+    handle().dispatchEvent(
+      new KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true }),
+    ),
+  );
+  expect(handle().getAttribute('aria-valuenow')).toBe('360');
+  expect(localStorage.getItem('quinecms:sidebar-width')).toBe('360');
+  await act(async () => root.unmount());
+  host.remove();
+  await mount();
+  expect(handle().getAttribute('aria-valuenow')).toBe('360');
+  await act(async () =>
+    handle().dispatchEvent(
+      new KeyboardEvent('keydown', { key: 'Home', bubbles: true }),
+    ),
+  );
+  expect(handle().getAttribute('aria-valuenow')).toBe('160');
+  localStorage.removeItem('quinecms:sidebar-width');
 });

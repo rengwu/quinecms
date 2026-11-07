@@ -1,11 +1,11 @@
 import { useState } from 'react';
-import { Button } from '@cloudflare/kumo/components/button';
 import type { Field, Media, Values } from '../core/types';
 import { isRecord, objectFields } from '../core/schema';
 import { fieldDefaults } from '../core/lists';
 import { useModel } from './ModelContext';
 import { PanelLevel } from './PanelNavigation';
 import Fields from './Fields';
+import { Button } from './ui';
 export default function ObjectField({
   field,
   value,
@@ -60,7 +60,22 @@ export default function ObjectField({
     );
   if (open)
     return (
-      <PanelLevel title={field.label} onBack={() => setOpen(false)}>
+      <PanelLevel
+        title={field.label}
+        onBack={() => setOpen(false)}
+        actions={
+          <Button
+            variant="secondary-destructive"
+            disabled={readOnly}
+            onClick={() => {
+              onChange(null);
+              setOpen(false);
+            }}
+          >
+            Clear object
+          </Button>
+        }
+      >
         <Fields
           fields={fields}
           values={isRecord(value) ? value : {}}
@@ -69,16 +84,6 @@ export default function ObjectField({
           readOnly={readOnly}
           depth={depth + 1}
         />
-        <Button
-          variant="secondary-destructive"
-          disabled={readOnly}
-          onClick={() => {
-            onChange(null);
-            setOpen(false);
-          }}
-        >
-          Clear object
-        </Button>
       </PanelLevel>
     );
   return (

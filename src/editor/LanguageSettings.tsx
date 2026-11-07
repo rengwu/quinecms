@@ -1,12 +1,8 @@
-import { Button } from '@cloudflare/kumo/components/button';
-import { Label } from '@cloudflare/kumo/components/label';
-import { Radio } from '@cloudflare/kumo/components/radio';
-import { Select } from '@cloudflare/kumo/components/select';
-import { Switch } from '@cloudflare/kumo/components/switch';
 import type { Content, Languages } from '../core/types';
 import { countCopies, languageName, removeCopies } from '../core/languages';
 import PanelSection from './PanelSection';
 import styles from './editor.module.css';
+import { Button, Label, Radio, Select, Switch } from './ui';
 
 // Sites can use any BCP 47 code in content/site.json; the portal offers common ones.
 const common = [
@@ -115,47 +111,54 @@ export default function LanguageSettings({
           </div>
           <div className={styles.field}>
             <Label htmlFor="add-language">Additional languages</Label>
-            {i18n.languages.map((code) => (
-              <div key={code} className={styles.usageRow}>
-                <div>
-                  <strong>{languageName(code)}</strong>
-                  <span>/{code}</span>
-                </div>
-                <Button
-                  variant="secondary-destructive"
-                  onClick={() => {
-                    const count = countCopies(content, code);
-                    const name = languageName(code);
-                    confirm({
-                      title: `Remove ${name}?`,
-                      body: `This deletes ${count} ${name} ${count === 1 ? 'copy' : 'copies'} from the draft. /${code} pages stop being published after the next Publish.`,
-                      actionLabel: `Remove ${name}`,
-                      destructive: true,
-                      action: () =>
-                        onChange(
-                          removeCopies(
-                            {
-                              ...content,
-                              site: {
-                                ...content.site,
-                                i18n: {
-                                  ...i18n,
-                                  languages: i18n.languages.filter(
-                                    (c) => c !== code,
-                                  ),
+            {i18n.languages.length > 0 && (
+              <ul
+                className={styles.recordList}
+                aria-label="Additional languages"
+              >
+                {i18n.languages.map((code) => (
+                  <li key={code} className={styles.usageRow}>
+                    <div>
+                      <strong>{languageName(code)}</strong>
+                      <span>/{code}</span>
+                    </div>
+                    <Button
+                      variant="secondary-destructive"
+                      onClick={() => {
+                        const count = countCopies(content, code);
+                        const name = languageName(code);
+                        confirm({
+                          title: `Remove ${name}?`,
+                          body: `This deletes ${count} ${name} ${count === 1 ? 'copy' : 'copies'} from the draft. /${code} pages stop being published after the next Publish.`,
+                          actionLabel: `Remove ${name}`,
+                          destructive: true,
+                          action: () =>
+                            onChange(
+                              removeCopies(
+                                {
+                                  ...content,
+                                  site: {
+                                    ...content.site,
+                                    i18n: {
+                                      ...i18n,
+                                      languages: i18n.languages.filter(
+                                        (c) => c !== code,
+                                      ),
+                                    },
+                                  },
                                 },
-                              },
-                            },
-                            code,
-                          ),
-                        ),
-                    });
-                  }}
-                >
-                  Remove
-                </Button>
-              </div>
-            ))}
+                                code,
+                              ),
+                            ),
+                        });
+                      }}
+                    >
+                      Remove
+                    </Button>
+                  </li>
+                ))}
+              </ul>
+            )}
             <Select
               id="add-language"
               aria-label="Add language"

@@ -1,0 +1,35 @@
+Registered 5 block versions.
+Registered 2 layout versions.
+15:15:47 [types] Generated 55ms
+15:15:47 [check] Getting diagnostics for Astro files in /private/var/folders/00/h_k67s0j5dq0qvg6ylqysk2w0000gn/T/quinecms-site-test-Y8ziw1/.quinecms/workspace...
+[96msrc/generated/pages/entry_first.astro[0m:[93m17[0m:[93m7[0m - [93mwarning[0m[90m ts(6133): [0m'blocks' is declared but its value is never read.
+
+[7m17[0m const blocks=page.blocks.map(b=>resolveBlock(b,entry.values,content,collection.fields));
+[7m  [0m [93m      ~~~~~~[0m
+[96msrc/generated/pages/entry_first.astro[0m:[93m8[0m:[93m1[0m - [93mwarning[0m[90m ts(6133): [0m'definitions' is declared but its value is never read.
+
+[7m8[0m import {definitions} from '../definitions';
+[7m [0m [93m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+[96msrc/generated/pages/entry_first.astro[0m:[93m7[0m:[93m1[0m - [93mwarning[0m[90m ts(6133): [0m'contextFor' is declared but its value is never read.
+
+[7m7[0m import {contextFor} from '../../core/content';
+[7m [0m [93m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+[96msrc/generated/pages/page_journal.astro[0m:[93m15[0m:[93m7[0m - [93mwarning[0m[90m ts(6133): [0m'blocks' is declared but its value is never read.
+
+[7m15[0m const blocks=page.blocks;
+[7m  [0m [93m      ~~~~~~[0m
+[96msrc/generated/pages/page_journal.astro[0m:[93m8[0m:[93m1[0m - [93mwarning[0m[90m ts(6133): [0m'definitions' is declared but its value is never read.
+
+[7m8[0m import {definitions} from '../definitions';
+[7m [0m [93m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+[96msrc/generated/pages/page_journal.astro[0m:[93m7[0m:[93m1[0m - [93mwarning[0m[90m ts(6133): [0m'contextFor' is declared but its value is never read.
+
+[7m7[0m import {contextFor} from '../../core/content';
+[7m [0m [93m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+Result (109 files): 
+- 0 errors
+- 0 warnings
+- 6 hints
+

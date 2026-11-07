@@ -1,0 +1,31 @@
+{
+  "runtimeCopies": {
+    "react": 1,
+    "svelte": 1,
+    "react-dom": 1,
+    "@vue/runtime-dom": 1,
+    "@vue/runtime-core": 1
+  },
+  "pages": [
+    {
+      "page": "admin/index.html",
+      "javascriptModules": 1,
+      "gzipJavaScriptBytes": 50757
+    },
+    {
+      "page": "index.html",
+      "javascriptModules": 9,
+      "gzipJavaScriptBytes": 108882
+    },
+    {
+      "page": "journal/a-slower-way-to-build/index.html",
+      "javascriptModules": 0,
+      "gzipJavaScriptBytes": 0
+    },
+    {
+      "page": "journal/index.html",
+      "javascriptModules": 0,
+      "gzipJavaScriptBytes": 0
+    }
+  ]
+}

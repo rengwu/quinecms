@@ -1,6 +1,3 @@
-import { Input } from '@cloudflare/kumo/components/input';
-import { Label } from '@cloudflare/kumo/components/label';
-import { Select } from '@cloudflare/kumo/components/select';
 import type { Values } from '../core/types';
 import {
   DEFAULT_BODY_FONT_SIZE,
@@ -10,6 +7,7 @@ import {
 } from '../core/site-style';
 import PanelSection from './PanelSection';
 import styles from './editor.module.css';
+import { Input, Label, Select } from './ui';
 
 export default function SiteDesign({
   globals,

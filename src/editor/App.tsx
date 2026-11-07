@@ -1,8 +1,15 @@
 import { legacyBackupFormat } from './legacy-brand';
+import Logo from './Logo';
+import {
+  PreviewProvider,
+  PreviewToggle,
+  Workbench,
+  Preview,
+} from './PreviewWorkspace';
+import { DotsThreeIcon, SidebarSimpleIcon } from '@phosphor-icons/react';
 import { ModelContext } from './ModelContext';
 import { fieldDefaults } from '../core/lists';
 import BlockCatalog from './BlockCatalog';
-import CatalogHeader from './CatalogHeader';
 import DocumentCreation from './DocumentCreation';
 import EntryFields from './EntryFields';
 import BlockCreation from './BlockCreation';
@@ -13,46 +20,36 @@ import MediaUpload, { MediaUploadContext } from './MediaUpload';
 import {
   migrateSite,
   layoutDefinitions,
-  activeLayout,
-  layoutKey,
   siteLayouts,
   contentForPage,
 } from '../core/layouts';
-import { PanelNavigation } from './PanelNavigation';
-import { Button } from '@cloudflare/kumo/components/button';
-import { Input } from '@cloudflare/kumo/components/input';
-import { Select } from '@cloudflare/kumo/components/select';
-import { Switch } from '@cloudflare/kumo/components/switch';
-import { Label } from '@cloudflare/kumo/components/label';
+import { PanelLevel, PanelNavigation } from './PanelNavigation';
+import { EditorBusyContext } from './Stack';
+import { BackDepth, useBrowserBack } from './browser-back';
 import {
   createElement,
+  type CSSProperties,
   useEffect,
   useLayoutEffect,
   useMemo,
   useRef,
   useState,
 } from 'react';
-import { Dialog } from '@cloudflare/kumo/components/dialog';
-import { Tabs } from '@cloudflare/kumo/components/tabs';
-import {
-  CaretRightIcon,
-  DesktopIcon,
-  DeviceMobileIcon,
-  PlusIcon,
-} from '@phosphor-icons/react';
+import { CaretRightIcon, PlusIcon } from '@phosphor-icons/react';
 import Schemas from './Schemas';
+import PageHeader from './PageHeader';
 import { incomingUsage } from '../core/schema';
 import UsageList from './UsageList';
 import type { UsageTarget } from './usage';
 import { entryPath } from '../core/routes';
 import PanelSection from './PanelSection';
 import PageList from './PageList';
-import Navigation, { type EditorArea } from './Navigation';
-import { Toasty, useKumoToastManager } from '@cloudflare/kumo/components/toast';
-import { KumoPortalProvider } from '@cloudflare/kumo/utils';
-import { Link } from '@cloudflare/kumo/components/link';
+import Navigation, {
+  readSidebarWidth,
+  SidebarResizeHandle,
+  type EditorArea,
+} from './Navigation';
 import BlockList from './BlockList';
-import '@cloudflare/kumo/styles/standalone';
 import type {
   Block,
   Content,
@@ -119,6 +116,19 @@ import {
   useAdminTheme,
   type AdminMode,
 } from './AdminTheme';
+import {
+  Button,
+  Dialog,
+  Input,
+  Label,
+  Link,
+  PortalProvider,
+  Select,
+  Switch,
+  Tabs,
+  Toasts,
+  useToast,
+} from './ui';
 export interface Config {
   encryptedAdmin?: boolean;
   git: GitConfig | null;
@@ -130,6 +140,8 @@ export default function App(props: {
   onLock?: () => void;
 }) {
   const portal = useRef<HTMLDivElement>(null);
+  const workspace = useRef<HTMLDivElement>(null);
+  useBrowserBack(workspace);
   const [mode, updateMode] = useState(readAdminMode);
   function setMode(next: AdminMode) {
     updateMode(next);
@@ -141,38 +153,40 @@ export default function App(props: {
   }
   return (
     <AdminThemeContext.Provider value={{ mode, setMode }}>
-      <div className={styles.workspace}>
+      <div ref={workspace} className={styles.workspace}>
         <div
-          className={`kumo-ui ${styles.adminCanvas}`}
+          className={`admin-ui ${styles.adminCanvas}`}
           data-mode={mode}
           aria-hidden="true"
         />
-        {/* Attach the container before Toasty's initial layout effect resolves it. */}
+        {/* Attach the container before Toasts's initial layout effect resolves it. */}
         <div
           ref={portal}
-          className={`kumo-ui ${styles.portal}`}
+          className={`admin-ui ${styles.portal}`}
           data-mode={mode}
         />
-        <KumoPortalProvider container={portal}>
-          <Toasty>
-            <Editor
-              {...props}
-              onLock={() => {
-                for (const key of [
-                  'lean:gate',
-                  'lean:github',
-                  'lean:git',
-                  'lean:r2',
-                ]) {
-                  try {
-                    sessionStorage.removeItem(key);
-                  } catch {}
-                }
-                props.onLock?.();
-              }}
-            />
-          </Toasty>
-        </KumoPortalProvider>
+        <PortalProvider container={portal}>
+          <PreviewProvider>
+            <Toasts>
+              <Editor
+                {...props}
+                onLock={() => {
+                  for (const key of [
+                    'lean:gate',
+                    'lean:github',
+                    'lean:git',
+                    'lean:r2',
+                  ]) {
+                    try {
+                      sessionStorage.removeItem(key);
+                    } catch {}
+                  }
+                  props.onLock?.();
+                }}
+              />
+            </Toasts>
+          </PreviewProvider>
+        </PortalProvider>
       </div>
     </AdminThemeContext.Provider>
   );
@@ -209,7 +223,7 @@ function Editor({
   const [saveState, setSaveState] = useState<
     'idle' | 'saving' | 'failed' | 'stale' | 'blocked'
   >('idle');
-  const toasts = useKumoToastManager();
+  const toasts = useToast();
   function setError(description: string) {
     toasts.add({
       title: 'Unable to complete',
@@ -235,9 +249,10 @@ function Editor({
       body: string;
       actionLabel?: string;
       destructive?: boolean;
+      /** The confirmation publishes, so it keeps the Publish colour. */
+      accent?: boolean;
       action: () => void;
-    } | null>(null),
-    [size, setSize] = useState('desktop');
+    } | null>(null);
   const importRef = useRef<HTMLInputElement>(null);
   useLayoutEffect(() => {
     // Main sections share one document, but must not inherit its scroll position.
@@ -247,6 +262,23 @@ function Editor({
       behavior: 'instant',
     });
   }, [tab]);
+  const [mediaId, setMediaId] = useState('');
+  const [sidebarWidth, setSidebarWidth] = useState(readSidebarWidth);
+  const [navigationOpen, setNavigationOpen] = useState(
+    () => typeof window !== 'undefined' && window.innerWidth >= 800,
+  );
+  const narrow = () =>
+    typeof window !== 'undefined' &&
+    !!window.matchMedia?.('(max-width: 799px)').matches;
+  useEffect(() => {
+    // Below 800px the sidebar overlays the editor, so it starts closed.
+    const query = window.matchMedia?.('(max-width: 799px)');
+    if (!query?.addEventListener) return;
+    const close = () => query.matches && setNavigationOpen(false);
+    query.addEventListener('change', close);
+    return () => query.removeEventListener('change', close);
+  }, []);
+  const [entryQuery, setEntryQuery] = useState('');
   const [layoutId, setLayoutId] = useState('');
   const [pendingDocument, setPendingDocument] = useState<Page | Entry | null>(
     null,
@@ -299,7 +331,25 @@ function Editor({
         doc.collectionId === collection?.id)),
   );
   const editingBlock = editingDocument && Boolean(selectedBlock);
-  const listingPages = tab === 'pages' && !editingDocument && !pendingDocument;
+  const backDepth =
+    tab === 'pages'
+      ? editingBlock || pendingBlock
+        ? 2
+        : editingDocument || pendingDocument
+          ? 1
+          : 0
+      : tab === 'content'
+        ? collection
+          ? 1 +
+            Number(
+              collection.mode !== 'single' &&
+                !!(editingDocument || pendingDocument),
+            )
+          : 0
+        : tab === 'layout'
+          ? Number(!!layoutId)
+          : Number(!!schemaId);
+  const listingPages = tab === 'pages' && !editingDocument;
   const previewEntry =
     tab === 'content'
       ? pendingDocument && 'values' in pendingDocument
@@ -310,7 +360,7 @@ function Editor({
       : undefined;
   const templateId = previewEntry && collection?.genericPageId;
   const showPreview = Boolean(
-    (!pendingDocument && tab === 'pages' && editingDocument) || templateId,
+    (tab === 'pages' && editingDocument) || templateId,
   );
   // Creation stays outside content/recovery until Create, but renders through
   // the same page and context as a committed block.
@@ -366,8 +416,10 @@ function Editor({
       }
     }
   }
-  const EditorSurface = showPreview ? 'aside' : 'main';
+  const EditorSurface = 'main';
   function openArea(area: EditorArea) {
+    setMediaId('');
+    if (window.innerWidth < 800) setNavigationOpen(false);
     setSchemaId('');
     setLayoutId('');
     setPendingDocument(null);
@@ -746,6 +798,7 @@ function Editor({
       setConfirm({
         title: 'Restore this backup?',
         body: 'The backup replaces local content. Review it before saving; your current repository connection stays the same.',
+        actionLabel: 'Restore backup',
         action: () => {
           setContent(migrateSite(data.content));
           setSelected('');
@@ -755,37 +808,95 @@ function Editor({
       });
     });
   }
-  return createElement(
+  const editor = createElement(
     MediaUploadContext.Provider,
     { value: { busy, available: r2 !== null, upload: uploadMedia } },
     <ModelContext.Provider value={content}>
       <LanguageContext.Provider value={{ main, language: editing, enabled }}>
-        <div className={styles.app}>
-          <header className={`kumo-ui ${styles.topbar}`} data-mode={mode}>
+        <div
+          className={styles.app}
+          data-navigation={navigationOpen}
+          style={{ '--navigation-width': `${sidebarWidth}px` } as CSSProperties}
+        >
+          <header className={`admin-ui ${styles.topbar}`} data-mode={mode}>
             <Button
               className={styles.navigationToggle}
-              aria-label="Open navigation"
+              aria-label="Toggle navigation"
+              aria-expanded={navigationOpen}
               disabled={busy}
-              onClick={() => setModal('navigation')}
+              onClick={() => setNavigationOpen(!navigationOpen)}
             >
-              Menu
+              <SidebarSimpleIcon />
             </Button>
-            <span className={styles.brand}>QuineCMS</span>
-            {(showPreview || (tab === 'layout' && !!layoutId)) && (
+            <Logo className={styles.brand} />
+            <nav className={styles.breadcrumbs} aria-label="Breadcrumbs">
               <Button
-                onClick={() =>
-                  setSize(size === 'desktop' ? 'mobile' : 'desktop')
+                disabled={busy}
+                variant="ghost"
+                data-editor-back={
+                  editingDocument || layoutId || schemaId || collectionId
+                    ? 1
+                    : undefined
                 }
-                aria-label="Toggle preview width"
-                icon={
-                  size === 'desktop' ? <DeviceMobileIcon /> : <DesktopIcon />
-                }
+                onClick={() => openArea(tab)}
               >
-                {/* Icon only on narrow screens, where the language select also fits. */}
-                <span className={styles.wideOnly}>
-                  {size === 'desktop' ? 'Mobile' : 'Desktop'}
-                </span>
+                {
+                  {
+                    pages: 'Pages',
+                    content: 'Collections',
+                    collections: 'Collection schemas',
+                    objects: 'Objects',
+                    media: 'Media',
+                    layout: 'Layouts',
+                    settings: 'Settings',
+                  }[tab]
+                }
               </Button>
+              {tab === 'content' && collection && (
+                <>
+                  <span className={styles.breadcrumbSeparator} aria-hidden>
+                    /
+                  </span>
+                  <Button
+                    disabled={busy}
+                    variant="ghost"
+                    data-editor-back={
+                      editingDocument && collection.mode !== 'single'
+                        ? 2
+                        : undefined
+                    }
+                    onClick={() => {
+                      setSelected('');
+                      setBlockId('');
+                    }}
+                  >
+                    {collection.name}
+                  </Button>
+                </>
+              )}
+              {(editingDocument || layoutId || schemaId) && (
+                <>
+                  <span className={styles.breadcrumbSeparator} aria-hidden>
+                    /
+                  </span>
+                  <span aria-current="page">
+                    {editingDocument && doc
+                      ? 'kind' in doc
+                        ? doc.title
+                        : entryTitle(doc)
+                      : tab === 'layout'
+                        ? siteLayouts(content.site).find(
+                            (l) => l.id === layoutId,
+                          )?.name || 'New layout'
+                        : [...content.collections, ...content.objects].find(
+                            (r) => r.id === schemaId,
+                          )?.name}
+                  </span>
+                </>
+              )}
+            </nav>
+            {(showPreview || (tab === 'layout' && !!layoutId)) && (
+              <PreviewToggle />
             )}
             <LanguageSelect
               content={content}
@@ -794,7 +905,22 @@ function Editor({
               onChange={setLanguage}
             />
             <div className={styles.saveControls}>
-              <span role="status" className={styles.saveStatus}>
+              <span
+                role="status"
+                className={styles.saveStatus}
+                data-state={
+                  connectionState === 'failed' ||
+                  saveState === 'blocked' ||
+                  saveState === 'stale' ||
+                  (dirty && saveState === 'failed')
+                    ? 'problem'
+                    : dirty
+                      ? 'dirty'
+                      : base
+                        ? 'saved'
+                        : 'local'
+                }
+              >
                 {connectionState === 'connecting' ? (
                   'Connecting…'
                 ) : connectionState === 'failed' ? (
@@ -854,7 +980,7 @@ function Editor({
               </Button>
             </div>
             <Button
-              variant="primary"
+              variant="accent"
               disabled={
                 busy ||
                 !store ||
@@ -877,7 +1003,9 @@ function Editor({
                 }
                 setConfirm({
                   title: 'Publish this draft?',
-                  body: `This updates ${publishBranch(repo!)} with the saved draft. Your hosting provider will rebuild the website.`,
+                  body: `The saved draft goes live on ${publishBranch(repo!)}. Your hosting provider then rebuilds the website.`,
+                  actionLabel: 'Publish',
+                  accent: true,
                   action: () => void publish(),
                 });
               }}
@@ -886,136 +1014,162 @@ function Editor({
             </Button>
           </header>
           <aside
-            className={`kumo-ui ${styles.navigation}`}
+            className={`admin-ui ${styles.navigation}`}
             data-mode={mode}
             aria-label="Main navigation"
           >
-            <Navigation active={tab} disabled={busy} onSelect={openArea} />
+            <div className={styles.navigationScroll}>
+              <Navigation
+                active={tab}
+                disabled={busy}
+                onSelect={(area) => {
+                  openArea(area);
+                  if (narrow()) setNavigationOpen(false);
+                }}
+                collections={content.collections}
+                selectedCollection={collectionId}
+                onCollection={(id) => {
+                  if (narrow()) setNavigationOpen(false);
+                  setEntryQuery('');
+                  openArea('content');
+                  setCollectionId(id);
+                  const c = content.collections.find((c) => c.id === id);
+                  setSelected(
+                    c?.mode === 'single'
+                      ? (content.entries.find((e) => e.collectionId === id)
+                          ?.id ?? '')
+                      : '',
+                  );
+                }}
+              />
+            </div>
+            <SidebarResizeHandle
+              width={sidebarWidth}
+              onChange={(width) => {
+                setSidebarWidth(width);
+                try {
+                  localStorage.setItem('quinecms:sidebar-width', String(width));
+                } catch {}
+              }}
+            />
           </aside>
-          {tab === 'layout' ? (
-            <SiteLayouts
-              content={content}
-              selected={layoutId}
-              onSelect={setLayoutId}
-              size={size}
-              busy={busy}
-              onChange={setContent}
-              onOpen={openUsage}
+          {navigationOpen && (
+            <button
+              type="button"
+              className={styles.navigationScrim}
+              aria-label="Close navigation"
+              tabIndex={-1}
+              onClick={() => setNavigationOpen(false)}
             />
-          ) : listingPages ? (
-            <PageList
-              pages={content.pages}
-              layouts={siteLayouts(content.site)}
-              busy={busy}
-              onAdd={() => setModal('page')}
-              onOpen={openDocument}
-              status={secondary ? listStatus : undefined}
-            />
-          ) : (
-            <>
-              <EditorSurface
-                className={`kumo-ui ${showPreview ? styles.drawer : styles.home}`}
-                data-mode={mode}
-                aria-label={showPreview ? 'Site builder' : 'Admin workspace'}
+          )}
+          <EditorBusyContext.Provider value={busy}>
+            <Workbench
+              preview={showPreview || (tab === 'layout' && !!layoutId)}
+            >
+              <PanelNavigation
+                key={`${tab}:${selected}:${collectionId}:${schemaId}`}
               >
-                <div className={showPreview ? undefined : styles.adminPanel}>
-                  <fieldset disabled={busy} className={styles.panelBody}>
-                    <PanelNavigation
-                      key={[
-                        tab,
-                        selected,
-                        blockId,
-                        collectionId,
-                        pendingDocument?.id,
-                        pendingBlock?.id,
-                        layoutKey(activeLayout(renderContent.site)),
-                      ].join(':')}
+                {pendingDocument && (
+                  <LanguageContext.Provider
+                    value={{ main, language: main, enabled }}
+                  >
+                    <DocumentCreation
+                      document={pendingDocument}
+                      content={content}
+                      onChange={setPendingDocument}
+                      onCreate={createDocument}
+                      onCancel={() => setPendingDocument(null)}
+                    />
+                  </LanguageContext.Provider>
+                )}
+                {modal === 'blocks' && page && (
+                  <FormScreen
+                    stack
+                    done={false}
+                    title="Add block"
+                    backDepth={backDepth + 1}
+                    onBack={() => setModal('')}
+                  >
+                    <BlockCatalog
+                      embedded
+                      definitions={definitions}
+                      content={renderContent}
+                      kind={page.kind}
+                      onAdd={(d) => {
+                        setPendingBlock(newBlock(d));
+                        setModal('');
+                      }}
+                    />
+                  </FormScreen>
+                )}
+                {pendingBlock && page && (
+                  <LanguageContext.Provider
+                    value={{ main, language: main, enabled }}
+                  >
+                    <BlockCreation
+                      block={pendingBlock}
+                      content={content}
+                      pageId={page.id}
+                      onChange={setPendingBlock}
+                      onCancel={() => setPendingBlock(null)}
+                      onCreate={() => {
+                        changeDoc({
+                          ...page,
+                          blocks: [...page.blocks, pendingBlock],
+                        });
+                        setBlockId(pendingBlock.id);
+                        setPendingBlock(null);
+                      }}
+                    />
+                  </LanguageContext.Provider>
+                )}
+                {tab === 'layout' ? (
+                  <SiteLayouts
+                    content={content}
+                    selected={layoutId}
+                    onSelect={setLayoutId}
+                    busy={busy}
+                    onChange={setContent}
+                    onOpen={openUsage}
+                  />
+                ) : listingPages ? (
+                  <PageList
+                    pages={content.pages}
+                    layouts={siteLayouts(content.site)}
+                    busy={busy}
+                    onAdd={() => setModal('page')}
+                    onOpen={openDocument}
+                    status={secondary ? listStatus : undefined}
+                  />
+                ) : (
+                  <>
+                    <EditorSurface
+                      data-editor-surface
+                      className={`admin-ui ${showPreview ? styles.drawer : styles.home}`}
+                      data-mode={mode}
+                      aria-label={
+                        showPreview ? 'Site builder' : 'Admin workspace'
+                      }
                     >
-                      {pendingDocument ? (
-                        <LanguageContext.Provider
-                          value={{ main, language: main, enabled }}
-                        >
-                          <DocumentCreation
-                            document={pendingDocument}
-                            content={content}
-                            onChange={setPendingDocument}
-                            onCreate={createDocument}
-                            onCancel={() => setPendingDocument(null)}
-                          />
-                        </LanguageContext.Provider>
-                      ) : pendingBlock && page ? (
-                        <LanguageContext.Provider
-                          value={{ main, language: main, enabled }}
-                        >
-                          <BlockCreation
-                            block={pendingBlock}
-                            content={content}
-                            pageId={page.id}
-                            onChange={setPendingBlock}
-                            onCancel={() => setPendingBlock(null)}
-                            onCreate={() => {
-                              changeDoc({
-                                ...page,
-                                blocks: [...page.blocks, pendingBlock],
-                              });
-                              setBlockId(pendingBlock.id);
-                              setPendingBlock(null);
-                            }}
-                          />
-                        </LanguageContext.Provider>
-                      ) : (
-                        <>
+                      <div className={styles.adminPanel}>
+                        <fieldset disabled={busy} className={styles.panelBody}>
                           {(tab === 'pages' ||
                             (tab === 'content' && editingDocument)) && (
                             <>
-                              {!(editingBlock && form) &&
-                                !copy.creation &&
-                                tab === 'pages' && (
-                                  <>
-                                    <Button
-                                      className={styles.back}
-                                      variant="ghost"
-                                      onClick={() => openArea('pages')}
-                                    >
-                                      ← Back
-                                    </Button>
-                                    <h2>
-                                      {doc && 'kind' in doc
-                                        ? doc.title || 'Untitled page'
-                                        : 'Page'}
-                                    </h2>
-                                  </>
-                                )}
-                              {!copy.creation &&
-                                tab === 'content' &&
-                                collection && (
-                                  <>
-                                    <Button
-                                      className={styles.back}
-                                      variant="ghost"
-                                      onClick={() => {
-                                        setSelected('');
-                                        setBlockId('');
-                                        if (collection.mode === 'single')
-                                          setCollectionId('');
-                                      }}
-                                    >
-                                      ← Back
-                                    </Button>
-                                    <h2>
-                                      {doc && 'values' in doc
-                                        ? entryTitle(doc)
-                                        : 'Entry'}
-                                    </h2>
-                                  </>
-                                )}
-                              {editingDocument &&
-                                !(editingBlock && form) &&
-                                !copy.creation &&
-                                copy.status}
+                              {editingDocument && !form && !copy.creation && (
+                                <>
+                                  <h1>
+                                    {doc &&
+                                      ('kind' in doc
+                                        ? doc.title
+                                        : entryTitle(doc))}
+                                  </h1>
+                                  {copy.status}
+                                </>
+                              )}
                               {editingDocument && copy.start && (
                                 <Button
-                                  variant="primary"
+                                  variant="secondary"
                                   className={styles.alignStart}
                                   onClick={copy.start}
                                 >
@@ -1025,6 +1179,7 @@ function Editor({
                               {editingDocument && form && copy.creation && (
                                 <FormScreen
                                   title={copy.creation.title}
+                                  backDepth={backDepth + 1}
                                   onBack={copy.creation.cancel}
                                   creation={{
                                     label: 'Create',
@@ -1062,25 +1217,66 @@ function Editor({
                               )}
                               {editingDocument && form && !copy.creation && (
                                 <>
-                                  {editingBlock && 'kind' in form ? (
-                                    <>
-                                      <Button
-                                        className={styles.back}
-                                        variant="ghost"
-                                        onClick={() => setBlockId('')}
-                                      >
-                                        ← Back
-                                      </Button>
+                                  {editingBlock && 'kind' in form && (
+                                    <FormScreen
+                                      stack
+                                      title={
+                                        blockDefinition?.label ??
+                                        'Unavailable block'
+                                      }
+                                      onBack={() => setBlockId('')}
+                                      backDepth={2}
+                                      actions={
+                                        selectedBlock && !secondary ? (
+                                          <>
+                                            <Button
+                                              variant="secondary-destructive"
+                                              onClick={() => {
+                                                changeForm({
+                                                  ...form,
+                                                  blocks: form.blocks.filter(
+                                                    (b) =>
+                                                      b.id !== selectedBlock.id,
+                                                  ),
+                                                });
+                                                setBlockId('');
+                                              }}
+                                            >
+                                              Remove block
+                                            </Button>
+                                            <Button
+                                              onClick={() => {
+                                                const previous = (
+                                                  base?.content ?? initial
+                                                ).pages
+                                                  .find((d) => d.id === form.id)
+                                                  ?.blocks.find(
+                                                    (b) =>
+                                                      b.id === selectedBlock.id,
+                                                  );
+                                                if (previous)
+                                                  changeBlock(
+                                                    structuredClone(previous),
+                                                  );
+                                                else
+                                                  changeForm({
+                                                    ...form,
+                                                    blocks: form.blocks.filter(
+                                                      (b) =>
+                                                        b.id !==
+                                                        selectedBlock.id,
+                                                    ),
+                                                  });
+                                                setBlockId('');
+                                              }}
+                                            >
+                                              Discard changes
+                                            </Button>
+                                          </>
+                                        ) : undefined
+                                      }
+                                    >
                                       <div className={styles.blockHeader}>
-                                        <h2
-                                          title={
-                                            blockDefinition?.label ??
-                                            'Unavailable block'
-                                          }
-                                        >
-                                          {blockDefinition?.label ??
-                                            'Unavailable block'}
-                                        </h2>
                                         {selectedBlock && (
                                           <div className={styles.blockVersion}>
                                             <Select
@@ -1158,66 +1354,101 @@ function Editor({
                                               it.
                                             </p>
                                           )}
-                                          {!secondary && (
-                                            <div
-                                              className={styles.actionFooter}
-                                            >
-                                              <Button
-                                                onClick={() => {
-                                                  const previous = (
-                                                    base?.content ?? initial
-                                                  ).pages
-                                                    .find(
-                                                      (d) => d.id === form.id,
-                                                    )
-                                                    ?.blocks.find(
-                                                      (b) =>
-                                                        b.id ===
-                                                        selectedBlock.id,
-                                                    );
-                                                  if (previous)
-                                                    changeBlock(
-                                                      structuredClone(previous),
-                                                    );
-                                                  else {
-                                                    changeForm({
-                                                      ...form,
-                                                      blocks:
-                                                        form.blocks.filter(
-                                                          (b) =>
-                                                            b.id !==
-                                                            selectedBlock.id,
-                                                        ),
-                                                    });
-                                                    setBlockId('');
-                                                  }
-                                                }}
-                                              >
-                                                Cancel block changes
-                                              </Button>
-                                              <Button
-                                                variant="secondary-destructive"
-                                                onClick={() => {
-                                                  changeForm({
-                                                    ...form,
-                                                    blocks: form.blocks.filter(
-                                                      (b) =>
-                                                        b.id !==
-                                                        selectedBlock.id,
-                                                    ),
-                                                  });
-                                                  setBlockId('');
-                                                }}
-                                              >
-                                                Remove
-                                              </Button>
-                                            </div>
-                                          )}
                                         </>
                                       )}
-                                    </>
-                                  ) : (
-                                    <>
+                                    </FormScreen>
+                                  )}
+                                  <div className={styles.recordEditor}>
+                                    <PageHeader
+                                      title={
+                                        'kind' in form
+                                          ? form.title || 'Untitled page'
+                                          : entryTitle(form)
+                                      }
+                                      menuLabel="Document actions"
+                                      menuHint={
+                                        documentUses.length &&
+                                        !secondary &&
+                                        !(
+                                          'values' in form &&
+                                          collection?.mode === 'single'
+                                        )
+                                          ? `Remove the links listed under “Used in” before deleting this ${'kind' in form ? 'page' : 'entry'}.`
+                                          : undefined
+                                      }
+                                      menu={[
+                                        ...(copy.remove
+                                          ? [
+                                              {
+                                                label: `Remove ${languageName(editing)} copy`,
+                                                destructive: true,
+                                                onSelect: () =>
+                                                  setConfirm({
+                                                    title: `Remove ${languageName(editing)} copy?`,
+                                                    body: `Its ${languageName(editing)} values are removed from the draft.`,
+                                                    actionLabel: 'Remove copy',
+                                                    destructive: true,
+                                                    action: () =>
+                                                      copy.remove?.(),
+                                                  }),
+                                              },
+                                            ]
+                                          : []),
+                                        ...(!secondary &&
+                                        !(
+                                          'values' in form &&
+                                          collection?.mode === 'single'
+                                        )
+                                          ? [
+                                              {
+                                                label: `Delete ${'kind' in form ? 'page' : 'entry'}`,
+                                                destructive: true,
+                                                disabled: !!documentUses.length,
+                                                onSelect: () =>
+                                                  setConfirm({
+                                                    title: `Delete this ${'kind' in form ? 'page' : 'entry'}?`,
+                                                    body: `“${'kind' in form ? form.title || 'Untitled page' : entryTitle(form)}” is removed from the draft. Saving the draft keeps the change.`,
+                                                    actionLabel: `Delete ${'kind' in form ? 'page' : 'entry'}`,
+                                                    destructive: true,
+                                                    action: () => {
+                                                      const next = {
+                                                        ...content,
+                                                        pages:
+                                                          content.pages.filter(
+                                                            (p) =>
+                                                              p.id !== form.id,
+                                                          ),
+                                                        entries:
+                                                          content.entries.filter(
+                                                            (e) =>
+                                                              e.id !== form.id,
+                                                          ),
+                                                      };
+                                                      const errors =
+                                                        schemaChanges(
+                                                          content,
+                                                          next,
+                                                        );
+                                                      if (errors.length) {
+                                                        setError(
+                                                          errors
+                                                            .map(
+                                                              (e) => e.message,
+                                                            )
+                                                            .join('\n'),
+                                                        );
+                                                        return;
+                                                      }
+                                                      setContent(next);
+                                                      setSelected('');
+                                                    },
+                                                  }),
+                                              },
+                                            ]
+                                          : []),
+                                      ]}
+                                    />
+                                    <div className={styles.recordMain}>
                                       {'kind' in form ? (
                                         <>
                                           <div className={styles.field}>
@@ -1236,35 +1467,10 @@ function Editor({
                                               }
                                             />
                                           </div>
-                                          <LayoutChoice
-                                            content={content}
-                                            value={form.layoutId}
-                                            onChange={(layoutId) =>
-                                              changeForm({ ...form, layoutId })
-                                            }
-                                          />
-                                          {form.kind === 'static' && (
-                                            <div className={styles.field}>
-                                              <Label htmlFor="page-path">
-                                                URL path
-                                                <SharedBadge />
-                                              </Label>
-                                              <Input
-                                                aria-label="URL path"
-                                                id="page-path"
-                                                value={form.path ?? ''}
-                                                onChange={(e) =>
-                                                  changeForm({
-                                                    ...form,
-                                                    path: e.target.value,
-                                                  })
-                                                }
-                                              />
-                                            </div>
-                                          )}
                                         </>
                                       ) : (
                                         <EntryFields
+                                          section="fields"
                                           entry={form}
                                           content={content}
                                           onChange={changeForm}
@@ -1283,7 +1489,7 @@ function Editor({
                                             <h2>Blocks</h2>
                                             {!secondary && (
                                               <Button
-                                                variant="primary"
+                                                variant="secondary"
                                                 icon={<PlusIcon />}
                                                 onClick={() =>
                                                   setModal('blocks')
@@ -1310,6 +1516,68 @@ function Editor({
                                           />
                                         </>
                                       )}
+                                    </div>
+                                    <aside
+                                      className={styles.recordMeta}
+                                      aria-label="Document settings"
+                                    >
+                                      {'values' in form && (
+                                        <EntryFields
+                                          section="meta"
+                                          entry={form}
+                                          content={content}
+                                          onChange={changeForm}
+                                          readOnly={busy}
+                                          onEditTemplate={
+                                            previewPage
+                                              ? () =>
+                                                  openDocument(previewPage.id)
+                                              : undefined
+                                          }
+                                        />
+                                      )}
+                                      {copy.status}
+                                      {'kind' in form && (
+                                        <>
+                                          <dl className={styles.properties}>
+                                            <dt>Type</dt>
+                                            <dd>
+                                              {form.kind === 'generic'
+                                                ? 'Generic page'
+                                                : 'Static page'}
+                                            </dd>
+                                          </dl>
+                                          <LayoutChoice
+                                            content={content}
+                                            value={form.layoutId}
+                                            onChange={(layoutId) =>
+                                              changeForm({
+                                                ...form,
+                                                layoutId,
+                                              })
+                                            }
+                                          />
+                                          {form.kind === 'static' && (
+                                            <div className={styles.field}>
+                                              <Label htmlFor="page-path">
+                                                URL path
+                                                <SharedBadge />
+                                              </Label>
+                                              <Input
+                                                aria-label="URL path"
+                                                id="page-path"
+                                                value={form.path ?? ''}
+                                                onChange={(e) =>
+                                                  changeForm({
+                                                    ...form,
+                                                    path: e.target.value,
+                                                  })
+                                                }
+                                              />
+                                            </div>
+                                          )}
+                                        </>
+                                      )}
                                       <UsageList
                                         content={content}
                                         uses={documentUses}
@@ -1322,80 +1590,8 @@ function Editor({
                                         onOpen={openUsage}
                                         disabled={busy}
                                       />
-                                      {copy.remove && (
-                                        <div className={styles.actionFooter}>
-                                          <Button
-                                            variant="secondary-destructive"
-                                            onClick={() =>
-                                              setConfirm({
-                                                title: `Remove ${languageName(editing)} copy?`,
-                                                body: `Its ${languageName(editing)} values are removed from the draft.`,
-                                                actionLabel: 'Remove copy',
-                                                destructive: true,
-                                                action: () => copy.remove?.(),
-                                              })
-                                            }
-                                          >
-                                            Remove {languageName(editing)} copy
-                                          </Button>
-                                        </div>
-                                      )}
-                                      {!secondary &&
-                                        !(
-                                          'values' in form &&
-                                          collection?.mode === 'single'
-                                        ) && (
-                                          <div className={styles.actionFooter}>
-                                            <Button
-                                              disabled={!!documentUses.length}
-                                              variant="secondary-destructive"
-                                              onClick={() =>
-                                                setConfirm({
-                                                  title:
-                                                    'Delete this document?',
-                                                  body: 'This change is local until you save the draft.',
-                                                  action: () => {
-                                                    const next = {
-                                                      ...content,
-                                                      pages:
-                                                        content.pages.filter(
-                                                          (p) =>
-                                                            p.id !== form.id,
-                                                        ),
-                                                      entries:
-                                                        content.entries.filter(
-                                                          (e) =>
-                                                            e.id !== form.id,
-                                                        ),
-                                                    };
-                                                    const errors =
-                                                      schemaChanges(
-                                                        content,
-                                                        next,
-                                                      );
-                                                    if (errors.length) {
-                                                      setError(
-                                                        errors
-                                                          .map((e) => e.message)
-                                                          .join('\n'),
-                                                      );
-                                                      return;
-                                                    }
-                                                    setContent(next);
-                                                    setSelected('');
-                                                  },
-                                                })
-                                              }
-                                            >
-                                              Delete{' '}
-                                              {'kind' in form
-                                                ? 'page'
-                                                : 'entry'}
-                                            </Button>
-                                          </div>
-                                        )}
-                                    </>
-                                  )}
+                                    </aside>
+                                  </div>
                                 </>
                               )}
                             </>
@@ -1404,73 +1600,107 @@ function Editor({
                             <>
                               {collection ? (
                                 <>
-                                  <Button
-                                    className={styles.back}
-                                    variant="ghost"
-                                    onClick={() => {
-                                      setCollectionId('');
-                                      setSelected('');
-                                    }}
-                                  >
-                                    ← Back
-                                  </Button>
-                                  <div className={styles.sectionHeader}>
-                                    <h2>
-                                      {collection.name || 'Untitled collection'}
-                                    </h2>
-                                    <Button
-                                      variant="primary"
-                                      icon={<PlusIcon />}
-                                      disabled={collection.mode === 'single'}
-                                      onClick={addEntry}
-                                    >
-                                      Add entry
-                                    </Button>
-                                  </div>
-                                  <ul
-                                    className={styles.recordList}
-                                    aria-label="Entries"
-                                  >
-                                    {content.entries
-                                      .filter(
-                                        (e) => e.collectionId === collection.id,
-                                      )
-                                      .map((entry) => (
-                                        <li key={entry.id}>
-                                          <Button
-                                            className={styles.recordButton}
-                                            onClick={() =>
-                                              openDocument(entry.id)
-                                            }
-                                          >
-                                            <span
-                                              className={styles.recordLabel}
-                                            >
-                                              {entryTitle(entry)}
-                                              <span className={styles.muted}>
-                                                {entryPath(collection, entry) ??
-                                                  'Data only'}
-                                              </span>
-                                            </span>
-                                            <span className={styles.recordEnd}>
-                                              {listStatus(entry)}
-                                              <CaretRightIcon aria-hidden="true" />
-                                            </span>
-                                          </Button>
-                                        </li>
-                                      ))}
-                                  </ul>
-                                  {!content.entries.some(
-                                    (e) => e.collectionId === collection.id,
-                                  ) && (
-                                    <p className={styles.muted}>
-                                      No entries yet.
-                                    </p>
-                                  )}
+                                  <PageHeader
+                                    title={
+                                      collection.name || 'Untitled collection'
+                                    }
+                                    actions={
+                                      <Button
+                                        variant="secondary"
+                                        icon={<PlusIcon />}
+                                        disabled={collection.mode === 'single'}
+                                        onClick={addEntry}
+                                      >
+                                        Add entry
+                                      </Button>
+                                    }
+                                  />
+                                  {(() => {
+                                    const all = content.entries.filter(
+                                      (e) => e.collectionId === collection.id,
+                                    );
+                                    const query = entryQuery
+                                      .trim()
+                                      .toLowerCase();
+                                    const shown = query
+                                      ? all.filter((entry) =>
+                                          [
+                                            entryTitle(entry),
+                                            entryPath(collection, entry) ?? '',
+                                          ].some((text) =>
+                                            text.toLowerCase().includes(query),
+                                          ),
+                                        )
+                                      : all;
+                                    return (
+                                      <>
+                                        {all.length > 0 && (
+                                          <div className={styles.listTools}>
+                                            <Input
+                                              type="search"
+                                              aria-label="Search entries"
+                                              placeholder={`Search ${all.length} ${all.length === 1 ? 'entry' : 'entries'}`}
+                                              value={entryQuery}
+                                              onChange={(e) =>
+                                                setEntryQuery(e.target.value)
+                                              }
+                                            />
+                                          </div>
+                                        )}
+                                        <ul
+                                          className={styles.recordList}
+                                          aria-label="Entries"
+                                        >
+                                          {shown.map((entry) => (
+                                            <li key={entry.id}>
+                                              <Button
+                                                className={styles.recordButton}
+                                                onClick={() =>
+                                                  openDocument(entry.id)
+                                                }
+                                              >
+                                                <span
+                                                  className={styles.recordLabel}
+                                                >
+                                                  <span>
+                                                    {entryTitle(entry)}
+                                                  </span>
+                                                  <span
+                                                    className={styles.muted}
+                                                  >
+                                                    {entryPath(
+                                                      collection,
+                                                      entry,
+                                                    ) ?? 'Data only'}
+                                                  </span>
+                                                </span>
+                                                <span
+                                                  className={styles.recordEnd}
+                                                >
+                                                  {listStatus(entry)}
+                                                  <CaretRightIcon aria-hidden="true" />
+                                                </span>
+                                              </Button>
+                                            </li>
+                                          ))}
+                                        </ul>
+                                        {!all.length && (
+                                          <p className={styles.muted}>
+                                            No entries yet.
+                                          </p>
+                                        )}
+                                        {!!all.length && !shown.length && (
+                                          <p className={styles.muted}>
+                                            No entries match “{entryQuery}”.
+                                          </p>
+                                        )}
+                                      </>
+                                    );
+                                  })()}
                                 </>
                               ) : (
                                 <>
-                                  <h2>Content</h2>
+                                  <PageHeader title="Collections" />
                                   <ul
                                     className={styles.recordList}
                                     aria-label="Content collections"
@@ -1525,45 +1755,104 @@ function Editor({
                             </LanguageContext.Provider>
                           )}
                           {tab === 'media' && (
-                            <PanelSection title="Media">
-                              <div className={styles.formStack}>
-                                <MediaUpload label="Upload file" />
-                                <p className={styles.muted}>
-                                  {r2
+                            <>
+                              <PageHeader
+                                title="Media"
+                                description={
+                                  r2
                                     ? 'Uploaded files may be public before publishing.'
-                                    : 'Uploads are unavailable for this site. Existing media can still be used.'}
-                                </p>
-                              </div>
-                              <div className={styles.mediaGrid}>
-                                {content.media.map((m) => (
-                                  <div className={styles.mediaCard} key={m.id}>
+                                    : 'Uploads are unavailable for this site. Existing media can still be used.'
+                                }
+                                actions={<MediaUpload label="Upload file" />}
+                              />
+                              {content.media
+                                .filter((m) => m.id === mediaId)
+                                .map((m) => (
+                                  <PanelLevel
+                                    key={m.id}
+                                    title={m.name}
+                                    onBack={() => setMediaId('')}
+                                  >
                                     {m.original.mime.startsWith('image/') && (
                                       <img
-                                        src={
-                                          m.variants[0]?.url ?? m.original.url
-                                        }
+                                        className={styles.mediaDetailImage}
+                                        src={m.original.url}
                                         alt={m.name}
                                       />
                                     )}
-                                    <p>{m.name}</p>
-                                    <p className={styles.muted}>
-                                      {Math.round(m.original.bytes / 1024)} KB ·{' '}
-                                      {m.variants.length} variants
-                                    </p>
-                                    <Link
-                                      href={m.original.url}
-                                      target="_blank"
-                                      rel="noreferrer"
+                                    <dl className={styles.properties}>
+                                      <dt>Type</dt>
+                                      <dd>{m.original.mime}</dd>
+                                      <dt>Size</dt>
+                                      <dd>
+                                        {Math.round(m.original.bytes / 1024)} KB
+                                      </dd>
+                                      <dt>Files</dt>
+                                      <dd className={styles.row}>
+                                        <Link
+                                          href={m.original.url}
+                                          target="_blank"
+                                          rel="noreferrer"
+                                        >
+                                          Open original
+                                        </Link>
+                                        {m.variants.map((v, index) => (
+                                          <Link
+                                            key={index}
+                                            href={v.url}
+                                            target="_blank"
+                                            rel="noreferrer"
+                                          >
+                                            Variant {index + 1}
+                                          </Link>
+                                        ))}
+                                      </dd>
+                                    </dl>
+                                  </PanelLevel>
+                                ))}
+                              <div className={styles.mediaGrid}>
+                                {content.media.map((m) => (
+                                  <Button
+                                    key={m.id}
+                                    className={styles.mediaCard}
+                                    aria-label={m.name}
+                                    onClick={() => setMediaId(m.id)}
+                                  >
+                                    <span className={styles.mediaThumb}>
+                                      {m.original.mime.startsWith('image/') ? (
+                                        <img
+                                          src={
+                                            m.variants[0]?.url ?? m.original.url
+                                          }
+                                          alt=""
+                                        />
+                                      ) : (
+                                        (m.name.split('.').pop() ?? 'file')
+                                      )}
+                                    </span>
+                                    <span
+                                      className={styles.mediaName}
+                                      title={m.name}
                                     >
-                                      Open original
-                                    </Link>
-                                  </div>
+                                      {m.name}
+                                    </span>
+                                    <span className={styles.mediaFacts}>
+                                      {Math.round(m.original.bytes / 1024)} KB
+                                      {m.variants.length
+                                        ? ` · ${m.variants.length} ${m.variants.length === 1 ? 'size' : 'sizes'}`
+                                        : ''}
+                                    </span>
+                                  </Button>
                                 ))}
                               </div>
-                            </PanelSection>
+                              {!content.media.length && (
+                                <p className={styles.muted}>No media yet.</p>
+                              )}
+                            </>
                           )}
                           {tab === 'settings' && (
                             <>
+                              <PageHeader title="Settings" />
                               <LanguageSettings
                                 content={content}
                                 onChange={setContent}
@@ -1632,6 +1921,8 @@ function Editor({
                                       setConfirm({
                                         title: 'Discard unsaved edits?',
                                         body: 'Return to the last loaded or saved content.',
+                                        actionLabel: 'Discard edits',
+                                        destructive: true,
                                         action: () => {
                                           discardRecovery();
                                           setContent(
@@ -1693,88 +1984,81 @@ function Editor({
                               </PanelSection>
                             </>
                           )}
-                        </>
-                      )}
-                    </PanelNavigation>
-                  </fieldset>
-                </div>
-              </EditorSurface>
-              {showPreview && (
-                <main
-                  className={styles.preview}
-                  data-size={size}
-                  aria-label="Live preview"
-                  onClickCapture={(event) => {
-                    if (
-                      pendingDocument &&
-                      (event.target as Element).closest('a')
-                    ) {
-                      event.preventDefault();
-                      event.stopPropagation();
-                    }
-                  }}
-                >
-                  {secondary && (
-                    <div
-                      className={`kumo-ui ${styles.previewModes}`}
-                      data-mode={mode}
-                    >
-                      <Tabs
-                        variant="segmented"
-                        size="sm"
-                        value={previewMode}
-                        onValueChange={(value) =>
-                          setPreviewMode(value as 'draft' | 'visitor')
+                        </fieldset>
+                      </div>
+                    </EditorSurface>
+                    {showPreview && (
+                      <Preview
+                        toolbar={
+                          secondary ? (
+                            <Tabs
+                              size="sm"
+                              value={previewMode}
+                              onValueChange={(value) =>
+                                setPreviewMode(value as 'draft' | 'visitor')
+                              }
+                              tabs={[
+                                { value: 'draft', label: 'Draft' },
+                                { value: 'visitor', label: 'Visitor' },
+                              ]}
+                            />
+                          ) : undefined
                         }
-                        tabs={[
-                          { value: 'draft', label: 'Draft' },
-                          { value: 'visitor', label: 'Visitor' },
-                        ]}
-                      />
-                    </div>
-                  )}
-                  {previewError ? (
-                    <p role="alert">{previewError}</p>
-                  ) : (
-                    <LayoutSurface
-                      content={renderContent}
-                      onNavigate={(url, documentId) => {
-                        if (busy || pendingDocument) return;
-                        if (documentId) openDocument(documentId);
-                        else {
-                          const id = Object.entries(
-                            contextFor(renderContent, 'navigation').links,
-                          ).find(([, path]) => path === url)?.[0];
-                          if (id) openDocument(id);
-                        }
-                      }}
-                    >
-                      <PageBlocks
-                        content={renderContent}
-                        page={previewPage}
-                        entry={shownEntry}
-                        selectedId={pendingBlock?.id ?? blockId}
-                        revealId={pendingBlock?.id ?? blockId}
-                        className={styles.previewBlock}
-                        fallback={
-                          shownFallback ? languageName(main) : undefined
-                        }
-                      />
-                      {!previewPage?.blocks.length && (
-                        <div className={styles.empty}>
-                          {previewEntry
-                            ? 'The shared template has no blocks yet.'
-                            : 'Add a block to start building.'}
-                        </div>
-                      )}
-                    </LayoutSurface>
-                  )}
-                </main>
-              )}
-            </>
-          )}
+                        onClickCapture={(event) => {
+                          if (
+                            pendingDocument &&
+                            (event.target as Element).closest('a')
+                          ) {
+                            event.preventDefault();
+                            event.stopPropagation();
+                          }
+                        }}
+                      >
+                        {previewError ? (
+                          <p role="alert">{previewError}</p>
+                        ) : (
+                          <LayoutSurface
+                            content={renderContent}
+                            onNavigate={(url, documentId) => {
+                              if (busy || pendingDocument) return;
+                              if (documentId) openDocument(documentId);
+                              else {
+                                const id = Object.entries(
+                                  contextFor(renderContent, 'navigation').links,
+                                ).find(([, path]) => path === url)?.[0];
+                                if (id) openDocument(id);
+                              }
+                            }}
+                          >
+                            <PageBlocks
+                              content={renderContent}
+                              page={previewPage}
+                              entry={shownEntry}
+                              selectedId={pendingBlock?.id ?? blockId}
+                              revealId={pendingBlock?.id ?? blockId}
+                              className={styles.previewBlock}
+                              fallback={
+                                shownFallback ? languageName(main) : undefined
+                              }
+                            />
+                            {!previewPage?.blocks.length && (
+                              <div className={styles.empty}>
+                                {previewEntry
+                                  ? 'The shared template has no blocks yet.'
+                                  : 'Add a block to start building.'}
+                              </div>
+                            )}
+                          </LayoutSurface>
+                        )}
+                      </Preview>
+                    )}
+                  </>
+                )}
+              </PanelNavigation>
+            </Workbench>
+          </EditorBusyContext.Provider>
           <Dialog.Root
-            open={!!modal || !!confirm}
+            open={(!!modal && modal !== 'blocks') || !!confirm}
             onOpenChange={(open) => {
               if (!open && !busy) {
                 setModal('');
@@ -1782,16 +2066,8 @@ function Editor({
               }
             }}
           >
-            <Dialog
-              size="lg"
-              className={`${styles.popup} ${modal === 'blocks' ? styles.catalogPopup : ''}`}
-            >
-              {modal === 'blocks' && !confirm ? (
-                <CatalogHeader
-                  title="Add block"
-                  closeLabel="Close block library"
-                />
-              ) : (
+            <Dialog size="lg" className={styles.popup}>
+              {
                 <Dialog.Title>
                   {confirm?.title ??
                     {
@@ -1803,14 +2079,20 @@ function Editor({
                     }[modal] ??
                     ''}
                 </Dialog.Title>
-              )}
+              }
               {confirm ? (
                 <>
                   <Dialog.Description>{confirm.body}</Dialog.Description>
                   <div className={styles.dialogActions}>
                     <Button onClick={() => setConfirm(null)}>Cancel</Button>
                     <Button
-                      variant={confirm.destructive ? 'destructive' : 'primary'}
+                      variant={
+                        confirm.destructive
+                          ? 'destructive'
+                          : confirm.accent
+                            ? 'accent'
+                            : 'primary'
+                      }
                       onClick={() => {
                         const action = confirm.action;
                         setConfirm(null);
@@ -1889,19 +2171,6 @@ function Editor({
                       </div>
                     </div>
                   )}
-                  {modal === 'blocks' && (
-                    <>
-                      <BlockCatalog
-                        definitions={definitions}
-                        content={renderContent}
-                        kind={page?.kind ?? 'static'}
-                        onAdd={(d) => {
-                          if (page) setPendingBlock(newBlock(d));
-                          setModal('');
-                        }}
-                      />
-                    </>
-                  )}
                 </>
               )}
             </Dialog>
@@ -1910,4 +2179,5 @@ function Editor({
       </LanguageContext.Provider>
     </ModelContext.Provider>,
   );
+  return createElement(BackDepth.Provider, { value: backDepth }, editor);
 }

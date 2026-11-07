@@ -1,9 +1,16 @@
 ---
 title: Decisions
-updated: 2026-10-23
+updated: 2026-11-07
 status: Accepted
 ---
 # Decisions
+
+Admin redesign: DEC-234–DEC-244 select a complete, compact redesign after
+Statamic's shell and editor, stacks for nested items, Off/Split/Float previews,
+13px text with 28px controls, Inter, amber and our own Base UI components.
+DEC-245–DEC-248 add two-column editors, blocks in stacks, one navigation rule
+(screens for lists and records, stacks for everything inside) and a top-bar
+Preview toggle. See the [admin redesign](../discussions/admin-redesign.md).
 
 Kahf proof: DEC-193 reduces the recreation to a small sample; DEC-194 selects
 optional internationalization. DEC-195–DEC-206 settle both behavior rounds,
@@ -819,3 +826,48 @@ guide a later implementation; they do not authorize it.
 | ID | Decision | Basis and rationale |
 | --- | --- | --- |
 | DEC-233 | Proceed with the accepted Kahf sample in the library and a separate site, working autonomously until completion or a consequential unresolved decision, using rule-lean. Preserve DEC-208–DEC-215's local-only acceptance boundary. | The user asked what comes next, then directed “lets work-until-grill while following rule-lean.” This supersedes the earlier engine-only stopping point for local Kahf implementation; it does not request hosting deployment. |
+
+## Admin redesign — grill-form, 2026-11-07
+
+Round one of the [admin redesign](../discussions/admin-redesign.md); see the
+[submitted answers](../journal/2026-11-07-grill-cce6caa4f347fe8a4b850ab1b8b91990.md).
+The editor layout, how blocks open and where the preview controls go were re-asked
+in round two.
+
+| ID | Decision | Basis and rationale |
+| --- | --- | --- |
+| DEC-234 | Redesign the admin portal completely, with more compact layout, spacing and components. Statamic's editor is the main reference; Cursor's settings screen sets the density. Apostrophe-style in-page editing is deferred. | The user's request names Statamic, Apostrophe, Payload, Zed, Clarity, Delta and Cursor ("perfect"). Payload's compact controls support the density target. |
+| DEC-235 | Use Statamic's shell: a top bar with the sidebar toggle, logo, breadcrumbs, editing language, save status, Save draft and Publish, above a grouped sidebar. | Q1. Save draft and Publish act on the whole site, so they stay visible on every screen. |
+| DEC-236 | Group the sidebar as Content (Pages, Collections expanding to each collection, Media), Design (Layouts) and Schemas (Collections, Objects), with Settings at the bottom. | Q2 selects the expanding Collections item over listing collections directly. |
+| DEC-237 | Open the admin on Pages. There is no home screen. | Q3. |
+| DEC-238 | Defer a ⌘K jump-to. | Q4 selects Later. |
+| DEC-239 | Open nested items (object fields, list items and referenced entries) in Statamic-style stacks: panels that slide over the editor. This replaces the current drawer and inner-panel navigation. | Q7. The user notes that the current menu and sub-page navigation "was assembled in a hurry". How stacks share space with the preview was asked in round two. |
+| DEC-240 | Offer three preview modes: Off; Split, docked right with a draggable divider; and Float, a window dragged anywhere and resized with the device's aspect ratio locked. A page opens in Split the first time, then the editor remembers the last mode in this browser. Desktop renders the 1280px page scaled to fit; a Desktop/Mobile toggle switches views. | Q8–Q10, tried in an interactive prototype. The user disliked the mode selector in the document header; its location was asked again in round two ([screenshot](../evidence/2026-11-07-admin-redesign/preview-selector.png)). |
+| DEC-241 | Below 800px, the sidebar opens from a menu button and there is no preview. | Q11. |
+| DEC-242 | Use 13px text and 28px controls, Inter self-hosted, and brand amber as the accent for the primary action, switches, focus, the current item and the selected block. | Q12–Q14. Inter is declared today but never loaded. |
+| DEC-243 | Build the admin's components on Base UI with our own tokens, replacing Kumo. | Q15. The editor needs 15 `!important` rules to override Kumo's fixed sizes. |
+| DEC-244 | Change the real editor step by step and judge each step in the admin gallery, keeping `pnpm verify` green. | Q16. A separate prototype would be built twice. |
+
+## Admin redesign, round two — grill-form, 2026-11-07
+
+See the [submitted answers](../journal/2026-11-07-grill-f90083cec02fa6ee4a9f346e3cd40120.md).
+The user picked "editor column only" for how much a stack covers beside a split
+preview, but asked for the question to be rephrased. That choice is unconfirmed.
+
+| ID | Decision | Basis and rationale |
+| --- | --- | --- |
+| DEC-245 | Lay out page and entry editors in two columns. The main column holds the title, then the fields or blocks. The side column holds the path, layout, page type, language status and Used by, and moves under the main column when the editor is narrower than about 560px. Delete moves into the ⋯ menu. | Q17. |
+| DEC-246 | Open a page's blocks in a stack over the editor, like other nested items. | Q18. All editing works one way, and the block list stays short enough to reorder. |
+| DEC-247 | Apply one navigation rule everywhere. Lists and records are screens, shown in the breadcrumbs. Anything inside a record, and every Add form, opens in a stack with Create and Cancel; Create then opens the new record. A single collection opens straight to its editor, Settings is one screen of rows, and a layout's settings screen keeps the preview modes. | Q20. This supersedes the drawer, inner panels and their ← Back buttons (DEC-239). Browser Back closes the top stack or leaves the screen. |
+| DEC-248 | Put a Preview toggle in the top bar. Float or Dock, Desktop/Mobile and Close sit on the preview's own bar. The toggle is hidden below 800px, where there is no preview. | Q21 replaces the rejected selector in the document header (DEC-240). |
+
+## Admin rework corrections — direct feedback, 2026-11-07
+
+| ID | Decision | Basis and rationale |
+| --- | --- | --- |
+| DEC-249 | Split preview fills all available height below its toolbar; only Float retains the device aspect ratio. | The maintainer rejected the vertically letterboxed preview screenshot during implementation. |
+| DEC-250 | The main sidebar resizes within a minimum and maximum width, and overflowing labels truncate with ellipsis. | Direct screenshot feedback. The implementation uses 160–360px, persists the width, and supports pointer and keyboard resizing. |
+
+The maintainer authorized simple, adjustable interaction defaults and subsequently
+stopped the parallel Claude review. Implementation and verification continue
+independently; a later visual polish pass is optional, not a delivery prerequisite.

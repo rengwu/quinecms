@@ -1,0 +1,23 @@
+Registered 5 block versions.
+Registered 2 layout versions.
+15:16:03 [types] Generated 150ms
+15:16:03 [build] output: "static"
+15:16:03 [build] mode: "static"
+15:16:03 [build] directory: /private/var/folders/00/h_k67s0j5dq0qvg6ylqysk2w0000gn/T/quinecms-site-test-Y8ziw1/.quinecms/workspace/dist/
+15:16:03 [build] Collecting build info...
+15:16:03 [build] ✓ Completed in 220ms.
+15:16:03 [build] Building static entrypoints...
+15:16:04 [vite] ✓ built in 177ms
+15:16:04 [vite] ✓ built in 126ms
+15:16:04 [build] Rearranging server assets...
+
+ generating static routes 
+15:16:04   ├─ /admin/index.html (+1.16s) 
+15:16:05   ├─ /journal/a-slower-way-to-build/index.html (+15ms) 
+15:16:05   ├─ /journal/index.html (+8ms) 
+15:16:05   ├─ /index.html (+14ms) 
+15:16:05 ✓ Completed in 1.29s.
+
+15:16:05 [build] ✓ Completed in 1.65s.
+15:16:05 [build] 4 page(s) built in 1.87s
+15:16:05 [build] Complete!

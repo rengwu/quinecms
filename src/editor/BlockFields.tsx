@@ -1,7 +1,4 @@
 import { useId, useState } from 'react';
-import { Button } from '@cloudflare/kumo/components/button';
-import { Input } from '@cloudflare/kumo/components/input';
-import { Label } from '@cloudflare/kumo/components/label';
 import type { Binding, Block, Collection, Field, Media } from '../core/types';
 import { bindingSource, bindingValid } from '../core/bindings';
 import {
@@ -15,6 +12,7 @@ import { useModel } from './ModelContext';
 import { PanelLevel } from './PanelNavigation';
 import Fields from './Fields';
 import styles from './editor.module.css';
+import { Button, Input, Label } from './ui';
 function BindingControl({
   field,
   value,

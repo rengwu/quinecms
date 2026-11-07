@@ -1,13 +1,10 @@
 import SchemaFieldEditor from './SchemaFieldEditor';
 import { useState } from 'react';
-import { Button } from '@cloudflare/kumo/components/button';
-import { Input } from '@cloudflare/kumo/components/input';
-import { Select } from '@cloudflare/kumo/components/select';
-import { Label } from '@cloudflare/kumo/components/label';
 import { CaretRightIcon, PlusIcon } from '@phosphor-icons/react';
 import type { Collection, Entry, Field, Media, Page } from '../core/types';
 import styles from './editor.module.css';
 import FormScreen from './FormScreen';
+import { Button, Input, Label, Select } from './ui';
 
 export default function CollectionSchema({
   collection,
@@ -39,44 +36,42 @@ export default function CollectionSchema({
       fields: collection.fields.map((f, i) => (i === fieldIndex ? next : f)),
     });
   }
-  if (pendingField)
-    return (
-      <SchemaFieldEditor
-        field={pendingField}
-        media={media}
-        values={[]}
-        onChange={setPendingField}
-        onBack={() => setPendingField(null)}
-        onDelete={() => {}}
-        onCreate={() => {
-          if (
-            onChange({
-              ...collection,
-              fields: [...collection.fields, pendingField],
-            }) !== false
-          )
-            setPendingField(null);
-        }}
-      />
-    );
-  if (field)
-    return (
-      <SchemaFieldEditor
-        field={field}
-        media={media}
-        values={entries.map((e) => e.values[field.key])}
-        titleField={collection.titleField === field.key}
-        onChange={updateField}
-        onBack={() => setFieldIndex(null)}
-        onDelete={() => {
+  const pendingEditor = pendingField ? (
+    <SchemaFieldEditor
+      field={pendingField}
+      media={media}
+      values={[]}
+      onChange={setPendingField}
+      onBack={() => setPendingField(null)}
+      onDelete={() => {}}
+      onCreate={() => {
+        if (
           onChange({
             ...collection,
-            fields: collection.fields.filter((_, i) => i !== fieldIndex),
-          });
-          setFieldIndex(null);
-        }}
-      />
-    );
+            fields: [...collection.fields, pendingField],
+          }) !== false
+        )
+          setPendingField(null);
+      }}
+    />
+  ) : null;
+  const fieldEditor = field ? (
+    <SchemaFieldEditor
+      field={field}
+      media={media}
+      values={entries.map((e) => e.values[field.key])}
+      titleField={collection.titleField === field.key}
+      onChange={updateField}
+      onBack={() => setFieldIndex(null)}
+      onDelete={() => {
+        onChange({
+          ...collection,
+          fields: collection.fields.filter((_, i) => i !== fieldIndex),
+        });
+        setFieldIndex(null);
+      }}
+    />
+  ) : null;
   return (
     <FormScreen
       title={
@@ -86,7 +81,24 @@ export default function CollectionSchema({
       }
       onBack={onBack}
       creation={onCreate ? { label: 'Create collection', onCreate } : undefined}
+      menu={
+        onCreate
+          ? undefined
+          : [
+              {
+                label:
+                  collection.mode === 'single'
+                    ? 'Delete collection and its entry'
+                    : 'Delete empty collection',
+                destructive: true,
+                disabled: collection.mode === 'many' && entries.length > 0,
+                onSelect: onDelete,
+              },
+            ]
+      }
     >
+      {pendingEditor}
+      {fieldEditor}
       <div className={styles.field}>
         <Label htmlFor="collection-name">Name</Label>
         <Input
@@ -96,9 +108,10 @@ export default function CollectionSchema({
           onChange={(e) => onChange({ ...collection, name: e.target.value })}
         />
       </div>
-      <p className={styles.muted}>
-        {collection.mode === 'single' ? 'Single entry' : 'Multiple entries'}
-      </p>
+      <dl className={styles.properties}>
+        <dt>Entries</dt>
+        <dd>{collection.mode === 'single' ? 'Single entry' : 'Multiple'}</dd>
+      </dl>
       {collection.genericPageId && (
         <div className={styles.field}>
           <Label htmlFor="collection-path">
@@ -163,7 +176,7 @@ export default function CollectionSchema({
       <div className={styles.sectionHeader}>
         <h2>Fields</h2>
         <Button
-          variant="primary"
+          variant="secondary"
           icon={<PlusIcon />}
           onClick={() => {
             let n = collection.fields.length;
@@ -186,7 +199,7 @@ export default function CollectionSchema({
               onClick={() => setFieldIndex(i)}
             >
               <span className={styles.recordLabel}>
-                {f.label || 'Untitled field'}
+                <span>{f.label || 'Untitled field'}</span>
                 <span className={styles.muted}>
                   {f.type}
                   {f.required ? ' · Required' : ''}
@@ -197,19 +210,6 @@ export default function CollectionSchema({
           </li>
         ))}
       </ul>
-      {!onCreate && (
-        <div className={styles.actionFooter}>
-          <Button
-            variant="secondary-destructive"
-            disabled={collection.mode === 'many' && entries.length > 0}
-            onClick={onDelete}
-          >
-            {collection.mode === 'single'
-              ? 'Delete collection and its entry'
-              : 'Delete empty collection'}
-          </Button>
-        </div>
-      )}
     </FormScreen>
   );
 }

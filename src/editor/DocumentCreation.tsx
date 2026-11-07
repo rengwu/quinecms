@@ -1,10 +1,9 @@
-import { Input } from '@cloudflare/kumo/components/input';
-import { Label } from '@cloudflare/kumo/components/label';
 import type { Content, Entry, Page } from '../core/types';
 import EntryFields from './EntryFields';
 import LayoutChoice from './LayoutChoice';
 import FormScreen from './FormScreen';
 import styles from './editor.module.css';
+import { Input, Label } from './ui';
 
 export default function DocumentCreation({
   document,

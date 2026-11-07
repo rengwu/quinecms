@@ -1,10 +1,10 @@
 import { useId, useLayoutEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { Button } from '@cloudflare/kumo/components/button';
 import { DotsSixVerticalIcon } from '@phosphor-icons/react';
 import type { Block, Definition } from '../core/types';
 import { useFlipList } from './useFlipList';
 import styles from './editor.module.css';
+import { Button } from './ui';
 
 export function reorderBlocks(
   blocks: Block[],
@@ -27,6 +27,21 @@ export function reorderBlocks(
   return next;
 }
 
+/** The block's first readable text, to tell similar rows apart. */
+export function blockSummary(block: Block) {
+  for (const value of Object.values(block.props ?? {})) {
+    if (typeof value !== 'string') continue;
+    const text = value
+      .replace(/<[^>]+>/g, ' ')
+      .replace(/[#*_`>\[\]()]/g, '')
+      .replace(/\s+/g, ' ')
+      .trim();
+    if (text && !/^(\/|https?:|media:|#)/.test(text) && /\s/.test(text))
+      return text;
+  }
+  return '';
+}
+
 export default function BlockList({
   blocks,
   definitions,
@@ -35,9 +50,12 @@ export default function BlockList({
   onChange,
   label = 'Blocks',
   showVersion = true,
+  summaries = true,
 }: {
   label?: string;
+  /** Shows the version when the block type has more than one. */
   showVersion?: boolean;
+  summaries?: boolean;
   blocks: Block[];
   definitions: Pick<Definition, 'type' | 'version' | 'label'>[];
   disabled: boolean;
@@ -192,19 +210,37 @@ export default function BlockList({
       window.removeEventListener('scroll', onScroll, true);
     };
   }, [dragging]);
+  function name(block: Block) {
+    return (
+      definitions.find(
+        (d) => d.type === block.type && d.version === block.version,
+      )?.label ?? block.type
+    );
+  }
+  // Every row repeating the same design prefix ("Tessera · Hero") is noise.
+  const prefixes = new Set(
+    displayed.map((block) => name(block).split(' · ').slice(0, -1).join(' · ')),
+  );
+  const shared = prefixes.size === 1 ? [...prefixes][0] : '';
   function rowContent(block: Block) {
+    const full = name(block);
+    const summary = summaries ? blockSummary(block) : '';
+    const versions = definitions.filter((d) => d.type === block.type).length;
     return (
       <>
-        <span>
-          {definitions.find(
-            (d) => d.type === block.type && d.version === block.version,
-          )?.label ?? block.type}{' '}
-          {showVersion && (
-            <span className={styles.muted}>v{block.version}</span>
-          )}
-        </span>
         {onChange && (
-          <DotsSixVerticalIcon aria-hidden size={16} className={styles.muted} />
+          <DotsSixVerticalIcon
+            aria-hidden
+            size={16}
+            className={styles.blockHandle}
+          />
+        )}
+        <span className={styles.blockName}>
+          {shared ? full.slice(shared.length + 3) : full}
+        </span>
+        {summary && <span className={styles.blockSummary}>{summary}</span>}
+        {showVersion && versions > 1 && (
+          <span className={styles.blockVersionTag}>v{block.version}</span>
         )}
       </>
     );
@@ -269,7 +305,8 @@ export default function BlockList({
           >
             <Button
               className={styles.blockButton}
-              variant="outline"
+              variant="ghost"
+              aria-label={name(block)}
               disabled={disabled}
               aria-describedby={onChange ? help : undefined}
               onPointerDown={(event) => {
@@ -335,7 +372,7 @@ export default function BlockList({
         createPortal(
           <div
             ref={carried}
-            className={`kumo-ui ${styles.dragOverlay}`}
+            className={`admin-ui ${styles.dragOverlay}`}
             data-mode={held.mode}
             data-sort-overlay={held.id}
             aria-hidden="true"
@@ -349,7 +386,7 @@ export default function BlockList({
           >
             <Button
               className={styles.blockButton}
-              variant="outline"
+              variant="ghost"
               tabIndex={-1}
             >
               {rowContent(heldBlock)}

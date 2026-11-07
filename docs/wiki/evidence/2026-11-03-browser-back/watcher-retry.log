@@ -1,0 +1,30 @@
+
+ RUN  v5.0.3 /Users/rengwu/Desktop/Projects/quinecms
+
+ ❯ tests/local-authoring.test.ts (8 tests | 1 failed | 7 skipped) 3910ms
+   × keeps the dev server and watcher together while local content and routes change 3909ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/local-authoring.test.ts > keeps the dev server and watcher together while local content and routes change
+TypeError: fetch failed
+ ❯ waitForText tests/local-authoring.test.ts:392:26
+    390|     const waitForText = async (path: string, expected: string) => {
+    391|       for (let attempt = 0; attempt < 80; attempt++) {
+    392|         const response = await fetch(url + path);
+       |                          ^
+    393|         if (response.ok && (await response.text()).includes(expected))…
+    394|         await new Promise((resolve) => setTimeout(resolve, 100));
+ ❯ tests/local-authoring.test.ts:406:5
+
+Caused by: Error: read ECONNRESET
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+Serialized Error: { errno: -54, code: 'ECONNRESET', syscall: 'read' }
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 7 skipped (8)
+   Start at  15:19:09
+   Duration  4.20s (tests 96%, transform 3%, import 1%)
+

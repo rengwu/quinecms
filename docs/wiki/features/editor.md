@@ -1,6 +1,6 @@
 ---
 title: Visual editing and recovery
-updated: 2026-10-23
+updated: 2026-11-07
 ---
 # Visual editing and recovery
 
@@ -44,7 +44,7 @@ Save available to retry.
 Verification: `pnpm exec vitest run tests/editor-save.test.ts tests/editor-submission.test.ts tests/github.test.ts tests/gitlab.test.ts`
 covers normal saves, stale rejection, provider races, export payloads, cancelled/failed/
 successful loads, recovered edits and destination changes. The component tests render
-real Kumo controls with mocked provider boundaries and preview islands.
+the real admin controls with mocked provider boundaries and preview islands.
 
 Browser recipe: in an isolated disposable editor, connect a test repository, edit a
 page, save, advance the remote separately, edit again and try saving. Inspect the status
@@ -54,40 +54,104 @@ content. No real provider resources were available for this run. Native browser 
 also failed to start; browser visuals and completed downloads remain unverified. See the
 [verification run](../verification/runs/2026-10-12-git-save-ux.md).
 
-## Intent and basis
+## Workspace and navigation
 
-The [accepted design](../discussions/agreed-design.md) requires a side drawer alongside a live single-document preview for page editing, defined block fields, basic collection schemas, and tab recovery. The [versioning and Markdown contracts](../discussions/technical-contracts.md) prohibit guessed migrations and silent loss of unsupported formatting.
+The [admin redesign](../discussions/admin-redesign.md), DEC-234–DEC-248,
+supersedes the original drawer and inner Back-button presentation. The engine
+uses its own compact components on Base UI: 13px/18px Inter, 28px controls,
+warm neutrals and dark/light modes. The ordinary primary action is neutral
+(foreground fill); amber is reserved for Publish, switches, focus, the current
+navigation item and the selected preview block (DEC-242). Admin resets and tokens
+are scoped to `.admin-ui`; the site canvas stays outside that scope.
 
-DEC-052–DEC-054 established the Add block header action and separate Content and Collection schemas areas. DEC-074 replaces the standalone Home menu with persistent main navigation in a separate left sidebar. The current area stays highlighted even in nested editors; Pages opens by default. At widths up to 800px, Menu opens the same destinations in a Kumo dialog.
+The top bar contains the sidebar toggle, logo, breadcrumbs, editing language,
+preview toggle when available, save status with a state dot, **Save draft** and
+**Publish**. The status keeps a reserved width so the controls beside it do not
+shift.
+Saving and publishing still operate on the entire site. The sidebar groups
+Content (Pages, an expandable Collections list, Media), Design (Layouts) and
+Schemas (Collections, Objects). Settings sits at the bottom. Pages opens first. The desktop sidebar has a
+draggable edge, constrained to 160–360px, starts at 224px and remembers its width. Long collection
+labels use an ellipsis and expose their full name on hover. The focused resize
+handle also accepts arrow keys, Home and End.
+Below 800px, the sidebar starts closed, opens over a dimmed workspace, and closes
+after choosing a destination, on pressing the dimmed area, or when a wide window
+narrows. Only the current breadcrumb shows. Expanding Collections leaves the
+current screen intact.
 
-Admin surface roots explicitly use `box-sizing: border-box`, so their declared
-widths and heights include padding and borders. This rule belongs to the engine
-and stays outside site previews; it must not depend on a theme's reset.
-[Preview overlap verification](../verification/runs/2026-10-16-admin-sizing.md).
+Lists and records are screens. Their parent destinations appear as clickable
+breadcrumbs; their URLs remain unchanged. Blocks, nested objects, list items,
+references, schema fields, media details and the Add block library open in
+slide-over panels. Panels dim the screen beneath them; each deeper level is
+narrower, so the level beneath stays visible at its edge. Each panel has a close
+button; Escape, pressing the dimmed area (except on creation forms) and browser
+Back return one level. Parent forms stay mounted and inert while a child is open.
+The split preview and global navigation remain available. Custom controls use
+the existing `PanelLevel` API.
 
-Main sections are selected by React state and conditionally rendered within one
-browser document, without separate URLs. Switching between Pages, Content,
-Collections, Objects, Media, Site Layouts and Settings resets document scrolling
-to the top before paint. This applies to both the sidebar and mobile menu.
-Editing within a section or expanding Schemas does not trigger that reset; nested
-field drill-down retains its existing parent-form show/hide behavior.
-[Scroll verification](../verification/runs/2026-10-15-navigation-scroll.md).
+Panels share one footer: removal and secondary actions on the left, then
+**Cancel** and the create action, or **Done** for edits that already apply.
+Every screen uses one header: title, actions on the right, an optional
+description, and a **⋯** menu for its less frequent actions. Lists share one
+grouped-row style with dividers; the Pages table and entry lists offer search,
+and Pages filters static pages from generic templates.
 
-DEC-132 makes non-leaf sidebar items disclosures without routes. Schemas expands/collapses Collections and Objects without navigating or resetting the current editor. Each child opens its list directly, with no intermediate Schemas screen and no Back button on either list. Nested schema editors retain Back. Only the active leaf has `aria-current`; the parent exposes its expanded state and a caret. The compact navigation dialog uses the same hierarchy, staying open for disclosure changes and closing after a leaf selection. Opening the menu on a schema destination reveals its active child.
+All Add forms open in panels with **Cancel** and **Create**. Existing values edit
+the draft live; pending creation stays outside content, recovery and saves until
+Create. A child created inside an unfinished parent belongs to that parent.
+Cancelling the parent discards its staged children. Uploads still belong to the
+media library even when the referencing form is cancelled. Busy upload/save
+states disable panel controls as well as the underlying editor.
 
-DEC-055 requires consistent form and action layout. The [editor layout contract](../journal/2026-10-05-editor-layout.md) defines 8px label/control gaps, 16px field gaps, 24px section spacing/padding, grouped navigation fields and separate terminal actions. Custom widgets follow the same contract as built-in fields.
+Page and entry screens have a main column for fields or blocks and a side column
+for path/slug, layout/template, type, copy status and incoming usage. The side
+column moves below the main column at 720px of editor space and disappears when
+it has nothing to show. Document, schema, object and layout deletion and copy
+removal are in the header's **⋯** menu, which explains any blocking reference
+guard. Every screen centers its content at one 960px maximum width. Narrow
+tables hide secondary columns and truncate long values with an ellipsis.
 
-DEC-056 adds Pages table → Page editor → Block editor. The full-page overview lists every page's title, type and URL path using [Kumo Table](https://kumo-ui.com/components/table/). It contains Add page, with no builder drawer or live preview. Main navigation remains available. Open a row (or its keyboard-accessible title button) to edit that page. Titles use plain table styling; hover/focus highlights the row, with a visible keyboard focus indicator. Adding first selects static or generic, then opens an uncommitted New page form; Create page adds it and opens the page editor; deleting returns to the table, including its empty state. Page edits survive returns and switching pages.
+Browser Back invokes the deepest visible parent/close action and preserves
+existing edits. At root screens it leaves normally. Forward does not restore
+cancelled forms or old content. Navigation history holds depths, never content.
+The production unsaved-change warning still applies on leaving or reloading.
+See the [original Back verification](../verification/runs/2026-11-03-browser-back.md)
+and [redesign verification](../verification/runs/2026-11-07-admin-rework.md).
 
-DEC-099 extends live rendering to individual Site Layouts settings and their selected preview page. DEC-057 continues to confine other live rendering to an individual page or its block editor. Content, Schemas → Collections/Objects, Media and Settings use centered admin forms/lists with no builder drawer, preview or preview-width toggle, including nested entry, model and field screens. Preview islands are unmounted when leaving individual page/layout editing. The Site Layouts table has no preview or preview-width toggle. The content state and shared Save draft/Publish actions remain available across all views.
+## Live preview controls
 
-DEC-076 standardizes the Pages table and every standard admin form/list at a centered 867px maximum content width, shrinking to fit narrower viewports. Both layout containers share `--admin-content-max-width`. This admin layout token is separate from the editable public-site width. The page-building drawer and compact dialogs retain their own layout.
+Pages, layouts and routed entries offer **Off**, **Split** and **Float**. Split is
+the initial preference; mode, device, divider and floating bounds persist in
+local browser storage (`quinecms:preview-workspace`). The top-bar Preview button
+shows/hides it. Its own bar holds Float/Dock, Desktop/Mobile and Close; translated
+content also has Draft/Visitor controls. Below 800px the preview is hidden.
 
-Pages and the other admin section headings share 18px, weight 600, line-height 1.5 and −0.02em letter spacing. Semantic heading levels remain independent of their visual size. The old Pages-only 24px style and obsolete structural overrides are removed; see the [typography verification](../verification/runs/2026-10-08-heading-typography.md).
+Split has a draggable divider, also adjustable with the left/right arrow keys;
+the preview initially takes 45% of the workspace. Float first opens in the
+workspace's bottom-right corner, can be moved by its bar and resized from any
+corner (the bottom-right one shows a grip), with bounds kept 16px inside the
+workspace and the device aspect ratio locked. The space around a narrower
+device matches the admin canvas. Pointer interaction with
+the canvas pauses during a drag. Split fills the available height below its toolbar, with an internally scrolling
+canvas at a logical desktop width of 1280px or mobile width of 390px. Floating
+windows retain 1280×800 or 390×844 proportions and scale to fit. Mode/device changes retain the same DOM
+and mounted islands, including their interactive state. Leaving the document
+can unmount its preview.
+
+This is the same-document preview, not an iframe. Container queries respond to
+the logical canvas; viewport media queries and viewport units still use the
+browser window. OS picture-in-picture and inline public-page editing remain
+deferred.
 
 ## Entry points and prerequisites
 
-Open `/admin/` using [setup](../verification/setup.md). Development and production use the site’s configured `ADMIN_EMAIL` and `ADMIN_PASSWORD` to decrypt the dashboard; the engine has no default login (DEC-187). See [encrypted admin](admin-encryption.md). Repository credentials are needed only for remote loading/saving. The main sidebar provides Pages, Content, Schemas, Media, Site Layouts and Settings. Schemas separates Collections and Objects; the [content-model contract](content-model.md) describes shared definitions, nested values, references and single entries. Area switching preserves local content; existing-item editors use ← Back to return to their parent screen; creation forms use Cancel and Create instead.
+Open `/admin/` using [setup](../verification/setup.md). Development and production
+use the site's configured `ADMIN_EMAIL` and `ADMIN_PASSWORD` to decrypt the
+portal; the engine has no default login. See [encrypted admin](admin-encryption.md).
+Repository credentials are required only for remote loading/saving. The
+[content-model contract](content-model.md) describes shared definitions, nested
+values, references and single entries. Existing provider and recovery behavior
+is unchanged by the redesign.
 
 ## Expected outcomes
 
@@ -101,13 +165,24 @@ and [verification](../verification/runs/2026-10-16-entry-preview.md).
 
 Incoming references appear as **Used in N places** above the deletion action, with plain-language instructions to remove or change the links first. Rows show recognizable editor locations, record names, field labels and list-item names; storage paths and IDs stay out of the summary. **Open** goes to the owning page/block, entry, collection/object schema or Site Layout. Self-references do not appear as deletion blockers. Object definitions use the same rows to explain where edits will apply. See the [reference-summary verification](../verification/runs/2026-10-08-readable-usage.md).
 
-The mobile live preview is horizontally centered in the workspace remaining beside the navigation and editing drawer. Its 390px width shrinks to the available desktop space; the narrow-window overflow behavior remains in place.
+The mobile canvas is centered and scaled inside the preview pane. Below 800px, authoring uses the full workspace without a website preview.
 
 The [block library](block-library.md) adds themed/tagged browsing, shared chrome, repeated content and schema lists. Its record owns the expanded contract and verification recipe.
 
 The shared sortable list uses optimistic FLIP animations for page blocks and every repeated-content list. From mouse-down, the carried row follows cursor Y at the original grab offset, with X locked; it is drawn above clipping containers. Neighbors animate into the temporary order over 150ms and interrupted movements start from the current visual position. The blue insertion marker has been removed. Edge scrolling uses a 32px activation band and a capped speed, following Chartr's shared sorter reference. Only the list changes while held; the site's content/preview order updates once on release. Releasing outside still commits, with positions above/below the list resolving to its ends. This explicitly supersedes the earlier outside-release cancellation behavior. Escape, system pointer cancellation, or conflicting content/disabled changes abort safely. Reduced motion retains exact pointer carrying and immediate reordering while skipping FLIP/settle motion.
 
-Create/edit/delete pages and entries; reorder blocks by dragging their rows (Alt+Up/Down with keyboard focus). Kumo supplies admin controls, dialogs, and toasts; its styles are scoped away from preview blocks. Select a block to edit its fields and version. This replaces the parent editor controls, including page fields and the parent back link. Back returns to the same document and restores those controls. Same-key compatible values survive a version switch, unmatched values are null, and Cancel restores the last loaded/saved instance. Unknown versions preserve raw data and prevent publication.
+Create/edit/delete pages and entries; reorder blocks by dragging their rows
+(Alt+Up/Down with keyboard focus). Selecting a block opens its fields and version
+in a panel over the retained page editor. Same-key compatible values survive a
+version switch, unmatched values are null, and **Discard changes** restores
+the last loaded/saved instance. Block rows show the block name, without a design
+prefix shared by every row, and a one-line summary of its first text; the
+version appears only for types with several versions. A custom field whose
+control is not installed shows a notice and keeps its value unchanged. Unknown versions preserve raw data and prevent
+publication. Closing the panel keeps live edits.
+
+
+`pnpm gallery` previews every admin control, field and editor screen in its states for design work; see the [admin design-system audit](../discussions/admin-design-system-audit.md). The admin login screen is shared with it from `src/admin/login-screen.ts`.
 
 Opening a block also brings it into view in the right preview. This reuses the
 new-block reveal behavior: wait until its preview has a visible height, scroll
@@ -117,7 +192,7 @@ The 2026-10-13 wiring change passed the 35 editor-navigation tests and type chec
 Browser automation could open the isolated Intr page but could not reliably
 activate its block controls, so this run did not establish visual scrolling.
 
-Schema rich-text fields and Text blocks provide visual headings, paragraphs, bold/italic, links, and lists with Markdown storage. Uploaded-image references and YouTube embeds round-trip in the visual editor. Unsupported Markdown remains available as source text. Custom React widgets and shared pure validators support compound block fields. Content browses collections → entry lists → schema-defined entry values only. Schemas browses Collections / Objects → definitions → individual fields, with label/key/type/required/options/default controls. Schema editing protects populated keys/types/options. Entries remain in Content and never appear in the Pages table. Add entry is confined to entry lists; Add collection belongs to the schema list. All Add actions (page, block, entry, collection, field and link) use the same blue Kumo primary variant, base size and plus icon. Add block remains aligned right beside Blocks, outside the draggable list. Main navigation preserves all local content edits. Site Layouts lists named configurations with activation switches. Individual layouts delegate title, appearance and navigation to their design settings; Settings owns admin Appearance, Backups, Session and Factory reset; content spacing belongs to Site Layout.
+Schema rich-text fields and Text blocks provide visual headings, paragraphs, bold/italic, links, and lists with Markdown storage. Uploaded-image references and YouTube embeds round-trip in the visual editor. Unsupported Markdown remains available as source text. Custom React widgets and shared pure validators support compound block fields. Content browses collections → entry lists → schema-defined entry values only. Schemas browses Collections / Objects → definitions → individual fields, with label/key/type/required/options/default controls. Schema editing protects populated keys/types/options. Entries remain in Content and never appear in the Pages table. Add entry is confined to entry lists; Add collection belongs to the schema list. All Add actions (page, block, entry, collection, field, object, layout and item) use the same secondary button with a plus icon; create and Done actions use the neutral primary. Add block remains aligned right beside Blocks, outside the draggable list. Main navigation preserves all local content edits. Site Layouts lists named configurations with activation switches. Individual layouts delegate title, appearance and navigation to their design settings; Settings owns admin Appearance, Backups, Session and Factory reset; content spacing belongs to Site Layout.
 
 Local content and its base/repository identity survive reloads silently in tab storage. Unreadable recovery data is preserved for download and requires explicit discard before it can be overwritten. This includes unfinished schema edits that cannot yet be saved. Export/import backups contain content, not credentials or binary uploads. Storage failure is visible. Lock clears legacy Git/R2 tab credentials, discards decrypted build configuration and returns to the gate. Git/R2 configuration lives in the build environment (DEC-185/DEC-186); there are no connection setup dialogs. Build tokens are never persisted with draft recovery. See [publishing](publishing.md).
 
@@ -155,13 +230,13 @@ Terminal confirmation/cancellation groups align to the right edge of the full fo
 
 ## Admin appearance (DEC-133)
 
-Settings → Appearance provides a **Dark mode** switch: on selects dark, off selects light. It updates admin navigation, page lists, forms, dialogs, menus, toasts, the login gate and the empty area around a narrow preview. That empty area uses Kumo's canvas color instead of the former hard-coded green `#101712`.
+Settings → Appearance provides a **Dark mode** switch: on selects dark, off selects light. It updates admin navigation, page lists, forms, dialogs, menus, toasts, the login gate and the empty area around a narrow preview. The admin uses the shared warm-neutral token palette; preview letterboxing stays neutral.
 
 The preference is local to this browser and origin (`lean:admin-theme` in local storage), survives reload and defaults to dark when absent or invalid. If storage is blocked, switching still works for the current session. It is not site content: it does not change Save draft state, backups, publication or Site Layout appearance. The preview remains outside the admin theme/style scopes. [Implementation and verification](../verification/runs/2026-10-08-admin-theme.md).
 
 ## Creation forms (DEC-129)
 
-Add opens a dedicated **New …** form. Entering or typing in that form does not add anything to site content, recovery, exports or saves. Its terminal actions are **Cancel** and **Create …**, with no Back or Delete/Remove action for the pending item. Cancel, leaving the screen or reloading discards unfinished creation. Existing items keep their normal Back and deletion controls.
+Add opens a dedicated **New …** form. Entering or typing in that form does not add anything to site content, recovery, exports or saves. Its terminal actions are **Cancel** and **Create …**, with no Back or Delete/Remove action for the pending item. Cancel, leaving the screen or reloading discards unfinished creation. Existing items keep live editing, panel close/breadcrumb navigation and their guarded deletion controls.
 
 Block and footer creation headings separate the action from the selected type: **New block** or **New footer** is the heading, with the definition label (for example, chartr · Workspace) directly underneath in smaller, muted text. The subtitle may wrap, and the grouped heading is separated from the first field by the standard form gap.
 
@@ -181,22 +256,37 @@ Create adds to the immediate parent. A child created inside an unfinished parent
 
 ## Verification recipe
 
-1. Open Pages. Verify all pages appear in a table with title/type/path columns, main navigation with Pages highlighted, and no builder drawer or preview. Open Home: page settings/blocks appear with a ← Back button, no selector or Add page. Open Hero: the sidebar starts with ← Back and shows no page fields, parent back link, or global destination menu. Back restores the page controls; reopen Hero. Change Heading and observe preview. Switch v2 → v1 → v2: Heading remains; Eyebrow/Alignment/Design start empty. Cancel restores the original.
-2. Drag Text up: the row follows cursor Y with X locked, neighboring rows animate and the website preview holds its original order until release. Try releasing over a row, a gutter and outside the list; the final sort commits in every case. Hover at a scroll edge to reach offscreen rows. Reverse midway through an animation, try variable-height row labels and reduced motion. Escape cancels; ordinary clicks still open an item. Edit Body visually and reload; development reloads directly, while production may require accepting the browser warning. Order and text should persist.
-3. Preview is always interactive. Increment the Svelte counter; select it in the drawer and change Starting number. Verify the preview uses the new number and retains its interactive increment until removal/reload.
-4. Content → Journal shows an entry list and Add entry in a standard admin view, with no model controls or preview. Open an entry, change Title and verify its heading updates; verify there is no block list or Add block action, then return to the entry list. Values persist and no live rendering appears at any level. Schemas → Collections → Journal instead shows the model and compact field rows in the same admin layout. Open Title: populated key/type and removal are disabled. Add a field with a default, then create an entry through Content and verify the default. A blank required title produces no proactive issue notice; Publish reports validation through a toast.
-5. Add a block through the header action and dialog. Switch directly to Site through the main sidebar; the builder drawer and preview disappear. Site → Discard edits resets local test content. Export/import and password/Lock browser paths still require a follow-up browser run.
-6. Inspect Hero Design, Media and Site. Labels sit above aligned controls; settings/add actions appear beside section headings. Each navigation link is one bounded group, with removal inside it. Backups and Session are separate sections. Schema field removal is separated from editable fields.
-7. Change a page title/path, return to Pages and open another page, then reopen the edited page: values persist and the table reflects them. Add page from the overview, choose Static page, rename it, then Create page. Repeat with Cancel and confirm no extra page appears. Delete that test page: Cancel keeps it; Continue returns to the table. With no pages, the table shows No pages yet and Add page remains available.
-8. Visit Media and Site through the main sidebar: both use a centered admin workspace with no builder drawer, website rendering or Mobile/Desktop button. Return to Pages → Home and verify the preview and width toggle return. A page-preview navigation link to an entry opens that entry's standard Content editor. Below 800px, Menu opens all five destinations; selecting one closes the dialog and changes the area.
+1. Run `pnpm test`, then an isolated site's `check`, `build` and `check:build`.
+   `tests/editor-navigation.test.ts` covers breadcrumb/Back navigation, schema
+   guards, pending creation and recovery. `tests/preview-workspace.test.tsx`
+   checks mounted-state preservation, stored preferences and constrained bounds.
+2. Open the Pages table, edit a page title/path, open a block panel and change a
+   field. Close it and use browser Back: existing edits survive. Open a nested
+   list item and return one level at a time. Create a child in a new parent,
+   cancel the parent, and confirm neither entered recovery.
+3. Exercise Split, divider drag/arrow keys, Float, title-bar movement, all four
+   resize corners, Desktop/Mobile and Off. Increment an interactive island and
+   confirm its value survives mode changes. Reload to check preferences.
+4. Visit collection entries, schemas, layouts, media details and Settings.
+   Create/cancel records; inspect deletion guards and upload busy states.
+   Use a translation copy and the Draft/Visitor preview. Check toast errors.
+5. Review dark/light at desktop and 390px: sidebar disclosure and navigation,
+   scrollable tables, stack controls, and the absence of preview below 800px.
+6. Verify encrypted login and the mounted portal in production preview.
+   Mocked Git/media tests do not establish live provider permissions or CORS.
 
-Generic-page binding, assignment and routing behavior is mapped in [Generic pages and collection content](generic-pages.md). Tab recovery uses a new namespace and leaves the legacy snapshot untouched.
+Generic-page binding and routing are mapped in [Generic pages](generic-pages.md).
+Current observations and limits are in the [redesign run](../verification/runs/2026-11-07-admin-rework.md).
 
 ## Coverage and limitations
 
 The initial run observed core interactions on an intermediate build. The startup repair subsequently verified development startup, live heading edits/cancel, and production startup with Svelte/Vue interaction on the repaired build. Recovery, visual editor mounting/read-only behavior, Markdown meaning, and adapter lifecycle have unit coverage. The Kumo refinement run verifies mouse sorting, silent recovery, and submission toasts in the browser; full layout parity remains untested.
 
 ## Verification history
+
+- [Admin redesign](../verification/runs/2026-11-07-admin-rework.md).
+
+- [Browser Back follows editor navigation](../verification/runs/2026-11-03-browser-back.md).
 
 - [Readable reference locations and source navigation](../verification/runs/2026-10-08-readable-usage.md).
 

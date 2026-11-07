@@ -1,0 +1,203 @@
+<style>
+.app.nav-off .body{grid-template-columns:0 minmax(0,1fr)}
+.app.nav-off .side{display:none}
+.work{position:relative;display:grid;grid-template-columns:minmax(0,1fr);min-height:0;overflow:hidden}
+.work[data-mode=split]{grid-template-columns:minmax(0,1fr) 5px var(--pw)}
+.doc{overflow:auto;padding:16px 20px;container-type:inline-size;min-width:0}
+.cols{display:grid;grid-template-columns:minmax(0,1fr) 220px;gap:20px;align-items:start}
+@container (max-width:640px){.cols{grid-template-columns:minmax(0,1fr)}}
+.stack{display:grid;gap:16px;grid-template-columns:minmax(0,1fr)}
+.meta{display:grid;gap:14px}
+.block{display:flex;align-items:center;gap:8px;min-height:36px;padding:0 8px 0 4px}
+.block .name{font-weight:500}
+.block .sum{color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0;flex:1}
+.drag{color:var(--faint)}
+.open{background:var(--raised)}
+.open .fields{padding:4px 12px 14px 32px;display:grid;gap:12px}
+.input input{all:unset;flex:1;min-width:0}
+.divider{display:none;cursor:col-resize;background:var(--line);touch-action:none;position:relative}
+.divider::after{content:"";position:absolute;inset:0 -4px}
+.divider:hover,.work.busy .divider{background:var(--line2)}
+.work[data-mode=split] .divider{display:block}
+.pv{display:none;flex-direction:column;background:var(--panel);min-width:0;min-height:0}
+.work[data-mode=split] .pv{display:flex}
+.work[data-mode=float] .pv{display:flex;position:absolute;border:1px solid var(--line2);border-radius:8px;overflow:hidden;box-shadow:0 12px 32px rgb(0 0 0/.45);z-index:3}
+.pvbar{height:32px;flex:none;display:flex;align-items:center;gap:6px;padding:0 4px 0 10px;border-bottom:1px solid var(--line);color:var(--muted);font-size:12px;touch-action:none;user-select:none}
+.work[data-mode=float] .pvbar{cursor:grab}
+.pvbar .seg{height:24px}
+.pvbar .btn.icon{width:24px;height:24px}
+.close{display:none}
+.work[data-mode=float] .close{display:inline-flex}
+.stage{flex:1;min-height:0;display:flex;justify-content:center;background:#0d0c0b;overflow:hidden}
+.work[data-mode=split] .stage{padding:8px}
+.vp{overflow:hidden;flex:none;background:#f4f1ea}
+.work.busy .vp{pointer-events:none}
+.h{position:absolute;width:14px;height:14px;z-index:4;display:none;touch-action:none}
+.work[data-mode=float] .h{display:block}
+.nw{left:-4px;top:-4px;cursor:nwse-resize}.ne{right:-4px;top:-4px;cursor:nesw-resize}
+.sw{left:-4px;bottom:-4px;cursor:nesw-resize}.se{right:-4px;bottom:-4px;cursor:nwse-resize}
+#site{transform-origin:0 0;overflow:auto;container:site/inline-size;color:#1d1b18;font:18px/1.55 Georgia,serif;scrollbar-width:none}
+#site *{margin:0}
+.s-nav{display:flex;gap:32px;align-items:center;padding:28px 80px;font:15px system-ui,sans-serif}
+.s-nav b{font:600 22px Georgia,serif;margin-right:auto}
+.s-menu{display:none}
+.s-hero{padding:96px 80px 88px;display:grid;gap:20px;max-width:1000px;outline:3px solid var(--accent);outline-offset:-3px}
+.s-eyebrow{font:600 14px system-ui,sans-serif;letter-spacing:.12em;text-transform:uppercase;color:#8a6a2b}
+.s-hero h1{font-size:72px;line-height:1.05;font-weight:400;letter-spacing:-.02em}
+.s-cta{justify-self:start;font:600 15px system-ui,sans-serif;background:#1d1b18;color:#f4f1ea;padding:14px 22px;border-radius:999px}
+.s-media{margin:0 80px;height:420px;border-radius:6px;background:linear-gradient(160deg,#9fb6c3,#3f6274 60%,#2a3d48)}
+.s-cols{display:grid;grid-template-columns:repeat(3,1fr);gap:48px;padding:80px}
+.s-cols h3{font-size:26px;font-weight:400;margin-bottom:10px}
+.s-foot{padding:40px 80px 64px;border-top:1px solid #d8d2c4;font:14px system-ui,sans-serif;color:#6b6457}
+@container site (max-width:700px){
+.s-nav{padding:18px 22px}.s-nav span{display:none}.s-menu{display:inline}
+.s-hero{padding:48px 22px}.s-hero h1{font-size:40px}
+.s-media{margin:0 22px;height:240px}
+.s-cols{grid-template-columns:1fr;gap:28px;padding:48px 22px}
+.s-foot{padding:28px 22px 40px}}
+</style>
+<div class="app" id="app">
+  <header class="top">
+    <button class="btn ghost icon" id="navtoggle" aria-label="Toggle sidebar">{{icon:SidebarSimple}}</button>
+    {{mark}}
+    <nav class="crumbs"><span class="sep">/</span><span>Pages</span><span class="sep">/</span><b>Home</b></nav>
+    <span class="grow"></span>
+    <span class="status">Unsaved changes</span>
+    <button class="btn">Save draft</button>
+    <button class="btn primary">Publish</button>
+  </header>
+  <div class="body">
+    {{sidebar:Pages}}
+    <div class="work" id="work" data-mode="split">
+      <div class="doc">
+        <div class="head">
+          <h1>Home</h1><span class="grow"></span>
+          <div class="seg" id="modes" role="group" aria-label="Preview">
+            <button data-mode="off">Off</button><button data-mode="split">{{icon:Columns}}Split</button><button data-mode="float">{{icon:PictureInPicture}}Float</button>
+          </div>
+          <button class="btn icon" aria-label="More actions">{{icon:DotsThree}}</button>
+        </div>
+        <div class="cols">
+          <div class="stack">
+            <label class="field"><span class="label">Title</span><span class="input"><input value="Home"></span></label>
+            <div class="head" style="margin:4px 0 -8px"><h2>Blocks</h2><span class="grow"></span><button class="btn">{{icon:Plus}}Add block</button></div>
+            <div class="card rows">
+              <div class="open">
+                <div class="block"><span class="drag">{{icon:DotsSixVertical}}</span>{{icon:CaretDown}}<span class="name">Hero</span><span class="sum"></span></div>
+                <div class="fields">
+                  <label class="field"><span class="label">Eyebrow</span><span class="input"><input id="eyebrow" value="Since 1998"></span></label>
+                  <label class="field"><span class="label">Heading</span><span class="input"><input id="heading" value="Boats, moorings and repairs"></span><span class="hint">Type here: the preview updates as you type.</span></label>
+                </div>
+              </div>
+              <div class="block"><span class="drag">{{icon:DotsSixVertical}}</span>{{icon:CaretRight}}<span class="name">Media</span><span class="sum">harbour.svg</span></div>
+              <div class="block"><span class="drag">{{icon:DotsSixVertical}}</span>{{icon:CaretRight}}<span class="name">Columns</span><span class="sum">Moorings, Repairs, Winter storage</span></div>
+            </div>
+          </div>
+          <div class="meta">
+            <div class="field"><span class="label">Path</span><span class="input">/</span></div>
+            <div class="field"><span class="label">Layout</span><span class="input">Main layout<span class="grow"></span>{{icon:CaretDown}}</span></div>
+            <div class="field"><span class="label">Type</span><span class="muted">Static page</span></div>
+            <div class="field"><span class="label">Used by</span><span class="muted">Main layout menu</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="divider" id="divider" role="separator" aria-label="Resize preview"></div>
+      <section class="pv" id="pv" aria-label="Preview">
+        <div class="pvbar" id="bar">
+          <div class="seg" id="devices" role="group" aria-label="Device">
+            <button data-device="desktop">{{icon:Monitor}}Desktop</button><button data-device="mobile">{{icon:DeviceMobile}}Mobile</button>
+          </div>
+          <span id="scale"></span><span class="grow"></span>
+          <button class="btn ghost icon close" id="close" aria-label="Close preview">{{icon:X}}</button>
+        </div>
+        <div class="stage" id="stage"><div class="vp" id="vp"><div id="site">
+          <div class="s-nav"><b>Harbour</b><span>About</span><span>Journal</span><span>Contact</span><span class="s-menu">Menu</span></div>
+          <header class="s-hero"><p class="s-eyebrow" id="se">Since 1998</p><h1 id="sh">Boats, moorings and repairs</h1><p>Moorings, maintenance and winter storage on the north quay.</p><span class="s-cta">Book a mooring</span></header>
+          <div class="s-media"></div>
+          <section class="s-cols"><div><h3>Moorings</h3><p>Sheltered berths for boats up to fourteen metres, with power and water.</p></div><div><h3>Repairs</h3><p>Engines, rigging and hulls, from a quick inspection to a full refit.</p></div><div><h3>Winter storage</h3><p>Covered and open storage from October to April, with lift-out included.</p></div></section>
+          <footer class="s-foot">Harbour · North Quay · Open daily 8–18</footer>
+        </div></div></div>
+        <i class="h nw" data-c="nw"></i><i class="h ne" data-c="ne"></i><i class="h sw" data-c="sw"></i><i class="h se" data-c="se"></i>
+      </section>
+    </div>
+  </div>
+</div>
+<script>
+const $ = (id) => document.getElementById(id);
+const work = $('work'), pv = $('pv'), vp = $('vp'), site = $('site'), bar = $('bar');
+const devices = { desktop: [1280, 800], mobile: [390, 844] };
+const BAR = 32, MIN = 200;
+const saved = (window.fungiPreview && window.fungiPreview.state) || {};
+const s = Object.assign({ mode: 'split', device: 'desktop', split: 460, nav: true, x: null, y: null, fw: { desktop: 380, mobile: 210 } }, saved);
+const save = () => window.fungiPreview && window.fungiPreview.setState(JSON.parse(JSON.stringify(s)));
+function float() {
+  const [W, H] = devices[s.device], ww = work.clientWidth, wh = work.clientHeight;
+  let w = Math.max(MIN, Math.min(s.fw[s.device], ww - 16, (wh - 16 - BAR) * W / H));
+  const h = w * H / W + BAR;
+  if (s.x === null) { s.x = ww - w - 16; s.y = wh - h - 16; }
+  s.x = Math.max(0, Math.min(s.x, ww - w)); s.y = Math.max(0, Math.min(s.y, wh - h));
+  s.fw[s.device] = w;
+  return { w, h };
+}
+function render() {
+  const [W, H] = devices[s.device];
+  document.getElementById('app').classList.toggle('nav-off', !s.nav);
+  work.dataset.mode = s.mode;
+  for (const b of $('modes').children) b.classList.toggle('on', b.dataset.mode === s.mode);
+  for (const b of $('devices').children) b.classList.toggle('on', b.dataset.device === s.device);
+  if (s.mode === 'off') return;
+  let scale, vh;
+  if (s.mode === 'split') {
+    s.split = Math.max(280, Math.min(s.split, work.clientWidth - 320));
+    work.style.setProperty('--pw', s.split + 'px');
+    pv.style.cssText = '';
+    const sw = $('stage').clientWidth - 16, sh = $('stage').clientHeight - 16;
+    scale = Math.min(1, sw / W); vh = sh;
+  } else {
+    const { w, h } = float();
+    pv.style.cssText = `left:${s.x}px;top:${s.y}px;width:${w}px;height:${h}px`;
+    scale = w / W; vh = H * scale;
+  }
+  vp.style.width = W * scale + 'px'; vp.style.height = vh + 'px';
+  site.style.width = W + 'px'; site.style.height = vh / scale + 'px';
+  site.style.transform = `scale(${scale})`;
+  $('scale').textContent = Math.round(scale * 100) + '%';
+}
+function drag(el, start) {
+  el.addEventListener('pointerdown', (e) => {
+    if (e.button !== 0 || e.target.closest('button')) return;
+    e.preventDefault();
+    el.setPointerCapture(e.pointerId);
+    const move = start(e);
+    work.classList.add('busy');
+    const up = () => { work.classList.remove('busy'); el.removeEventListener('pointermove', onMove); el.removeEventListener('pointerup', up); el.removeEventListener('pointercancel', up); save(); };
+    const onMove = (m) => { move(m.clientX - e.clientX, m.clientY - e.clientY); render(); };
+    el.addEventListener('pointermove', onMove); el.addEventListener('pointerup', up); el.addEventListener('pointercancel', up);
+  });
+}
+drag($('divider'), () => { const start = s.split; return (dx) => { s.split = start - dx; }; });
+drag(bar, () => { if (s.mode !== 'float') return () => {}; const x = s.x, y = s.y; return (dx, dy) => { s.x = x + dx; s.y = y + dy; }; });
+for (const handle of document.querySelectorAll('.h')) drag(handle, () => {
+  const c = handle.dataset.c, [W, H] = devices[s.device];
+  const x = s.x, y = s.y, w = s.fw[s.device], h = w * H / W + BAR;
+  return (dx, dy) => {
+    const gx = c.includes('e') ? dx : -dx, gy = c.includes('s') ? dy : -dy;
+    let nw = w + (gx + gy * W / H) / 2;
+    const maxW = c.includes('e') ? work.clientWidth - x : x + w;
+    const maxH = c.includes('s') ? work.clientHeight - y : y + h;
+    nw = Math.max(MIN, Math.min(nw, maxW, (maxH - BAR) * W / H));
+    const nh = nw * H / W + BAR;
+    s.fw[s.device] = nw;
+    s.x = c.includes('w') ? x + w - nw : x;
+    s.y = c.includes('n') ? y + h - nh : y;
+  };
+});
+$('modes').addEventListener('click', (e) => { const b = e.target.closest('button'); if (b) { s.mode = b.dataset.mode; render(); save(); } });
+$('devices').addEventListener('click', (e) => { const b = e.target.closest('button'); if (b) { s.device = b.dataset.device; render(); save(); } });
+$('close').addEventListener('click', () => { s.mode = 'off'; render(); save(); });
+$('navtoggle').addEventListener('click', () => { s.nav = !s.nav; render(); save(); });
+$('heading').addEventListener('input', (e) => { $('sh').textContent = e.target.value; });
+$('eyebrow').addEventListener('input', (e) => { $('se').textContent = e.target.value; });
+new ResizeObserver(render).observe(work);
+render();
+</script>

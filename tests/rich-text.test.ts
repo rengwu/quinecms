@@ -95,7 +95,7 @@ it('inserts and removes an uploaded image without losing surrounding Markdown', 
   );
   const button = (label: string) =>
     [...document.querySelectorAll('button')].find(
-      (b) => b.textContent === label,
+      (b) => b.textContent === label || b.getAttribute('aria-label') === label,
     )!;
   await act(async () => button('Image').click());
   await act(async () =>

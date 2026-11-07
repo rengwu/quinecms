@@ -1,7 +1,8 @@
+import { UploadSimpleIcon } from '@phosphor-icons/react';
 import { createContext, useContext, useRef, useState } from 'react';
-import { Button } from '@cloudflare/kumo/components/button';
 import type { Media } from '../core/types';
 import styles from './editor.module.css';
+import { Button } from './ui';
 
 export const MediaUploadContext = createContext<{
   busy: boolean;
@@ -33,7 +34,8 @@ export default function MediaUpload({
   return (
     <div className={styles.mediaUpload}>
       <Button
-        variant={fieldLabel ? 'secondary' : 'primary'}
+        variant="secondary"
+        icon={fieldLabel ? undefined : <UploadSimpleIcon />}
         aria-label={fieldLabel ? `Upload for ${fieldLabel}` : label}
         disabled={disabled || uploads.busy}
         onClick={() => {

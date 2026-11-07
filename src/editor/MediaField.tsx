@@ -1,9 +1,8 @@
-import { Input } from '@cloudflare/kumo/components/input';
-import { Select } from '@cloudflare/kumo/components/select';
 import type { Media } from '../core/types';
 import { isRecord } from '../core/schema';
 import MediaUpload from './MediaUpload';
 import styles from './editor.module.css';
+import { Input, Select } from './ui';
 
 export default function MediaField({
   id,

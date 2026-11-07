@@ -12,7 +12,6 @@ const alias = Object.fromEntries(
       resolve(path as string),
     ]),
 );
-import { kumoStyles } from './kumo-styles.mjs';
 
 // A separate, self-contained editor never enters Astro's public asset graph.
 // write:false keeps every plaintext admin asset out of the publish directory.
@@ -26,7 +25,6 @@ export async function adminBundle(development = false) {
     // bundle's JSX consistent with the production React runtime below.
     oxc: { jsx: { development: false } },
     plugins: [
-      kumoStyles(),
       svelte({ configFile: false, compilerOptions: { dev: false } }),
       vue(),
     ],

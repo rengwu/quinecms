@@ -1,11 +1,10 @@
 import { useState } from 'react';
-import { Button } from '@cloudflare/kumo/components/button';
-import { Input } from '@cloudflare/kumo/components/input';
 import type { Json } from '../core/types';
 import { entryLabel } from '../core/schema';
 import { useModel } from './ModelContext';
 import { PanelLevel } from './PanelNavigation';
 import styles from './editor.module.css';
+import { Button, Input } from './ui';
 export default function ReferenceField({
   label,
   collectionId,

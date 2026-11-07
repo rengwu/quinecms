@@ -1,9 +1,9 @@
 import { useId } from 'react';
-import { Button } from '@cloudflare/kumo/components/button';
 import type { Content } from '../core/types';
 import type { Usage } from '../core/schema';
 import { describeUsage, type UsageTarget } from './usage';
 import styles from './editor.module.css';
+import { Button } from './ui';
 
 export default function UsageList({
   content,

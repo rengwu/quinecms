@@ -21,6 +21,8 @@ capabilities upstream; do not introduce site overrides of engine files.
   A site's `.quinecms/workspace/` is disposable generated output.
 - `tests/fixtures/` and `tests/support/project.ts`: test-owned designs and content,
   never shipped in the engine package.
+- `tools/admin-gallery/` (`pnpm gallery`): every admin component and screen in its
+  states, on those fixtures. Add a specimen when adding an editor component.
 
 The initial library is `rengwu/quinecms-library` (Archline and Intr), and the
 independent pilot is `rengwu/quinecms-site-archline`. Original bundled designs and

@@ -114,6 +114,7 @@ for (const file of await htmlFiles('dist')) {
             m.includes('src/editor/') ||
             m.includes('src/integrations/') ||
             m.includes('@cloudflare/kumo') ||
+            m.includes('@base-ui/') ||
             m.includes('@octokit/') ||
             m.includes('@aws-sdk/'),
         ),

@@ -363,7 +363,7 @@ it.each(['quinecms-backup', legacyBackupFormat])(
     expect(readRecovery()?.content.pages[0].title).not.toBe(
       'Restored client work',
     );
-    await click('Continue', dialog());
+    await click('Restore backup', dialog());
     expect(readRecovery()?.content.pages[0].title).toBe('Restored client work');
   },
 );

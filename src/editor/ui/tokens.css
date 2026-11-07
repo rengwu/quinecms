@@ -1,0 +1,134 @@
+/* Admin tokens and reset. Admin surfaces carry .admin-ui and data-mode; the live
+   preview sits outside them and keeps the site's own styles (DEC-048). */
+.admin-ui {
+  --ui-font:
+    'Inter Variable', Inter, system-ui, -apple-system, BlinkMacSystemFont,
+    'Segoe UI', sans-serif;
+  --ui-text: 13px;
+  --ui-leading: 18px;
+  --ui-text-small: 12px;
+  --ui-leading-small: 16px;
+  --ui-text-title: 15px;
+  --ui-text-page: 18px;
+  --ui-control: 28px;
+  --ui-control-small: 24px;
+  --ui-radius: 6px;
+  --ui-radius-panel: 8px;
+
+  color-scheme: dark;
+  --ui-canvas: #121110;
+  --ui-surface: #181715;
+  --ui-raised: #211f1d;
+  --ui-hover: #2a2825;
+  --ui-field: #141312;
+  --ui-line: #2b2926;
+  --ui-line-strong: #3a3733;
+  --ui-fg: #ebe9e5;
+  --ui-muted: #9a968f;
+  --ui-faint: #6f6b65;
+  --ui-accent: #ee9b00;
+  --ui-accent-hover: #ffad1f;
+  --ui-on-accent: #1d1b18;
+  /* The ordinary primary action is neutral; amber is reserved (DEC-242). */
+  --ui-primary: #ebe9e5;
+  --ui-primary-hover: #ffffff;
+  --ui-on-primary: #161513;
+  --ui-focus: #ee9b00;
+  --ui-danger: #e5484d;
+  --ui-danger-text: #ff8a85;
+  --ui-success: #46a758;
+  --ui-warning: #e5a50a;
+  --ui-link: #ebe9e5;
+  --ui-scrim: rgb(0 0 0 / 0.5);
+  --ui-shadow: 0 12px 32px rgb(0 0 0 / 0.45);
+
+  color: var(--ui-fg);
+  font-family: var(--ui-font);
+  font-size: var(--ui-text);
+  line-height: var(--ui-leading);
+  -webkit-font-smoothing: antialiased;
+}
+.admin-ui[data-mode='light'] {
+  color-scheme: light;
+  --ui-canvas: #f7f6f3;
+  --ui-surface: #ffffff;
+  --ui-raised: #f3f1ed;
+  --ui-hover: #ebe8e3;
+  --ui-field: #ffffff;
+  --ui-line: #e6e3dd;
+  --ui-line-strong: #d5d1c9;
+  --ui-fg: #1d1b18;
+  --ui-muted: #6b665e;
+  --ui-faint: #9a958c;
+  --ui-accent-hover: #d98d00;
+  --ui-primary: #1d1b18;
+  --ui-primary-hover: #34312c;
+  --ui-on-primary: #ffffff;
+  --ui-focus: #a86a00;
+  --ui-danger: #d13438;
+  --ui-danger-text: #b42328;
+  --ui-success: #2f8a3f;
+  --ui-warning: #a86a00;
+  --ui-link: #1d1b18;
+  --ui-scrim: rgb(29 27 24 / 0.28);
+  --ui-shadow: 0 12px 32px rgb(29 27 24 / 0.16);
+}
+
+:where(.admin-ui),
+:where(.admin-ui) *,
+:where(.admin-ui) ::before,
+:where(.admin-ui) ::after {
+  box-sizing: border-box;
+}
+:where(.admin-ui)
+  :where(h1, h2, h3, h4, h5, h6, p, ul, ol, dl, dd, figure, blockquote, pre) {
+  margin: 0;
+}
+:where(.admin-ui) :where(h1, h2, h3, h4, h5, h6) {
+  font-size: inherit;
+  font-weight: inherit;
+}
+:where(.admin-ui) :where(ul, ol, menu) {
+  padding: 0;
+  list-style: none;
+}
+:where(.admin-ui) :where(fieldset) {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  min-width: 0;
+}
+:where(.admin-ui) :where(legend) {
+  padding: 0;
+}
+:where(.admin-ui) :where(button, input, select, textarea) {
+  margin: 0;
+  font: inherit;
+  color: inherit;
+  letter-spacing: inherit;
+}
+:where(.admin-ui) :where(button) {
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+}
+:where(.admin-ui) :where(a) {
+  color: inherit;
+  text-decoration: inherit;
+}
+:where(.admin-ui) :where(img, video) {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+:where(.admin-ui) :where(table) {
+  border-collapse: collapse;
+}
+:where(.admin-ui) :where([hidden]:not([hidden='until-found'])) {
+  display: none;
+}
+:where(.admin-ui) :focus-visible {
+  outline: 2px solid var(--ui-focus);
+  outline-offset: 1px;
+}

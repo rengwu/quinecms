@@ -1,7 +1,23 @@
-import { Button } from '@cloudflare/kumo/components/button';
-import { Input } from '@cloudflare/kumo/components/input';
-import { InputArea } from '@cloudflare/kumo/components/input';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import {
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type ReactNode,
+  type RefObject,
+} from 'react';
+import {
+  ImageIcon,
+  LinkSimpleIcon,
+  ListBulletsIcon,
+  ListNumbersIcon,
+  ParagraphIcon,
+  TextBIcon,
+  TextHThreeIcon,
+  TextHTwoIcon,
+  TextItalicIcon,
+  YoutubeLogoIcon,
+} from '@phosphor-icons/react';
 import { LexicalExtensionComposer } from '@lexical/react/LexicalExtensionComposer';
 import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin';
 import { ContentEditable } from '@lexical/react/LexicalContentEditable';
@@ -32,6 +48,7 @@ import {
   FORMAT_TEXT_COMMAND,
   PASTE_COMMAND,
   COMMAND_PRIORITY_HIGH,
+  type BaseSelection,
 } from 'lexical';
 import { HeadingNode, $createHeadingNode } from '@lexical/rich-text';
 import {
@@ -52,6 +69,7 @@ import styles from './editor.module.css';
 import { EMBED, EmbedNode, EmbedMediaContext } from './EmbedNode';
 import EmbedControls from './EmbedControls';
 import { embedDestination } from '../core/embeds';
+import { Button, Input, InputArea } from './ui';
 export const transformers = [
   EMBED,
   HEADING,
@@ -92,9 +110,47 @@ export function supportedMarkdown(value: string): boolean {
   // compare imported/exported data separately before permitting changes.
   return safe;
 }
-function Controls({ value, readOnly }: { value: string; readOnly: boolean }) {
+type Panel = '' | 'link' | 'image' | 'youtube';
+function Controls({
+  value,
+  readOnly,
+  panel,
+  onPanel,
+  selection,
+}: {
+  value: string;
+  readOnly: boolean;
+  panel: Panel;
+  onPanel(panel: Panel): void;
+  /** Where an embed is inserted once its panel is confirmed. */
+  selection: RefObject<BaseSelection | null>;
+}) {
   const [editor] = useLexicalComposerContext();
   const [url, setURL] = useState('');
+  const openEmbed = (next: Panel) => {
+    if (panel === next) return onPanel('');
+    editor.getEditorState().read(() => {
+      selection.current = $getSelection()?.clone() ?? null;
+    });
+    onPanel(next);
+  };
+  const embeds = (
+    <>
+      <span className={styles.formatDivider} aria-hidden />
+      {tool(
+        'Image',
+        <ImageIcon />,
+        () => openEmbed('image'),
+        panel === 'image',
+      )}
+      {tool(
+        'YouTube',
+        <YoutubeLogoIcon />,
+        () => openEmbed('youtube'),
+        panel === 'youtube',
+      )}
+    </>
+  );
   const last = useRef(value);
   useEffect(() => {
     editor.setEditable(!readOnly);
@@ -135,99 +191,98 @@ function Controls({ value, readOnly }: { value: string; readOnly: boolean }) {
           tag === 'p' ? $createParagraphNode() : $createHeadingNode(tag),
         );
     });
+  function tool(
+    label: string,
+    icon: ReactNode,
+    action: () => void,
+    pressed?: boolean,
+  ) {
+    return (
+      <Button
+        size="sm"
+        shape="square"
+        variant="ghost"
+        type="button"
+        disabled={readOnly}
+        aria-label={label}
+        title={label}
+        aria-pressed={pressed}
+        onMouseDown={(e) => e.preventDefault()}
+        onClick={action}
+        icon={icon}
+      />
+    );
+  }
   return (
-    <div className={styles.formatBar}>
-      <Button
-        size="sm"
-        disabled={readOnly}
-        type="button"
-        onMouseDown={(e) => e.preventDefault()}
-        onClick={() => editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'bold')}
-        aria-label="Bold"
-      >
-        <b>B</b>
-      </Button>
-      <Button
-        size="sm"
-        disabled={readOnly}
-        type="button"
-        onMouseDown={(e) => e.preventDefault()}
-        onClick={() => editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'italic')}
-        aria-label="Italic"
-      >
-        <i>I</i>
-      </Button>
-      <Button
-        size="sm"
-        disabled={readOnly}
-        type="button"
-        onMouseDown={(e) => e.preventDefault()}
-        onClick={() => format('h2')}
-      >
-        H2
-      </Button>
-      <Button
-        size="sm"
-        disabled={readOnly}
-        type="button"
-        onMouseDown={(e) => e.preventDefault()}
-        onClick={() => format('h3')}
-      >
-        H3
-      </Button>
-      <Button
-        size="sm"
-        disabled={readOnly}
-        type="button"
-        onMouseDown={(e) => e.preventDefault()}
-        onClick={() => {
+    <>
+      <div className={styles.formatBar} role="toolbar" aria-label="Formatting">
+        {tool('Bold', <TextBIcon weight="bold" />, () =>
+          editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'bold'),
+        )}
+        {tool('Italic', <TextItalicIcon />, () =>
+          editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'italic'),
+        )}
+        <span className={styles.formatDivider} aria-hidden />
+        {tool('Heading 2', <TextHTwoIcon />, () => format('h2'))}
+        {tool('Heading 3', <TextHThreeIcon />, () => format('h3'))}
+        {tool('Paragraph', <ParagraphIcon />, () => {
           editor.dispatchCommand(REMOVE_LIST_COMMAND, undefined);
           format('p');
-        }}
-      >
-        ¶
-      </Button>
-      <Button
-        size="sm"
-        disabled={readOnly}
-        type="button"
-        onMouseDown={(e) => e.preventDefault()}
-        onClick={() =>
-          editor.dispatchCommand(INSERT_UNORDERED_LIST_COMMAND, undefined)
-        }
-        aria-label="Bullet list"
-      >
-        • List
-      </Button>
-      <Button
-        size="sm"
-        disabled={readOnly}
-        type="button"
-        onMouseDown={(e) => e.preventDefault()}
-        onClick={() =>
-          editor.dispatchCommand(INSERT_ORDERED_LIST_COMMAND, undefined)
-        }
-        aria-label="Numbered list"
-      >
-        1. List
-      </Button>
-      <Input
-        size="sm"
-        disabled={readOnly}
-        aria-label="Link URL"
-        placeholder="Link URL"
-        value={url}
-        onChange={(e) => setURL(e.target.value)}
-      />
-      <Button
-        size="sm"
-        type="button"
-        disabled={readOnly || (!!url && !safeURL(url))}
-        onClick={() => editor.dispatchCommand(TOGGLE_LINK_COMMAND, url || null)}
-      >
-        Link
-      </Button>
-    </div>
+        })}
+        <span className={styles.formatDivider} aria-hidden />
+        {tool('Bullet list', <ListBulletsIcon />, () =>
+          editor.dispatchCommand(INSERT_UNORDERED_LIST_COMMAND, undefined),
+        )}
+        {tool('Numbered list', <ListNumbersIcon />, () =>
+          editor.dispatchCommand(INSERT_ORDERED_LIST_COMMAND, undefined),
+        )}
+        <span className={styles.formatDivider} aria-hidden />
+        {tool(
+          'Link',
+          <LinkSimpleIcon />,
+          () => onPanel(panel === 'link' ? '' : 'link'),
+          panel === 'link',
+        )}
+        {embeds}
+      </div>
+      {panel === 'link' && (
+        <div className={styles.formatPanel}>
+          <Input
+            size="sm"
+            disabled={readOnly}
+            aria-label="Link URL"
+            placeholder="https://… or /page"
+            value={url}
+            autoFocus
+            onChange={(e) => setURL(e.target.value)}
+          />
+          <Button
+            size="sm"
+            type="button"
+            variant="ghost"
+            disabled={readOnly}
+            onClick={() => {
+              editor.dispatchCommand(TOGGLE_LINK_COMMAND, null);
+              onPanel('');
+            }}
+          >
+            Remove link
+          </Button>
+          <Button
+            size="sm"
+            type="button"
+            disabled={readOnly || !url || !safeURL(url)}
+            onClick={() => {
+              editor.dispatchCommand(TOGGLE_LINK_COMMAND, url);
+              setURL('');
+              onPanel('');
+            }}
+          >
+            Apply link
+          </Button>
+        </div>
+      )}
+    </>
   );
 }
 export default function RichText({
@@ -238,6 +293,8 @@ export default function RichText({
   media = [],
 }: WidgetProps) {
   const text = typeof value === 'string' ? value : '';
+  const [panel, setPanel] = useState<Panel>('');
+  const selection = useRef<BaseSelection | null>(null);
   const extension = useMemo(
     () =>
       defineExtension({
@@ -277,8 +334,22 @@ export default function RichText({
     <div className={styles.richText}>
       <EmbedMediaContext.Provider value={media}>
         <LexicalExtensionComposer extension={extension} contentEditable={null}>
-          <Controls value={text} readOnly={readOnly} />
-          <EmbedControls media={media} readOnly={readOnly} />
+          <Controls
+            value={text}
+            readOnly={readOnly}
+            panel={panel}
+            onPanel={setPanel}
+            selection={selection}
+          />
+          {(panel === 'image' || panel === 'youtube') && (
+            <EmbedControls
+              media={media}
+              readOnly={readOnly}
+              mode={panel}
+              selection={selection}
+              onClose={() => setPanel('')}
+            />
+          )}
           <RichTextPlugin
             contentEditable={
               <ContentEditable

@@ -139,14 +139,11 @@ async function mount(initial = content, configured = true) {
     ),
   );
 }
-const panel = () =>
-  host.querySelector<HTMLElement>(
-    '[aria-label="Site builder"], [aria-label="Admin workspace"]',
-  )!;
+const panel = () => host.querySelector<HTMLElement>('[data-preview]')!;
 function button(label: string, scope: ParentNode = host) {
   const result = [...scope.querySelectorAll<HTMLButtonElement>('button')].find(
     (el) =>
-      !el.closest('[hidden]') &&
+      !el.closest('[hidden], [inert]') &&
       (el.getAttribute('aria-label') === label ||
         el.textContent?.trim() === label),
   );
@@ -172,7 +169,7 @@ async function fill(label: string, value: string) {
 }
 async function openBlock() {
   await click('Home');
-  await click('Media v1', panel());
+  await click('Media', panel());
 }
 async function chooseFile(
   label = 'File for File',
@@ -207,7 +204,7 @@ afterEach(async () => {
   vi.mocked(upload).mockReset();
 });
 
-it('selects the uploaded file, updates its preview, and keeps it in Media after cancelling block changes', async () => {
+it('selects the uploaded file, updates its preview, and keeps it in Media after discarding block changes', async () => {
   await mount();
   await openBlock();
   await chooseFile();
@@ -229,7 +226,7 @@ it('selects the uploaded file, updates its preview, and keeps it in Media after 
       .querySelector('[data-preview-island="block_media"]')
       ?.getAttribute('data-preview-props'),
   ).toContain(uploaded.id);
-  await click('Cancel block changes');
+  await click('Discard changes');
   expect(draft().pages[0].blocks[0]).toEqual(content.pages[0].blocks[0]);
   expect(draft().media).toEqual([oldMedia, uploaded]);
 });
@@ -247,7 +244,7 @@ it('shows progress, holds editing/navigation during upload, and restores the fie
   await chooseFile();
   expect(panel().textContent).toContain('Uploading original.jpg…');
   expect(button('Upload for File').disabled).toBe(true);
-  expect(button('Cancel block changes').matches(':disabled')).toBe(true);
+  expect(button('Discard changes').matches(':disabled')).toBe(true);
   expect(button('Pages').disabled).toBe(true);
   expect(draft().media).toEqual([oldMedia]);
   await act(async () => reject(new Error('Upload failed: connection lost.')));
@@ -276,7 +273,7 @@ it('hides upload and storage controls when the build has no storage, while prese
     (panel().querySelector('[aria-label="Caption"]') as HTMLInputElement).value,
   ).toBe('Keep this caption');
   expect(upload).not.toHaveBeenCalled();
-  await click('Cancel block changes');
+  await click('Discard changes');
   await click('Media');
   expect(host.textContent).toContain('Uploads are unavailable for this site.');
   expect(host.textContent).not.toContain('Storage settings');
@@ -328,7 +325,7 @@ it('updates a nested list image without changing other rows', async () => {
   ];
   await mount(initial);
   await click('Home');
-  await click('Intr · Project gallery v1');
+  await click('Intr · Project gallery');
   await click('First image');
   await chooseFile('File for Image');
   const rows = draft().pages[0].blocks[0].props.images as any[];
@@ -337,10 +334,10 @@ it('updates a nested list image without changing other rows', async () => {
     (initial.pages[0].blocks[0].props.images as any[])[1],
   );
   await click(
-    '← Back',
-    panel().querySelector('[data-panel-level]:not([hidden])')!,
+    'Close panel',
+    panel().querySelector('[data-panel-level]:not([inert])')!,
   );
-  await click('Cancel block changes');
+  await click('Discard changes');
   expect(draft().pages[0].blocks).toEqual(initial.pages[0].blocks);
   expect(draft().media).toEqual([oldMedia, uploaded]);
 });
@@ -362,7 +359,7 @@ it('keeps an upload from a cancelled new block without inserting the block', asy
 
 it('retains both layout settings and the uploaded record when a layout replaces its content snapshot', async () => {
   await mount();
-  await click('Site Layouts');
+  await click('Layouts');
   await click('Main layout');
   await chooseFile('File for Logo');
   expect((draft().site.layouts![0].design.settings.header as any).logo).toEqual(
@@ -405,7 +402,7 @@ it('uploads from collection entry fields and keeps non-image files selectable wi
     variants: [],
   };
   vi.mocked(upload).mockResolvedValueOnce(pdf);
-  await click('Content');
+  await click('Collections');
   await click('Projects');
   await click('Project oneData only');
   await chooseFile(

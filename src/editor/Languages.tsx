@@ -5,8 +5,6 @@ import {
   useState,
   type ReactNode,
 } from 'react';
-import { Badge } from '@cloudflare/kumo/components/badge';
-import { Select } from '@cloudflare/kumo/components/select';
 import type { Content, Issue } from '../core/types';
 import {
   applyView,
@@ -25,6 +23,7 @@ import {
 } from '../core/languages';
 import { definitions } from '../generated/definitions';
 import styles from './editor.module.css';
+import { Badge, Select } from './ui';
 
 /** The editing language, kept across portal navigation (DEC-219). */
 export const LanguageContext = createContext({

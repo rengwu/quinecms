@@ -1,9 +1,8 @@
-import { Select } from '@cloudflare/kumo/components/select';
-import { Label } from '@cloudflare/kumo/components/label';
 import type { Content } from '../core/types';
 import { siteLayouts } from '../core/layout-state';
 import styles from './editor.module.css';
 import { SharedBadge } from './Languages';
+import { Label, Select } from './ui';
 
 export default function LayoutChoice({
   content,

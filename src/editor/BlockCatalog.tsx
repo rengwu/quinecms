@@ -1,3 +1,4 @@
+import { useBackDepth } from './browser-back';
 import {
   memo,
   useCallback,
@@ -7,9 +8,6 @@ import {
   useState,
   type CSSProperties,
 } from 'react';
-import { Button } from '@cloudflare/kumo/components/button';
-import { Input } from '@cloudflare/kumo/components/input';
-import { Select } from '@cloudflare/kumo/components/select';
 import { CaretLeftIcon, CaretRightIcon, PlusIcon } from '@phosphor-icons/react';
 import type { Block, Content, Context, Definition } from '../core/types';
 import { contextFor } from '../core/content';
@@ -17,6 +15,7 @@ import { siteStyle } from '../core/site-style';
 import { catalogDefinitions, filterCatalog, tagsOf, themeOf } from './catalog';
 import Island from './Island';
 import styles from './catalog.module.css';
+import { Button, Input, Select } from './ui';
 
 function sample(
   d: Definition,
@@ -104,14 +103,18 @@ export default function BlockCatalog({
   content,
   kind,
   placement = 'page',
+  embedded = false,
   onAdd,
 }: {
   definitions: Definition[];
   content: Content;
   kind: 'static' | 'generic';
   placement?: 'page' | 'footer';
+  /** Inside a stack panel, which scrolls the catalog itself. */
+  embedded?: boolean;
   onAdd(d: Definition): void;
 }) {
+  const backDepth = useBackDepth() + 2;
   const [query, setQuery] = useState('');
   const [theme, setTheme] = useState('');
   const [tags, setTags] = useState<string[]>([]);
@@ -164,7 +167,12 @@ export default function BlockCatalog({
                 visibility?.unobserve(element);
               }
             },
-            { root: scrollRef.current },
+            {
+              root: embedded
+                ? (scrollRef.current?.closest<HTMLElement>('[role="dialog"]') ??
+                  null)
+                : scrollRef.current,
+            },
           );
     thumbnailObserver.current = visibility;
     for (const element of pendingThumbnails.current.keys())
@@ -190,6 +198,10 @@ export default function BlockCatalog({
   const [tagScroll, setTagScroll] = useState({ left: false, right: false });
   useEffect(() => {
     if (scrollRef.current) scrollRef.current.scrollTop = 0;
+    const panel = embedded
+      ? scrollRef.current?.closest<HTMLElement>('[role="dialog"]')
+      : null;
+    if (panel) panel.scrollTop = 0;
   }, [preview]);
   const available = useMemo(
     () => catalogDefinitions(definitions, kind, placement),
@@ -237,9 +249,17 @@ export default function BlockCatalog({
   );
   if (preview && data)
     return (
-      <div ref={scrollRef} className={styles.catalog}>
+      <div
+        ref={scrollRef}
+        className={styles.catalog}
+        data-embedded={embedded || undefined}
+      >
         <div className={styles.previewToolbar}>
-          <Button variant="ghost" onClick={() => setPreview(null)}>
+          <Button
+            data-editor-back={backDepth}
+            variant="ghost"
+            onClick={() => setPreview(null)}
+          >
             ← Back
           </Button>
           <div>
@@ -273,7 +293,11 @@ export default function BlockCatalog({
       </div>
     );
   return (
-    <div ref={scrollRef} className={styles.catalog}>
+    <div
+      ref={scrollRef}
+      className={styles.catalog}
+      data-embedded={embedded || undefined}
+    >
       <div className={styles.controls}>
         <Input
           aria-label="Search blocks"
@@ -328,7 +352,7 @@ export default function BlockCatalog({
             <Button
               key={t}
               size="sm"
-              variant={tags.includes(t) ? 'primary' : 'outline'}
+              variant="outline"
               aria-pressed={tags.includes(t)}
               onClick={() =>
                 setTags(

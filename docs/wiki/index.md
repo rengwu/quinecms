@@ -1,9 +1,39 @@
 ---
 title: QuineCMS
-updated: 2026-10-25
+updated: 2026-11-07
 status: Accepted
 ---
 # QuineCMS
+
+Latest design work: [admin redesign](discussions/admin-redesign.md). DEC-234–DEC-244
+accept a complete, compact redesign after Statamic's shell and editor: a top bar
+with breadcrumbs and Save/Publish, a grouped sidebar, stacks for nested items,
+Off/Split/Float live previews, 13px text with 28px controls, Inter, amber and our
+own Base UI components. DEC-245–DEC-248 add two-column editors, blocks in stacks,
+one navigation rule and a top-bar Preview toggle. DEC-249–DEC-250 require full-height
+Split and a resizable sidebar with ellipsis. The implementation passes 293 tests,
+production checks and bounded browser verification; see the [handoff](discussions/admin-rework-handoff.md) and
+[verification](verification/runs/2026-11-07-admin-rework.md). A strict
+[review](discussions/admin-rework-review.md) (2026-11-08) listed defects, departures from
+DEC-242/DEC-247 and inconsistencies; a follow-up pass resolved most of them.
+
+Earlier design work: [admin design-system audit](discussions/admin-design-system-audit.md).
+Before any redesign of the Kumo-based admin, `pnpm gallery` shows every admin
+component, input and editor screen in its states on one page, with dark/light
+mode and forced hover, focus and pressed styles. The audit records why the admin
+reads as basic and chunky. This is the pre-redesign baseline. See the
+[verification](verification/runs/2026-11-07-admin-gallery.md) and the
+[handoff](discussions/admin-design-system-handoff.md).
+
+Latest research: [Statamic competitive and architecture review](discussions/statamic-competitive-review.md).
+Source-backed comparison of Statamic 6 and the current QuineCMS engine, with
+prioritized authoring and architecture proposals. These are research recommendations,
+not accepted implementation scope.
+
+Latest editor fix: browser **Back** follows the current editor's Back/Cancel
+action, including nested forms, and preserves existing draft edits. Root lists
+retain normal browser navigation. See the [editor contract](features/editor.md)
+and [verification](verification/runs/2026-11-03-browser-back.md).
 
 Current discussion: [Kahf recreation readiness study](discussions/kahf-recreation.md).
 The accepted sample is thirteen logical pages: the twelve-page editorial/catalog

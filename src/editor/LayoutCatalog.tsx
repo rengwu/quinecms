@@ -1,11 +1,11 @@
+import { useBackDepth } from './browser-back';
 import { useState } from 'react';
-import { Button } from '@cloudflare/kumo/components/button';
-import { Input } from '@cloudflare/kumo/components/input';
 import type { Content, LayoutDefinition, Page } from '../core/types';
 import { layoutDefinitions, contentForLayout } from '../core/layouts';
 import CatalogHeader from './CatalogHeader';
 import LayoutSurface, { PageBlocks } from './LayoutSurface';
 import catalog from './layout-catalog.module.css';
+import { Button, Input } from './ui';
 
 export default function LayoutCatalog({
   content,
@@ -18,6 +18,7 @@ export default function LayoutCatalog({
   onSelect(definition: LayoutDefinition): void;
   title: string;
 }) {
+  const backDepth = useBackDepth() + 2;
   const [search, setSearch] = useState('');
   const [preview, setPreview] = useState<LayoutDefinition>();
   const [mobile, setMobile] = useState(false);
@@ -53,7 +54,10 @@ export default function LayoutCatalog({
         {preview ? (
           <>
             <div className={catalog.toolbar}>
-              <Button onClick={() => setPreview(undefined)}>
+              <Button
+                data-editor-back={backDepth}
+                onClick={() => setPreview(undefined)}
+              >
                 Back to layouts
               </Button>
               <Button onClick={() => setMobile(!mobile)}>

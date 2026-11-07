@@ -136,7 +136,6 @@ export async function prepareSite(siteRoot, { development = false } = {}) {
     'generate-layouts.mjs',
     'admin-build.ts',
     'build-assets.mjs',
-    'kumo-styles.mjs',
     'validate-content.ts',
     'check-build.mjs',
   ])

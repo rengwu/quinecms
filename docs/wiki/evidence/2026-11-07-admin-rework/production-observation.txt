@@ -1,0 +1,12 @@
+Native browser final production check, 2026-11-07. Local fixture /admin/ on port 5322.
+Unlocked via login, opened Home, clicked Count 0, changed Split to Float and device, closed and reopened Preview.
+								43 splitter Resize navigation, Value: 279.5
+							70 container Live preview
+								73 button Float preview
+									77 text Fixture
+										79 heading Fixture, Value: 1
+											80 text Fixture
+									82 button Count 1
+									83 text Fixture
+									84 text Fixture
+									85 text Static HTML

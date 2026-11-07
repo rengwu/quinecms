@@ -1,3 +1,4 @@
+import './font';
 export {};
 
 const form = document.querySelector<HTMLFormElement>('#admin-login')!;

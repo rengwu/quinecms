@@ -1,6 +1,6 @@
 ---
 title: Verification setup
-updated: 2026-10-25
+updated: 2026-11-07
 ---
 # Verification setup
 
@@ -19,7 +19,12 @@ pnpm preview --port 4321
 
 The preview serves the built static `dist/` on `http://127.0.0.1:4321`. Check `/` and `/admin/` return HTTP 200. Use a different explicit port if another process owns 4321; do not stop unrelated processes. `pnpm dev` is the source development alternative. The CLI watches local site inputs and regenerates its disposable workspace. Restart after installing dependencies or changing environment values. Check both a public route and `/admin/` in the final running instance, not just an isolated production build.
 
-For editor startup changes, exercise `/admin/` in both development and production preview. HTTP 200 and a successful build do not prove that React mounted: verify the Pages table and main sidebar first, then open a page row to check the drawer and live preview, change a block field and cancel it, and check the browser console. The [startup repair](runs/2026-10-05T0910Z-admin-startup.md) caught a development-only missing React preamble that the initial production checks missed.
+Engine source is copied into the site's generated workspace during assembly.
+Restart the site command after upstream engine edits and compare the changed
+source with `.quinecms/workspace/src/` before attributing browser results to the
+new build. The site watcher does not watch the engine checkout.
+
+For editor startup changes, exercise `/admin/` in both development and production preview. HTTP 200 and a successful build do not prove that React mounted: verify the Pages table and main sidebar first, then open a page row to check the record editor and live preview, change a block field and cancel it, and check the browser console. The [startup repair](runs/2026-10-05T0910Z-admin-startup.md) caught a development-only missing React preamble that the initial production checks missed.
 
 For unfinished content, `pnpm validate:content --draft` runs structural checks without requiring publishable routes or required values. `--base <git-ref>` also compares schema changes/deletion impact with a local commit; it can be combined with `--draft`. The command refreshes generated registries only and does not write content or remote state.
 
@@ -142,3 +147,31 @@ Hash the library source/preset/assets/configuration, site records/configuration,
 lockfiles and built output; exclude `.env`, generated workspaces and browser
 recovery. Settings → Discard edits restores disposable browser checks. The run
 report records the input/output manifests and screenshots.
+
+### Admin rework fixtures
+
+The 2026-11-07 rework used an engine-owned `projectFixture()` plus a separate
+copy of the library Tessera preset, with disposable local login and no providers.
+The current review instance is recorded in the
+[handoff](../discussions/admin-rework-handoff.md). Commands from the site root:
+
+```sh
+node /absolute/path/to/quinecms/bin/quinecms.mjs dev --host 127.0.0.1 --port 5321
+node /absolute/path/to/quinecms/bin/quinecms.mjs build
+node /absolute/path/to/quinecms/bin/quinecms.mjs check-build
+node /absolute/path/to/quinecms/bin/quinecms.mjs check
+node /absolute/path/to/quinecms/bin/quinecms.mjs preview --host 127.0.0.1 --port 5322
+```
+
+Run build/check on a different fixture from the running dev instance. The native
+browser driver exercised the UI through accessibility controls and screenshots;
+no application-state injection was used. Gallery frames on port 5319 supply
+390px and 1280px specimens. Preview variants include Split, Float, Float mobile,
+Mobile canvas and Off. Native dragging verifies sidebar and floating geometry;
+keyboard arrows/Home/End verify the sidebar bounds. Each state change preserves
+the preview's live island, observable with the production fixture counter.
+
+When concurrent site builds exhaust CPU, the complete engine suite can be run as
+`pnpm exec vitest run --maxWorkers=4`; this selects the same tests. Wiki checks
+remain a separate required step. Do not infer live provider behavior from gallery
+transport mocks. See the [rework run](runs/2026-11-07-admin-rework.md).

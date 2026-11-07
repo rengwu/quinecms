@@ -49,7 +49,7 @@ Generated public routes import their assigned design wrapper and optional Head d
 
 `contentForPage` and `contentForLayout` provide render-only content views. In those views, the existing `activeLayout`, `layoutGlobals` and `layoutTitle` APIs resolve the chosen configuration via `site.layout`. Do not save these views: persisted content stores `site.layouts` only. This keeps author components unchanged while supporting per-page selection.
 
-`LayoutSettingsProps` supplies `settings`, `content` and `onChange(settings)`. Authors may build arbitrary React settings UI or reuse `Fields` and `PanelSection`; no universal header/footer/theme schema is imposed. Repeated fields use the editor-wide `PanelNavigation` boundary. Custom drill-down controls must use `PanelLevel` so parent and sibling controls disappear until Back.
+`LayoutSettingsProps` supplies `settings`, `content` and `onChange(settings)`. Authors may build arbitrary React settings UI or reuse `Fields` and `PanelSection`; no universal header/footer/theme schema is imposed. Repeated fields use the editor-wide `PanelNavigation` boundary. Custom drill-down controls use `PanelLevel` to open a slide-over panel. The parent remains mounted and inert until the panel closes; the live preview stays available. See the [editor workspace contract](editor.md#workspace-and-navigation).
 
 The pure policy can derive `title`, optional block-context `globals`, and validation through `fields`, `blocks` and `add`. Library layout manifests declare spacing in `defaults`; their settings controls use those defaults as placeholders, and their policies resolve blank/invalid overrides with `contentSpacing`. Both wrappers and block context consume `layoutGlobals`, keeping public rendering and preview consistent. Width must be finite and positive; gutter must be finite and nonnegative. Invalid explicit overrides fail structural validation. Keep browser/editor dependencies out of this module because public content validation also loads it. Styling tokens are optional: no categories, badges, filtering, warnings or compatibility gates depend on a block's styling choices. Static/generic field-binding rules remain separate.
 
@@ -77,6 +77,8 @@ compatibility rules remain. Choosing a layout does not restrict the block catalo
 8. Verify used layouts cannot be disabled/deleted, generic pages count without entries, the last active layout is protected, and unused incomplete layouts do not block publication. Build pages using different designs and check their wrappers, titles, spacing and assets.
 
 ## Verification history
+
+- [Admin rework](../verification/runs/2026-11-07-admin-rework.md): new shell, nested creation panels and shared preview workspace.
 
 - [Multiple layout configurations](../verification/runs/2026-10-13-multiple-site-layouts.md): lifecycle, assignments, validation, recovery and per-route builds.
 

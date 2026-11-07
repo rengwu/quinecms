@@ -1,8 +1,5 @@
 import { CaretRightIcon, PlusIcon } from '@phosphor-icons/react';
-import { useState } from 'react';
-import { Button } from '@cloudflare/kumo/components/button';
-import { Input } from '@cloudflare/kumo/components/input';
-import { Label } from '@cloudflare/kumo/components/label';
+import { useEffect, useState } from 'react';
 import type {
   Content,
   ObjectDefinition,
@@ -30,9 +27,11 @@ import SchemaFieldEditor from './SchemaFieldEditor';
 import CollectionSchema from './CollectionSchema';
 import styles from './editor.module.css';
 import FormScreen from './FormScreen';
+import PageHeader from './PageHeader';
 import { ModelContext } from './ModelContext';
 import UsageList from './UsageList';
 import type { UsageTarget } from './usage';
+import { Button, Input, Label, useToast } from './ui';
 export default function Schemas({
   area,
   selectedId: selected,
@@ -48,7 +47,17 @@ export default function Schemas({
   onChange(c: Content): void;
   onOpenUsage(target: UsageTarget): void;
 }) {
+  const toast = useToast();
   const [error, setError] = useState('');
+  useEffect(() => {
+    if (error)
+      toast.add({
+        title: 'Unable to complete',
+        description: error,
+        variant: 'error',
+        timeout: 0,
+      });
+  }, [error]);
   const [notice, setNotice] = useState('');
   const [pending, setPending] = useState<Collection | ObjectDefinition | null>(
     null,
@@ -156,6 +165,84 @@ export default function Schemas({
     }
   }
 
+  const listing = (
+    <>
+      <PageHeader
+        title={area === 'collections' ? 'Collection schemas' : 'Objects'}
+        description={
+          area === 'collections'
+            ? 'The fields each collection stores. Entries are edited under Content.'
+            : 'Field groups shared by collections and blocks.'
+        }
+        actions={
+          area === 'collections' ? (
+            <>
+              <Button
+                variant="secondary"
+                icon={<PlusIcon />}
+                onClick={() => createCollection('single')}
+              >
+                Add single-entry collection
+              </Button>
+              <Button
+                variant="secondary"
+                icon={<PlusIcon />}
+                onClick={() => createCollection('many')}
+              >
+                Add collection
+              </Button>
+            </>
+          ) : (
+            <Button
+              variant="secondary"
+              icon={<PlusIcon />}
+              onClick={() => {
+                const o: ObjectDefinition = {
+                  formatVersion: 1,
+                  id: id('object'),
+                  name: 'New object',
+                  fields: [],
+                };
+                setPending(o);
+              }}
+            >
+              Add object
+            </Button>
+          )
+        }
+      />
+      <ul
+        className={styles.recordList}
+        aria-label={
+          area === 'collections' ? 'Collection schemas' : 'Object definitions'
+        }
+      >
+        {(area === 'collections' ? content.collections : content.objects).map(
+          (record) => (
+            <li key={record.id}>
+              <Button
+                className={styles.recordButton}
+                aria-label={`${record.name} · ${record.fields.length} ${record.fields.length === 1 ? 'field' : 'fields'}`}
+                onClick={() => select(record.id)}
+              >
+                <span className={styles.recordLabel}>
+                  <span>{record.name}</span>
+                  <span className={styles.muted}>
+                    {record.fields.length}{' '}
+                    {record.fields.length === 1 ? 'field' : 'fields'}
+                    {'mode' in record && record.mode === 'single'
+                      ? ' · Single entry'
+                      : ''}
+                  </span>
+                </span>
+                <CaretRightIcon aria-hidden="true" />
+              </Button>
+            </li>
+          ),
+        )}
+      </ul>
+    </>
+  );
   return (
     <ModelContext.Provider value={model}>
       {error && (
@@ -168,6 +255,7 @@ export default function Schemas({
           {notice}
         </p>
       )}
+      {((!collection && !object) || pending) && listing}
       {collection ? (
         <CollectionSchema
           collection={collection}
@@ -235,79 +323,7 @@ export default function Schemas({
               select('');
           }}
         />
-      ) : (
-        <>
-          <h2>{area === 'collections' ? 'Collections' : 'Objects'}</h2>
-          <div className={styles.row}>
-            {area === 'collections' ? (
-              <>
-                <Button
-                  variant="primary"
-                  icon={<PlusIcon />}
-                  onClick={() => createCollection('many')}
-                >
-                  Add collection
-                </Button>
-                <Button
-                  variant="primary"
-                  icon={<PlusIcon />}
-                  onClick={() => createCollection('single')}
-                >
-                  Add single-entry collection
-                </Button>
-              </>
-            ) : (
-              <Button
-                variant="primary"
-                icon={<PlusIcon />}
-                onClick={() => {
-                  const o: ObjectDefinition = {
-                    formatVersion: 1,
-                    id: id('object'),
-                    name: 'New object',
-                    fields: [],
-                  };
-                  setPending(o);
-                }}
-              >
-                Add object
-              </Button>
-            )}
-          </div>
-          <ul
-            className={styles.recordList}
-            aria-label={
-              area === 'collections'
-                ? 'Collection schemas'
-                : 'Object definitions'
-            }
-          >
-            {(area === 'collections'
-              ? content.collections
-              : content.objects
-            ).map((record) => (
-              <li key={record.id}>
-                <Button
-                  className={styles.recordButton}
-                  onClick={() => select(record.id)}
-                >
-                  <span>
-                    {record.name}
-                    <span className={styles.muted}>
-                      {' · '}
-                      {record.fields.length} fields
-                      {'mode' in record && record.mode === 'single'
-                        ? ' · Single entry'
-                        : ''}
-                    </span>
-                  </span>
-                  <CaretRightIcon />
-                </Button>
-              </li>
-            ))}
-          </ul>
-        </>
-      )}
+      ) : null}
     </ModelContext.Provider>
   );
 }
@@ -356,54 +372,66 @@ function ObjectSchema({
               values.push(row);
       });
   }
-  if (pendingField)
-    return (
-      <SchemaFieldEditor
-        field={pendingField}
-        media={content.media}
-        values={[]}
-        onChange={setPendingField}
-        onBack={() => setPendingField(null)}
-        onDelete={() => {}}
-        onCreate={() => {
-          if (
-            onChange({
-              ...object,
-              fields: [...object.fields, pendingField],
-            }) !== false
-          )
-            setPendingField(null);
-        }}
-      />
-    );
-  if (field)
-    return (
-      <SchemaFieldEditor
-        field={field}
-        values={values.map((v) => v[field.key])}
-        media={content.media}
-        onBack={() => select(null)}
-        onChange={(next) =>
+  const pendingEditor = pendingField ? (
+    <SchemaFieldEditor
+      field={pendingField}
+      media={content.media}
+      values={[]}
+      onChange={setPendingField}
+      onBack={() => setPendingField(null)}
+      onDelete={() => {}}
+      onCreate={() => {
+        if (
           onChange({
             ...object,
-            fields: object.fields.map((f, i) => (i === selected ? next : f)),
-          })
-        }
-        onDelete={() => {
-          onChange({
-            ...object,
-            fields: object.fields.filter((_, i) => i !== selected),
-          });
-          select(null);
-        }}
-      />
-    );
+            fields: [...object.fields, pendingField],
+          }) !== false
+        )
+          setPendingField(null);
+      }}
+    />
+  ) : null;
+  const fieldEditor = field ? (
+    <SchemaFieldEditor
+      field={field}
+      values={values.map((v) => v[field.key])}
+      media={content.media}
+      onBack={() => select(null)}
+      onChange={(next) =>
+        onChange({
+          ...object,
+          fields: object.fields.map((f, i) => (i === selected ? next : f)),
+        })
+      }
+      onDelete={() => {
+        onChange({
+          ...object,
+          fields: object.fields.filter((_, i) => i !== selected),
+        });
+        select(null);
+      }}
+    />
+  ) : null;
   return (
     <FormScreen
       title={onCreate ? 'New object' : object.name || 'Untitled object'}
       onBack={onBack}
       creation={onCreate ? { label: 'Create object', onCreate } : undefined}
+      menu={
+        onCreate
+          ? undefined
+          : [
+              {
+                label: 'Delete unused object',
+                destructive: true,
+                disabled: uses.length > 0,
+                onSelect: onDelete,
+              },
+            ]
+      }
     >
+      {pendingEditor}
+      {fieldEditor}
       <div className={styles.field}>
         <Label htmlFor="object-name">Name</Label>
         <Input
@@ -420,9 +448,9 @@ function ObjectSchema({
         onOpen={onOpenUsage}
       />
       <div className={styles.sectionHeader}>
-        <h3>Fields</h3>
+        <h2>Fields</h2>
         <Button
-          variant="primary"
+          variant="secondary"
           icon={<PlusIcon />}
           onClick={() => {
             let n = object.fields.length;
@@ -441,20 +469,15 @@ function ObjectSchema({
         {object.fields.map((f, i) => (
           <li key={i}>
             <Button className={styles.recordButton} onClick={() => select(i)}>
-              {f.label} · {f.type} →
+              <span className={styles.recordLabel}>
+                <span>{f.label || 'Untitled field'}</span>
+                <span className={styles.muted}>{f.type}</span>
+              </span>
+              <CaretRightIcon aria-hidden="true" />
             </Button>
           </li>
         ))}
       </ul>
-      {!onCreate && (
-        <Button
-          variant="secondary-destructive"
-          disabled={uses.length > 0}
-          onClick={onDelete}
-        >
-          Delete unused object
-        </Button>
-      )}
     </FormScreen>
   );
 }

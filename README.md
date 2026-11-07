@@ -1,4 +1,9 @@
-# QuineCMS
+<h1>
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/brand/quinecms-logo-dark.svg" />
+    <img src="docs/brand/quinecms-logo.svg" alt="QuineCMS" height="48" />
+  </picture>
+</h1>
 
 QuineCMS is a Git-based CMS for static websites. Developers define layouts,
 blocks, and editable fields in code. Editors manage pages and structured content
@@ -90,4 +95,6 @@ pnpm install --frozen-lockfile
 pnpm verify
 ```
 
-`pnpm verify` runs the test suite and documentation checks.
+`pnpm verify` runs the test suite and documentation checks. `pnpm gallery`
+previews every admin component and screen in its states; see
+[the admin gallery](tools/admin-gallery/README.md).

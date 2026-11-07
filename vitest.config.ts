@@ -9,5 +9,6 @@ export default defineConfig({
       },
     ],
   },
-  test: { include: ['tests/**/*.test.ts'], environment: 'node' },
+  oxc: { jsx: { runtime: 'automatic', importSource: 'react' } },
+  test: { include: ['tests/**/*.test.{ts,tsx}'], environment: 'node' },
 });

@@ -97,7 +97,9 @@ async function mount() {
   );
 }
 const visible = () =>
-  [...host.querySelectorAll('button')].filter((b) => !b.closest('[hidden]'));
+  [...host.querySelectorAll('button')].filter(
+    (b) => !b.closest('[hidden], [inert]'),
+  );
 async function click(label: string | RegExp) {
   const found = visible().find((b) =>
     typeof label === 'string'
@@ -133,7 +135,7 @@ async function type(label: string, value: string) {
 it('creates and edits a language copy from the top-bar language without changing shared values', async () => {
   await mount();
   await language('Indonesian');
-  await click('Content');
+  await click('Collections');
   await click('Journal');
   expect(host.textContent).toContain('No copy');
   await click(/^First entry/);

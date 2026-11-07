@@ -1,7 +1,7 @@
-import { Button } from '@cloudflare/kumo/components/button';
-import { Dialog } from '@cloudflare/kumo/components/dialog';
+import { useBackDepth } from './browser-back';
 import { XIcon } from '@phosphor-icons/react';
 import styles from './editor.module.css';
+import { Button, Dialog } from './ui';
 
 export default function CatalogHeader({
   title,
@@ -12,13 +12,19 @@ export default function CatalogHeader({
   closeLabel: string;
   description?: string;
 }) {
+  const backDepth = useBackDepth() + 1;
   return (
     <div className={styles.catalogHeader}>
       <div className={styles.catalogTitleRow}>
         <Dialog.Title>{title}</Dialog.Title>
         <Dialog.Close
           render={
-            <Button variant="ghost" shape="square" aria-label={closeLabel} />
+            <Button
+              data-editor-back={backDepth}
+              variant="ghost"
+              shape="square"
+              aria-label={closeLabel}
+            />
           }
         >
           <XIcon size={20} />

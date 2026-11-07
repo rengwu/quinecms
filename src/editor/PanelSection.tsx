@@ -1,7 +1,7 @@
 import { useId, type ReactNode } from 'react';
 import styles from './editor.module.css';
 
-// One layout contract for sidebar groups. Kumo continues to own the controls.
+// One layout contract for sidebar groups; controls come from ./ui.
 export default function PanelSection({
   title,
   action,

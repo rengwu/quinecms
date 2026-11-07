@@ -9,10 +9,10 @@ import type { ReactNode } from 'react';
 import { createContext, useContext } from 'react';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { useLexicalEditable } from '@lexical/react/useLexicalEditable';
-import { Button } from '@cloudflare/kumo/components/button';
 import type { Media } from '../core/types';
 import { embedDestination, embedMarkdown } from '../core/embeds';
 import styles from './editor.module.css';
+import { Button } from './ui';
 
 export const EmbedMediaContext = createContext<Media[]>([]);
 type SerializedEmbed = SerializedLexicalNode & {

@@ -1,0 +1,46 @@
+{
+  "revision": "309c0baf8000dbda8e19363043a8565a96efd106",
+  "dirty": true,
+  "node": "v22.19.0",
+  "source": {
+    "src/editor/App.tsx": "f28dee75d10e8fc25b4563c71d6cb54ca55850b1ebdcaf2cfbb4f62b6ec6cc30",
+    "src/editor/BlockCatalog.tsx": "0b1f5ffc7568f4b9792efccd5f9c0712f55144d52fedfd112a209f8a140c5620",
+    "src/editor/CatalogHeader.tsx": "915ab0b0c4d92e60026fa3d6196dbb2fb23efbd1a445ae3ec22cfb586a6baa06",
+    "src/editor/FormScreen.tsx": "56c2e4fd81259c7605e54ff24a3b42c10113e32fd4ec47b0e6a40374d65500c4",
+    "src/editor/LayoutCatalog.tsx": "f05ba48f6064153cbb7394a7be20ddfa23222826d87590843016261be2624e4e",
+    "src/editor/PanelNavigation.tsx": "341c0ab88fd520580319d7f7911f36c9bd0c6f6fb81eb497478bbf1ec3e8393c",
+    "src/editor/SchemaFieldEditor.tsx": "9c47bc5228619fbd6b085a89078ccba437926572dd13568c7179a14ef86eebc5",
+    "src/editor/SiteLayouts.tsx": "091a54ab020f5810a1625ea5614bda307fddd7632c7cb82c14249351ec3d8d75",
+    "tests/editor-navigation.test.ts": "256cc47a8a8f44890d67a62571a97e1a6c7ca151cdccde1392798f5339b98ce3",
+    "src/editor/browser-back.ts": "df4d581636d2e961432d4408ad20a1ef1a4e056c576990ffd5e94d1f0fa3ecb7",
+    "package.json": "2b06463c8c75bb99aa6672e3c966352e8d59d0a434c69a9809995a94cddc12a6",
+    "pnpm-lock.yaml": "bf3adb3a4086b7630e04f7ce068919f8d3c9aa08b66296705154079a99826cd7",
+    "tests/support/project.ts": "9b5185c2a1646a9d49e5cbf8796fea1d0710bc0a56e21e97c02b087d5b513a04"
+  },
+  "fixtureContent": {
+    "content/collections/collection_journal.json": "9f8f91868cf5188c9140b787c31e7c8e14f4611fc4661e03e7041847fa843198",
+    "content/entries/collection_journal/entry_first.json": "0c77a438ca4a82a26889b3b79d6db36eec3dfefcfbf83a84a65078116f5677cd",
+    "content/pages/page_entry.json": "f5755da810741890c79ec3102032dac860a94fc7bf670b46c21a817cef93cd3e",
+    "content/pages/page_home.json": "0b1ff593eeaae33c0c567e7a8297c87d37a7d9b9c1c1c8bdc58828bd8c63a185",
+    "content/pages/page_journal.json": "03c9c7cec198208754cac34dc2413955724353965fc0ee63f7399d74266e90c7",
+    "content/site.json": "20e7c032ea0270728701190e40d630d05a83dd6d7e522fdd4a286d00ab67862d"
+  },
+  "built": {
+    "dist/_astro/View.CmtWBxJS.js": "21dbf208ebc73163a141f66db5422d27b0380cf47e44ba67a882e603fb402248",
+    "dist/_astro/View.D-aZGgCa.js": "32973410c7a0e229b717fe14fd38fad04a286365333d7b9ff3474d1211ec5dd0",
+    "dist/_astro/View.D4gWRHgN.js": "da91fe06640c0c6808675f512bfefd57d7698989d4f3787ce8a7b17cb92c8b93",
+    "dist/_astro/client.36kBiTn9.js": "a8e0849499ee9bf68790f38bf02e18bdcd048d3cc245308f81ff5b44f7586790",
+    "dist/_astro/client.CLhIxG29.js": "4698c577644dd82e07506c5a67216e21b73de9e14974388ab099053a7dcaec7f",
+    "dist/_astro/client.CqNkUr3r.js": "c0b4d651c01cc6273493fda7de4524d5af09976906ca12a8c5fc50d2027f6da1",
+    "dist/_astro/client.svelte.DBI82BSX.js": "bedf43d416b8eed3352e9fb5e79deca7538d2566ea1ed2139679389e456fca6d",
+    "dist/_astro/crypto.BF1IeCf1.js": "5d47f41fc9384f22f889b15840155553e71a3d8352768e63a0eafc1457841dc3",
+    "dist/_astro/index.B-lfIjY8.css": "e3f82f062c8beb72d94f23a60693f4e71d04b90d763231f0f25ffe9186a83da9",
+    "dist/_astro/index.astro_astro_type_script_index_0_lang.DkVUZO9T.js": "e1734629355b12be6ee9f24d7d233dce2b520ad99531b3fc7b4e21161555f966",
+    "dist/_astro/react.DJY1zw8Z.js": "702812fc9378c73101b63526d0318d087e3d267ac7d54d67bd9c269dd1fcdbb6",
+    "dist/_astro/runtime-core.esm-bundler.DiiDXvlA.js": "6e68af06212ebf12394ebd412d50b6a0ccf1eefeac589089519cce66553054d2",
+    "dist/admin/index.html": "b5e2437a8e232f0bb319d0f68a388bc436a7fedc031b41dc5c78c9fed89913f1",
+    "dist/index.html": "0810c5f8968c3259203ac7c7fefc2283c71b1064bcc6e0311202550f52ab9d09",
+    "dist/journal/a-slower-way-to-build/index.html": "b9c69dd26721235814993957c00bbe3b9190d4c309722f6d5fec8414f09ac6fa",
+    "dist/journal/index.html": "4ef2c3a832f2eda8aebada6b618dbf90c36e562e1c1486ee55220da387b399e0"
+  }
+}

@@ -1,10 +1,7 @@
+import { BackDepth, useBackDepth } from './browser-back';
+import type { ComponentProps } from 'react';
 import { useState } from 'react';
-import { PlusIcon } from '@phosphor-icons/react';
-import { Button } from '@cloudflare/kumo/components/button';
-import { Input, InputArea } from '@cloudflare/kumo/components/input';
-import { Select } from '@cloudflare/kumo/components/select';
-import { Checkbox } from '@cloudflare/kumo/components/checkbox';
-import { Label } from '@cloudflare/kumo/components/label';
+import { CaretRightIcon, PlusIcon } from '@phosphor-icons/react';
 import type { Field, Media, ObjectShape } from '../core/types';
 import { hasValue, isRecord } from '../core/schema';
 import { useModel } from './ModelContext';
@@ -13,8 +10,19 @@ import { PanelLevel } from './PanelNavigation';
 import Fields from './Fields';
 import styles from './editor.module.css';
 import FormScreen from './FormScreen';
+import { Button, Checkbox, Input, InputArea, Label, Select } from './ui';
 
-export default function SchemaFieldEditor({
+export default function SchemaFieldEditor(
+  props: ComponentProps<typeof FieldEditor>,
+) {
+  const depth = Math.max(1, useBackDepth()) + 1;
+  return (
+    <BackDepth.Provider value={depth}>
+      <FieldEditor {...props} />
+    </BackDepth.Provider>
+  );
+}
+function FieldEditor({
   field,
   values,
   media,
@@ -56,47 +64,45 @@ export default function SchemaFieldEditor({
     } else if (field.type === 'array')
       return onChange({ ...field, of: { type: 'object', ...next } });
   }
-  if (pendingChild)
-    return (
-      <SchemaFieldEditor
-        field={pendingChild}
-        media={media}
-        values={[]}
-        depth={depth + 1}
-        onChange={setPendingChild}
-        onBack={() => setPendingChild(null)}
-        onDelete={() => {}}
-        onCreate={() => {
-          if (setShape({ fields: [...children, pendingChild] }) !== false)
-            setPendingChild(null);
-        }}
-      />
-    );
-  if (child)
-    return (
-      <SchemaFieldEditor
-        key={childIndex}
-        field={child}
-        media={media}
-        depth={depth + 1}
-        values={(field.type === 'array'
-          ? values.flatMap((v) => (Array.isArray(v) ? v : []))
-          : values
-        )
-          .filter(isRecord)
-          .map((v) => v[child.key])}
-        onBack={() => selectChild(null)}
-        onChange={(next) =>
-          setShape({
-            fields: children.map((f, i) => (i === childIndex ? next : f)),
-          })
-        }
-        onDelete={() => {
-          setShape({ fields: children.filter((_, i) => i !== childIndex) });
-          selectChild(null);
-        }}
-      />
-    );
+  const pendingEditor = pendingChild ? (
+    <SchemaFieldEditor
+      field={pendingChild}
+      media={media}
+      values={[]}
+      depth={depth + 1}
+      onChange={setPendingChild}
+      onBack={() => setPendingChild(null)}
+      onDelete={() => {}}
+      onCreate={() => {
+        if (setShape({ fields: [...children, pendingChild] }) !== false)
+          setPendingChild(null);
+      }}
+    />
+  ) : null;
+  const childEditor = child ? (
+    <SchemaFieldEditor
+      key={childIndex}
+      field={child}
+      media={media}
+      depth={depth + 1}
+      values={(field.type === 'array'
+        ? values.flatMap((v) => (Array.isArray(v) ? v : []))
+        : values
+      )
+        .filter(isRecord)
+        .map((v) => v[child.key])}
+      onBack={() => selectChild(null)}
+      onChange={(next) =>
+        setShape({
+          fields: children.map((f, i) => (i === childIndex ? next : f)),
+        })
+      }
+      onDelete={() => {
+        setShape({ fields: children.filter((_, i) => i !== childIndex) });
+        selectChild(null);
+      }}
+    />
+  ) : null;
   const reference =
     field.type === 'reference'
       ? field
@@ -122,10 +128,24 @@ export default function SchemaFieldEditor({
     );
   return (
     <FormScreen
+      stack
       title={onCreate ? 'New field' : field.label || 'Untitled field'}
       onBack={onBack}
       creation={onCreate ? { label: 'Create field', onCreate } : undefined}
+      actions={
+        onCreate ? undefined : (
+          <Button
+            variant="secondary-destructive"
+            disabled={populated || titleField}
+            onClick={onDelete}
+          >
+            Remove field
+          </Button>
+        )
+      }
     >
+      {pendingEditor}
+      {childEditor}
       <div className={styles.field}>
         <Label htmlFor="schema-label">Label</Label>
         <Input
@@ -299,7 +319,7 @@ export default function SchemaFieldEditor({
                   {field.type === 'array' ? 'Item fields' : 'Object fields'}
                 </h3>
                 <Button
-                  variant="primary"
+                  variant="secondary"
                   icon={<PlusIcon />}
                   onClick={() => {
                     let n = children.length;
@@ -321,7 +341,11 @@ export default function SchemaFieldEditor({
                       className={styles.recordButton}
                       onClick={() => selectChild(i)}
                     >
-                      {f.label} · {f.type} →
+                      <span className={styles.recordLabel}>
+                        <span>{f.label || 'Untitled field'}</span>
+                        <span className={styles.muted}>{f.type}</span>
+                      </span>
+                      <CaretRightIcon aria-hidden="true" />
                     </Button>
                   </li>
                 ))}
@@ -392,20 +416,12 @@ export default function SchemaFieldEditor({
             }
           />
         )}
-      <Button onClick={() => setEditingDefault(true)}>
+      <Button
+        className={styles.alignStart}
+        onClick={() => setEditingDefault(true)}
+      >
         Edit default value
       </Button>
-      {!onCreate && (
-        <div className={styles.actionFooter}>
-          <Button
-            variant="secondary-destructive"
-            disabled={populated || titleField}
-            onClick={onDelete}
-          >
-            Remove field
-          </Button>
-        </div>
-      )}
     </FormScreen>
   );
 }

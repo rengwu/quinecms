@@ -1,0 +1,35 @@
+Registered 5 block versions.
+Registered 2 layout versions.
+22:51:38 [types] Generated 57ms
+22:51:38 [check] Getting diagnostics for Astro files in /private/var/folders/00/h_k67s0j5dq0qvg6ylqysk2w0000gn/T/quinecms-site-test-INNXXE/.quinecms/workspace...
+src/generated/pages/entry_first.astro:17:7 - warning ts(6133): 'blocks' is declared but its value is never read.
+
+17 const blocks=page.blocks.map(b=>resolveBlock(b,entry.values,content,collection.fields));
+         ~~~~~~
+src/generated/pages/entry_first.astro:8:1 - warning ts(6133): 'definitions' is declared but its value is never read.
+
+8 import {definitions} from '../definitions';
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+src/generated/pages/entry_first.astro:7:1 - warning ts(6133): 'contextFor' is declared but its value is never read.
+
+7 import {contextFor} from '../../core/content';
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+src/generated/pages/page_journal.astro:15:7 - warning ts(6133): 'blocks' is declared but its value is never read.
+
+15 const blocks=page.blocks;
+         ~~~~~~
+src/generated/pages/page_journal.astro:8:1 - warning ts(6133): 'definitions' is declared but its value is never read.
+
+8 import {definitions} from '../definitions';
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+src/generated/pages/page_journal.astro:7:1 - warning ts(6133): 'contextFor' is declared but its value is never read.
+
+7 import {contextFor} from '../../core/content';
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Result (119 files): 
+- 0 errors
+- 0 warnings
+- 6 hints
+

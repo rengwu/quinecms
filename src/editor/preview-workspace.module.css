@@ -1,0 +1,249 @@
+.workbench {
+  grid-area: workspace;
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+  isolation: isolate;
+}
+.workbench[data-preview='split'] {
+  grid-template-columns: minmax(0, 1fr) minmax(
+      0,
+      min(var(--preview-share), calc(100% - 280px))
+    );
+}
+.preview {
+  container: preview-pane / inline-size;
+  box-sizing: border-box;
+  position: relative;
+  grid-column: 2;
+  grid-row: 1;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  /* The space around a narrower device matches the admin canvas. */
+  background: #121110;
+  border-left: 1px solid #3a3733;
+}
+.preview[data-admin-mode='light'] {
+  background: #e9e7e2;
+  border-left-color: #d5d1c9;
+}
+.preview[data-preview-mode='off'] {
+  display: none;
+}
+.preview[data-preview-mode='float'] {
+  position: absolute;
+  /* A positioned grid child otherwise uses its split-column grid area as
+     the containing block, placing the floating window beyond the editor. */
+  grid-area: auto;
+  z-index: 30;
+  border: 1px solid #4a4640;
+  border-radius: 8px;
+  box-shadow: 0 16px 48px rgb(0 0 0 / 0.45);
+  overflow: visible;
+}
+.preview[data-preview-mode='float'][data-admin-mode='light'] {
+  border-color: #c9c4bb;
+  box-shadow: 0 16px 48px rgb(29 27 24 / 0.22);
+}
+.preview[data-preview-mode='float'] .viewport {
+  overflow: hidden;
+  border-radius: 0 0 7px 7px;
+}
+.toolbar {
+  height: 28px;
+  flex-shrink: 0;
+  display: flex;
+  gap: 4px;
+  min-width: 0;
+  overflow: hidden;
+  align-items: center;
+  padding: 2px 4px 2px 8px;
+  background: var(--ui-raised);
+  border-bottom: 1px solid var(--ui-line);
+  border-radius: inherit;
+  user-select: none;
+}
+/* Segmented tabs keep their own height so they fit inside their track. */
+.toolbar button:not([role='tab']) {
+  height: 24px;
+  min-height: 24px;
+  padding: 0 6px;
+  font-size: 12px;
+}
+.toolbar [role='tab'] {
+  padding: 0 8px;
+  font-size: 12px;
+}
+.caption {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  font-size: 12px;
+  color: var(--ui-muted);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.toolbar > [role='tablist'] {
+  flex: none;
+  margin-right: auto;
+}
+.toolbar > * {
+  flex-shrink: 0;
+}
+.toolbar > .caption {
+  flex-shrink: 1;
+}
+.preview[data-preview-mode='float'] .toolbar {
+  cursor: move;
+  touch-action: none;
+}
+.viewport {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+.scaled {
+  flex: none;
+  position: relative;
+  background: white;
+}
+.canvas {
+  transform-origin: top left;
+  overflow: auto;
+  container-type: inline-size;
+  background: white;
+  color: #181818;
+}
+.splitter {
+  position: absolute;
+  left: -4px;
+  top: 0;
+  bottom: 0;
+  width: 8px;
+  z-index: 2;
+  cursor: col-resize;
+  touch-action: none;
+}
+.splitter::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 3px;
+  width: 2px;
+  background: transparent;
+  transition: background-color 0.12s;
+}
+.splitter:hover::after,
+.splitter:active::after,
+.preview[data-dragging] .splitter::after {
+  background: rgb(255 255 255 / 0.18);
+}
+.splitter:focus-visible {
+  outline: none;
+}
+.splitter:focus-visible:not([data-pointer])::after {
+  background: rgb(255 255 255 / 0.45);
+}
+.corner {
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  touch-action: none;
+  display: none;
+}
+.preview[data-preview-mode='float'] .corner {
+  display: block;
+}
+.preview[data-preview-mode='float'] .splitter {
+  display: none;
+}
+.corner[data-corner='nw'] {
+  left: -5px;
+  top: -5px;
+  cursor: nwse-resize;
+}
+.corner[data-corner='ne'] {
+  right: -5px;
+  top: -5px;
+  cursor: nesw-resize;
+}
+.corner[data-corner='sw'] {
+  left: -5px;
+  bottom: -5px;
+  cursor: nesw-resize;
+}
+.corner[data-corner='se'] {
+  right: -5px;
+  bottom: -5px;
+  cursor: nwse-resize;
+}
+/* A visible grip shows that the window resizes. */
+.corner[data-corner='se']::after {
+  content: '';
+  position: absolute;
+  right: 8px;
+  bottom: 8px;
+  width: 9px;
+  height: 9px;
+  border-right: 2px solid rgb(120 116 108 / 0.9);
+  border-bottom: 2px solid rgb(120 116 108 / 0.9);
+  border-radius: 0 0 3px 0;
+  pointer-events: none;
+}
+@media (max-width: 799px) {
+  .workbench[data-preview='split'] {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .preview,
+  .toggle {
+    display: none !important;
+  }
+}
+.preview[data-dragging] .canvas {
+  pointer-events: none;
+  user-select: none;
+}
+.toolbar:has([role='tablist']) .caption {
+  display: none;
+}
+/* A narrow window keeps every control inside it: icons only, labels in
+   their accessible names and tooltips. */
+@container preview-pane (max-width: 400px) {
+  .label {
+    display: none;
+  }
+  .toolbar button:not([role='tab']) {
+    width: 24px;
+    padding: 0;
+  }
+}
+@container preview-pane (max-width: 300px) {
+  .caption {
+    display: none;
+  }
+  .toolbar [role='tab'] {
+    padding: 0 6px;
+    font-size: 11px;
+  }
+}
+.preview[data-admin-mode='light'] .splitter:hover::after,
+.preview[data-admin-mode='light'] .splitter:active::after,
+.preview[data-admin-mode='light'][data-dragging] .splitter::after {
+  background: rgb(0 0 0 / 0.16);
+}
+.preview[data-admin-mode='light']
+  .splitter:focus-visible:not([data-pointer])::after {
+  background: rgb(0 0 0 / 0.4);
+}
+.preview[data-admin-mode='light'] .corner[data-corner='se']::after {
+  border-color: rgb(110 104 96 / 0.8);
+}

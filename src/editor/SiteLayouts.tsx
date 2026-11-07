@@ -1,10 +1,4 @@
 import { useState } from 'react';
-import { Button } from '@cloudflare/kumo/components/button';
-import { Table } from '@cloudflare/kumo/components/table';
-import { Switch } from '@cloudflare/kumo/components/switch';
-import { Input } from '@cloudflare/kumo/components/input';
-import { Label } from '@cloudflare/kumo/components/label';
-import { Dialog } from '@cloudflare/kumo/components/dialog';
 import { PlusIcon } from '@phosphor-icons/react';
 import type { Content, LayoutDefinition, SiteLayout } from '../core/types';
 import { id, contextFor } from '../core/content';
@@ -22,8 +16,10 @@ import {
 import { incomingUsage } from '../core/schema';
 import type { UsageTarget } from './usage';
 import { useAdminTheme } from './AdminTheme';
-import { PanelNavigation } from './PanelNavigation';
+import { Preview } from './PreviewWorkspace';
 import FormScreen from './FormScreen';
+import PageHeader from './PageHeader';
+import { useBackDepth } from './browser-back';
 import LayoutCatalog from './LayoutCatalog';
 import LayoutSettings from './LayoutSettings';
 import LayoutSurface, { PageBlocks } from './LayoutSurface';
@@ -32,11 +28,11 @@ import { languageName, localize, pruneCopies } from '../core/languages';
 import { definitions } from '../generated/definitions';
 import UsageList from './UsageList';
 import styles from './editor.module.css';
+import { Button, Dialog, Input, Label, Switch, Table } from './ui';
 
 export default function SiteLayouts({
   content,
   selected,
-  size,
   busy,
   onSelect,
   onChange,
@@ -44,13 +40,13 @@ export default function SiteLayouts({
 }: {
   content: Content;
   selected: string;
-  size: string;
   busy: boolean;
   onSelect(id: string): void;
   onChange(content: Content): void;
   onOpen(target: UsageTarget): void;
 }) {
   const { mode } = useAdminTheme();
+  const backDepth = useBackDepth();
   const [pending, setPending] = useState<SiteLayout>();
   const [catalog, setCatalog] = useState(false);
   const [confirm, setConfirm] = useState<LayoutDefinition | 'delete'>();
@@ -125,35 +121,35 @@ export default function SiteLayouts({
     : content;
   return (
     <>
-      {!layout ? (
+      {(!layout || creating) && (
         <main
-          className={`kumo-ui ${styles.home}`}
+          data-editor-surface
+          className={`admin-ui ${styles.home}`}
           data-mode={mode}
           aria-label="Site Layouts"
         >
           <div className={styles.pageOverview}>
-            <div className={styles.sectionHeader}>
-              <h1>Site Layouts</h1>
-              <Button
-                variant="primary"
-                icon={<PlusIcon />}
-                disabled={busy}
-                onClick={() => setCatalog(true)}
-              >
-                Add layout
-              </Button>
-            </div>
-            <p className={styles.muted}>
-              Layouts in use cannot be turned off or deleted. At least one
-              layout must stay active.
-            </p>
+            <PageHeader
+              title="Layouts"
+              description="Layouts in use cannot be turned off or deleted. At least one layout must stay active."
+              actions={
+                <Button
+                  variant="secondary"
+                  icon={<PlusIcon />}
+                  disabled={busy}
+                  onClick={() => setCatalog(true)}
+                >
+                  Add layout
+                </Button>
+              }
+            />
             <div className={styles.pageTable}>
               <Table aria-label="Site Layouts">
                 <Table.Header>
                   <Table.Row>
                     <Table.Head>Layout name</Table.Head>
-                    <Table.Head>Design</Table.Head>
-                    <Table.Head>Pages</Table.Head>
+                    <Table.Head className={styles.optional}>Design</Table.Head>
+                    <Table.Head className={styles.optional}>Pages</Table.Head>
                     <Table.Head>Active</Table.Head>
                   </Table.Row>
                 </Table.Header>
@@ -190,11 +186,13 @@ export default function SiteLayouts({
                             {layout.name || 'Untitled layout'}
                           </button>
                         </Table.Cell>
-                        <Table.Cell>
+                        <Table.Cell className={styles.optional}>
                           {design?.label ?? layout.design.id} · v
                           {layout.design.version}
                         </Table.Cell>
-                        <Table.Cell>{count}</Table.Cell>
+                        <Table.Cell className={styles.optional}>
+                          {count}
+                        </Table.Cell>
                         <Table.Cell
                           onClick={(event) => event.stopPropagation()}
                         >
@@ -224,112 +222,109 @@ export default function SiteLayouts({
             {error && <p role="alert">{error}</p>}
           </div>
         </main>
-      ) : (
+      )}
+      {layout && (
         <>
           <aside
-            className={`kumo-ui ${styles.drawer}`}
+            hidden={creating}
+            data-editor-surface
+            className={`admin-ui ${styles.drawer}`}
             data-mode={mode}
             aria-label="Site builder"
           >
             <fieldset disabled={busy} className={styles.panelBody}>
-              <PanelNavigation key={`${layout.id}:${layoutKey(layout.design)}`}>
-                <FormScreen
-                  title={
-                    copy.creation?.title ??
-                    (creating ? 'New layout' : layout.name || 'Untitled layout')
-                  }
-                  onBack={copy.creation?.cancel ?? back}
-                  creation={
-                    copy.creation
-                      ? { label: 'Create', onCreate: copy.creation.create }
-                      : creating
-                        ? {
-                            label: 'Create layout',
-                            onCreate: () => {
-                              if (!layout.name.trim()) {
-                                setError('Enter a layout name.');
-                                return;
-                              }
-                              onChange({
-                                ...content,
-                                site: {
-                                  ...content.site,
-                                  layouts: [
-                                    ...layouts,
-                                    { ...layout, name: layout.name.trim() },
-                                  ],
-                                },
-                              });
-                              setPending(undefined);
-                              setError('');
-                            },
-                          }
-                        : undefined
-                  }
-                >
-                  <div className={styles.field}>
-                    <Label htmlFor="layout-name">Layout name</Label>
-                    <Input
-                      id="layout-name"
-                      aria-label="Layout name"
-                      value={layout.name}
-                      onChange={(event) =>
-                        change({ ...layout, name: event.target.value })
-                      }
-                    />
-                  </div>
-                  {error && <p role="alert">{error}</p>}
-                  {copy.status}
-                  {copy.start && (
-                    <Button
-                      variant="primary"
-                      className={styles.alignStart}
-                      onClick={copy.start}
-                    >
-                      Add {languageName(language)} copy
-                    </Button>
-                  )}
-                  {edited && (
-                    <LayoutSettings
+              <FormScreen
+                backDepth={copy.creation ? backDepth + 1 : undefined}
+                title={
+                  copy.creation?.title ??
+                  (creating ? 'New layout' : layout.name || 'Untitled layout')
+                }
+                onBack={copy.creation?.cancel ?? back}
+                menuHint={reason}
+                menu={
+                  !creating && !copy.creation && !secondary
+                    ? [
+                        {
+                          label: 'Delete layout',
+                          destructive: true,
+                          disabled: !!reason,
+                          onSelect: () => setConfirm('delete'),
+                        },
+                      ]
+                    : undefined
+                }
+                creation={
+                  copy.creation
+                    ? { label: 'Create', onCreate: copy.creation.create }
+                    : creating
+                      ? {
+                          label: 'Create layout',
+                          onCreate: () => {
+                            if (!layout.name.trim()) {
+                              setError('Enter a layout name.');
+                              return;
+                            }
+                            onChange({
+                              ...content,
+                              site: {
+                                ...content.site,
+                                layouts: [
+                                  ...layouts,
+                                  { ...layout, name: layout.name.trim() },
+                                ],
+                              },
+                            });
+                            setPending(undefined);
+                            setError('');
+                          },
+                        }
+                      : undefined
+                }
+              >
+                <div className={styles.field}>
+                  <Label htmlFor="layout-name">Layout name</Label>
+                  <Input
+                    id="layout-name"
+                    aria-label="Layout name"
+                    value={layout.name}
+                    onChange={(event) =>
+                      change({ ...layout, name: event.target.value })
+                    }
+                  />
+                </div>
+                {error && <p role="alert">{error}</p>}
+                {copy.status}
+                {copy.start && (
+                  <Button className={styles.alignStart} onClick={copy.start}>
+                    Add {languageName(language)} copy
+                  </Button>
+                )}
+                {edited && (
+                  <LayoutSettings
+                    content={content}
+                    selection={edited.design}
+                    previewPage={page}
+                    onPreviewPage={setPreviewId}
+                    onChange={(design) => copy.change({ ...edited, design })}
+                    onDesign={() => setCatalog(true)}
+                    onVersion={choose}
+                  />
+                )}
+                {!creating && !copy.creation && !secondary && (
+                  <>
+                    <UsageList
                       content={content}
-                      selection={edited.design}
-                      previewPage={page}
-                      onPreviewPage={setPreviewId}
-                      onChange={(design) => copy.change({ ...edited, design })}
-                      onDesign={() => setCatalog(true)}
-                      onVersion={choose}
+                      uses={incomingUsage(content).get(layout.id) ?? []}
+                      description="These pages share this layout. Reassign them before turning it off or deleting it."
+                      onOpen={onOpen}
+                      disabled={busy}
                     />
-                  )}
-                  {!creating && !copy.creation && !secondary && (
-                    <>
-                      <UsageList
-                        content={content}
-                        uses={incomingUsage(content).get(layout.id) ?? []}
-                        description="These pages share this layout. Reassign them before turning it off or deleting it."
-                        onOpen={onOpen}
-                        disabled={busy}
-                      />
-                      {reason && <p className={styles.muted}>{reason}</p>}
-                      <div className={styles.actionFooter}>
-                        <Button
-                          variant="secondary-destructive"
-                          disabled={!!reason}
-                          onClick={() => setConfirm('delete')}
-                        >
-                          Delete layout
-                        </Button>
-                      </div>
-                    </>
-                  )}
-                </FormScreen>
-              </PanelNavigation>
+                  </>
+                )}
+              </FormScreen>
             </fieldset>
           </aside>
-          <main
-            className={styles.preview}
-            data-size={size}
-            aria-label="Live preview"
-          >
+          <Preview>
             <LayoutSurface
               key={layout.id}
               content={view}
@@ -358,7 +353,7 @@ export default function SiteLayouts({
                 <div className={styles.empty}>Layout preview</div>
               )}
             </LayoutSurface>
-          </main>
+          </Preview>
         </>
       )}
       <Dialog.Root

@@ -7,16 +7,12 @@ import { localized } from '../core/languages';
 import { SharedBadge } from './Languages';
 import ListField from './ListField';
 import { PanelNavigation, usePanelNavigation } from './PanelNavigation';
-import { Input } from '@cloudflare/kumo/components/input';
-import { InputArea } from '@cloudflare/kumo/components/input';
-import { Select } from '@cloudflare/kumo/components/select';
-import { Checkbox } from '@cloudflare/kumo/components/checkbox';
-import { Label } from '@cloudflare/kumo/components/label';
 import { lazy, Suspense, useId } from 'react';
 import type { Field, Media, Values, Collection } from '../core/types';
 import { blank, compatible } from '../core/content';
 import { widgets } from './widgets';
 import styles from './editor.module.css';
+import { Checkbox, Input, InputArea, Label, Select } from './ui';
 const controls = Object.fromEntries(
   Object.entries(widgets).map(([name, loader]) => [name, lazy(loader)]),
 );
@@ -78,6 +74,38 @@ export default function Fields({
             ? controls.markdown
             : f.widget && controls[f.widget];
         const inputId = prefix + '-field-' + f.key;
+        if (f.widget && !Widget)
+          return (
+            <div className={styles.field} key={f.key}>
+              <Label>
+                {f.label}
+                {f.required ? ' *' : ''}
+                {shared(f)}
+              </Label>
+              <p className={styles.unavailableField}>
+                This field’s control is not installed in this editor. Its value
+                is kept unchanged.
+              </p>
+            </div>
+          );
+        if (f.type === 'toggle')
+          return (
+            <div className={styles.toggleField} key={f.key}>
+              <Checkbox
+                aria-label={f.label}
+                label={
+                  <>
+                    {f.label}
+                    {f.required ? ' *' : ''}
+                    {shared(f)}
+                  </>
+                }
+                checked={value === true}
+                disabled={readOnly}
+                onCheckedChange={(value) => set(value)}
+              />
+            </div>
+          );
         if (Widget)
           return (
             <fieldset className={styles.widgetField} key={f.key}>
@@ -100,7 +128,7 @@ export default function Fields({
           );
         return (
           <div className={styles.field} key={f.key}>
-            <Label htmlFor={f.type === 'toggle' ? undefined : inputId}>
+            <Label htmlFor={inputId}>
               {f.label}
               {f.required ? ' *' : ''}
               {shared(f)}
@@ -195,14 +223,6 @@ export default function Fields({
                   </Select.Option>
                 ))}
               </Select>
-            ) : f.type === 'toggle' ? (
-              <Checkbox
-                aria-label={f.label}
-
-                checked={value === true}
-                disabled={readOnly}
-                onCheckedChange={(value) => set(value)}
-              />
             ) : f.type === 'select' ? (
               <Select
                 className={styles.full}

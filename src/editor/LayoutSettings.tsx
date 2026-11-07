@@ -1,7 +1,4 @@
 import { Suspense, lazy, type ComponentType } from 'react';
-import { Button } from '@cloudflare/kumo/components/button';
-import { Select } from '@cloudflare/kumo/components/select';
-import { Label } from '@cloudflare/kumo/components/label';
 import type {
   Content,
   LayoutDefinition,
@@ -17,6 +14,7 @@ import {
 import { layoutEditors } from '../generated/layout-browser';
 import PanelSection from './PanelSection';
 import styles from './editor.module.css';
+import { Button, Label, Select } from './ui';
 
 const editors = Object.fromEntries(
   Object.entries(layoutEditors).map(([key, load]) => [
