@@ -148,6 +148,25 @@ lockfiles and built output; exclude `.env`, generated workspaces and browser
 recovery. Settings → Discard edits restores disposable browser checks. The run
 report records the input/output manifests and screenshots.
 
+### Default text localization
+
+With the sibling library and an existing Playwright/Chromium installation:
+
+```sh
+PLAYWRIGHT_MODULE=/absolute/path/to/playwright node --import tsx \
+  tests/localization.browser.mjs docs/wiki/evidence/<run-id> ../quinecms-library
+```
+
+This driver creates an isolated Tessera site on a free port, uses only its
+disposable fixture login, enables Chinese through Settings, cancels and creates
+a page copy, edits its hero, switches languages and verifies recovery after
+reload/login. It checks the actual tab recovery record and unchanged source
+content, writes browser evidence and removes its server/site/browser afterward.
+Creation footer actions use the keyboard to avoid Astro's overlapping development
+toolbar. It never uses a live site's browser profile or Git/R2 credentials.
+The [2026-11-08 run](runs/2026-11-08-localization-defaults.md) also records a native
+check of the maintainer's retained draft on the updated review server.
+
 ### Admin rework fixtures
 
 The 2026-11-07 rework used an engine-owned `projectFixture()` plus a separate

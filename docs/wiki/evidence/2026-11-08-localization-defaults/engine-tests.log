@@ -1,0 +1,9 @@
+
+ RUN  v5.0.3 /Users/rengwu/Desktop/Projects/quinecms
+
+
+ Test Files  35 passed (35)
+      Tests  297 passed (297)
+   Start at  06:37:15
+   Duration  115.19s (tests 83%, import 12%, environment 4%, transform 1%)
+

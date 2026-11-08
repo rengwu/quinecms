@@ -39,7 +39,7 @@ export type Field = {
   key: string;
   label: string;
   required?: boolean;
-  /** Varies by language when internationalization is on; shared by default. */
+  /** Text/richtext vary by default; false keeps a leaf shared, true opts other leaves in. */
   localized?: boolean;
   default?: Json;
   widget?: string;

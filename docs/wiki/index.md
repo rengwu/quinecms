@@ -1,9 +1,15 @@
 ---
 title: QuineCMS
-updated: 2026-11-07
+updated: 2026-11-08
 status: Accepted
 ---
 # QuineCMS
+
+Latest authoring change: text and rich-text fields are now translatable by
+default (DEC-251), with explicit shared exceptions for technical text. Existing
+main values and translation copies are preserved. See
+[internationalization](features/internationalization.md) and the
+[verification run](verification/runs/2026-11-08-localization-defaults.md).
 
 Latest design work: [admin redesign](discussions/admin-redesign.md). DEC-234–DEC-244
 accept a complete, compact redesign after Statamic's shell and editor: a top bar

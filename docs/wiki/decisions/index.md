@@ -744,7 +744,7 @@ unauthorized; see the [design discussion](../discussions/optional-internationali
 | DEC-200 | A language copy becomes eligible automatically when its required fields are valid; no explicit Ready control. | Q6 selects option 2. Structural validation and the existing publication boundary remain; eligibility does not immediately publish edits. |
 | DEC-201 | Main-language text edits leave valid translations eligible without source-change tracking or freshness/review warnings. | Q7 selects option 3 and explicitly invokes rule-lean. This does not exempt structurally invalid content or schema changes from validation. |
 | DEC-202 | Include pages/blocks, entries, shared layout/navigation copy and visitor-facing metadata wherever those fields exist in the first i18n release. | Q8 selects option 1. Admin-interface translation and a separate expanded metadata system are not implied. |
-| DEC-203 | Make localization a field setting; fields are shared by default. | Q9 selects option 1. Schema and block/layout definitions choose which values may vary. Shared values are not per-field fallback, and shared page composition remains required. |
+| DEC-203 | Make localization a field setting; fields are shared by default. | Default superseded by DEC-251 for text/rich text. Q9 selects option 1. Schema and block/layout definitions choose which values may vary. Shared values are not per-field fallback, and shared page composition remains required. |
 | DEC-204 | Share paths/slugs across languages and add only the locale prefix in the first release. | Q10 selects option 1. Localized paths/slugs are deferred. |
 | DEC-205 | Manage enabled languages, main language, i18n enablement and strict/fallback policy in portal Settings, saved and published with site content. | Q11 selects option 1 over developer-only configuration. |
 | DEC-206 | Fix the main language once translations exist; defer main-language migration support. | Q12 selects option 1 to avoid adding content promotion and URL migration to the first release. |
@@ -867,6 +867,12 @@ preview, but asked for the question to be rephrased. That choice is unconfirmed.
 | --- | --- | --- |
 | DEC-249 | Split preview fills all available height below its toolbar; only Float retains the device aspect ratio. | The maintainer rejected the vertically letterboxed preview screenshot during implementation. |
 | DEC-250 | The main sidebar resizes within a minimum and maximum width, and overflowing labels truncate with ellipsis. | Direct screenshot feedback. The implementation uses 160–360px, persists the width, and supports pointer and keyboard resizing. |
+
+## Translation defaults — 2026-11-08
+
+| ID | Decision | Basis and rationale |
+| --- | --- | --- |
+| DEC-251 | Text and rich-text content is translatable by default; explicit `localized: false` marks shared exceptions. Other leaf types retain shared defaults and can opt in. Composition and field mappings remain shared. | The maintainer found every Tessera block field marked Shared after adding Chinese, accepted the proposed type-based defaults, and authorized implementation after a checkpoint commit. Supersedes DEC-203's text default. Developers mark technical-text exceptions; editors can override collection/object field settings. Existing values/copies are preserved without automatic translation or inference of previously shared text's intended language. |
 
 The maintainer authorized simple, adjustable interaction defaults and subsequently
 stopped the parallel Claude review. Implementation and verification continue

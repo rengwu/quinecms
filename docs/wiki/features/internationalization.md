@@ -1,6 +1,6 @@
 ---
 title: Optional internationalization
-updated: 2026-10-25
+updated: 2026-11-08
 ---
 # Optional internationalization
 
@@ -36,16 +36,29 @@ Languages** and saved with the draft:
 
 ## Which values vary
 
-Fields are shared unless `"localized": true`. It is allowed on single-value
-fields, including references, reference lists and media. Objects, object arrays
-and block lists cannot vary; their inner fields can, and rows stay shared.
+Text and rich-text fields vary by language by default (DEC-251). Set
+`"localized": false` on technical text such as anchors, commands and code to
+keep it shared. Other leaf types, including URLs, numbers, dates, selects,
+references, reference lists and media, stay shared unless `"localized": true`.
+Objects, object arrays, block lists, collection selectors and collection-field
+mappings cannot vary; their inner content fields can, and rows stay shared.
 
-- Collection and object schemas set it with the **Per language** switch.
-- Block and Site Layout definitions set it in their library code.
+- Collection and object schemas override the default with the **Per language**
+  switch. Turning it off stores an explicit `false`, including on text fields.
+- Block and Site Layout definitions inherit the same defaults; library authors
+  only configure exceptions.
 - Media alt text always varies by language; `localized` decides whether the
   image varies.
 - Static page titles always vary. Paths, slugs, block order and bindings are
   shared.
+
+The default applies to existing definitions that omit `localized`, too. Main
+values and stored copies stay in place; no values are moved or automatically
+translated. Newly translatable fields are blank in an existing copy until an
+editor fills them. Review required-field completeness and technical-text
+exceptions when upgrading an existing multilingual site. Text previously entered
+in a shared field remains a main-language value; the engine cannot infer which
+language the editor intended.
 
 ## Stored copies
 
@@ -131,14 +144,17 @@ Each additional language gets every route under its prefix. On `/id/…`:
 
 ## Coverage and limitations
 
-Library blocks and layouts need `localized` fields and a language switch. Kahf
-now implements both, including client title search with localized collection
-URLs; other library designs are not automatically translated. Site Layouts preview the draft only, and layout copies are removed only with
+Library text fields are translatable without extra configuration; technical
+text must be explicitly shared. A public language switch is still owned by the
+layout. Kahf implements one, including client title search with localized collection
+URLs; the engine does not automatically translate content. Site Layouts preview the draft only, and layout copies are removed only with
 their language. Preview outlines cover whole blocks, not individual cards.
 New pages, entries and blocks are created with main-language values. Live Git
 saves and publishing were not exercised.
 
 ## Verification history
+
+- [2026-11-08 text localization defaults](../verification/runs/2026-11-08-localization-defaults.md).
 
 - [2026-10-25 Kahf library/site proof](../verification/runs/2026-10-25-kahf.md) — real library copies, fallback routes and local editor workflows.
 

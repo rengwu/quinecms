@@ -19,7 +19,7 @@ Indonesian-secondary for the pilot (DEC-195–DEC-199). Do not re-ask these choi
 
 The [second submitted round](../journal/2026-10-19-grill-f85ebc7f-a355-4637-bbad-e6e30ca052d9.md)
 settles automatic eligibility from valid required fields, no source-change
-tracking, all visitor-facing content, per-field localization with shared defaults,
+tracking, all visitor-facing content, per-field localization (text defaults later revised by DEC-251),
 shared paths/slugs, portal-owned settings and a fixed main language once
 translations exist (DEC-200–DEC-206). An explicit Ready switch and source-change
 review warnings were not selected; apply the user's rule-lean constraint.

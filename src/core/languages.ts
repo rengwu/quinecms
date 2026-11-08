@@ -45,9 +45,10 @@ export const validLanguage = (code: unknown): code is string => {
   }
 };
 
-/** Leaf fields holding one value per language. Containers never vary. */
+/** Text varies by default; other leaves opt in. Composition and field mappings stay shared. */
 export const localized = (f: Field) =>
-  f.localized === true &&
+  (f.localized ?? (f.type === 'text' || f.type === 'richtext')) &&
+  !f.collectionField &&
   f.type !== 'object' &&
   f.type !== 'list' &&
   f.type !== 'collection' &&

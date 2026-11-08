@@ -1,0 +1,14 @@
+Registered 55 block versions.
+Registered 4 layout versions.
+06:41:39 [types] Generated 171ms
+06:41:39 [check] Getting diagnostics for Astro files in /Users/rengwu/Desktop/Projects/quinecms-library/.quinecms/site/.quinecms/workspace...
+[96msrc/editor/App.tsx[0m:[93m9[0m:[93m10[0m - [93mwarning[0m[90m ts(6133): [0m'DotsThreeIcon' is declared but its value is never read.
+
+[7m9[0m import { DotsThreeIcon, SidebarSimpleIcon } from '@phosphor-icons/react';
+[7m [0m [93m         ~~~~~~~~~~~~~[0m
+
+Result (249 files): 
+- 0 errors
+- 0 warnings
+- 1 hint
+

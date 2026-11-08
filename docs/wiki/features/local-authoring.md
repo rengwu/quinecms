@@ -299,8 +299,9 @@ both sources. Local validation checks metadata, not file existence; verify local
 asset URLs in the built site. [Media contract](media.md#locally-authored-media).
 
 Sites with additional languages keep `i18n` in `site.json` and per-language
-`copies` on pages, entries and layout configurations; fields vary only with
-`"localized": true`. Copies refer to rows by `_rowId`, so give translated rows
+`copies` on pages, entries and layout configurations. Text/rich-text fields vary
+by default; `"localized": false` keeps technical text shared, and other leaf
+types opt in with `"localized": true`. Copies refer to rows by `_rowId`, so give translated rows
 IDs. See [optional internationalization](internationalization.md) for the record
 shapes and fallback rules.
 
@@ -320,8 +321,10 @@ returning `{ update, destroy }` for browser use. Public activation is `never`, `
 `idle` or `load`; preview mounts immediately. The same source renders both contexts.
 Preview props may be incomplete; graceful blanks/placeholders usually help authoring.
 Root package pins and manifest dependency ranges are checked during generation.
-Mark block and layout fields `"localized": true` when their text should be
-translated; fields are shared across languages otherwise.
+Block and layout text/rich-text fields are translatable by default. Mark technical
+text (anchors, commands, code, identifiers) `"localized": false`; URLs, media,
+references and other leaf types stay shared unless explicitly opted in. Collection
+and collection-field selectors always stay shared, as do containers and row order.
 
 `context` provides instance identity, resolved globals, media, links, preview/binding
 placeholders and collection summaries. Collection-card field mappings expose their

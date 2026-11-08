@@ -1,0 +1,19 @@
+
+> quinecms-library@0.2.0 test /Users/rengwu/Desktop/Projects/quinecms-library
+> node scripts/prepare-tests.mjs && vitest run --maxWorkers=2
+
+Registered 55 block versions.
+Registered 4 layout versions.
+Content is valid for publication.
+
+ RUN  v5.0.3 /Users/rengwu/Desktop/Projects/quinecms-library
+
+
+ Test Files  5 passed (5)
+      Tests  17 passed (17)
+   Start at  06:41:25
+   Duration  3.79s (import 33%, transform 25%, environment 22%, tests 19%)
+
+    Isolate  5 workers spawned · ~332ms startup each (spawn + environment, per file)
+             at least ~498ms faster with isolate: false — reuses workers across files instead of one per file
+

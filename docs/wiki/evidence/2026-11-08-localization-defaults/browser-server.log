@@ -1,0 +1,18 @@
+Registered 55 block versions.
+Registered 4 layout versions.
+6:42:52 AM [vite-plugin-svelte] no Svelte config found at /private/var/folders/00/h_k67s0j5dq0qvg6ylqysk2w0000gn/T/quinecms-site-test-hm9Ux8/.quinecms/workspace - using default configuration.
+06:42:52 [vite] connected.
+06:42:52 [types] Generated 0ms
+06:42:52 [vite] connected.
+06:42:53 [vite] Forced re-optimization of dependencies
+ astro  v7.3.5 ready in 581 ms
+┃ Local    http://127.0.0.1:61849/
+06:42:53 watching for file changes...
+QuineCMS dev: http://127.0.0.1:61849
+
+ update  ▶ New version of Astro available: 7.4.7
+  Run pnpm dlx @astrojs/upgrade to update
+
+06:42:56 [200] /admin/ 1005ms
+06:42:59 [200] /admin/ 909ms
+QuineCMS dev failed (143).

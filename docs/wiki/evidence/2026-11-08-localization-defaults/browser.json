@@ -1,0 +1,15 @@
+{
+  "browser": "151.0.7922.34",
+  "url": "http://127.0.0.1:61849",
+  "results": [
+    {
+      "scenario": "Cancel a new Chinese copy",
+      "result": "Passed"
+    },
+    {
+      "scenario": "Create, edit, switch languages and recover Chinese hero text",
+      "result": "Passed",
+      "observed": "English values and local source content unchanged; Chinese values retained in the tab draft; commands shared."
+    }
+  ]
+}

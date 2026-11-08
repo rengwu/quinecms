@@ -6,6 +6,7 @@ import type { Field, Media, ObjectShape } from '../core/types';
 import { hasValue, isRecord } from '../core/schema';
 import { useModel } from './ModelContext';
 import { useLanguage } from './Languages';
+import { localized } from '../core/languages';
 import { PanelLevel } from './PanelNavigation';
 import Fields from './Fields';
 import styles from './editor.module.css';
@@ -410,10 +411,8 @@ function FieldEditor({
             label={
               field.type === 'media' ? 'Per-language image' : 'Per language'
             }
-            checked={field.localized === true}
-            onCheckedChange={(on) =>
-              onChange({ ...field, localized: on ? true : undefined })
-            }
+            checked={localized(field)}
+            onCheckedChange={(on) => onChange({ ...field, localized: on })}
           />
         )}
       <Button

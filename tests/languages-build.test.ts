@@ -36,11 +36,13 @@ it('builds additional languages with prefixed routes, fallback metadata and lang
         missing: 'fallback',
       };
     });
-    await edit('content/collections/collection_journal.json', (c) => {
-      c.fields[0].localized = true;
-    });
     await edit('content/pages/page_home.json', (page) => {
-      page.copies = { id: { title: 'Beranda' } };
+      page.copies = {
+        id: {
+          title: 'Beranda',
+          blocks: { [page.blocks[0].id]: { title: 'Halo dunia', body: 'Isi' } },
+        },
+      };
     });
     await command(directory, ['validate']);
     await command(directory, ['build']);
@@ -53,6 +55,8 @@ it('builds additional languages with prefixed routes, fallback metadata and lang
     const translated = await html('id');
     expect(translated).toContain('<html lang="id"');
     expect(translated).toContain('<title>Beranda');
+    expect(translated).toContain('<h1>Halo dunia</h1>');
+    expect(home).not.toContain('Halo dunia');
     expect(translated).not.toContain('noindex');
     expect(translated).toContain('<div lang="id" style="display: contents">');
     expect(translated).toContain('<a href="/id" aria-current="page">id</a>');

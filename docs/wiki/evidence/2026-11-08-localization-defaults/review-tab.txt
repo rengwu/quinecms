@@ -1,0 +1,10 @@
+Native Helium observation, 2026-11-08, http://127.0.0.1:5323/admin/
+Confirmed the existing review tab and restarted only its local CLI.
+Reauthenticated with documented disposable fixture credentials.
+Retained tab draft: Unsaved changes; Chinese Home title: ni hao.
+Opened Tessera · Hero without editing content.
+Heading, Description, Eyebrow, Emphasis and action labels: blank Chinese fields, no Shared badge.
+Anchor, Command, Action URL and Secondary URL: Shared.
+Command retained: npm create tessera@latest; URLs retained: /docs/quickstart and /docs.
+The generated workspace matches the updated engine languages.ts, schema.ts and SchemaFieldEditor.tsx byte-for-byte.
+Left the tab open to the Chinese hero. No Save/Publish or field writes.

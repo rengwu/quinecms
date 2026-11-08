@@ -49,9 +49,8 @@ const content: Content = {
           label: 'Title',
           type: 'text',
           required: true,
-          localized: true,
         },
-        { key: 'summary', label: 'Summary', type: 'text' },
+        { key: 'summary', label: 'Summary', type: 'text', localized: false },
       ],
     },
   ],
@@ -169,4 +168,29 @@ it('creates and edits a language copy from the top-bar language without changing
   expect(host.textContent).not.toContain('Eligible');
   await language('Indonesian');
   expect(field('Title').value).toBe('Entri pertama');
+});
+
+it('shows the text default in schema settings and persists an explicit shared override', async () => {
+  await mount();
+  const collections = visible().filter(
+    (b) => b.textContent?.trim() === 'Collections',
+  );
+  await act(async () => collections.at(-1)!.click());
+  await click(/^Journal/);
+  await click(/^Titletext/);
+  const perLanguage = () =>
+    [...host.querySelectorAll<HTMLElement>('[role="checkbox"]')].find(
+      (el) => el.closest('label')?.textContent?.trim() === 'Per language',
+    );
+  expect(perLanguage()).toBeTruthy();
+  expect(perLanguage()!.getAttribute('aria-checked')).toBe('true');
+  await act(async () => perLanguage()!.click());
+  expect(readRecovery()!.content.collections[0].fields[0].localized).toBe(
+    false,
+  );
+  await click('Done');
+  await click(/^Titletext/);
+  expect(perLanguage()!.getAttribute('aria-checked')).toBe('false');
+  await act(async () => perLanguage()!.click());
+  expect(readRecovery()!.content.collections[0].fields[0].localized).toBe(true);
 });

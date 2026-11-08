@@ -107,11 +107,11 @@ export function schemaIssues(model: Model): Issue[] {
       const path = `${where}.${f.key}`;
       if (f.required !== undefined && typeof f.required !== 'boolean')
         add(path, 'Required must be true or false.');
+      if (f.localized !== undefined && typeof f.localized !== 'boolean')
+        add(path, 'Localized must be true or false.');
       if (
-        f.localized !== undefined &&
-        (f.localized !== true ||
-          f.type === 'object' ||
-          (f.type === 'array' && f.of?.type === 'object'))
+        f.localized === true &&
+        (f.type === 'object' || (f.type === 'array' && f.of?.type === 'object'))
       )
         add(path, 'Only single-value fields can vary by language.');
       if (

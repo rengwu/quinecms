@@ -9,10 +9,13 @@ import {
   countCopies,
   issueLabel,
   localize,
+  localized,
+  mergeCopy,
   pruneCopies,
   recordView,
   removeCopies,
   startCopy,
+  splitCopy,
 } from '../src/core/languages';
 import { definitions as installed } from '../src/generated/definitions';
 import type {
@@ -22,6 +25,161 @@ import type {
   Field,
   Page,
 } from '../src/core/types';
+import { emptyModel, schemaIssues } from '../src/core/schema';
+
+describe('default field localization', () => {
+  it('translates text and rich text while keeping other field types and mappings shared', () => {
+    const fields: Field[] = [
+      { key: 'heading', label: 'Heading', type: 'text' },
+      { key: 'body', label: 'Body', type: 'richtext' },
+      { key: 'command', label: 'Command', type: 'text', localized: false },
+      { key: 'link', label: 'Link', type: 'url' },
+      { key: 'count', label: 'Count', type: 'number' },
+      { key: 'date', label: 'Date', type: 'date' },
+      { key: 'enabled', label: 'Enabled', type: 'toggle' },
+      { key: 'mode', label: 'Mode', type: 'select', options: [] },
+      { key: 'photo', label: 'Photo', type: 'media' },
+      {
+        key: 'related',
+        label: 'Related',
+        type: 'reference',
+        collectionId: 'c',
+      },
+      {
+        key: 'links',
+        label: 'Links',
+        type: 'array',
+        of: { type: 'reference', collectionId: 'c' },
+      },
+      { key: 'source', label: 'Source', type: 'collection' },
+      {
+        key: 'titleField',
+        label: 'Title field',
+        type: 'text',
+        collectionField: { collectionKey: 'source', types: ['text'] },
+      },
+      { key: 'rows', label: 'Rows', type: 'list', fields: [] },
+      { key: 'details', label: 'Details', type: 'object', fields: [] },
+    ];
+    expect(fields.filter(localized).map((f) => f.key)).toEqual([
+      'heading',
+      'body',
+    ]);
+    for (const key of ['link', 'photo', 'related', 'links']) {
+      expect(
+        localized({ ...fields.find((f) => f.key === key)!, localized: true }),
+      ).toBe(true);
+    }
+    for (const key of ['source', 'titleField', 'rows', 'details']) {
+      expect(
+        localized({ ...fields.find((f) => f.key === key)!, localized: true }),
+      ).toBe(false);
+    }
+  });
+
+  it('preserves existing values and translations when editing newly localized nested text', () => {
+    const fields: Field[] = [
+      { key: 'heading', label: 'Heading', type: 'text' },
+      { key: 'body', label: 'Body', type: 'richtext' },
+      { key: 'command', label: 'Command', type: 'text', localized: false },
+      {
+        key: 'rows',
+        label: 'Rows',
+        type: 'list',
+        fields: [
+          { key: 'label', label: 'Label', type: 'text' },
+          { key: 'url', label: 'URL', type: 'url' },
+        ],
+      },
+      { key: 'details', label: 'Details', type: 'object', objectId: 'details' },
+    ];
+    const model = {
+      ...emptyModel,
+      objects: [
+        {
+          formatVersion: 1 as const,
+          id: 'details',
+          name: 'Details',
+          fields: [{ key: 'caption', label: 'Caption', type: 'text' as const }],
+        },
+      ],
+    };
+    const main = {
+      heading: 'Welcome',
+      body: '**English**',
+      command: 'npm start',
+      rows: [{ _rowId: 'r1', label: 'Docs', url: '/docs' }],
+      details: { caption: 'English caption' },
+    };
+    const existing = { heading: '欢迎' };
+    const view = mergeCopy(fields, main, existing, model);
+    expect(view).toEqual({
+      heading: '欢迎',
+      body: null,
+      command: 'npm start',
+      rows: [{ _rowId: 'r1', label: null, url: '/docs' }],
+      details: { caption: null },
+    });
+    view.body = '**中文**';
+    (view.rows as any)[0].label = '文档';
+    (view.details as any).caption = '说明';
+    const [unchangedMain, copy] = splitCopy(fields, main, view, model);
+    expect(unchangedMain).toEqual(main);
+    expect(copy).toEqual({
+      heading: '欢迎',
+      body: '**中文**',
+      rows: { r1: { label: '文档' } },
+      details: { caption: '说明' },
+    });
+    expect(mergeCopy(fields, main, copy, model)).toEqual(view);
+    expect(existing).toEqual({ heading: '欢迎' });
+  });
+
+  it('accepts explicit shared settings and rejects invalid localization settings', () => {
+    const check = (field: Field) =>
+      schemaIssues({
+        ...emptyModel,
+        objects: [
+          { formatVersion: 1, id: 'obj', name: 'Object', fields: [field] },
+        ],
+      });
+    expect(
+      check({ key: 'code', label: 'Code', type: 'text', localized: false }),
+    ).toEqual([]);
+    expect(
+      check({
+        key: 'details',
+        label: 'Details',
+        type: 'object',
+        fields: [],
+        localized: false,
+      }),
+    ).toEqual([]);
+    expect(
+      check({
+        key: 'details',
+        label: 'Details',
+        type: 'object',
+        fields: [],
+        localized: true,
+      }),
+    ).toContainEqual(
+      expect.objectContaining({
+        message: 'Only single-value fields can vary by language.',
+      }),
+    );
+    expect(
+      check({
+        key: 'title',
+        label: 'Title',
+        type: 'text',
+        localized: 'yes' as any,
+      }),
+    ).toContainEqual(
+      expect.objectContaining({ message: 'Localized must be true or false.' }),
+    );
+  });
+});
 
 // Journal entries translate title, body and step names; everything else is shared.
 const localizedKeys = new Set(['title', 'body', 'name', 'question', 'answer']);
@@ -31,7 +189,7 @@ const localize_ = (fields: Field[]): Field[] =>
       ? { ...f, of: { ...f.of, fields: localize_(f.of.fields) } }
       : localizedKeys.has(f.key)
         ? { ...f, localized: true }
-        : f,
+        : { ...f, localized: false },
   );
 const definitions: Definition[] = installed.map((d) =>
   d.type === 'accordion' ? { ...d, fields: localize_(d.fields) } : d,
@@ -142,7 +300,13 @@ describe('language copies', () => {
     page.copies = {
       id: {
         title: 'Beranda',
-        blocks: { block_3: { question: 'Bagaimana?', answer: 'Begini.' } },
+        blocks: {
+          block_0: { title: 'Buat sesuatu yang bertahan.' },
+          block_1: { body: 'Isi halaman' },
+          block_2: { label: 'Hitung' },
+          block_3: { question: 'Bagaimana?', answer: 'Begini.' },
+          block_4: { quote: 'Sederhana.' },
+        },
       },
     };
     const visitor = localize(c, 'id', definitions);
