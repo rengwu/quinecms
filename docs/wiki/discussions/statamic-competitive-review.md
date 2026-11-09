@@ -97,7 +97,7 @@ QuineCMS already previews pages, layouts and routed entries using shared renderi
 
 Statamic sources for the broader inventory: [Bard](https://statamic.dev/fieldtypes/bard), [Replicator](https://statamic.dev/fieldtypes/replicator), [assets](https://statamic.dev/frontend/assets), [permissions](https://statamic.dev/control-panel/permissions), [multi-site](https://statamic.dev/control-panel/multi-site), [search](https://statamic.dev/frontend/search), [forms](https://statamic.dev/frontend/forms), [REST](https://statamic.dev/frontend/rest-api), [GraphQL](https://statamic.dev/frontend/graphql), [addons](https://statamic.dev/addons/building-an-addon).
 
-QuineCMS's authoritative current contracts: [content model](../features/content-model.md), [editor](../features/editor.md), [publishing](../features/publishing.md), [media](../features/media.md), [internationalization](../features/internationalization.md), [engine/site separation](../features/site-engine.md), [Kahf proof](../features/kahf.md).
+QuineCMS's authoritative current contracts: [content model](../features/content-model.md), [editor](../features/editor.md), [publishing](../features/publishing.md), [media](../features/media.md), [internationalization](../features/internationalization.md), [engine/site separation](../features/site-engine.md), [Kahf proof](../trials/kahf.md).
 
 ### Edition and deployment distinctions
 

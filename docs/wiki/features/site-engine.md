@@ -1,18 +1,18 @@
 ---
-title: Separate engine, libraries and sites
-updated: 2026-11-07
+title: Engine and extensions
+updated: 2026-11-09
 ---
-# Separate engine, libraries and sites
+# Engine and extensions
 
 **ID:** FEAT-site-engine
 
 ## Intent and basis
 
 DEC-172–DEC-183 select a reusable core/admin engine, independently owned sites,
-extensions-only designs and manually pinned upgrades. Implementation was authorized
-with `work-until-grill` on 2026-10-14. The [discussion](../discussions/site-engine-separation.md)
-retains the study and accepted boundaries. The initial library contains Archline
-and Intr; the independent pilot uses Archline.
+extensions-only designs and manually pinned upgrades. The
+[discussion](../discussions/site-engine-separation.md) retains the accepted
+boundaries. Sites consume the reusable engine/admin; libraries and original
+extensions supply their designs.
 
 ## Repository and build contract
 
@@ -26,8 +26,8 @@ and library maintenance; that is not a library override delivery workflow.
 
 ```json
 {
-  "libraries": ["quinecms-library"],
-  "initialLayout": { "id": "archline", "version": 1 }
+  "libraries": ["company-designs"],
+  "initialLayout": { "id": "company", "version": 1 }
 }
 ```
 
@@ -36,22 +36,10 @@ specifiers select the source and revision, and the lockfile resolves installatio
 Environment variables cannot select or override libraries. They supply credentials
 and build/deployment credentials only. Never commit provider tokens or `.env`.
 
-Shared package scripts are deliberately thin:
-
-```json
-{
-  "scripts": {
-    "dev": "quinecms dev",
-    "build": "quinecms build",
-    "check": "quinecms check",
-    "validate:content": "quinecms validate",
-    "check:build": "quinecms check-build",
-    "preview": "quinecms preview"
-  }
-}
-```
-
-Run `pnpm install --frozen-lockfile` before CI builds. The CLI copies engine source,
+Site scripts invoke the [shared CLI](local-authoring.md). The
+[installation and upgrade guide](../guides/installation-and-upgrades.md) gives the
+workflow. The example above assumes that dependency and layout are installed.
+The CLI copies engine source,
 selected extensions, assets and content into `.quinecms/workspace/`, generates
 registries/routes there, and invokes the engine's Astro build. Installed packages
 are read-only. The workspace and output are ignored, disposable directories;
@@ -59,22 +47,8 @@ never edit them as source. A successful build copies static output to site `dist
 Failed builds leave committed site inputs and the previous delivered `dist/` intact.
 `check-build` checks the last workspace build without regenerating its inputs.
 
-Development uses Astro/Vite's watcher for site content, original extensions, assets
-and configuration, with native per-file events instead of recursive FSEvents.
-Saves are debounced and generation is serialized; successful generation sends a
-browser reload. Content-only edits keep the server running; route-table changes
-use Astro's normal configuration refresh. The watcher remains attached after that
-refresh. Invalid JSON reports an error and a subsequent valid save recovers.
-The generated package manifest is written only in its resolved form, avoiding
-dependency re-optimization on unchanged site dependencies.
-
-Restart after installing a dependency or changing environment settings. Local
-source edits update the workspace; browser content edits stay in browser recovery
-until exported or saved through Git. There is no direct browser-to-filesystem save.
-Do not run concurrent commands against the same site's disposable workspace.
-
-See [development reload verification](../verification/runs/2026-11-07-dev-reload.md)
-for the regression/browser checks and their platform limits.
+Development reload, validation, typechecking, static builds and artifact checks
+are covered in [Local development and validation](local-authoring.md).
 
 ## Extension manifest
 
@@ -83,7 +57,7 @@ Both installed libraries and original site extensions use `quinecms.library.json
 ```json
 {
   "id": "company-designs",
-  "engine": "^0.2.0",
+  "engine": "^0.3.0",
   "blocks": ["src/blocks/banner/v1"],
   "layouts": ["src/layouts/company/v1"],
   "public": "public",
@@ -127,7 +101,8 @@ fail rather than silently changing a renderer's runtime. Block manifests retain
 required dependency ranges, checked against installed versions. Styles must scope
 the website/preview surface so loading another library cannot restyle admin controls.
 
-All installed blocks and layouts appear in the existing catalogs. Subscriptions
+Installed blocks and layouts supply the catalogs; compatibility, deprecation
+and latest-version selection govern new choices while saved records remain pinned. Subscriptions
 and revisions have no admin setting. Configure library designs through their exposed
 fields; deeper modifications go upstream. Copying, patching or silently shadowing
 subscribed implementations is not a supported delivery workflow. Original site
@@ -142,16 +117,11 @@ publication still needs a home page. There is no implicit Starter fallback.
 Existing explicit single-layout records can still be read; the old implicit Site
 Options shape requires a maintainer to select a design manually.
 
-Engine and library pins are independent. To upgrade, first save/export the current
-draft, create a branch, change one pin, install and commit the resulting lockfile.
-Run content validation (including `--base` for schema changes), typecheck, build,
-artifact checks and relevant browser journeys. Make any necessary content/custom
-code changes yourself. Put the reviewed upgrade commit on the connected draft
-branch, then deploy/open its matching editor and publish that snapshot. If deploying
-through Git directly, align draft and publish branches to the same reviewed commit
-without overwriting divergent work. A new editor cannot write an old-source draft. Failed checks do not migrate
-or delete inputs. Keep the prior content snapshot as well as old pins: restoring
-code alone does not undo content edited under a newer contract.
+Engine and library pins are independent and upgrade explicitly. A matching
+editor is required to write a draft with changed source inputs. There is no
+automatic content/settings migration; keeping an old pin alone cannot undo
+content already edited under a newer contract. See the
+[upgrade guide](../guides/installation-and-upgrades.md#upgrades).
 
 ## Save and publish protection
 
@@ -169,28 +139,6 @@ bypasses a newer Git save. Build from the same committed inputs as the connected
 draft, using the frozen lockfile and the site's installed CLI. The protection is
 for coherent builds, not a sandbox for executing untrusted extension packages.
 
-## Verification recipe and limits
+## Checks and evidence
 
-Engine `pnpm test` exercises independent original extensions, multiple frameworks,
-retained versions, duplicate identities/assets, missing initial designs, pin guards,
-custom fields, content validation, encrypted admin, static routes and both mocked
-Git providers' blocked writes. Library `pnpm test` validates its fixture content,
-local media, shared edits, bindings and rendering. The pilot's `pnpm verify` validates
-its actual site. A clean clone/install/build and desktop/mobile browser checks are
-required before calling an engine/library revision delivered.
-
-Portable output is checked using an ordinary static server. Live Git, browser
-credentials, R2 uploads and hosting each require their own evidence; local/mocked
-results must not be described as proving those integrations.
-
-
-## Engine separation verification — 2026-10-14
-
-[Independent engine and public pilot verification](../verification/runs/2026-10-14-engine-separation.md): engine/library/clean-build/browser/live-GitHub checks pass; the maintainer subsequently deployed to Netlify (DEC-184). The [hosted smoke check](../verification/runs/2026-10-14-netlify-pilot.md) passes for public routes, assets, mobile navigation and the login page; the maintainer subsequently [confirmed the full hosted connection, edit, draft save, publish and live deployment flow](../journal/2026-10-14-pilot-acceptance.md). This final signed-in evidence is user-reported; pilot delivery is accepted.
-
-
-## R2 environment configuration — 2026-10-14
-
-[Verification](../verification/runs/2026-10-14-r2-environment.md) covers environment
-validation, encrypted credential delivery, absence of storage setup controls,
-configured/unconfigured uploads and existing media behavior. Live R2 is not claimed.
+[Check recipes and dated evidence](../verification/features/site-engine.md).

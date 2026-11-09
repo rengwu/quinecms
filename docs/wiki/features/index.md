@@ -1,26 +1,46 @@
 ---
 title: Feature map
-updated: 2026-10-25
+updated: 2026-11-09
 ---
 # Feature map
 
-Start with [Building sites with local agents](local-authoring.md) for local authoring and delivery. Capabilities are options to use where they fit the design and client; this map describes their current contracts and checks. Verification results apply only to the recorded build. Decisions and historical technical discussions remain in the wiki.
+QuineCMS provides the engine, admin portal and site commands described here.
+Installed libraries and original site extensions supply designs and blocks;
+particular recreations and starter catalogs are not bundled CMS features.
 
-- [Separate engine, libraries and sites](site-engine.md) — FEAT-site-engine.
-- [Local authoring and validation](local-authoring.md) — FEAT-local-authoring.
-- [Quine recreation trial](../journal/2026-10-11-quine-rebuild.md) — complete isolated example, client editing map and discoverability findings.
+## Content and site design
 
-- [Collections, objects and references](content-model.md) — FEAT-content-model.
-- [Site Layout library](site-layouts.md) — FEAT-site-layouts.
-- [Kahf recreation](kahf.md) — FEAT-kahf.
-- [Historical chartr layout and blocks](chartr.md) — FEAT-chartr.
-- [Searchable block library](block-library.md) — FEAT-block-library.
-- [Static pages and registered blocks](static-blocks.md) — FEAT-static-blocks.
-- [Generic pages and collection content](generic-pages.md) — FEAT-generic-pages.
-- [Visual editing and recovery](editor.md) — FEAT-editor.
-- [Encrypted static admin](admin-encryption.md) — FEAT-admin-encryption.
-- [GitHub/GitLab draft saves and publishing](publishing.md) — FEAT-publishing.
-- [Direct media uploads](media.md) — FEAT-media.
-- [Optional internationalization](internationalization.md) — FEAT-internationalization.
+| Capability | Included functionality |
+| --- | --- |
+| [Collections, objects and references](content-model.md) | Collection-owned schemas; many/single-entry collections; reusable objects; nested arrays; ordered references; defaults; usage and deletion guards. |
+| [Static pages and registered blocks](static-blocks.md) | Page routes; ordered block composition; retained implementation versions; shared public/preview renderers; React, Vue, Svelte and vanilla activation. |
+| [Generic pages and collection content](generic-pages.md) | Reusable entry templates; typed field bindings and list projections; data-only collections; explicit entry routes; live entry previews. |
+| [Site Layouts](site-layouts.md) | Named configurations; per-page assignment; independent settings; activation and usage guards; explicit design/version changes; shared layout previews. |
+| [Searchable block catalog](block-library.md) | Name/theme/tag search; compatible-definition filtering; rendered samples; device previews; staged block creation. |
 
-Use [verification setup](../verification/setup.md). The [initial run](../verification/runs/2026-10-05T0819Z-implementation.md) covers automated checks and records browser observations, unavailable browser follow-up, and untested live providers.
+## Editing, media and languages
+
+| Capability | Included functionality |
+| --- | --- |
+| [Visual editing and recovery](editor.md) | Breadcrumbs and nested panels; staged creation; drag/keyboard ordering; visual Markdown; Split/Float previews; dark/light appearance; backups, tab recovery and reset. |
+| [Media library and direct uploads](media.md) | Media records and selection; uploads from fields; image variants; alternative text; local asset URLs; direct R2 uploads when configured. |
+| [Optional internationalization](internationalization.md) | Per-language copies; field localization; shared composition; eligibility; whole-item fallback or strict publication; prefixed routes; Draft/Visitor previews. |
+
+## Saving, publishing and access
+
+| Capability | Included functionality |
+| --- | --- |
+| [Git draft saves and publishing](publishing.md) | GitHub/GitLab connections; whole-draft commits; stale/source checks; recovery; publication of an exact saved snapshot to a configured branch. |
+| [Encrypted static admin](admin-encryption.md) | Build-time encrypted editor/configuration; email/password unlock; in-memory provider credentials; session locking; static hosting without a runtime CMS server. |
+
+## Developer capabilities
+
+| Capability | Included functionality |
+| --- | --- |
+| [Engine and extensions](site-engine.md) | Independent site inputs; pinned engine/library dependencies; extension manifests; custom fields; shared runtimes; isolated assembly; build-source safeguards. |
+| [Local development and validation](local-authoring.md) | Development server and file reload; structural/publication validation; baseline change checks; typechecking; static build, preview and artifact inspection. |
+
+For workflows, use the [authoring guides](../guides/index.md). For evidence, use
+[Trials](../trials/index.md) and [verification](../verification/index.md). Those
+records describe how capabilities are used or checked, rather than additional
+CMS features. [DEC-252–DEC-257](../discussions/feature-map-scope.md) define this map's scope.

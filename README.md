@@ -11,8 +11,8 @@ through a browser interface at `/admin/`. QuineCMS stores content in Git and use
 Astro to generate the site.
 
 [Documentation](docs/wiki/features/index.md) ·
-[Site setup](docs/wiki/features/site-engine.md) ·
-[Authoring guide](docs/wiki/features/local-authoring.md) ·
+[Site setup](docs/wiki/guides/installation-and-upgrades.md) ·
+[Authoring guide](docs/wiki/guides/local-authoring.md) ·
 [Example site](https://github.com/rengwu/quinecms-site-archline)
 
 ## Features

@@ -1,19 +1,25 @@
 ---
 title: Verification setup
-updated: 2026-11-07
+updated: 2026-11-09
 ---
 # Verification setup
 
-Run engine tests in the QuineCMS repository and site commands in the independent site repository, with Node 22.12+ and pinned pnpm 10.34.1. The initial run used macOS, Node 22.19.0, and Helium via the native computer-use tool.
+Run engine tests in the QuineCMS repository and site commands in an independent
+site repository, with Node 22.12+ and pinned pnpm 10.34.1. Start with the
+[feature check index](features/index.md) for scoped recipes. Historical runs name
+their own environments; the setup below describes the current checkout.
 
 ## Commands and readiness
 
 ```sh
+# In the engine repository:
 pnpm install --frozen-lockfile
-# First setup only: copy .env.example to .env and set ADMIN_EMAIL/ADMIN_PASSWORD.
-pnpm verify                  # engine: regression suite; site: validation/check/build/artifacts
-# In a site repository:
+pnpm verify                  # regression suite and wiki integrity
+# In an isolated site repository with installed dependencies and test credentials:
 pnpm validate:content
+pnpm check
+pnpm build
+pnpm check:build
 pnpm preview --port 4321
 ```
 
@@ -28,7 +34,7 @@ For editor startup changes, exercise `/admin/` in both development and productio
 
 For unfinished content, `pnpm validate:content --draft` runs structural checks without requiring publishable routes or required values. `--base <git-ref>` also compares schema changes/deletion impact with a local commit; it can be combined with `--draft`. The command refreshes generated registries only and does not write content or remote state.
 
-Regression tests read `tests/fixtures/content/`, independently of the client site's root `content/`. The isolated build test retains the sample Journal zero-JavaScript assertions. `check:build` checks the actual site's assets, emitted-runtime sharing and separation from editor/provider code; it does not require demo routes, every framework, or restrict custom renderer embeds. The fixture includes legacy records intentionally, while new work can follow the canonical examples in the [authoring guide](../features/local-authoring.md).
+Regression tests read `tests/fixtures/content/`, independently of the client site's root `content/`. The isolated build test retains the sample Journal zero-JavaScript assertions. `check:build` checks the actual site's assets, emitted-runtime sharing and separation from editor/provider code; it does not require demo routes, every framework, or restrict custom renderer embeds. The fixture includes legacy records intentionally, while new work can follow the canonical examples in the [authoring guide](../guides/local-authoring.md).
 
 ## Identity and isolation
 
@@ -44,7 +50,13 @@ the site’s configured ADMIN_EMAIL and ADMIN_PASSWORD pair. The separate `quine
 - Native browser automation can drive the actual editor. The initial run lost window access; the startup repair subsequently verified development editing and production mounting/interactions in Safari.
 - Live GitHub/GitLab/R2/hosting checks require separately configured disposable resources and credentials. GitLab mock tests cover paginated loads, temporary-branch/fast-forward transactions, races and lost responses; the [provider run](runs/2026-10-08-gitlab.md) records current limits. None of these tests establishes live account permissions or CORS.
 
-The optional bundled public fixtures are Home, Block examples, the nine-block chartr page, an explicit static Journal index, and two entries rendered through the Journal entry generic page. To review the full recreation, select chartr in Site Layout and choose chartr as Preview page; the committed site keeps Starter selected. Generic pages are editable under Pages but have no standalone public route. Main and draft content live in Git once connected; the local demo is read-only at the filesystem boundary.
+The engine ships no bundled public site. Engine tests own designs/content under
+`tests/fixtures/` and create isolated sites through `tests/support/project.ts`.
+For manual browser work, use a disposable site with explicit installed definitions
+and content; choose its actual pages and collection entries rather than assuming
+`/blocks/`, `/journal/` or a Starter/chartr layout exists. The admin gallery is a
+separate developer specimen tool (`pnpm gallery`). [Trials](../trials/index.md)
+records historical examples and independent-site proofs.
 
 ## Evidence and cleanup
 
@@ -130,7 +142,7 @@ not pass the ordinary production pin guard.
 In the independent Kahf site run `pnpm install --frozen-lockfile`,
 `pnpm validate:content`, `pnpm check`, then `pnpm dev`. Stop dev before check/build
 and restart it after upstream library changes. Use the editor recipe in
-[FEAT-kahf](../features/kahf.md). The provider-free browser disables Save/Publish;
+[Kahf trial](../trials/kahf.md). The provider-free browser disables Save/Publish;
 the library's two jsdom editor tests exercise those controls with a mocked Git
 transport and mocked preview islands. Browser tests cover the actual preview.
 

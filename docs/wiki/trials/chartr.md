@@ -1,20 +1,24 @@
 ---
-title: chartr layout and blocks
-updated: 2026-10-08
+title: chartr recreation trial
+updated: 2026-11-09
 ---
-# chartr layout and blocks
+# chartr recreation trial
 
-**ID:** FEAT-chartr
+**Historical identifier:** `FEAT-chartr` (retained for earlier evidence).
+
+This is a recreation trial, not an engine feature. See the [Trials index](index.md)
+for its exercised capabilities and scope. The site/design behavior below belongs
+to the recorded trial.
 
 **Transition note (2026-10-14):** The original bundled design catalog described below
 is preserved at engine commit `bfbb522`. The current engine ships no designs;
-[configured extensions](site-engine.md) supply the catalog. The initial shared
+[configured extensions](../features/site-engine.md) supply the catalog. The initial shared
 library contains Archline and Intr. Historical test counts and recipes below apply
 to their recorded revisions, not the new pilot.
 
 ## Intent and entry points
 
-DEC-106 requests a recreation of [chartr.dev](https://chartr.dev/) after the [Site Layout foundation](site-layouts.md). The adjacent `chartr-site-v2` source remains unchanged. See the [scope](../discussions/chartr-recreation.md) and [implementation journal](../journal/2026-10-06-site-layouts-implementation.md).
+DEC-106 requests a recreation of [chartr.dev](https://chartr.dev/) after the [Site Layout foundation](../features/site-layouts.md). The adjacent `chartr-site-v2` source remains unchanged. See the [scope](../discussions/chartr-recreation.md) and [implementation journal](../journal/2026-10-06-site-layouts-implementation.md).
 
 In `/admin/`, choose **Site Layout → Change layout → chartr**, then set **Preview page → chartr**. The page at `/chartr` contains nine independent blocks in reference order. The committed site's existing Starter selection stays intact; the imported `examples/chartr-backup.json` instead selects chartr and contains the existing pages, collections and entries alongside the new sample. Browser backup import replaces the local draft, so use the picker when only changing layout.
 

@@ -35,7 +35,7 @@ original Indonesian body with explicit language markup. Other translated sample
 copy is recorded in the preset, including where the source's Indonesian route
 still contained English.
 
-The [local implementation](../features/kahf.md) is complete and the
+The [local implementation](../trials/kahf.md) is complete and the
 [verification run](../verification/runs/2026-10-25-kahf.md) passes: 16 library tests,
 validation/typecheck, 26 public routes plus admin, 602 local links/184 rendered
 asset references, representative desktop/mobile comparisons, public interactions,
@@ -133,7 +133,7 @@ Non-i18n engine additions below remain proposals to evaluate against the scope.
 
 Inspected on 2026-10-18 against engine `5d005b5`. The working tree was clean at
 the start. Read the [engine contract](../features/site-engine.md),
-[local authoring](../features/local-authoring.md), [layouts](../features/site-layouts.md),
+[local authoring](../guides/local-authoring.md), [layouts](../features/site-layouts.md),
 [content model](../features/content-model.md), [generic pages](../features/generic-pages.md),
 media, editor, decisions and recent planning records, and checked the relevant
 source implementations.

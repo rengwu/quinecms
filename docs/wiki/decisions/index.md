@@ -1,9 +1,14 @@
 ---
 title: Decisions
-updated: 2026-11-07
+updated: 2026-11-09
 status: Accepted
 ---
 # Decisions
+
+Feature map scope: DEC-252–DEC-257 distinguish CMS capabilities from trials and
+authoring guidance. Include developer capabilities, group concrete subfeatures,
+give trials their own area, and link to separate checks/evidence. The full
+documentation audit is recorded in [Feature map scope](../discussions/feature-map-scope.md).
 
 Admin redesign: DEC-234–DEC-244 select a complete, compact redesign after
 Statamic's shell and editor, stacks for nested items, Off/Split/Float previews,
@@ -49,7 +54,7 @@ grill answers. The [scoped design](../discussions/multiple-site-layouts.md) is
 settled and implemented locally following work-until-grill authorization. See
 [verification](../verification/runs/2026-10-13-multiple-site-layouts.md).
 
-Local authoring direction: DEC-134 prioritizes creative freedom and advisory guidance for agents working in cloned repositories. The user approves the short entry point, practical guide and dependable local validation. Remote agent access and MCP remain excluded. The [original investigation](../discussions/local-agent-authoring.md) records the findings; the [current guide](../features/local-authoring.md) describes the delivered workflow.
+Local authoring direction: DEC-134 prioritizes creative freedom and advisory guidance for agents working in cloned repositories. The user approves the short entry point, practical guide and dependable local validation. Remote agent access and MCP remain excluded. The [original investigation](../discussions/local-agent-authoring.md) records the findings; the [current guide](../guides/local-authoring.md) describes the delivered workflow.
 
 Current direction: DEC-109 permits a breaking pre-production redesign. Earlier decisions remain historical/product context, rather than compatibility obligations for the replacement model.
 
@@ -877,3 +882,20 @@ preview, but asked for the question to be rephrased. That choice is unconfirmed.
 The maintainer authorized simple, adjustable interaction defaults and subsequently
 stopped the parallel Claude review. Implementation and verification continue
 independently; a later visual polish pass is optional, not a delivery prerequisite.
+
+## Feature map scope — grill-form, 2026-11-09
+
+The [submitted answers](../journal/2026-11-09-grill-cbd5005e63f65a81e0129a6bc195227c.md)
+accept all five recommendations. The [cleanup plan](../discussions/feature-map-scope.md)
+records the documentation scope, subsequently applied at the maintainer’s
+request; these choices do not establish new
+product behavior or verification results.
+
+| ID | Decision | Basis and rationale |
+| --- | --- | --- |
+| DEC-252 | The feature map contains capabilities included in QuineCMS. Site recreations and other proving exercises are trials, not CMS features. | Direct instruction names Kahf, chartr and Quine as hurdle-testing trials and distinguishes the CMS from the process that proves it. |
+| DEC-253 | Include editor, public-site and developer-facing capabilities. Keep authoring workflows and advice in guidance. | Q1 accepts engine/CLI functionality as part of the CMS. |
+| DEC-254 | Organize the map into grouped capabilities with concrete subfeatures and links to contracts. | Q2 selects useful detail without requiring a separate page for every control. |
+| DEC-255 | Give trials a separate area linked from the wiki home, with links to the capabilities exercised and existing verification runs. | Q3 retains useful trial scope, findings and evidence outside the feature map. |
+| DEC-256 | Feature pages describe current behavior, entry points and limits, with links to separate check recipes and dated evidence. | Q4 separates the capability contract from its proof. |
+| DEC-257 | The cleanup scope covers an audit and reorganization of all current feature documentation, correcting obsolete bundled-design claims and separating guidance/trials while preserving historical evidence. | Q5 selects the full documentation scope over changing only the index or trial pages. No CMS implementation change is implied. |

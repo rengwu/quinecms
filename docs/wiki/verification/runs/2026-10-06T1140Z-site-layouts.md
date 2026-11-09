@@ -7,7 +7,7 @@ result: Passed
 
 ## Scope and identity
 
-[FEAT-site-layouts](../../features/site-layouts.md), [FEAT-chartr](../../features/chartr.md), [FEAT-editor](../../features/editor.md), [FEAT-static-blocks](../../features/static-blocks.md) and [FEAT-block-library](../../features/block-library.md). Implements DEC-092–DEC-108 after the user's “lets go” authorization. The later header/footer screenshots require dedicated nested editor levels sitewide.
+[FEAT-site-layouts](../../features/site-layouts.md), [FEAT-chartr](../../trials/chartr.md), [FEAT-editor](../../features/editor.md), [FEAT-static-blocks](../../features/static-blocks.md) and [FEAT-block-library](../../features/block-library.md). Implements DEC-092–DEC-108 after the user's “lets go” authorization. The later header/footer screenshots require dedicated nested editor levels sitewide.
 
 Dirty tree based on `a4fe1bac89a08763c388283a6ef369214d86d3fa`, macOS, Node 22.19.0, pnpm 10.34.1, Astro 7.3.5, React 19.3.0. [Source manifest](../../evidence/2026-10-06T1140Z-site-layouts/source-manifest.json) records 370 application/test/content/asset/configuration files, SHA-256 `58230c4f922e55a5a136f09d0bd58aaecb2ce7b00eb260a73fc508d4d8070b08`. Existing uncommitted discussion records were preserved.
 

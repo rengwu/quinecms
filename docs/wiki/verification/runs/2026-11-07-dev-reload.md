@@ -7,7 +7,7 @@ result: Passed
 
 ## Scope and build
 
-Verified [local authoring](../../features/local-authoring.md) and the
+Verified [local authoring](../../guides/local-authoring.md) and the
 [site engine](../../features/site-engine.md): keeping `pnpm dev` running while
 saving site-owned JSON, source and assets must update the site and notify an open
 browser. The user authorized the engine repair and upgrading the independent

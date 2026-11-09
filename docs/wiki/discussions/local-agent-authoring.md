@@ -5,7 +5,7 @@ status: Historical audit; local guidance and validation implemented
 ---
 # Local agent authoring investigation
 
-Follow-up, 2026-10-08: the user approves the final response's steps 1–3 (concise AGENTS.md, practical authoring guide, dependable local validation) and clarifies that creative freedom is primary. Capability choices and workflows are recommendations, not requirements. DEC-134 records this direction. See the [current guide](../features/local-authoring.md) and [implementation journal](../journal/2026-10-08-local-authoring.md). The audit below describes the earlier inspected revision; its identified documentation/verification gaps are addressed in that increment. Additional examples and fresh-agent exercises remain future options.
+Follow-up, 2026-10-08: the user approves the final response's steps 1–3 (concise AGENTS.md, practical authoring guide, dependable local validation) and clarifies that creative freedom is primary. Capability choices and workflows are recommendations, not requirements. DEC-134 records this direction. See the [current guide](../guides/local-authoring.md) and [implementation journal](../journal/2026-10-08-local-authoring.md). The audit below describes the earlier inspected revision; its identified documentation/verification gaps are addressed in that increment. Additional examples and fresh-agent exercises remain future options.
 
 The user's purpose is to let a developer build a client website quickly with AI while leaving its ongoing content maintenance to the client through the portal. The agent should understand and use the builder's layouts, blocks, pages, schemas, objects, collections and references, both for a new site and for later changes.
 

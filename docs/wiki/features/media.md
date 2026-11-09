@@ -1,8 +1,8 @@
 ---
-title: Direct media uploads
-updated: 2026-10-16
+title: Media library and direct uploads
+updated: 2026-11-09
 ---
-# Direct media uploads
+# Media library and direct uploads
 
 **ID:** FEAT-media
 
@@ -19,11 +19,6 @@ No upload server or media transcoding service is added.
 Media uses a responsive card grid with 16px gaps and a 220px target minimum card
 width, shrinking to fit narrower containers. Images use a consistent 140px preview
 height with `object-fit: contain`; names, file details and original links remain.
-
-Local Safari verification on 2026-10-16: three columns at 867px available width,
-two at 600px, and one at 280px and 200px, without horizontal overflow. Desktop
-appearance was checked in the dev site; narrow checks temporarily constrained the
-grid container and restored it afterward. No live uploads were exercised.
 
 ## Upload from media fields
 
@@ -55,9 +50,6 @@ text starts empty when a new file is selected, matching the existing selector.
 The Media library uses the same upload control and inline feedback. No new
 storage service, dependency or content format was added. Failed upload cleanup
 remains owned by the existing uploader.
-
-[Local verification](../verification/runs/2026-10-13-media-fields.md) covers the
-editor flows and mocked uploads. Live R2 upload execution remains unverified.
 
 ## Build environment setup
 
@@ -136,46 +128,20 @@ paths, protocol-relative URLs, HTTP media URLs and executable/data schemes are
 rejected. The metadata validator does not inspect the filesystem; authors must
 verify that each public file exists and loads from the built output.
 
-This supports reference-site recreation without an initial R2 upload. It does
-not add a browser file-import pipeline or storage synchronization. Later uploads
-still go to R2. Removing/resetting records does not delete copied local files or
-uploaded objects. See the [Quine trial](../journal/2026-10-11-quine-rebuild.md).
+Local assets can be used without an R2 account. This does not add a browser
+file-import pipeline or storage synchronization. Later uploads still go to R2.
+Removing/resetting records does not delete copied local files or uploaded objects.
 
 The original uploads directly to R2. Decodable static raster images below the pixel limit get configured smaller WebP variants, with no upscaling; animated/unsupported formats retain their original. Non-image media uses native players or links. Metadata enters the draft, while credentials and binaries do not.
 
 Failed batches attempt to delete their own attempted keys. Successful uploads discarded before Save remain in R2 for manual cleanup. Public URLs may be accessible before Publish. Settings → Factory reset clears all media-library records from the local draft, while retaining uploaded R2 objects. Save draft persists removal of the records; this action never deletes bucket objects.
 
-## Verification recipe
+## Limits
 
-1. Run `pnpm exec vitest run tests/storage-config.test.ts tests/media-fields.test.ts tests/media.test.ts tests/local-authoring.test.ts` for environment validation/defaults,
-   no-storage behavior, encrypted build configuration/plaintext exclusion, preserved
-   output on failure, upload/selection/cancel/retry paths and mocked SDK cleanup.
-2. Build a disposable site with dummy complete R2 settings. Unlock its production
-   admin and check Media plus a media field: Upload is available, storage settings
-   and credential controls are absent. Existing file selection still works.
-3. Build with all connection values blank: no upload buttons or setup dialog;
-   existing media remains usable. Partial settings must fail with named missing
-   variables rather than printing values. Do not upload using dummy credentials.
-4. With an authorized disposable live bucket, configure its environment, public URL
-   and CORS outside the portal, rebuild, upload a JPEG/PNG, inspect original/variant
-   sizes and Content-Type, select it, Save/Publish and verify public rendering.
-   Check a denied request and retained field selection. Live R2 remains unverified.
+No automatic deletion of successfully uploaded assets, remote image service or
+video/audio transcoding is supplied. Browser encoding and live R2 behavior
+depend on the browser, configured credentials and bucket policy.
 
-## Coverage and limitations
+## Checks and evidence
 
-Canvas/SDK mocks are not proof of browser encoders, R2 CORS, or live object cleanup. No automatic deletion of successfully uploaded assets, image service, or video transcoding is supplied.
-
-## Verification history
-
-- [Upload from media fields](../verification/runs/2026-10-13-media-fields.md): full local verification, eight editor upload regressions, desktop/mobile controls and validation errors; no live R2 upload.
-
-- [Test connection button](../verification/runs/2026-10-13-r2-connection-test.md): mocked write/read/delete verification and actual 4324 UI check; no live bucket probe.
-- [Simplified R2 setup](../verification/runs/2026-10-13-r2-setup.md): local setup behavior and regression verification; no live R2 connection.
-- [Initial implementation run](../verification/runs/2026-10-05T0819Z-implementation.md).
-
-
-## R2 environment configuration — 2026-10-14
-
-[Verification](../verification/runs/2026-10-14-r2-environment.md) covers environment
-validation, encrypted credential delivery, absence of storage setup controls,
-configured/unconfigured uploads and existing media behavior. Live R2 is not claimed.
+[Check recipes and dated evidence](../verification/features/media.md).

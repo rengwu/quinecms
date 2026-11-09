@@ -7,7 +7,7 @@ status: Implemented after Site Layout foundation
 
 After the [Site Layout system](site-layouts.md) is implemented, the user requests recreating [chartr.dev](https://chartr.dev/) as a Site Layout plus independent blocks, using `../chartr-site-v2` as the source reference. DEC-106 records this requested sequence. This is a real use of the growing layout/block library, with a page assembled from separately registered content blocks.
 
-The user subsequently authorized both phases. See the [implemented feature](../features/chartr.md), [journal](../journal/2026-10-06-site-layouts-implementation.md) and [verification](../verification/runs/2026-10-06T1140Z-site-layouts.md). The proposed decomposition and unexecuted targets below describe the planning stage.
+The user subsequently authorized both phases. See the [historical trial](../trials/chartr.md), [journal](../journal/2026-10-06-site-layouts-implementation.md) and [verification](../verification/runs/2026-10-06T1140Z-site-layouts.md). The proposed decomposition and unexecuted targets below describe the planning stage.
 
 ## Requested outcome
 

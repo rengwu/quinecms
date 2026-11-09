@@ -7,7 +7,7 @@ result: Passed
 
 ## Scope
 
-[FEAT-site-layouts](../../features/site-layouts.md), [FEAT-chartr](../../features/chartr.md) and [FEAT-editor](../../features/editor.md). DEC-130 moves content spacing into the active layout’s settings and gives each layout its own defaults. Selected checks cover navigation, switching, candidate preview, zero/cleared overrides, persistence, validation and rendering tokens.
+[FEAT-site-layouts](../../features/site-layouts.md), [FEAT-chartr](../../trials/chartr.md) and [FEAT-editor](../../features/editor.md). DEC-130 moves content spacing into the active layout’s settings and gives each layout its own defaults. Selected checks cover navigation, switching, candidate preview, zero/cleared overrides, persistence, validation and rendering tokens.
 
 ## Build and environment
 

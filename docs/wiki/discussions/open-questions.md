@@ -1,9 +1,19 @@
 ---
 title: Open questions
-updated: 2026-10-25
-status: Local Kahf proof complete; no blocking product decision
+updated: 2026-11-09
+status: Feature map cleanup applied; no blocking scope question
 ---
 # Open questions
+
+## Feature map scope — settled
+
+The [submitted round](../journal/2026-11-09-grill-cbd5005e63f65a81e0129a6bc195227c.md)
+settles the documentation boundary and scope (DEC-252–DEC-257): include editor,
+public-site and developer capabilities; group concrete subfeatures; give trials
+their own area; separate checks/evidence from feature contracts; and audit all
+current feature documentation. No consequential interview question remains.
+The [cleanup](feature-map-scope.md) was subsequently authorized with “apply it”
+and is complete; see the [audit](../journal/2026-11-09-feature-map-cleanup.md).
 
 ## Kahf recreation — implementation
 
@@ -213,7 +223,7 @@ DEC-135 adds GitLab beside GitHub. The implementation keeps Save/Publish in the 
 
 ## Local agent authoring — approved and implemented
 
-DEC-134 prioritizes creative freedom and advisory guidance for local agents in cloned repositories. The user approves the concise entry point, practical guide and dependable local validation. These are implemented in the [authoring guide](../features/local-authoring.md) and [journal](../journal/2026-10-08-local-authoring.md). Remote agent access/MCP remains excluded. No further product question blocks this increment. Expanded example packages and fresh-agent benchmarks remain optional future work; they were not included in the approved steps 1–3.
+DEC-134 prioritizes creative freedom and advisory guidance for local agents in cloned repositories. The user approves the concise entry point, practical guide and dependable local validation. These are implemented in the [authoring guide](../guides/local-authoring.md) and [journal](../journal/2026-10-08-local-authoring.md). Remote agent access/MCP remains excluded. No further product question blocks this increment. Expanded example packages and fresh-agent benchmarks remain optional future work; they were not included in the approved steps 1–3.
 
 ## Admin appearance — resolved
 

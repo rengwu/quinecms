@@ -13,7 +13,7 @@ should nudge rather than prescribe. DEC-134 records this accepted direction.
 No further product interview is needed for this increment.
 
 AGENTS.md and README now lead with that purpose and link to the
-[local authoring guide](../features/local-authoring.md). It covers new and existing
+[local authoring guide](../guides/local-authoring.md). It covers new and existing
 sites, content structures, exact record/value shapes, custom blocks/layouts,
 browser/Git/local boundaries and delivery. Current feature pages correct stale
 spacing, schema and navigation descriptions. Historical technical discussions are

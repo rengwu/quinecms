@@ -1,397 +1,74 @@
 ---
-title: Building sites with local agents
-updated: 2026-11-07
+title: Local development and validation
+updated: 2026-11-09
 ---
-# Building sites with local agents
+# Local development and validation
 
 **ID:** FEAT-local-authoring
 
-## Start with the design
+## Entry points and prerequisites
 
-Work in the site repository, which owns its content, configuration, assets and original
-extensions. QuineCMS supplies the engine/admin as a pinned dependency. Optional
-libraries supply designs; the engine imposes no site aesthetic. See the
-[installation and extension contract](site-engine.md). Let the brief, references
-and your judgment shape the visual design, interactions and information structure.
+Run the installed `quinecms` CLI from a site repository containing
+`quinecms.config.json`, content and pinned dependencies. The engine repository
+maintains the CLI; it is not itself a client site. Node 22.12+ and the repository's
+pinned pnpm version are required. See [Engine and extensions](site-engine.md) for
+assembly and [the authoring guide](../guides/local-authoring.md) for workflows.
 
-The builder can make a useful bridge between an expressive custom site and easy
-client maintenance. Consider editable fields for content the client is likely to
-change; use collections or reusable structures when they simplify the project.
-A small site may need only a few blocks. A more involved site may benefit from
-structured content and custom renderers. Site-specific code is also an option.
+## Site commands
 
-The workflows below are suggestions. Choose the capabilities that fit. Record shapes,
-renderer interfaces and validation limits are more precise because they describe
-what the current software can read and render, rather than prescribing a design.
-
-## A quick map
-
-| Look here | To understand |
-| --- | --- |
-| `content/site.json` and `content/pages/` | This site's layout selection, pages and block instances. |
-| `content/collections/`, `content/objects/`, `content/entries/` | Its schemas and structured content, if used. |
-| `quinecms.config.json`, `package.json`, `pnpm-lock.yaml` | Installed libraries, exact engine/library revisions and initial layout. |
-| `extensions/local/quinecms.library.json` | Optional original site blocks/layouts and helpers. |
-| Engine export `quinecms/core/types` | Exact record and field shapes. |
-| `src/core/content.ts`, `schema.ts`, `bindings.ts`, `lists.ts`, `routes.ts` | Validation, change checks, references, defaults and routes. |
-| [Feature map](index.md) | Current capability details and UI entry points. |
-
-Local agents normally edit source/JSON in the clone. The browser is useful for
-checking appearance and whether the client's controls feel right. Browser editing
-updates an in-memory draft and tab recovery; it does not write the local checkout.
-Importing a backup replaces that browser draft. A connected editor saves to its
-configured GitHub or GitLab draft branch. These are different copies until synchronized.
-
-## Choosing content structures
-
-These are useful starting points, not required allocations:
-
-| Need | Consider |
-| --- | --- |
-| A page with its own address | A static page with ordered blocks. |
-| Section-specific copy, images or a small repeatable list | Block props with declared fields. |
-| Repeated, independently managed items such as articles or people | A `many` collection with its own schema and entries. |
-| One centrally managed record, such as company details | A `single` collection; its one entry is still independent content. |
-| The same field structure in several places | A named object definition. Each use owns its values; it does not share the content itself. |
-| Repeated values owned by one entry | An array of objects, using one inline or named shape. |
-| Selecting existing shared records | A reference, or ordered array of references, to one collection. |
-| A reusable presentation for entries | A generic page assigned to a collection. |
-| Site-wide chrome, typography or custom surrounding UI | A Site Layout with author-defined settings. |
-| A distinctive section or interaction | A custom registered block and its renderer. |
-
-A data-only collection needs no URL. An ordinary collection assigned a generic
-page uses a prefix plus entry slugs; a single-entry collection uses one exact path.
-An index, if useful, is a separate static page. Static pages use static blocks;
-generic pages use generic blocks. General content queries and reverse-reference
-template lists are not built-in capabilities; forward bindings and collection
-cards cover the current structured rendering features. A custom renderer can
-provide other behavior using its available content context.
-
-## Starting a new site
-
-Start from the [Archline pilot](https://github.com/rengwu/quinecms-site-archline)
-or create a site with pinned dependencies and the configuration described in the
-[engine contract](site-engine.md). Install dependencies, inspect selected definitions,
-and sketch routes, visual components and likely client edits. Configure library
-designs through their exposed fields or author independent original extensions.
-Unused content directories may be absent. Keep any existing client content intact
-unless replacement is part of the brief.
-
-For new records, the canonical layout shape is a useful starting point:
-
-```json
-{
-  "formatVersion": 1,
-  "id": "site_main",
-  "globals": {},
-  "layouts": [{
-    "id": "layout_main",
-    "name": "Main layout",
-    "active": true,
-    "design": {
-      "id": "company",
-      "version": 1,
-      "settings": { "title": "Client site", "navigation": [] }
-    }
-  }]
-}
-```
-
-That assumes an original installed `company@1` design with those settings. Use
-the selected definition's actual defaults. Multiple named configurations can use
-the same design independently. Every page assigns an active configuration by
-`layoutId`; entries inherit their generic page's assignment. At least one layout
-must remain active, and used layouts cannot be disabled or deleted. Content spacing
-and styling belong to each design's settings and policy.
-
-A static page might begin as:
-
-```json
-{
-  "formatVersion": 1,
-  "id": "page_home",
-  "layoutId": "layout_main",
-  "kind": "static",
-  "path": "/",
-  "title": "Home",
-  "blocks": []
-}
-```
-
-It lives at `content/pages/page_home.json`. A publishable snapshot currently needs
-a static home page at `/`. Add block instances with their installed `type`, `version`,
-unique `id` and `props`. A useful starting value is the definition's defaults;
-`newBlock()` in `src/core/content.ts` also clones defaults and row identities.
-
-`pnpm dev` assembles the site and watches local content, original extensions, assets
-and configuration. Keep it running while editing JSON: saving a file updates the
-workspace and automatically refreshes the open browser after generation succeeds.
-Page/entry copy and layout settings do not restart the development server. Adding,
-renaming or removing routes lets Astro refresh its route configuration on the same
-address. Invalid JSON reports an error; correcting and saving the file recovers
-without restarting the command. This is a page refresh, so temporary public-page
-interaction state can reset.
-
-Restart after dependency or environment changes. Do not edit
-`.quinecms/workspace/`: it is disposable generated output. Browser editor drafts
-and recovery remain separate from local files; this watcher does not merge them.
-
-The [development reload verification](../verification/runs/2026-11-07-dev-reload.md)
-covers saved JSON, browser reloads, route changes and recovery.
-
-## Recreating an existing site
-
-Inspect the reference at wide/narrow widths and exercise its interactions. When
-source is available, inventory routes, copy, assets, fonts and behavior. Confirm
-only unresolved choices: fidelity, source reuse, likely client edits and whether
-the active site should be replaced or preserved. A reproduction is not automatically
-a redesign, a CMS schema port or permission to remove unrelated content.
-
-Compare the rebuilt page and reference at the same viewport after fonts and entry
-animations finish. Check distinctive typography closely: splitting text for an
-animation can change word spaces, kerning and flex sizing even with the correct
-font and size. Repeat the comparison in the editor preview.
-
-Map visible sections and client tasks to builder capabilities before coding:
-
-| Reference need | Builder location | Client location |
+| CLI | Conventional site script | Behavior |
 | --- | --- | --- |
-| Shared shell, typography, navigation | Registered layout design and named configuration | Site Layouts |
-| Section copy/images/actions | Registered block fields | Pages → page → block |
-| A short list owned by one section | Block `list` fields with `_rowId` rows | The block's named list |
-| Independent reusable content | Collection and entries, when useful | Content and Schemas |
-| Existing image files | `public/` plus media records | Media and field selectors |
-| New interaction | Block renderer and activation | Preview and public site |
+| `quinecms dev` | `pnpm dev` | Assemble the site and start its development server with local file reload. |
+| `quinecms validate` | `pnpm validate:content` | Check structural validity and publication readiness against installed definitions. |
+| `quinecms check` | `pnpm check` | Assemble the site and run Astro's source/type checks. |
+| `quinecms build` | `pnpm build` | Enforce production pins, assemble and build static output, then copy the successful output to site `dist/`. |
+| `quinecms check-build` | `pnpm check:build` | Inspect the last generated build's assets, runtime sharing and public/editor separation without regenerating inputs. |
+| `quinecms preview` | `pnpm preview` | Serve the existing generated static build; it does not rebuild content. |
 
-All installed themes and blocks are available together in the main dashboard:
-run `pnpm dev`, use Site Layouts → Add layout and Pages → Add block → All themes.
-The initial library includes Archline and Intr. The Archline pilot uses a Projects
-collection with generated detail routes. Library test fixtures preserve Intr's
-alternative model: ordered shared project cards and one explicitly authored detail
-page. Historical Quine/chartr examples remain at engine commit `bfbb522`; they are
-not installed designs in the new engine.
+Sites define these thin scripts in their own package manifest. `pnpm verify` is
+an optional site convenience script, not a universal engine CLI command.
+The engine repository's `pnpm verify` runs its regression suite and wiki check.
 
-For collection blocks, declare each top-level selector with `collectionField`
-(`collectionKey` plus compatible `types`). Public rendering and live preview pass
-its definition to `contextFor(content, instanceId, definition)`, which supplies
-only those selected paths in `entries[].values`, keyed by path. Selector property
-names are arbitrary; supported nested paths use the existing resolver. Blank
-optional selections add nothing, while a selected optional field with no value is
-null. Publication validation catches invalid nonempty selections.
+## Validation
 
-The old five mappings (`titleField`, `summaryField`, `imageField`, `dateField`,
-`urlField`) remain the fallback for callers without a definition or definitions
-without declared mappings. New libraries should declare their selectors and a
-compatible engine requirement (this capability starts at 0.3.0). This does not
-change generic-page bindings or add a query API. See the
-[accepted contract](../discussions/tessera-collection-context.md).
+`validate --draft` selects structural checks only, allowing incomplete required
+content that cannot yet publish. `validate --base <git-ref>` also checks schema
+changes and deletion impact against an explicit local Git commit. The flags can
+be combined. Output names the phase, content path and issue; failures exit nonzero.
 
-Several details are easy to miss during implementation:
+Validation refreshes generated registries without generating routes. It does
+not edit site content, fetch Git history, move branches or contact a provider.
+Final-state checks alone do not establish the safety of a change from an earlier
+snapshot; that is the purpose of `--base`.
 
-- A media field value is an object containing `mediaId` and optional `alt`.
-  Block lists use `list`/`fields`; collection arrays use `array`/`of`.
-- Keep layout geometry defaults, its policy output and renderer consistent.
-  Author-specific settings need not expose every source-maintained value.
-- Scope typography/resets to the website. Container queries let the same
-  responsive renderer react to the editor's narrow preview, independently of
-  the desktop browser window. The layout Head does not mount in that preview,
-  so assets needed there also need a renderer-loaded path.
-- Choose responsive image sources for the visible crop. A landscape image filling
-  a tall phone hero needs more pixels than its narrow element width implies;
-  check `currentSrc` and sharpness after a fresh mobile load.
-- Give shared-content blocks clear field labels and an editing map. A reference
-  selects content; it does not open an inline editor for that content. In block
-  lists, reference-only rows currently fall back to numbered item labels.
-- Choose layout activation deliberately: `never` renders only on the server,
-  while `load` hydrates the React wrapper. Static blocks do not eliminate that
-  layout cost. Native navigation may be enough; measure the built page scripts
-  before choosing React hydration for a small menu behavior.
-- Read the actual dev-server URL and verify the page identity. A requested port
-  may belong to another running site. Click an interactive control and inspect
-  the development terminal; an HTTP 200 and correct static screenshot do not
-  establish successful hydration. Vite caches are separate per checkout and
-  Astro command, so checks/builds do not overwrite the active dev cache. Isolated
-  checkouts explicitly allow their linked dependency directory.
-- Test at least one realistic content edit and a repeatable-list edit, then
-  confirm preview, cancellation/restoration and export. Browser edits do not
-  write the source checkout. Record where content is maintained and how to keep
-  it, alongside any fidelity compromises and untested integrations.
+## Development reload
 
-## Adjusting an existing site
+The server watches site-owned content, original extensions, source, scripts,
+public assets and configuration. Saves are debounced and generation is serialized.
+Content changes reload the browser after generation; route-table changes use
+Astro's configuration refresh. Invalid JSON reports an error and a later valid
+save recovers. Newly created optional input directories are watched too.
 
-Start with `git status`, the current site records, the relevant definitions and the
-client's request. If the client uses the portal, review its latest saved draft too:
-`GIT_DRAFT_BRANCH` configures the branch, defaulting to `draft`. Fetching that
-branch through the developer's normal Git workflow makes its saved content available
-locally. Unsaved edits in someone else's browser are not in Git.
+The watcher does not watch upstream engine/library checkouts. Restart after
+changing dependencies, upstream code or environment settings. A reload can reset
+public-page interaction state. Browser editor changes stay in the browser draft
+until exported or saved through Git; this is not browser-to-filesystem saving.
 
-Identify the content snapshot being changed before editing. A text adjustment may
-belong in one block's props, an entry value or shared layout settings. A change to
-all article pages may belong in their generic page. New controls or visual behavior
-may belong in a definition/renderer. Named-object changes can affect several collections;
-`incomingUsage`, `definitionUses` and `collectionUses` in `src/core/schema.ts` help
-trace their uses, and the portal exposes readable usage summaries.
+## Assembly and limits
 
-For a normal adjustment, stable IDs and unrelated values are useful to retain.
-If the request deliberately changes the structure, coordinate its values, references
-and presentation too. The change checker can identify incompatible populated fields
-or remaining references to deleted records. No automatic content migration is provided.
+`.quinecms/workspace/` is disposable generated output. Installed packages and site
+inputs remain the source of truth. Stop one site command before another command
+assembles that same workspace. Failed validation/build generation leaves inputs
+and the previous delivered `dist/` intact; a successful build replaces that output.
 
-A useful check before delivery is:
+Artifact inspection checks generated assets and dependency graphs; it does not
+establish visual fidelity, successful browser hydration or live provider behavior.
+Validation checks media metadata, not whether every referenced public file exists.
+Manual source/content upgrades have no automatic migration promise.
 
-```sh
-pnpm validate:content --base HEAD
-pnpm verify
-```
+The implementation follows DEC-134 and DEC-172–DEC-183. The
+[engine contract](site-engine.md) defines exact pin, extension and build boundaries.
 
-Choose a baseline ref representing the actual starting snapshot; `HEAD` is only
-appropriate when that is the intended baseline. The command reads local Git history
-without fetching or changing branches. `--draft` can be combined with `--base` for
-unfinished work. Source changes may require reconciliation with the shared draft
-and deployment of the rebuilt editor before portal publication; see [publishing](publishing.md).
+## Checks and evidence
 
-## Records and values
-
-Each site/page/collection/object/entry/media record has `formatVersion: 1` and an ID.
-Except for `site.json`, record filenames match their IDs; entry directories match
-`collectionId`. Block instances have their own IDs and implementation versions. IDs identify records;
-paths, slugs and labels are editable attributes. `filesFor()` and `parseFiles()` in
-`src/core/content.ts` implement file mapping and serialization.
-
-Collections contain `name`, `mode`, `fields`, `titleField`, and optional `path` and
-`genericPageId`. Entries contain `collectionId`, `values`, and optional `slug`.
-There is no entry block list. For a `single` collection, create its one entry too;
-the portal does this on Create collection. `fieldDefaults()` is useful when making
-entries/owned values, and `normalizeLists()` creates new identities when copying rows.
-
-| Field definition | Stored value |
-| --- | --- |
-| `{ "key": "name", "label": "Name", "type": "text" }` | String or empty/null. Other scalar types include richtext, number, date, toggle, select and media. |
-| `{ "key": "seo", "label": "SEO", "type": "object", "objectId": "object_seo" }` | An owned object of field values. Inline `fields` can replace `objectId`. |
-| `{ "key": "team", "label": "Team", "type": "array", "of": { "type": "object", "objectId": "object_person" } }` | Ordered objects; `_rowId` gives each row a stable editor identity. |
-| `{ "key": "author", "label": "Author", "type": "reference", "collectionId": "collection_authors" }` | An existing entry ID or null. |
-| `{ "key": "related", "label": "Related", "type": "array", "of": { "type": "reference", "collectionId": "collection_articles" } }` | Ordered unique entry IDs. |
-
-Collection/object schemas use `array`; block/layout definitions retain `list` with
-`fields`. Arrays have one object shape or one target collection, not mixed variants.
-Owned objects and object arrays allow three levels; named-definition reuse adds no
-extra level, and recursive owned definitions are rejected. References between
-independent entries may form cycles. [Full content contract](content-model.md).
-
-Generic block `bindings` map a target prop to a typed path, for example
-`{ "heading": "seo.title", "author": "author.name" }`. A list projection uses
-`{ "source": "items", "fields": { "label": "name" } }` for its target binding.
-The source's type/shape needs to fit the destination field, including every collection
-sharing that generic page. Paths are bounded to 12 segments. Empty optional values
-use literal `props` fallbacks; zero and false remain values. The generic editor preview
-shows placeholders; a built entry route shows the actual resolved content.
-
-Rich text stores Markdown. Uploaded image embeds use `![alt](media:media_id)` and
-YouTube embeds use `![title](youtube:VIDEO_ID)`. The managed rich-text renderer has a
-limited safe vocabulary; a custom block's code can implement other visual/media behavior.
-Media props store `{ "mediaId": "media_example", "alt": "Description" }`, rather
-than a URL or bare ID. Records live in `content/media/`. Client uploads go to R2
-through Media; copied assets can live in `public/` with root-relative record URLs.
-For example `public/photos/team.jpg` uses `/photos/team.jpg`. Supply the normal
-`original` metadata (`key`, `url`, `mime`, `bytes`, optional dimensions) and
-`variants: []` when no variants exist. Existing selectors and renderers work with
-both sources. Local validation checks metadata, not file existence; verify local
-asset URLs in the built site. [Media contract](media.md#locally-authored-media).
-
-Sites with additional languages keep `i18n` in `site.json` and per-language
-`copies` on pages, entries and layout configurations. Text/rich-text fields vary
-by default; `"localized": false` keeps technical text shared, and other leaf
-types opt in with `"localized": true`. Copies refer to rows by `_rowId`, so give translated rows
-IDs. See [optional internationalization](internationalization.md) for the record
-shapes and fallback rules.
-
-## Custom blocks and layouts
-
-A block version has a `definition.json` and renderer under an extension's `src/blocks/<name>/vN/`.
-Register it in `quinecms.library.json` as described in the [extension contract](site-engine.md#extension-manifest). Definitions describe `type`, `version`,
-`label`, `framework`, `activation`, `component`, `fields`, `defaults` and dependency
-ranges. Optional metadata includes `kind`, theme/tags/description and footer placement.
-Use tags for content or purpose, never the theme name itself; `theme` already
-provides that classification and its own catalog filter.
-The manifest is a good place to make a custom block discoverable in the catalog.
-
-React/Svelte/Vue components receive `{ props, context }`. Vanilla implementations
-export `render(props, context)` for public markup and `mount(host, props, context)`
-returning `{ update, destroy }` for browser use. Public activation is `never`, `visible`,
-`idle` or `load`; preview mounts immediately. The same source renders both contexts.
-Preview props may be incomplete; graceful blanks/placeholders usually help authoring.
-Root package pins and manifest dependency ranges are checked during generation.
-Block and layout text/rich-text fields are translatable by default. Mark technical
-text (anchors, commands, code, identifiers) `"localized": false`; URLs, media,
-references and other leaf types stay shared unless explicitly opted in. Collection
-and collection-field selectors always stay shared, as do containers and row order.
-
-`context` provides instance identity, resolved globals, media, links, preview/binding
-placeholders and collection summaries. Collection-card field mappings expose their
-selected values. It is not an unrestricted data-query service. See `src/core/types.ts`
-and the relevant renderer for the available context. New behavior can be authored
-in source where useful.
-
-A layout lives under an extension's `src/` and is registered in its manifest's `layouts` array.
-Its manifest names a React wrapper, React settings component, pure policy, defaults
-and fields, with an optional server-rendered Head component. Activation is `never`
-or `load`. The wrapper receives settings, content, block children and preview context;
-placing those children makes the page's block composition visible. Its settings UI
-receives `settings`, `content` and `onChange`. The policy can derive title/globals and
-validate values. The [layout contract](site-layouts.md#authoring-api) describes details.
-
-Custom settings are permitted: `fields: []` is valid. Custom React field widgets
-and pure validators register through the extension manifest. Use the public
-`quinecms/core/*` and `quinecms/editor/*` exports. Document custom value shapes near
-original extensions; modify subscribed library implementations upstream.
-
-CSS Modules/framework-scoped CSS help keep an expressive design independent from
-the editor. The layout owns the website surface; shared `--site-*` variables are
-available when useful. Browser preview shares a document with the admin, so global
-resets can affect both. Existing shared controls (`Fields`, `PanelLevel`, creation
-forms) offer a consistent client experience for custom settings; [editor behavior](editor.md)
-describes their navigation and cancellation semantics.
-
-Saved records pin implementation versions. A version switch preserves compatible
-same-key block values; layout switches use fresh defaults. If an implementation is
-changed or removed, check the records using it. This prototype has no migration
-commitment, and deliberate redesign is possible within the task's scope.
-
-## Validation and delivery
-
-```sh
-pnpm validate:content                 # structural and publication issues
-pnpm validate:content --draft         # structural issues only
-pnpm validate:content --base HEAD     # also compare schema/deletion impact
-pnpm verify                          # site checks, build and artifacts (pilot script)
-pnpm preview                         # inspect the built result
-```
-
-The validator refreshes generated registries without generating routes, then calls
-the existing core validators. It prints paths, phases and messages; failure exits
-nonzero. It does not edit content or save/publish anything. `--base` uses an explicit
-local Git snapshot; final-state validation alone cannot establish every change-impact
-check. Tests use isolated sample records; the build and artifact check inspect the
-actual site's output. Runtime sharing and public/editor separation remain checked
-without requiring particular page names, frameworks, scripts or custom embeds.
-
-For visual changes, inspect the relevant public routes, narrow/wide layouts and
-browser editor controls. Consider a representative client edit: can the owner find
-and adjust the intended content, and does the rendered page actually use it? Which
-parts remain developer-maintained can be an intentional handoff choice.
-
-`pnpm build` produces `dist/`. README describes GitHub/GitLab connection and static hosting setup.
-Save draft, Publish to Git and successful hosting deployment are separate outcomes.
-Local/mock checks establish neither account permissions nor live upload/deploy
-success. A useful handoff names the changed routes/controls, how to edit them, what
-was verified, and any intentionally source-maintained parts.
-
-## Verification history
-
-See the [local authoring implementation run](../verification/runs/2026-10-08-local-authoring.md)
-for the new-site regression, draft/baseline validation and verification limits.
-
-
-## Engine separation verification — 2026-10-14
-
-[Independent engine and public pilot verification](../verification/runs/2026-10-14-engine-separation.md): engine/library/clean-build/browser/live-GitHub checks pass; the maintainer subsequently deployed to Netlify (DEC-184). The [hosted smoke check](../verification/runs/2026-10-14-netlify-pilot.md) passes for public routes, assets, mobile navigation and the login page; the maintainer subsequently [confirmed the full hosted connection, edit, draft save, publish and live deployment flow](../journal/2026-10-14-pilot-acceptance.md). This final signed-in evidence is user-reported; pilot delivery is accepted.
+[Check recipes and dated evidence](../verification/features/local-authoring.md).

@@ -1,10 +1,14 @@
 ---
-title: Kahf recreation
-updated: 2026-10-25
+title: Kahf recreation trial
+updated: 2026-11-09
 ---
-# Kahf recreation
+# Kahf recreation trial
 
-**ID:** FEAT-kahf
+**Historical identifier:** `FEAT-kahf` (retained for earlier evidence).
+
+This is a recreation trial, not an engine feature. See the [Trials index](index.md)
+for its exercised capabilities and scope. The site/design behavior below belongs
+to the recorded trial.
 
 ## Intent and basis
 

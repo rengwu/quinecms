@@ -1,6 +1,6 @@
 ---
 title: Git draft saves and publishing
-updated: 2026-10-16
+updated: 2026-11-09
 ---
 # Git draft saves and publishing
 
@@ -81,7 +81,7 @@ Named object definitions and all nested/reference values are part of the same sn
 
 Automatic connection reads content from a coherent commit and creates a missing draft branch from the selected publish branch. Save validates structural integrity and schema change impact, creates one content commit, then advances the draft without force. A concurrent writer rejects that update. Uncertain network responses are checked against the intended operation before edits are cleared.
 
-Validation errors appear in Kumo toasts when Save or Publish is submitted; no proactive issue panel is shown. Publish accepts only saved, fully valid content and a matching deployed source contract. It checks publish-branch ancestry and advances that branch to the validated snapshot without force, preserving any newer draft commits. Divergent history requires synchronization. The success message says deployment pending; no provider status is invented.
+Validation errors appear in admin toasts when Save or Publish is submitted; no proactive issue panel is shown. Publish accepts only saved, fully valid content and a matching deployed source contract. It checks publish-branch ancestry and advances that branch to the validated snapshot without force, preserving any newer draft commits. Divergent history requires synchronization. The success message says deployment pending; no provider status is invented.
 
 ## Publication target
 
@@ -103,29 +103,17 @@ For Save, the commits API creates a unique `lean-save-<uuid>` branch and one com
 
 Both operations run from the editor. Merge requests remain in GitLab's history, and successful merges request removal of their temporary source branches. The adapter briefly waits for merge-request preparation, never schedules delayed automatic merges, and reports unmet approval/pipeline/permission requirements as incomplete. Failed merge requests are closed on a best-effort basis. Interrupted calls may leave temporary branches or requests requiring manual cleanup; local edits remain recoverable. These tradeoffs are an implementation choice for preserving the existing snapshot guarantees with public GitLab APIs.
 
-The GitLab API behavior was checked against the official [commits API](https://docs.gitlab.com/api/commits/), [repository tree/blob APIs](https://docs.gitlab.com/api/repositories/), [merge requests API](https://docs.gitlab.com/api/merge_requests/#merge-a-merge-request), [merge methods](https://docs.gitlab.com/user/project/merge_requests/methods/) and [token documentation](https://docs.gitlab.com/user/profile/personal_access_tokens/). Documentation review is distinct from live account verification.
+The adapter was developed against the official [commits API](https://docs.gitlab.com/api/commits/), [repository tree/blob APIs](https://docs.gitlab.com/api/repositories/), [merge requests API](https://docs.gitlab.com/api/merge_requests/#merge-a-merge-request), [merge methods](https://docs.gitlab.com/user/project/merge_requests/methods/) and [token documentation](https://docs.gitlab.com/user/profile/personal_access_tokens/). Documentation review is distinct from live account verification.
 
-## Verification recipe
+## Limits
 
-1. `pnpm test` runs both providers' mocked transaction scenarios: missing branch, atomic multi-record save, stale preflight, concurrent update, lost response, incomplete Publish rejection, exact-snapshot publication, divergent publish branches and source mismatch. GitLab adds pagination, nested project paths, merge settings, approval blocking and destination/credential isolation.
-2. Configure a disposable repository/token in the build environment, unlock the editor, edit two records, Save, and inspect one commit containing both changes. Repeat with a second editor to exercise the conflict/recovery UI. For GitLab, also inspect temporary-branch removal and the merge request history.
-3. Publish a valid saved draft, inspect the publish branch's exact SHA and unchanged newer draft commits, then observe the chosen hosting workflow's result. Check GitLab behavior with required approvals/pipelines and a lost connection separately.
+The portal does not merge divergent history, synchronize source automatically,
+or poll hosting deployment status. GitLab approvals, pipelines and branch
+policies can prevent an otherwise valid save/publication. Interrupted GitLab
+operations may leave temporary branches or merge requests for manual cleanup.
+Provider permissions and CORS remain deployment prerequisites, not guarantees
+from mocked transport tests.
 
-Steps 2–3 are unvalidated live-provider recipes. Do not use a production site as a disposable fixture.
+## Checks and evidence
 
-## Coverage and limitations
-
-Transport mocks establish client transaction logic, not GitHub/GitLab permissions, branch policies, self-managed CORS, server-version compatibility or deployment success. No live GitLab write has been verified. Projects requiring human-reviewed merge requests may need a different publication workflow; this increment keeps publishing in the editor. The portal does not merge divergent history, synchronize source automatically, or poll hosting deployment status.
-
-## Verification history
-
-- [GitLab support, credential isolation and transaction verification](../verification/runs/2026-10-08-gitlab.md).
-
-- [Object-record and reference save/reload/publication with a mock Git transport](../verification/runs/2026-10-08-content-model.md).
-
-- [Initial implementation run](../verification/runs/2026-10-05T0819Z-implementation.md).
-
-
-## Engine separation verification — 2026-10-14
-
-[Independent engine and public pilot verification](../verification/runs/2026-10-14-engine-separation.md): engine/library/clean-build/browser/live-GitHub checks pass; the maintainer subsequently deployed to Netlify (DEC-184). The [hosted smoke check](../verification/runs/2026-10-14-netlify-pilot.md) passes for public routes, assets, mobile navigation and the login page; the maintainer subsequently [confirmed the full hosted connection, edit, draft save, publish and live deployment flow](../journal/2026-10-14-pilot-acceptance.md). This final signed-in evidence is user-reported; pilot delivery is accepted.
+[Check recipes and dated evidence](../verification/features/publishing.md).

@@ -17,7 +17,7 @@ A common inspector navigation outlet now renders nested list editors at a dedica
 
 Verification found and repaired an unlabeled Starter title input and a mobile-menu keyboard focus gap. The typography regression test was scoped to the open select's controlled popup to avoid selecting a stale option during close animation. A test fixture using unsupported recursively nested collection schema fields was corrected to exercise the supported nested header structure instead; this did not expand collection schema scope.
 
-See [Site Layouts](../features/site-layouts.md), [chartr](../features/chartr.md) and the [verification report](../verification/runs/2026-10-06T1140Z-site-layouts.md). No provider writes or deployment were performed. The normal development instance is left running for review; the separate production fixture server is temporary.
+See [Site Layouts](../features/site-layouts.md), [chartr](../trials/chartr.md) and the [verification report](../verification/runs/2026-10-06T1140Z-site-layouts.md). No provider writes or deployment were performed. The normal development instance is left running for review; the separate production fixture server is temporary.
 
 ## Development-server follow-up
 

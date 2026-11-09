@@ -5,7 +5,7 @@ status: Historical technical discussion; current contracts linked
 ---
 # Technical contracts
 
-For current local development, start with [Building sites with local agents](../features/local-authoring.md). The current [content model](../features/content-model.md), [generic pages](../features/generic-pages.md), [layout API](../features/site-layouts.md), [block library](../features/block-library.md), [editor](../features/editor.md) and [publishing](../features/publishing.md) pages describe the implemented contracts. Exact records and rendering interfaces are in `src/core/types.ts` and `src/core/layout-contract.ts`.
+For current local development, start with [Building sites with local agents](../guides/local-authoring.md). The current [content model](../features/content-model.md), [generic pages](../features/generic-pages.md), [layout API](../features/site-layouts.md), [block library](../features/block-library.md), [editor](../features/editor.md) and [publishing](../features/publishing.md) pages describe the implemented contracts. Exact records and rendering interfaces are in `src/core/types.ts` and `src/core/layout-contract.ts`.
 
 The remaining sections preserve the original technical design discussion from 2026-10-05 and its incremental annotations. Examples and statements of “proposed”, “current” or “pending” below belong to that history where later decisions supersede them. In particular, collection/object schemas now support the implemented object/array/reference model; canonical site settings and spacing belong to the active layout; the block/layout library and local validation are implemented. These historical snippets are not the recommended templates for new sites.
 

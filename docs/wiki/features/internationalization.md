@@ -1,6 +1,6 @@
 ---
 title: Optional internationalization
-updated: 2026-11-08
+updated: 2026-11-09
 ---
 # Optional internationalization
 
@@ -12,9 +12,9 @@ Sites can publish an item in additional languages. The behavior follows
 DEC-194–DEC-206 and DEC-217–DEC-231 in
 [optional internationalization](../discussions/optional-internationalization.md);
 the [engineering design](../discussions/internationalization-engineering-design.md)
-records how it fits the engine. The engine is implemented locally, and the
-[Kahf recreation](kahf.md) now exercises marked library fields, translated layouts
-and partial real content.
+records how it fits the engine. DEC-251 makes text and rich-text fields
+translatable by default. Particular translated designs are supplied by libraries
+or original site extensions.
 
 ## Settings
 
@@ -114,7 +114,7 @@ Each additional language gets every route under its prefix. On `/id/…`:
 ## Editor
 
 - A top-bar **Editing language** select (code only below 600px) stays selected
-  across Pages, Content and Site Layouts.
+  across Pages, collection entries and Layouts.
 - In another language, forms show that language's values; shared fields keep
   their place with a **Shared** badge and remain editable. Rows and blocks can be
   opened and translated, but are added, removed and reordered in the main
@@ -129,33 +129,16 @@ Each additional language gets every route under its prefix. On `/id/…`:
 - Schema changes list the copies they leave incomplete or whose translated
   values they remove.
 
-## Verification recipe
+## Limits
 
-1. `pnpm test`: `tests/languages.test.ts` (overlays, eligibility, strict,
-   reserved paths, removal), `tests/languages-build.test.ts` (prefixed routes,
-   `lang`, `noindex`, language links, strict validation) and
-   `tests/editor-languages.test.ts` (copy creation and editing).
-2. In a disposable site with `i18n` enabled and a translatable field, run
-   `validate`, `check`, `build` and `check-build`; confirm `/id/…` routes.
-3. In `/admin`, switch the top-bar language and exercise an eligible, an
-   incomplete and a missing copy: Draft/Visitor preview, Add → Cancel, Add →
-   Create, Remove copy, a row inside a list, layout settings, the schema switch,
-   Settings off/on and Remove language. Check the top bar at 390px.
+The engine does not automatically translate content or rewrite literal URLs in
+URL fields and Markdown. The layout draws its own public language switch from
+the supplied language links. Site Layout previews show the draft only; layout
+copies are removed with their language. Preview outlines cover whole blocks,
+not individual cards. New records and composition are created in the main
+language. There is no source-change review state, automatic browser-language
+redirect, or general sitemap/canonical-link feature.
 
-## Coverage and limitations
+## Checks and evidence
 
-Library text fields are translatable without extra configuration; technical
-text must be explicitly shared. A public language switch is still owned by the
-layout. Kahf implements one, including client title search with localized collection
-URLs; the engine does not automatically translate content. Site Layouts preview the draft only, and layout copies are removed only with
-their language. Preview outlines cover whole blocks, not individual cards.
-New pages, entries and blocks are created with main-language values. Live Git
-saves and publishing were not exercised.
-
-## Verification history
-
-- [2026-11-08 text localization defaults](../verification/runs/2026-11-08-localization-defaults.md).
-
-- [2026-10-25 Kahf library/site proof](../verification/runs/2026-10-25-kahf.md) — real library copies, fallback routes and local editor workflows.
-
-- [2026-10-23 engine implementation](../verification/runs/2026-10-23-internationalization.md) — Passed locally.
+[Check recipes and dated evidence](../verification/features/internationalization.md).

@@ -223,7 +223,7 @@ The main language uses `content` as-is, so single-language sites keep today's pa
    modes, schema switch and effect box. Browser checks of the DEC-214 walkthrough
    at desktop width and 390px.
 4. **Docs:** record formats in [content model](../features/content-model.md) and
-   [local authoring](../features/local-authoring.md).
+   [local authoring](../guides/local-authoring.md).
 5. **Library and Kahf site:** as above, verified locally only (DEC-215).
 
 ## Review points

@@ -1,6 +1,6 @@
 ---
 title: Site Layouts
-updated: 2026-10-14
+updated: 2026-11-09
 ---
 # Site Layouts
 
@@ -8,11 +8,11 @@ updated: 2026-10-14
 
 ## Intent and basis
 
-DEC-165–DEC-171 replace the single-selection model with independently named layout configurations and explicit page assignments. The [multiple-layout discussion](../discussions/multiple-site-layouts.md) records the accepted scope. DEC-092–DEC-105 and DEC-107 established versioned designs, unrestricted author-owned settings, optional styling variables and a repository-based design library. DEC-163 supersedes the picker whitelist: all installed layouts are always available in the same dashboard. DEC-108 requires dedicated nested editing levels. DEC-130 moves content spacing into the layout with author-defined defaults, superseding DEC-097. See the [accepted design](../discussions/site-layouts.md) and [implementation journal](../journal/2026-10-06-site-layouts-implementation.md).
+DEC-165–DEC-171 replace the single-selection model with independently named layout configurations and explicit page assignments. The [multiple-layout discussion](../discussions/multiple-site-layouts.md) records the accepted scope. DEC-092–DEC-105 and DEC-107 established versioned designs, unrestricted author-owned settings, optional styling variables and a repository-based design library. DEC-163 supersedes the picker whitelist: all installed layouts are always available in the same dashboard. DEC-247 supplies the current screen/panel navigation convention. DEC-130 moves content spacing into the layout with author-defined defaults, superseding DEC-097. See the [accepted design](../discussions/site-layouts.md) and [implementation journal](../journal/2026-10-06-site-layouts-implementation.md).
 
 ## Entry points
 
-Open `/admin/` → **Site Layouts** for a Pages-style table showing the saved name, design/version, page count and Active switch. Open a row to edit its name/settings beside a live preview. Select a preview page and use the toolbar to switch desktop/mobile widths.
+Open `/admin/` → **Design → Layouts** for a table showing the saved name, design/version, page count and Active switch. Open a row to edit its name/settings beside a live preview. Select a preview page and use the toolbar to switch desktop/mobile widths.
 
 **Add layout** opens the searchable design catalog, then a named creation form. Create layout adds an active configuration with independent settings; Cancel leaves the draft unchanged. Multiple configurations can use the same design. **Change design** on an existing layout uses the same catalog, followed by a reset confirmation naming the layout and affected page count. Catalog previews never mutate the draft. Save draft and Publish remain separate.
 
@@ -20,7 +20,7 @@ Turning a layout off or deleting it requires zero assigned pages. At least one a
 
 The visible title and close button share a fixed header row above the scrolling catalog and preview. Hover highlights the whole card background, including the Preview row; the rendered thumbnail retains its own appearance.
 
-**Site Layouts → a layout → Content spacing** edits content max-width and page gutter. Each installed design supplies its own defaults. Clearing either override uses the active layout’s default. **Settings** contains Repository connection, admin Appearance, Backups, Session and Factory reset. Other standard admin areas retain their existing layout. Generic page previews preserve field placeholders.
+Each design supplies its own settings controls. Designs using the shared spacing helpers may expose content max-width and page gutter, with their own defaults; there is no mandatory Content spacing panel. **Settings** contains admin Appearance, Languages, Backups, Session and Factory reset. Git/R2 configuration comes from the build environment, with no repository/storage setup form. Generic page previews preserve field placeholders; routed entry previews resolve entry values.
 
 ## Stored contract and transitions
 
@@ -51,49 +51,18 @@ Generated public routes import their assigned design wrapper and optional Head d
 
 `LayoutSettingsProps` supplies `settings`, `content` and `onChange(settings)`. Authors may build arbitrary React settings UI or reuse `Fields` and `PanelSection`; no universal header/footer/theme schema is imposed. Repeated fields use the editor-wide `PanelNavigation` boundary. Custom drill-down controls use `PanelLevel` to open a slide-over panel. The parent remains mounted and inert until the panel closes; the live preview stays available. See the [editor workspace contract](editor.md#workspace-and-navigation).
 
-The pure policy can derive `title`, optional block-context `globals`, and validation through `fields`, `blocks` and `add`. Library layout manifests declare spacing in `defaults`; their settings controls use those defaults as placeholders, and their policies resolve blank/invalid overrides with `contentSpacing`. Both wrappers and block context consume `layoutGlobals`, keeping public rendering and preview consistent. Width must be finite and positive; gutter must be finite and nonnegative. Invalid explicit overrides fail structural validation. Keep browser/editor dependencies out of this module because public content validation also loads it. Styling tokens are optional: no categories, badges, filtering, warnings or compatibility gates depend on a block's styling choices. Static/generic field-binding rules remain separate.
+The pure policy can derive `title`, optional block-context `globals`, and validation through `fields`, `blocks` and `add`. Designs using the spacing helpers declare spacing in `defaults`; their settings controls can use those defaults as placeholders, and their policies resolve blank overrides with `contentSpacing`. Wrappers and block context can consume `layoutGlobals` for consistent public/preview rendering. In that contract, width is finite and positive and gutter finite and nonnegative; policies validate explicit overrides. These helpers do not impose a universal settings schema. Keep browser/editor dependencies out of this module because public content validation also loads it. Styling tokens are optional: no categories, badges, filtering, warnings or compatibility gates depend on a block's styling choices. Static/generic field-binding rules remain separate.
 
 ## One dashboard for all themes (DEC-163)
 
 Run `pnpm dev` in the site repository and open `/admin/`. All definitions from
-configured libraries and original extensions are available together. The initial
-shared library contains Archline and Intr. Subscription configuration is outside
+configured libraries and original extensions are available together. Subscription configuration is outside
 the portal; there is no theme-specific launch command.
 
 The block catalog independently offers all installed themes through **All themes**
 and its optional theme/search filters. Its static/generic page and footer
 compatibility rules remain. Choosing a layout does not restrict the block catalog.
 
-## Verification recipe
+## Checks and evidence
 
-1. Customize Archline width/gutter, preview Intr and close it. Confirm the candidate uses its own defaults and the draft is unchanged. Confirm changing the design to Intr, then Archline: each uses its defaults while content remains intact. Verify custom width, zero gutter, cleared overrides and recovery.
-2. Check Pages and Site Layouts previews with static and generic pages. Visit Settings, Content, schemas and Media to confirm their normal admin layout.
-3. Open header/footer list items and a nested dropdown item. Each replaces all parent controls; Back returns exactly one level. Use the same behavior for block lists, entry lists and schema default rows.
-4. Recover a tab and export/import a backup. Confirm every layout ID/name/active state/design/settings and page assignment round-trips; legacy settings remain intact.
-5. Open Add layout or Change design and verify all installed themes appear. Switch layouts and reopen the catalog: all remain available. Open a page’s Add block catalog and confirm blocks from other themes remain selectable.
-6. Install a newer retained version beside an older selected one. Confirm public rendering and both settings/preview loaders stay pinned until explicit selection. Run `pnpm verify`.
-
-7. Create two instances of Archline, edit their settings independently and reassign a page. Check counts, page preview and usage links. Cancel creation/design resets/deletion and confirm no unintended change.
-8. Verify used layouts cannot be disabled/deleted, generic pages count without entries, the last active layout is protected, and unused incomplete layouts do not block publication. Build pages using different designs and check their wrappers, titles, spacing and assets.
-
-## Verification history
-
-- [Admin rework](../verification/runs/2026-11-07-admin-rework.md): new shell, nested creation panels and shared preview workspace.
-
-- [Multiple layout configurations](../verification/runs/2026-10-13-multiple-site-layouts.md): lifecycle, assignments, validation, recovery and per-route builds.
-
-- [Card hover and aligned catalog headers](../verification/runs/2026-10-08-layout-catalog.md): automated checks pass; selected browser checks are partially incomplete.
-
-- [Layout-owned spacing](../verification/runs/2026-10-08-layout-spacing.md). Covers per-layout defaults, overrides, switching, candidate previews, validation and persistence.
-
-- [Explicit creation forms and cancellation](../verification/runs/2026-10-08-creation-forms.md).
-
-- [chartr content width and spacing repair](../verification/runs/2026-10-06T1426Z-chartr-spacing.md). Shared geometry applies under both layouts; chartr header/footer and block containers use consistent bounds without duplicate padding.
-- [Generated layout Head dev-server repair](../verification/runs/2026-10-06T1222Z-layout-dev-restart.md).
-
-- [Site Layout foundation, chartr and dedicated navigation levels](../verification/runs/2026-10-06T1140Z-site-layouts.md). Automated retention/version/whitelist checks and bounded Safari browser observations; live providers are separate and untested.
-
-
-## Engine separation verification — 2026-10-14
-
-[Independent engine and public pilot verification](../verification/runs/2026-10-14-engine-separation.md): engine/library/clean-build/browser/live-GitHub checks pass; the maintainer subsequently deployed to Netlify (DEC-184). The [hosted smoke check](../verification/runs/2026-10-14-netlify-pilot.md) passes for public routes, assets, mobile navigation and the login page; the maintainer subsequently [confirmed the full hosted connection, edit, draft save, publish and live deployment flow](../journal/2026-10-14-pilot-acceptance.md). This final signed-in evidence is user-reported; pilot delivery is accepted.
+[Check recipes and dated evidence](../verification/features/site-layouts.md).

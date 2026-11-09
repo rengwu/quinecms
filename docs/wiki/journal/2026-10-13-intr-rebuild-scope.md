@@ -73,7 +73,7 @@ details and statistics remain demo content, not independently verified claims.
   `urlField`. Intr uses it for optional links to static detail pages; tests cover
   shared edits, missing links and unsafe URL rejection. No query language or
   routing model was added.
-- The [authoring guide](../features/local-authoring.md#recreating-an-existing-site)
+- The [authoring guide](../guides/local-authoring.md#recreating-an-existing-site)
   now contrasts Quine's block-owned projects with Intr's shared entries, explains
   the limited card-field adapter, and describes static detail ownership.
 - The example's editing map names client destinations and source-maintained

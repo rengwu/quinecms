@@ -6,7 +6,7 @@ result: Untested
 # Independent engine, design library and Archline pilot verification
 
 Scope: DEC-172–DEC-183 and [FEAT-site-engine](../../features/site-engine.md),
-including [local authoring](../../features/local-authoring.md),
+including [local authoring](../../guides/local-authoring.md),
 [layout lifecycle](../../features/site-layouts.md),
 [encrypted admin](../../features/admin-encryption.md) and
 [Git save/publication](../../features/publishing.md).

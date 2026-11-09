@@ -13,7 +13,7 @@ capabilities upstream; do not introduce site overrides of engine files.
 - [README](README.md): engine development and site commands.
 - [Engine and extension contract](docs/wiki/features/site-engine.md): package,
   assembly, library subscriptions, initialization and upgrade boundaries.
-- [Local authoring guide](docs/wiki/features/local-authoring.md): site workflows,
+- [Local authoring guide](docs/wiki/guides/local-authoring.md): site workflows,
   record formats and custom extensions.
 - `src/core/types.ts`: record/field types. `src/editor/` owns the portal;
   `src/integrations/` owns Git persistence and uploads.

@@ -49,7 +49,7 @@ simple and robust way to handle conflicts, and invokes rule-lean.
   deployed source contract against the saved snapshot.
 
 See [editor behavior](../features/editor.md), [publishing](../features/publishing.md)
-and [local authoring](../features/local-authoring.md). Source inspected:
+and [local authoring](../guides/local-authoring.md). Source inspected:
 `src/editor/App.tsx`, `src/editor/recovery.ts`, `src/integrations/repository.ts`
 and the GitHub/GitLab adapters.
 
